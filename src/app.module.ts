@@ -1,26 +1,28 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
-/**
- * App main module
- * every mudules should
- * register here
- */
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfigAsync } from './config/typeorm.config';
+import { CollectionssModule } from './collectionss/collectionss.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      debug: true,
       playground: true,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      definitions: {
+        path: join(process.cwd(), 'src/graphql.ts'),
+      },
     }),
+
+    TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    CollectionssModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

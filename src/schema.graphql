@@ -1,0 +1,48 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Collectionss {
+  collection_id: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  ImageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+}
+
+type Query {
+  getAllcollectionss: [Collectionss!]!
+  getCollectionById(collection_id: String!): Collectionss!
+}
+
+type Mutation {
+  createCollection(createCollection: CreateCollectionssInput!): Collectionss!
+  updateCollectionAtribute(updateCollectionssInput: UpdateCollectionssInput!): Collectionss!
+  deleteCollection(id: String!): String!
+}
+
+input CreateCollectionssInput {
+  collection_id: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String
+  externalUrl: String
+  ImageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input UpdateCollectionssInput {
+  collection_id: String!
+  bannerImageUrl: String
+  externalUrl: String
+  ImageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
