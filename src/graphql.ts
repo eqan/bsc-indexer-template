@@ -8,49 +8,53 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export interface CreateCollectionssInput {
-    collection_id: string;
+export interface CreateCollectionsInput {
+    collectionId: string;
     name: string;
     slug: string;
     bannerImageUrl?: Nullable<string>;
     externalUrl?: Nullable<string>;
-    ImageUrl?: Nullable<string>;
+    imageUrl?: Nullable<string>;
     twitterUserName?: Nullable<string>;
     discordUrl?: Nullable<string>;
     description?: Nullable<string>;
 }
 
-export interface UpdateCollectionssInput {
-    collection_id: string;
+export interface UpdateCollectionsInput {
+    collectionId: string;
     bannerImageUrl?: Nullable<string>;
     externalUrl?: Nullable<string>;
-    ImageUrl?: Nullable<string>;
+    imageUrl?: Nullable<string>;
     twitterUserName?: Nullable<string>;
     discordUrl?: Nullable<string>;
     description?: Nullable<string>;
 }
 
-export interface Collectionss {
-    collection_id: string;
+export interface DeleteCollectionsInput {
+    id: string[];
+}
+
+export interface Collections {
+    collectionId: string;
     name: string;
     slug: string;
     bannerImageUrl: string;
     externalUrl: string;
-    ImageUrl: string;
+    imageUrl: string;
     twitterUserName: string;
     discordUrl: string;
     description: string;
 }
 
 export interface IQuery {
-    getAllcollectionss(): Collectionss[] | Promise<Collectionss[]>;
-    getCollectionById(collection_id: string): Collectionss | Promise<Collectionss>;
+    index(): Collections[][] | Promise<Collections[][]>;
+    showCollectionById(collectionId: string): Collections | Promise<Collections>;
 }
 
 export interface IMutation {
-    createCollection(createCollection: CreateCollectionssInput): Collectionss | Promise<Collectionss>;
-    updateCollectionAtribute(updateCollectionssInput: UpdateCollectionssInput): Collectionss | Promise<Collectionss>;
-    deleteCollection(id: string): string | Promise<string>;
+    createCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
+    updateCollectionAtribute(updateCollectionssInput: UpdateCollectionsInput): Collections | Promise<Collections>;
+    delete(deleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
 }
 
 type Nullable<T> = T | null;

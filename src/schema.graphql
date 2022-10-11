@@ -2,47 +2,51 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Collectionss {
-  collection_id: String!
+type Collections {
+  collectionId: String!
   name: String!
   slug: String!
   bannerImageUrl: String!
   externalUrl: String!
-  ImageUrl: String!
+  imageUrl: String!
   twitterUserName: String!
   discordUrl: String!
   description: String!
 }
 
 type Query {
-  getAllcollectionss: [Collectionss!]!
-  getCollectionById(collection_id: String!): Collectionss!
+  index: [[Collections!]!]!
+  showCollectionById(collectionId: String!): Collections!
 }
 
 type Mutation {
-  createCollection(createCollection: CreateCollectionssInput!): Collectionss!
-  updateCollectionAtribute(updateCollectionssInput: UpdateCollectionssInput!): Collectionss!
-  deleteCollection(id: String!): String!
+  createCollection(createCollection: CreateCollectionsInput!): Collections!
+  updateCollectionAtribute(updateCollectionssInput: UpdateCollectionsInput!): Collections!
+  delete(deleteCollectionInput: DeleteCollectionsInput!): Collections
 }
 
-input CreateCollectionssInput {
-  collection_id: String!
+input CreateCollectionsInput {
+  collectionId: String!
   name: String!
   slug: String!
   bannerImageUrl: String
   externalUrl: String
-  ImageUrl: String
+  imageUrl: String
   twitterUserName: String
   discordUrl: String
   description: String
 }
 
-input UpdateCollectionssInput {
-  collection_id: String!
+input UpdateCollectionsInput {
+  collectionId: String!
   bannerImageUrl: String
   externalUrl: String
-  ImageUrl: String
+  imageUrl: String
   twitterUserName: String
   discordUrl: String
   description: String
+}
+
+input DeleteCollectionsInput {
+  id: [String!]!
 }

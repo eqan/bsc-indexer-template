@@ -15,9 +15,9 @@ export default abstract class BaseProvider<T> {
 
   abstract create(createDto: Partial<T> | Partial<T>[]): Promise<T>;
 
-  abstract show(id: number): Promise<T>;
+  abstract show(id: string): Promise<T>;
 
   abstract edit(editDto: Partial<T>): Promise<T>;
 
-  abstract delete(deleteWithIds: { id: number[] }): void;
+  abstract delete(deleteWithIds: { id: string[] }): void;
 }

@@ -1,5 +1,5 @@
 {
-  "name": "indexer",
+  "name": "bsc-indexer",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
+    "preinstall": "echo 'engine-strict=true' >> .npmrc",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -19,6 +20,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "engines": {
+    "node": "16.10.0",
+    "npm": "8.1.0"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.1.3",

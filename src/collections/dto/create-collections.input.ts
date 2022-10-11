@@ -4,57 +4,50 @@ import {
   IsNotEmpty,
   IsString,
   IsUrl,
-  Max,
-  Min,
 } from 'class-validator';
 
-/**Create Collectionss table in database
- *
- */
-
 @InputType()
-// @ObjectType()
-export class CreateCollectionssInput {
+export class CreateCollectionsInput {
   @IsNotEmpty({ message: 'Id cannot be null' })
-  @IsEthereumAddress()
+  @IsEthereumAddress({ message: 'Collection ID Must be a Ethereum Address' })
   @Field()
-  collection_id: string;
+  collectionId: string;
 
-  @IsString()
+  @IsString({ message: 'Name must be a String' })
   @Field()
   name: string;
 
-  @IsString()
+  @IsString({ message: 'Slug must be String' })
   @Field()
   slug: string;
 
   @IsString()
-  @IsUrl()
+  @IsUrl({ message: 'Banner Image URL must be a valid URL' })
   @Field({
     nullable: true,
   })
   bannerImageUrl: string;
 
   @IsString()
-  @IsUrl()
+  @IsUrl({ message: 'External URL must be a valid URL' })
   @Field({
     nullable: true,
   })
   externalUrl: string;
 
-  @IsUrl()
+  @IsUrl({ message: 'Image URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  ImageUrl: string;
+  imageUrl: string;
 
-  @IsString()
+  @IsString({ message: 'Twitter User Name must be String' })
   @Field({
     nullable: true,
   })
   twitterUserName: string;
 
-  @IsUrl()
+  @IsUrl({ message: 'Discord URL must be a valid URL' })
   @Field({
     nullable: true,
   })

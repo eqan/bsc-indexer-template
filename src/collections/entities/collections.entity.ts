@@ -1,19 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, PrimaryColumn, BaseEntity } from 'typeorm';
 
-/**Create Collectionss table in database
- *
- */
 @ObjectType()
-@Entity()
-export class Collectionss extends BaseEntity {
+@Entity('Collections')
+export class Collections extends BaseEntity {
   @Field()
   @PrimaryColumn({
     type: 'text',
     unique: true,
     nullable: false,
   })
-  collection_id: string;
+  collectionId: string;
 
   @Field()
   @Column('text')
@@ -42,7 +39,7 @@ export class Collectionss extends BaseEntity {
     type: 'text',
     nullable: true,
   })
-  ImageUrl: string;
+  imageUrl: string;
 
   @Field()
   @Column({

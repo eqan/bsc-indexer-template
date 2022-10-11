@@ -4,11 +4,15 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigAsync } from './config/typeorm.config';
-import { CollectionssModule } from './collectionss/collectionss.module';
+import { CollectionsModule } from './collections/collections.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    /**
+     * GraphQl Module
+     * GraphQl Configuration
+     */
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
@@ -17,12 +21,15 @@ import { ConfigModule } from '@nestjs/config';
         path: join(process.cwd(), 'src/graphql.ts'),
       },
     }),
-
+    /**
+     * TypeORM Module
+     * TypeORM Configurations
+     */
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CollectionssModule,
+    CollectionsModule,
   ],
 })
 export class AppModule {}
