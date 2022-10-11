@@ -1,0 +1,49 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Tokens {
+  tokenContract: String!
+  name: String!
+  tokenId: String!
+  collectionId: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String!
+  attributes: String!
+  description: String!
+}
+
+type Query {
+  index: [[Tokens!]!]!
+  showTokenById(tokenId: String!): Tokens!
+}
+
+type Mutation {
+  createToken(createTokenInput: CreateTokensInput!): Tokens!
+  updateTokenAttribute(updateTokensInput: UpdateTokensInput!): Tokens!
+  delete(deleteTokenInput: DeleteTokensInput!): Tokens
+}
+
+input CreateTokensInput {
+  tokenContract: String!
+  tokenId: String!
+  name: String!
+  collectionId: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String
+  attributes: String
+  description: String
+}
+
+input UpdateTokensInput {
+  tokenContract: String!
+  name: String
+  tokenId: String
+  collectionId: String
+  description: String
+  imageUrl: String
+}
+
+input DeleteTokensInput {
+  id: [String!]!
+}
