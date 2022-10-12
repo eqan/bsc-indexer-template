@@ -2,6 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Collections {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  imageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
 type Tokens {
   tokenContract: String!
   name: String!
@@ -14,14 +31,45 @@ type Tokens {
 }
 
 type Query {
+  GetAllCollections: GetAllCollections!
+  ShowCollectionById(collectionId: String!): Collections!
   index: [[Tokens!]!]!
   showTokenById(tokenId: String!): Tokens!
 }
 
 type Mutation {
+  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
+  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   createToken(createTokenInput: CreateTokensInput!): Tokens!
   updateTokenAttribute(updateTokensInput: UpdateTokensInput!): Tokens!
   delete(deleteTokenInput: DeleteTokensInput!): Tokens
+}
+
+input CreateCollectionsInput {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input UpdateCollectionsInput {
+  collectionId: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input DeleteCollectionsInput {
+  id: [String!]!
 }
 
 input CreateTokensInput {

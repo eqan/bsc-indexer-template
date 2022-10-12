@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { TokensModule } from './tokens/tokens.module';
 
@@ -29,7 +30,8 @@ import { TokensModule } from './tokens/tokens.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TokensModule,
+    CollectionsModule,
+    TokensModule
   ],
 })
 export class AppModule {}
