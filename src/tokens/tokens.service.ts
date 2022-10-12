@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTokensInput } from './dto/create-tokens.input';
+import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
 
@@ -36,10 +37,7 @@ export class TokensService {
    * @@params No Params
    * @returns Array of Tokens and Total Number of Tokens
    */
-  async findAllTokens(): Promise<{
-    items: Tokens[];
-    total: number;
-  }> {
+  async findAllTokens(): Promise<GetAllTokens> {
     try {
       const items = await this.tokensRepo.find();
       const total = await this.tokensRepo.count();

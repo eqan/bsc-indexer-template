@@ -1,13 +1,14 @@
+import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateTokensInput as CreateTokenInput } from './dto/create-tokens.input';
 import { DeleteTokensInput } from './dto/delete-tokens.input';
 import { UpdateTokensInput } from './dto/update-tokens.input';
-import { Tokens as Token } from './entities/tokens.entity';
+import { Tokens } from './entities/tokens.entity';
 import { TokensService as TokenService } from './tokens.service';
 
-@Resolver(() => Token)
-export class TokensResolver extends BaseProvider<Token> {
+@Resolver(() => Tokens)
+export class TokensResolver extends BaseProvider<Tokens> {
   constructor(private readonly tokenService: TokenService) {
     super();
   }
@@ -17,21 +18,29 @@ export class TokensResolver extends BaseProvider<Token> {
    * @param createTokenInput
    * @returns Created  Tokens
    */
-  @Mutation(() => Token, { name: 'createToken' })
-  create(
+  @Mutation(() => Tokens, { name: 'createToken' })
+  async create(
     @Args('createTokenInput')
     createTokenInput: CreateTokenInput,
-  ) {
-    return this.tokenService.createToken(createTokenInput);
+  ): Promise<Tokens> {
+    try {
+      return await this.tokenService.createToken(createTokenInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
    * GET All Tokens
    * @returns
    */
-  @Query((returns) => [[Token], Number])
+  @Query((returns) => [[Tokens], Number])
   async index() {
-    return this.tokenService.findAllTokens();
+    try {
+      return this.tokenService.findAllTokens();
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -39,9 +48,13 @@ export class TokensResolver extends BaseProvider<Token> {
    * @param tokenId
    * @returns Token Against provided ID
    */
-  @Query(() => Token, { name: 'showTokenById' })
-  show(@Args('tokenId') tokenId: string) {
-    return this.tokenService.getTokenById(tokenId);
+  @Query(() => Tokens, { name: 'showTokenById' })
+  async show(@Args('tokenId') tokenId: string): Promise<Tokens> {
+    try {
+      return await this.tokenService.getTokenById(tokenId);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -49,12 +62,16 @@ export class TokensResolver extends BaseProvider<Token> {
    * @param updateTokenInput
    * @returns Updated Token
    */
-  @Mutation(() => Token, { name: 'updateTokenAttribute' })
-  edit(
+  @Mutation(() => Tokens, { name: 'updateTokenAttribute' })
+  async edit(
     @Args('updateTokensInput')
     updateTokenInput: UpdateTokensInput,
-  ) {
-    return this.tokenService.updateTokenAttribute(updateTokenInput);
+  ): Promise<Tokens> {
+    try {
+      return await this.tokenService.updateTokenAttribute(updateTokenInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -62,13 +79,17 @@ export class TokensResolver extends BaseProvider<Token> {
    * @param tokenId
    * @returns Nothing
    */
-  @Mutation(() => Token, { nullable: true })
-  delete(
+  @Mutation(() => Tokens, { nullable: true })
+  async delete(
     @Args({
       name: 'deleteTokenInput',
     })
     deleteTokenInput: DeleteTokensInput,
-  ): void {
-    this.tokenService.delete(deleteTokenInput);
+  ): Promise<void> {
+    try {
+      await this.tokenService.delete(deleteTokenInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
