@@ -96,15 +96,10 @@ export class TokensService {
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      const promises = [];
-      ids.map((id) => {
-        promises.push(this.tokensRepo.delete(id));
-      });
-      Promise.all(promises).then((values) => {
-        if (!values) {
-          throw new NotFoundException('Token not found');
-        }
-      });
+      const values = await this.tokensRepo.delete(ids);
+      if (!values) {
+        throw new NotFoundException('Token not found');
+      }
     } catch (error) {
       throw new BadRequestException(error);
     }
