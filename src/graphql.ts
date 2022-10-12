@@ -53,13 +53,13 @@ export interface GetAllCollections {
 
 export interface IQuery {
     GetAllCollections(): GetAllCollections | Promise<GetAllCollections>;
-    showCollectionById(collectionId: string): Collections | Promise<Collections>;
+    ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
 }
 
 export interface IMutation {
-    createCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
-    updateCollectionAtribute(updateCollectionssInput: UpdateCollectionsInput): Collections | Promise<Collections>;
-    delete(deleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
+    CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
+    UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
+    DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
 }
 
 type Nullable<T> = T | null;

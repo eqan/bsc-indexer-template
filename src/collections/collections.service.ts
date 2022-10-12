@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
@@ -27,7 +27,6 @@ export class CollectionsService {
   ): Promise<Collections> {
     try {
       const collection = this.collectionsRepo.create(createCollectionsInput);
-
       return await this.collectionsRepo.save(collection);
     } catch (error) {
       throw new BadRequestException(error);
@@ -41,8 +40,10 @@ export class CollectionsService {
    */
   async findAllCollections(): Promise<GetAllCollections> {
     try {
-      const items = await this.collectionsRepo.find();
-      const total = await this.collectionsRepo.count();
+      const [items, total] = await Promise.all([
+        this.collectionsRepo.find(),
+        this.collectionsRepo.count(),
+      ]);
       if (!items) {
         throw new NotFoundException('No Collections Found');
       }
@@ -74,7 +75,7 @@ export class CollectionsService {
   }
 
   /**
-   * Update Collections Atributes
+   * Update Collections Attributes
    * @param updateCollectionsInput
    * @returns
    */
@@ -91,18 +92,15 @@ export class CollectionsService {
   }
 
   /**
-   * DEETE Collection
+   * DELETE Collection
    * @param collectionId
-   * @returns Message that collection succesfully deleted
+   * @returns Message that collection successfully deleted
    */
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      const promises = [];
-      ids.map((id) => {
-        promises.push(this.collectionsRepo.delete(id));
-      });
-      await Promise.resolve(promises);
+      await this.collectionsRepo.delete({ collectionId: In(ids) });
+      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }

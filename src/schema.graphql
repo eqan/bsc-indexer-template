@@ -16,18 +16,18 @@ type Collections {
 
 type GetAllCollections {
   items: [Collections!]!
-  total: Float!
+  total: Int!
 }
 
 type Query {
   GetAllCollections: GetAllCollections!
-  showCollectionById(collectionId: String!): Collections!
+  ShowCollectionById(collectionId: String!): Collections!
 }
 
 type Mutation {
-  createCollection(createCollection: CreateCollectionsInput!): Collections!
-  updateCollectionAtribute(updateCollectionssInput: UpdateCollectionsInput!): Collections!
-  delete(deleteCollectionInput: DeleteCollectionsInput!): Collections
+  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
+  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
 }
 
 input CreateCollectionsInput {
