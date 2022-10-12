@@ -6,11 +6,12 @@ import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
 import { BadRequestException } from '@nestjs/common';
 import { GetAllCollections } from './dto/get-all-collections.dto';
+import BaseProvider from 'src/core/base.BaseProvider';
 
 @Resolver(() => Collections)
-export class CollectionsResolver {
+export class CollectionsResolver extends BaseProvider<Collections> {
   constructor(private readonly collectionsService: CollectionsService) {
-    // super();
+    super();
   }
   /**
    *
@@ -26,9 +27,13 @@ export class CollectionsResolver {
     @Args('createCollection')
     createCollectionsInput: CreateCollectionsInput,
   ): Promise<Collections> {
-    return await this.collectionsService.createCollection(
-      createCollectionsInput,
-    );
+    try {
+      return await this.collectionsService.createCollection(
+        createCollectionsInput,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
