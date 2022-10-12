@@ -1,5 +1,4 @@
-import { CreateCollectionsInput } from './create-collections.input';
-import { ArgsType, Field, InputType, PickType } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
 
 @ArgsType()
 @InputType()

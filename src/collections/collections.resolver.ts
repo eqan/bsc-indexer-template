@@ -3,15 +3,14 @@ import { CollectionsService } from './collections.service';
 import { Collections } from './entities/collections.entity';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
-import BaseProvider from 'src/core/base.BaseProvider';
-// import { type } from 'os';
 import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
-// import { DeleteCollectionssInput } from './dto/delete-collectionss.input';
+import { BadRequestException } from '@nestjs/common';
+import { GetAllCollections } from './dto/get-all-collections.dto';
 
 @Resolver(() => Collections)
-export class CollectionsResolver extends BaseProvider<Collections> {
+export class CollectionsResolver {
   constructor(private readonly collectionsService: CollectionsService) {
-    super();
+    // super();
   }
   /**
    *
@@ -23,20 +22,22 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    * @returns Created  Collection
    */
   @Mutation(() => Collections, { name: 'createCollection' })
-  create(
+  async create(
     @Args('createCollection')
     createCollectionsInput: CreateCollectionsInput,
-  ) {
-    return this.collectionsService.createCollection(createCollectionsInput);
+  ): Promise<Collections> {
+    return await this.collectionsService.createCollection(
+      createCollectionsInput,
+    );
   }
 
   /**
    * GET All Collections
-   * @returns
+   * @returns Collections Array and their total count
    */
-  @Query((returns) => [[Collections], Number])
-  async index() {
-    return this.collectionsService.findAllCollections();
+  @Query(() => GetAllCollections, { name: 'GetAllCollections' })
+  async index(): Promise<GetAllCollections> {
+    return await this.collectionsService.findAllCollections();
   }
 
   /**
@@ -45,8 +46,12 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    * @returns Collection Against provided ID
    */
   @Query(() => Collections, { name: 'showCollectionById' })
-  show(@Args('collectionId') collectionId: string) {
-    return this.collectionsService.getCollectionById(collectionId);
+  async show(@Args('collectionId') collectionId: string): Promise<Collections> {
+    try {
+      return await this.collectionsService.getCollectionById(collectionId);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -55,13 +60,17 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    * @returns Updated Collection
    */
   @Mutation(() => Collections, { name: 'updateCollectionAtribute' })
-  edit(
+  async edit(
     @Args('updateCollectionssInput')
     updateCollectionsInput: UpdateCollectionsInput,
-  ) {
-    return this.collectionsService.updateCollectionAttribute(
-      updateCollectionsInput,
-    );
+  ): Promise<Collections> {
+    try {
+      return await this.collectionsService.updateCollectionAttribute(
+        updateCollectionsInput,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -70,12 +79,16 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    * @returns Nothing
    */
   @Mutation(() => Collections, { nullable: true })
-  delete(
+  async delete(
     @Args({
       name: 'deleteCollectionInput',
     })
     deleteCollectionInput: DeleteCollectionsInput,
-  ): void {
-    this.collectionsService.delete(deleteCollectionInput);
+  ): Promise<void> {
+    try {
+      await this.collectionsService.delete(deleteCollectionInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
+import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 
@@ -26,11 +26,9 @@ export class CollectionsService {
     createCollectionsInput: CreateCollectionsInput,
   ): Promise<Collections> {
     try {
-      const collection: Collections = await this.collectionsRepo.create(
-        createCollectionsInput,
-      );
+      const collection = this.collectionsRepo.create(createCollectionsInput);
 
-      return collection;
+      return await this.collectionsRepo.save(collection);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -41,10 +39,7 @@ export class CollectionsService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllCollections(): Promise<{
-    items: Collections[];
-    total: number;
-  }> {
+  async findAllCollections(): Promise<GetAllCollections> {
     try {
       const items = await this.collectionsRepo.find();
       const total = await this.collectionsRepo.count();
@@ -103,12 +98,11 @@ export class CollectionsService {
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      ids.map(async (id) => {
-        const found = await this.collectionsRepo.delete(id);
-        if (!found) {
-          throw new NotFoundException('Collection not found');
-        }
+      const promises = [];
+      ids.map((id) => {
+        promises.push(this.collectionsRepo.delete(id));
       });
+      await Promise.resolve(promises);
     } catch (error) {
       throw new BadRequestException(error);
     }

@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, PrimaryColumn, BaseEntity } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @ObjectType()
 @Entity('Collections')
-export class Collections extends BaseEntity {
+export class Collections {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -25,40 +25,40 @@ export class Collections extends BaseEntity {
     type: 'text',
     nullable: true,
   })
-  bannerImageUrl: string;
+  bannerImageUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  externalUrl: string;
+  externalUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  imageUrl: string;
+  imageUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  twitterUserName: string;
+  twitterUserName?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  discordUrl: string;
+  discordUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  description: string;
+  description?: string;
 }

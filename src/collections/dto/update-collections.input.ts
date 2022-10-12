@@ -18,35 +18,35 @@ export class UpdateCollectionsInput {
   @Field({
     nullable: true,
   })
-  bannerImageUrl: string;
+  bannerImageUrl?: string;
 
   @IsString()
   @IsUrl({ message: 'External URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  externalUrl: string;
+  externalUrl?: string;
 
   @IsUrl({ message: 'Image URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  imageUrl: string;
+  imageUrl?: string;
 
   @IsString({ message: 'Twitter User Name must be String' })
   @Field({
     nullable: true,
   })
-  twitterUserName: string;
+  twitterUserName?: string;
 
   @IsUrl({ message: 'Discord URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  discordUrl: string;
+  discordUrl?: string;
 
   @Field({
     nullable: true,
   })
-  description: string;
+  description?: string;
 }

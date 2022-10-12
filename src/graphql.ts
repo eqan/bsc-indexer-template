@@ -46,8 +46,13 @@ export interface Collections {
     description: string;
 }
 
+export interface GetAllCollections {
+    items: Collections[];
+    total: number;
+}
+
 export interface IQuery {
-    index(): Collections[][] | Promise<Collections[][]>;
+    GetAllCollections(): GetAllCollections | Promise<GetAllCollections>;
     showCollectionById(collectionId: string): Collections | Promise<Collections>;
 }
 

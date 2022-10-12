@@ -14,8 +14,13 @@ type Collections {
   description: String!
 }
 
+type GetAllCollections {
+  items: [Collections!]!
+  total: Float!
+}
+
 type Query {
-  index: [[Collections!]!]!
+  GetAllCollections: GetAllCollections!
   showCollectionById(collectionId: String!): Collections!
 }
 
