@@ -1,0 +1,57 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Collections {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  imageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
+type Query {
+  GetAllCollections: GetAllCollections!
+  ShowCollectionById(collectionId: String!): Collections!
+}
+
+type Mutation {
+  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
+  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+}
+
+input CreateCollectionsInput {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input UpdateCollectionsInput {
+  collectionId: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input DeleteCollectionsInput {
+  id: [String!]!
+}
