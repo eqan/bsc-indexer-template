@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
-import { join } from 'path';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfigAsync } from './config/typeorm.config';
-import { CollectionsModule } from './collections/collections.module';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
+import { CollectionsModule } from './collections/collections.module';
+import { typeOrmConfigAsync } from './config/typeorm.config';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
     CollectionsModule,
+    TokensModule
   ],
 })
 export class AppModule {}
