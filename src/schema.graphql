@@ -20,8 +20,15 @@ type GetAllCollections {
 }
 
 type Query {
-  GetAllCollections: GetAllCollections!
+  GetAllCollections(filterDto: FilterDto!): GetAllCollections!
   showCollectionById(collectionId: String!): Collections!
+}
+
+input FilterDto {
+  page: Float
+  limit: Int
+  collectionId: String
+  name: String
 }
 
 type Mutation {

@@ -4,11 +4,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, ILike, Like, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
+import {FilterDto} from "./dto/filter.dto";
 import { Collections } from './entities/collections.entity';
+import { retry, skip } from 'rxjs';
 
 @Injectable()
 export class CollectionsService {
@@ -35,14 +37,38 @@ export class CollectionsService {
   }
 
   /**
-   * Get All Collections
+   * Get All Collections ... With Filters
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllCollections(): Promise<GetAllCollections> {
+  async findAllCollections(filterDto:FilterDto): Promise<GetAllCollections> {
     try {
-      const items = await this.collectionsRepo.find();
+      if(filterDto.collectionId && !filterDto.name){
+        const items=await this.collectionsRepo.findBy({collectionId: filterDto.collectionId})
+        const total = await this.collectionsRepo.count();
+
+        return {items,total}
+      }
+      if(filterDto.name && !filterDto.collectionId){
+        let items=await this.collectionsRepo.findBy({name:ILike(`%${filterDto.name}%`)})
+        const total = await this.collectionsRepo.count();
+
+        return {items,total}
+
+      }
+      let items = await this.collectionsRepo.find({ where:
+        {
+          collectionId: filterDto.collectionId,
+         name:  ILike(`%${filterDto.name}%`)},
+         
+        take: Number(filterDto.limit) || 10,
+        skip: Number(filterDto.page) || 0,
+        },
+        )
+
+        
       const total = await this.collectionsRepo.count();
+      
       if (!items) {
         throw new NotFoundException('No Collections Found');
       }
@@ -107,4 +133,8 @@ export class CollectionsService {
       throw new BadRequestException(error);
     }
   }
+
+
+  
+
 }

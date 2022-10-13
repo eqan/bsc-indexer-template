@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @ObjectType()
 @Entity('Collections')
-export class Collections {
+export class Collections{
   @Field()
   @PrimaryColumn({
     type: 'text',
