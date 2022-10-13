@@ -41,6 +41,30 @@ export interface DeleteCollectionsInput {
     id: string[];
 }
 
+export interface CreateTokensInput {
+    tokenContract: string;
+    tokenId: string;
+    name: string;
+    collectionId: string;
+    metaDataIndexed: boolean;
+    imageUrl?: Nullable<string>;
+    attributes?: Nullable<string>;
+    description?: Nullable<string>;
+}
+
+export interface UpdateTokensInput {
+    tokenContract: string;
+    name?: Nullable<string>;
+    tokenId?: Nullable<string>;
+    collectionId?: Nullable<string>;
+    description?: Nullable<string>;
+    imageUrl?: Nullable<string>;
+}
+
+export interface DeleteTokensInput {
+    id: string[];
+}
+
 export interface Collections {
     collectionId: string;
     name: string;
@@ -58,15 +82,31 @@ export interface GetAllCollections {
     total: number;
 }
 
+export interface Tokens {
+    tokenContract: string;
+    name: string;
+    tokenId: string;
+    collectionId: string;
+    metaDataIndexed: boolean;
+    imageUrl: string;
+    attributes: string;
+    description: string;
+}
+
 export interface IQuery {
     GetAllCollections(filterDto: FilterDto): GetAllCollections | Promise<GetAllCollections>;
-    showCollectionById(collectionId: string): Collections | Promise<Collections>;
+    ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
+    index(): Tokens[][] | Promise<Tokens[][]>;
+    showTokenById(tokenId: string): Tokens | Promise<Tokens>;
 }
 
 export interface IMutation {
-    createCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
-    updateCollectionAtribute(updateCollectionssInput: UpdateCollectionsInput): Collections | Promise<Collections>;
-    delete(deleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
+    CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
+    UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
+    DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
+    createToken(createTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
+    updateTokenAttribute(updateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
+    delete(deleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
 }
 
 type Nullable<T> = T | null;

@@ -15,15 +15,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     super();
   }
   /**
-   *
-   */
-  // index(): Promise<{ items: Collectionss[]; total: number }> {}
-  /**
    * Create Collections
-   * @param createCollectionssInput
+   * @param createCollectionsInput
    * @returns Created  Collection
    */
-  @Mutation(() => Collections, { name: 'createCollection' })
+  @Mutation(() => Collections, { name: 'CreateCollection' })
   async create(
     @Args('createCollection')
     createCollectionsInput: CreateCollectionsInput,
@@ -54,7 +50,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param collectionId
    * @returns Collection Against provided ID
    */
-  @Query(() => Collections, { name: 'showCollectionById' })
+  @Query(() => Collections, { name: 'ShowCollectionById' })
   async show(@Args('collectionId') collectionId: string): Promise<Collections> {
     try {
       return await this.collectionsService.getCollectionById(collectionId);
@@ -66,12 +62,12 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Update Collection Attribute
-   * @param updateCollectionssInput
+   * @param updateCollectionsInput
    * @returns Updated Collection
    */
-  @Mutation(() => Collections, { name: 'updateCollectionAtribute' })
+  @Mutation(() => Collections, { name: 'UpdateCollectionAttribute' })
   async edit(
-    @Args('updateCollectionssInput')
+    @Args('updateCollectionsInput')
     updateCollectionsInput: UpdateCollectionsInput,
   ): Promise<Collections> {
     try {
@@ -88,10 +84,10 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param collectionId
    * @returns Nothing
    */
-  @Mutation(() => Collections, { nullable: true })
+  @Mutation(() => Collections, { name: 'DeleteCollections', nullable: true })
   async delete(
     @Args({
-      name: 'deleteCollectionInput',
+      name: 'DeleteCollectionInput',
     })
     deleteCollectionInput: DeleteCollectionsInput,
   ): Promise<void> {
