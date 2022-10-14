@@ -38,11 +38,10 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @returns Collections Array and their total count
    */
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
-  async index(@Args("filterDto") filterDto: FilterDto): Promise<GetAllCollections> {
-
-      return await this.collectionsService.findAllCollections(filterDto);
-
-    
+  async index(
+    @Args('filterCollectionDto') filterDto: FilterDto,
+  ): Promise<GetAllCollections> {
+    return await this.collectionsService.findAllCollections(filterDto);
   }
 
   /**
@@ -58,7 +57,6 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
       throw new BadRequestException(error);
     }
   }
-
 
   /**
    * Update Collection Attribute

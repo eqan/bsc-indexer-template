@@ -8,9 +8,8 @@ import { In, DataSource, ILike, Like, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
-import {FilterDto} from "./dto/filter.dto";
+import { FilterDto } from './dto/filter.dto';
 import { Collections } from './entities/collections.entity';
-import { retry, skip } from 'rxjs';
 
 @Injectable()
 export class CollectionsService {
@@ -40,16 +39,23 @@ export class CollectionsService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllCollections(filterDto:FilterDto): Promise<GetAllCollections> {
+  async findAllCollections(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
-      const items = await this.collectionsRepo.find();
-      const total = await this.collectionsRepo.count();
-      if (!items) {
-        throw new NotFoundException('No Collections Found');
-      }
+      const { page, limit, ...rest } = filterDto;
+      const [items, total] = await Promise.all([
+        this.collectionsRepo.find({
+          where: {
+            collectionId: rest.collectionId,
+            name: ILike(`%${rest.name}%`),
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.collectionsRepo.count(),
+      ]);
       return { items, total };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 
@@ -105,8 +111,4 @@ export class CollectionsService {
       throw new BadRequestException(error);
     }
   }
-
-
-  
-
 }
