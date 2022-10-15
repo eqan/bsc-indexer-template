@@ -8,17 +8,17 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export interface FilterTokenDto {
-    page?: Nullable<number>;
-    limit?: Nullable<number>;
-    tokenId?: Nullable<string>;
-    name?: Nullable<string>;
-}
-
 export interface FilterDto {
     page?: Nullable<number>;
     limit?: Nullable<number>;
     collectionId?: Nullable<string>;
+    name?: Nullable<string>;
+}
+
+export interface FilterTokenDto {
+    page?: Nullable<number>;
+    limit?: Nullable<number>;
+    tokenId?: Nullable<string>;
     name?: Nullable<string>;
 }
 

@@ -42,17 +42,17 @@ type Query {
   ShowTokenById(tokenId: String!): Tokens!
 }
 
-input FilterTokenDto {
-  page: Float
-  limit: Int
-  tokenId: String
-  name: String
-}
-
 input FilterDto {
   page: Float
   limit: Int
   collectionId: String
+  name: String
+}
+
+input FilterTokenDto {
+  page: Float
+  limit: Int
+  tokenId: String
   name: String
 }
 
