@@ -37,12 +37,9 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    * @returns Collections Array and their total count
    */
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
-  async index(): Promise<GetAllCollections> {
-    try {
-      return await this.collectionsService.findAllCollections();
-    } catch (err) {
-      throw new BadRequestException(err);
-    }
+  async index(
+  ): Promise<GetAllCollections> {
+    return await this.collectionsService.findAllCollections();
   }
 
   /**

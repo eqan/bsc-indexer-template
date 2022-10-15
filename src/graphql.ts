@@ -8,6 +8,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface FilterTokenDto {
+    page?: Nullable<number>;
+    limit?: Nullable<number>;
+    tokenId?: Nullable<string>;
+    name?: Nullable<string>;
+}
+
 export interface CreateCollectionsInput {
     collectionId: string;
     name: string;
@@ -94,7 +101,7 @@ export interface GetAllTokens {
 export interface IQuery {
     GetAllCollections(): GetAllCollections | Promise<GetAllCollections>;
     ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
-    GetTokens(): GetAllTokens | Promise<GetAllTokens>;
+    GetAllTokens(GetAllTokens: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
     ShowTokenById(tokenId: string): Tokens | Promise<Tokens>;
 }
 
