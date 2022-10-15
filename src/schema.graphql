@@ -36,10 +36,17 @@ type GetAllTokens {
 }
 
 type Query {
-  GetAllCollections: GetAllCollections!
+  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
   GetTokens: GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
+}
+
+input FilterDto {
+  page: Float
+  limit: Int
+  collectionId: String
+  name: String
 }
 
 type Mutation {
