@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions
+  TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Tokens } from 'src/tokens/entities/tokens.entity';

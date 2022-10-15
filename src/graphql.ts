@@ -35,10 +35,9 @@ export interface DeleteCollectionsInput {
 }
 
 export interface CreateTokensInput {
-    tokenContract: string;
     tokenId: string;
-    name: string;
     collectionId: string;
+    name: string;
     metaDataIndexed: boolean;
     imageUrl?: Nullable<string>;
     attributes?: Nullable<string>;
@@ -46,16 +45,23 @@ export interface CreateTokensInput {
 }
 
 export interface UpdateTokensInput {
-    tokenContract: string;
+    tokenId: string;
     name?: Nullable<string>;
-    tokenId?: Nullable<string>;
-    collectionId?: Nullable<string>;
     description?: Nullable<string>;
     imageUrl?: Nullable<string>;
 }
 
 export interface DeleteTokensInput {
     id: string[];
+}
+
+export interface Tokens {
+    tokenId: string;
+    name: string;
+    metaDataIndexed: boolean;
+    imageUrl: string;
+    attributes: string;
+    description: string;
 }
 
 export interface Collections {
@@ -73,17 +79,6 @@ export interface Collections {
 export interface GetAllCollections {
     items: Collections[];
     total: number;
-}
-
-export interface Tokens {
-    tokenContract: string;
-    name: string;
-    tokenId: string;
-    collectionId: string;
-    metaDataIndexed: boolean;
-    imageUrl: string;
-    attributes: string;
-    description: string;
 }
 
 export interface IQuery {

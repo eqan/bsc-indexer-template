@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CollectionsService } from 'src/collections/collections.service';
 import { Repository } from 'typeorm';
 import { CreateTokensInput } from './dto/create-tokens.input';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
@@ -15,6 +16,8 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
+
+    private collectionsService: CollectionsService,
   ) {}
 
   /**
@@ -24,9 +27,18 @@ export class TokensService {
    */
   async createToken(createTokensInput: CreateTokensInput): Promise<Tokens> {
     try {
-      const token = this.tokensRepo.create(createTokensInput);
+      const { collectionId, ...restParams } = createTokensInput;
+      const token = this.tokensRepo.create(restParams);
+      const collection = await this.collectionsService.getCollectionById(
+        collectionId,
+      );
 
-      return await token.save();
+      token.collection = collection;
+      token.tokenId = collectionId + ':' + token.tokenId;
+
+      await token.save();
+      delete token.collection;
+      return token;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -55,15 +67,13 @@ export class TokensService {
    * @param id
    * @returns Token against Provided Id
    */
-  async getTokenById(tokenContract: string): Promise<Tokens> {
+  async getTokenById(tokenId: string): Promise<Tokens> {
     try {
       const found = await this.tokensRepo.findOneBy({
-        tokenContract,
+        tokenId,
       });
       if (!found) {
-        throw new NotFoundException(
-          `Token against ${tokenContract}} not found`,
-        );
+        throw new NotFoundException(`Token against ${tokenId}} not found`);
       }
       return found;
     } catch (error) {
@@ -80,9 +90,9 @@ export class TokensService {
     updateTokensInput: UpdateTokensInput,
   ): Promise<Tokens> {
     try {
-      const { tokenContract, ...rest } = updateTokensInput;
-      await this.tokensRepo.update({ tokenContract }, rest);
-      return await this.getTokenById(tokenContract);
+      const { tokenId, ...rest } = updateTokensInput;
+      await this.tokensRepo.update({ tokenId }, rest);
+      return await this.getTokenById(tokenId);
     } catch (error) {
       throw new BadRequestException(error);
     }

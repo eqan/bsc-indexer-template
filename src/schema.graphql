@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Tokens {
+  tokenId: String!
+  name: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String!
+  attributes: String!
+  description: String!
+}
+
 type Collections {
   collectionId: String!
   name: String!
@@ -17,17 +26,6 @@ type Collections {
 type GetAllCollections {
   items: [Collections!]!
   total: Int!
-}
-
-type Tokens {
-  tokenContract: String!
-  name: String!
-  tokenId: String!
-  collectionId: String!
-  metaDataIndexed: Boolean!
-  imageUrl: String!
-  attributes: String!
-  description: String!
 }
 
 type Query {
@@ -73,10 +71,9 @@ input DeleteCollectionsInput {
 }
 
 input CreateTokensInput {
-  tokenContract: String!
   tokenId: String!
-  name: String!
   collectionId: String!
+  name: String!
   metaDataIndexed: Boolean!
   imageUrl: String
   attributes: String
@@ -84,10 +81,8 @@ input CreateTokensInput {
 }
 
 input UpdateTokensInput {
-  tokenContract: String!
+  tokenId: String!
   name: String
-  tokenId: String
-  collectionId: String
   description: String
   imageUrl: String
 }

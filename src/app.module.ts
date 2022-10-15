@@ -31,7 +31,7 @@ import { TokensModule } from './tokens/tokens.module';
       isGlobal: true,
     }),
     CollectionsModule,
-    TokensModule
+    TokensModule,
   ],
 })
 export class AppModule {}

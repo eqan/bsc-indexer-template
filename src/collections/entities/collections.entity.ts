@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @ObjectType()
 @Entity('Collections')
@@ -61,4 +62,7 @@ export class Collections {
     nullable: true,
   })
   description?: string;
+
+  @OneToMany(() => Tokens, (token) => token.tokenId)
+  tokens: Tokens[];
 }
