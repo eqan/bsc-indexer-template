@@ -36,7 +36,7 @@ type GetAllTokens {
 }
 
 type Query {
-  GetAllCollections: GetAllCollections!
+  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
   GetAllTokens(GetAllTokens: FilterTokenDto!): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
@@ -46,6 +46,13 @@ input FilterTokenDto {
   page: Float
   limit: Int
   tokenId: String
+  name: String
+}
+
+input FilterDto {
+  page: Float
+  limit: Int
+  collectionId: String
   name: String
 }
 

@@ -7,9 +7,10 @@ import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
 import { BadRequestException } from '@nestjs/common';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import BaseProvider from 'src/core/base.BaseProvider';
+import { FilterDto } from './dto/filter.dto';
 
 @Resolver(() => Collections)
-export class CollectionsResolver extends BaseProvider<Collections> {
+export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   constructor(private readonly collectionsService: CollectionsService) {
     super();
   }
@@ -38,8 +39,9 @@ export class CollectionsResolver extends BaseProvider<Collections> {
    */
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
   async index(
+    @Args('filterCollectionDto') filterDto: FilterDto,
   ): Promise<GetAllCollections> {
-    return await this.collectionsService.findAllCollections();
+    return await this.collectionsService.findAllCollections(filterDto);
   }
 
   /**
