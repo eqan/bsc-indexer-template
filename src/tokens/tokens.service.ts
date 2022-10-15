@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateTokensInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
@@ -40,16 +40,21 @@ export class TokensService {
    */
   async findAllTokens(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
     try {
+      const { page, limit, ...rest } = filterTokenDto;
       const [items, total] = await Promise.all([
-        this.tokensRepo.find(),
+        this.tokensRepo.find({
+          where: {
+            collectionId: rest.tokenId,
+            name: ILike(`%${rest.name}%`),
+          },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
         this.tokensRepo.count(),
       ]);
-      if (!items) {
-        throw new NotFoundException('No Collections Found');
-      }
       return { items, total };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 
