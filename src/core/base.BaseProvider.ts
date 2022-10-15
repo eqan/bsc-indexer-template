@@ -13,17 +13,11 @@ export default abstract class BaseProvider<T> {
     total: number;
   }>;
 
-  abstract create(
-    createDto: Partial<T> | Partial<T>[],
-    entityType: Partial<T>,
-  ): Promise<T>;
+  abstract create(createDto: Partial<T> | Partial<T>[]): Promise<T>;
 
-  abstract show(id: string, entityType: Partial<T>): Promise<T>;
+  abstract show(id: string): Promise<T>;
 
-  abstract edit(editDto: Partial<T>, entityType: Partial<T>): Promise<T>;
+  abstract edit(editDto: Partial<T>): Promise<T>;
 
-  abstract delete(
-    deleteWithIds: { id: string[] },
-    entityType: Partial<T>,
-  ): void;
+  abstract delete(deleteWithIds: { id: string[] }): void;
 }
