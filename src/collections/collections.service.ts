@@ -45,13 +45,18 @@ export class CollectionsService {
       const [items, total] = await Promise.all([
         this.collectionsRepo.find({
           where: {
-            collectionId: rest.collectionId,
-            name: ILike(`%${rest.name}%`),
+            collectionId: rest?.collectionId,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.collectionsRepo.count(),
+        this.collectionsRepo.count({
+          where: {
+            collectionId: rest.collectionId,
+            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
+          },
+        }),
       ]);
       return { items, total };
     } catch (err) {

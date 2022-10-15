@@ -94,7 +94,7 @@ export interface Tokens {
 }
 
 export interface IQuery {
-    GetAllCollections(filterDto: FilterDto): GetAllCollections | Promise<GetAllCollections>;
+    GetAllCollections(filterCollectionDto: FilterDto): GetAllCollections | Promise<GetAllCollections>;
     ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
     index(): Tokens[][] | Promise<Tokens[][]>;
     showTokenById(tokenId: string): Tokens | Promise<Tokens>;

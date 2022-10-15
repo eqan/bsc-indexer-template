@@ -31,7 +31,7 @@ type Tokens {
 }
 
 type Query {
-  GetAllCollections(filterDto: FilterDto!): GetAllCollections!
+  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
   index: [[Tokens!]!]!
   showTokenById(tokenId: String!): Tokens!
