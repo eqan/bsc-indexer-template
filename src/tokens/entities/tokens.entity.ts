@@ -1,6 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Collections } from 'src/collections/entities/collections.entity';
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn
+} from 'typeorm';
 
 /**Create tokens table in database
  *
@@ -51,5 +58,6 @@ export class Tokens extends BaseEntity {
   // collection: Collections;
 
   @ManyToOne(() => Collections, (collection) => collection.collectionId)
+  @JoinColumn({ name: 'collectionId' }) // <-- Add this
   collection: Collections;
 }

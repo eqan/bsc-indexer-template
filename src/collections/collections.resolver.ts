@@ -1,16 +1,28 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { CollectionsService } from './collections.service';
-import { Collections } from './entities/collections.entity';
-import { CreateCollectionsInput } from './dto/create-collections.input';
-import { UpdateCollectionsInput } from './dto/update-collections.input';
-import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
 import { BadRequestException } from '@nestjs/common';
-import { GetAllCollections } from './dto/get-all-collections.dto';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver
+} from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { TokensService } from 'src/tokens/tokens.service';
+import { CollectionsService } from './collections.service';
+import { CreateCollectionsInput } from './dto/create-collections.input';
+import { DeleteCollectionsInput } from './dto/delete-collectionss.input';
+import { GetAllCollections } from './dto/get-all-collections.dto';
+import { UpdateCollectionsInput } from './dto/update-collections.input';
+import { Collections } from './entities/collections.entity';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections> {
-  constructor(private readonly collectionsService: CollectionsService) {
+  constructor(
+    private readonly collectionsService: CollectionsService,
+    private readonly tokenService: TokensService,
+  ) {
     super();
   }
   /**
@@ -95,5 +107,12 @@ export class CollectionsResolver extends BaseProvider<Collections> {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  @ResolveField('tokens', (returns) => [Tokens])
+  async getTokens(@Parent() collection: Collections) {
+    const { collectionId } = collection;
+    return (await this.tokenService.getAllTokensByCollectionId(collectionId))
+      .items;
   }
 }
