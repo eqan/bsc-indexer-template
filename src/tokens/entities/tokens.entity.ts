@@ -6,7 +6,7 @@ import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
  *
  */
 @ObjectType()
-@Entity('tokens')
+@Entity('Tokens')
 export class Tokens extends BaseEntity {
   @Field()
   @PrimaryColumn({

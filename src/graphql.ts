@@ -81,17 +81,6 @@ export interface GetAllCollections {
     total: number;
 }
 
-export interface Tokens {
-    tokenContract: string;
-    name: string;
-    tokenId: string;
-    collectionId: string;
-    metaDataIndexed: boolean;
-    imageUrl: string;
-    attributes: string;
-    description: string;
-}
-
 export interface GetAllTokens {
     items: Tokens[];
     total: number;
@@ -108,7 +97,7 @@ export interface IMutation {
     CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
     UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
     DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
-    CreateToken(CreateTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
+    CreateToken(createTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
     UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
     DeleteToken(DeleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
 }
