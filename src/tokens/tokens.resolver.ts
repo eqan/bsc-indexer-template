@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateTokensInput as CreateTokenInput } from './dto/create-tokens.input';
 import { DeleteTokensInput } from './dto/delete-tokens.input';
+import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
 import { TokensService as TokenService } from './tokens.service';
@@ -18,7 +19,7 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * @param createTokenInput
    * @returns Created  Tokens
    */
-  @Mutation(() => Tokens, { name: 'createToken' })
+  @Mutation(() => Tokens, { name: 'CreateToken' })
   async create(
     @Args('createTokenInput')
     @Body()
@@ -35,7 +36,7 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * GET All Tokens
    * @returns
    */
-  @Query((returns) => [[Tokens], Number])
+  @Query(() => GetAllTokens, { name: 'GetTokens' })
   async index() {
     try {
       return this.tokenService.findAllTokens();
@@ -49,7 +50,7 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * @param tokenId
    * @returns Token Against provided ID
    */
-  @Query(() => Tokens, { name: 'showTokenById' })
+  @Query(() => Tokens, { name: 'ShowTokenById' })
   async show(@Args('tokenId') tokenId: string): Promise<Tokens> {
     try {
       return await this.tokenService.getTokenById(tokenId);
@@ -63,9 +64,9 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * @param updateTokenInput
    * @returns Updated Token
    */
-  @Mutation(() => Tokens, { name: 'updateTokenAttribute' })
+  @Mutation(() => Tokens, { name: 'UpdateTokenAttribute' })
   async edit(
-    @Args('updateTokensInput')
+    @Args('UpdateTokensInput')
     updateTokenInput: UpdateTokensInput,
   ): Promise<Tokens> {
     try {
@@ -80,10 +81,10 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * @param tokenId
    * @returns Nothing
    */
-  @Mutation(() => Tokens, { nullable: true })
+  @Mutation(() => Tokens, { nullable: true, name: 'DeleteToken' })
   async delete(
     @Args({
-      name: 'deleteTokenInput',
+      name: 'DeleteTokenInput',
     })
     deleteTokenInput: DeleteTokensInput,
   ): Promise<void> {

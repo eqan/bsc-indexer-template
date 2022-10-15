@@ -28,20 +28,36 @@ type GetAllCollections {
   total: Int!
 }
 
+type Tokens {
+  tokenContract: String!
+  name: String!
+  tokenId: String!
+  collectionId: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String!
+  attributes: String!
+  description: String!
+}
+
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
+}
+
 type Query {
   GetAllCollections: GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
-  index: [[Tokens!]!]!
-  showTokenById(tokenId: String!): Tokens!
+  GetTokens: GetAllTokens!
+  ShowTokenById(tokenId: String!): Tokens!
 }
 
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
-  createToken(createTokenInput: CreateTokensInput!): Tokens!
-  updateTokenAttribute(updateTokensInput: UpdateTokensInput!): Tokens!
-  delete(deleteTokenInput: DeleteTokensInput!): Tokens
+  CreateToken(CreateTokenInput: CreateTokensInput!): Tokens!
+  UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
+  DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
 }
 
 input CreateCollectionsInput {
