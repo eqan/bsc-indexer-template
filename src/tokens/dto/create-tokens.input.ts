@@ -13,24 +13,24 @@ import {
 
 @InputType('CreateTokensInput')
 export class CreateTokensInput {
-  @IsNotEmpty({ message: 'token contract cannot be null' })
-  @IsEthereumAddress()
-  @Field()
-  tokenContract: string;
-
-  @IsNotEmpty({ message: 'Id contract cannot be null' })
+  @IsNotEmpty({ message: 'Token ID cannot be null' })
   @IsString()
   @Field()
   tokenId: string;
+
+  @IsNotEmpty({ message: 'Collection contract cannot be null' })
+  @IsEthereumAddress()
+  @Field()
+  collectionId: string;
 
   @IsString()
   @Field()
   name: string;
 
-  @IsNotEmpty({ message: 'Collection Id cannot be null' })
-  @IsString()
-  @Field()
-  collectionId: string;
+  // @IsNotEmpty({ message: 'Collection Id cannot be null' })
+  // @IsString()
+  // @Field()
+  // collectionId: string;
 
   @IsBoolean()
   @Field()

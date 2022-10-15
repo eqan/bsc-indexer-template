@@ -42,10 +42,9 @@ export interface DeleteCollectionsInput {
 }
 
 export interface CreateTokensInput {
-    tokenContract: string;
     tokenId: string;
-    name: string;
     collectionId: string;
+    name: string;
     metaDataIndexed: boolean;
     imageUrl?: Nullable<string>;
     attributes?: Nullable<string>;
@@ -53,16 +52,23 @@ export interface CreateTokensInput {
 }
 
 export interface UpdateTokensInput {
-    tokenContract: string;
+    tokenId: string;
     name?: Nullable<string>;
-    tokenId?: Nullable<string>;
-    collectionId?: Nullable<string>;
     description?: Nullable<string>;
     imageUrl?: Nullable<string>;
 }
 
 export interface DeleteTokensInput {
     id: string[];
+}
+
+export interface Tokens {
+    tokenId: string;
+    name: string;
+    metaDataIndexed: boolean;
+    imageUrl: string;
+    attributes: string;
+    description: string;
 }
 
 export interface Collections {
@@ -82,17 +88,6 @@ export interface GetAllCollections {
     total: number;
 }
 
-export interface Tokens {
-    tokenContract: string;
-    name: string;
-    tokenId: string;
-    collectionId: string;
-    metaDataIndexed: boolean;
-    imageUrl: string;
-    attributes: string;
-    description: string;
-}
-
 export interface GetAllTokens {
     items: Tokens[];
     total: number;
@@ -109,7 +104,7 @@ export interface IMutation {
     CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
     UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
     DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
-    CreateToken(CreateTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
+    CreateToken(createTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
     UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
     DeleteToken(DeleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Body } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateTokensInput as CreateTokenInput } from './dto/create-tokens.input';
@@ -21,7 +21,8 @@ export class TokensResolver extends BaseProvider<Tokens> {
    */
   @Mutation(() => Tokens, { name: 'CreateToken' })
   async create(
-    @Args('CreateTokenInput')
+    @Args('createTokenInput')
+    @Body()
     createTokenInput: CreateTokenInput,
   ): Promise<Tokens> {
     try {
