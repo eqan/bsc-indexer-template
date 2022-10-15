@@ -44,7 +44,7 @@ export class TokensService {
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
-            collectionId: rest.tokenId,
+            tokenId: rest.tokenId,
             name: ILike(`%${rest.name}%`),
           },
           skip: (page - 1) * limit,
