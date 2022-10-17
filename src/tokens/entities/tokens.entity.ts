@@ -47,17 +47,6 @@ export class Tokens extends BaseEntity {
   })
   description?: string;
 
-  // @ManyToOne(() => Collections, (collection: Collections) => collection.collectionId, {primary: true})
-  // @JoinColumn({ name: 'collectionId' })
-  // collection: Collections;
-
-  @ManyToOne(() => Collections, (collection) => collection.collectionId)
-  collection: Collections;
-
-  // @ManyToOne(() => Collections, (collection: Collections) => collection.collectionId, {primary: true})
-  // @JoinColumn({ name: 'collectionId' })
-  // collection: Collections;
-
   @ManyToOne(() => Collections, (collection) => collection.collectionId)
   collection: Collections;
 }

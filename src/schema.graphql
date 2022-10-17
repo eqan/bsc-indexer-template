@@ -36,7 +36,7 @@ type GetAllTokens {
 type Query {
   GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
-  GetAllTokens(GetAllTokens: FilterTokenDto!): GetAllTokens!
+  GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
 }
 
