@@ -5,7 +5,7 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver
+  Resolver,
 } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
@@ -109,10 +109,9 @@ export class CollectionsResolver extends BaseProvider<Collections> {
     }
   }
 
-  @ResolveField('tokens', (returns) => [Tokens])
+  @ResolveField('tokens', () => [Tokens], { nullable: true })
   async getTokens(@Parent() collection: Collections) {
     const { collectionId } = collection;
-    return (await this.tokenService.getAllTokensByCollectionId(collectionId))
-      .items;
+    return await this.tokenService.getAllTokensByCollectionId(collectionId);
   }
 }

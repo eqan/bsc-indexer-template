@@ -2,15 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Tokens {
-  tokenId: String!
-  name: String!
-  metaDataIndexed: Boolean!
-  imageUrl: String!
-  attributes: String!
-  description: String!
-}
-
 type Collections {
   collectionId: String!
   name: String!
@@ -21,16 +12,26 @@ type Collections {
   twitterUserName: String!
   discordUrl: String!
   description: String!
+  tokens: [Tokens!]
 }
 
-type GetAllCollections {
-  items: [Collections!]!
-  total: Int!
+type Tokens {
+  tokenId: String!
+  name: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String!
+  attributes: String!
+  description: String!
 }
 
 type GetAllTokens {
   items: [Tokens!]!
   total: Float!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
 }
 
 type Query {
