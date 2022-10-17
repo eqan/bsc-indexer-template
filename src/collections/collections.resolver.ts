@@ -109,6 +109,12 @@ export class CollectionsResolver extends BaseProvider<Collections> {
     }
   }
 
+  
+  /**
+   * Resolve field to link tokens with its collection
+   * @param collection
+   * @returns All tokens of its collection
+   */
   @ResolveField('tokens', () => [Tokens], { nullable: true })
   async getTokens(@Parent() collection: Collections) {
     const { collectionId } = collection;

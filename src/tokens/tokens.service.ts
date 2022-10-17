@@ -1,9 +1,8 @@
 
-import { Collections } from 'src/collections/entities/collections.entity';
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
@@ -46,7 +45,7 @@ export class TokensService {
   }
 
   /**
-   * Get All Tokens
+   * Get All Tokens Using Collection ID
    * @@params CollectionID
    * @returns Array of Tokens and Total Number of Tokens of that specific collection
    */
