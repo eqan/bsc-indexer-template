@@ -27,10 +27,10 @@ export class CreateTokenInput {
   @Field()
   name: string;
 
-  // @IsNotEmpty({ message: 'Collection Id cannot be null' })
-  // @IsString()
-  // @Field()
-  // collectionId: string;
+  // // @IsNotEmpty({ message: 'Collection Id cannot be null' })
+  // // @IsString()
+  // // @Field()
+  // // collectionId: string;
 
   @IsBoolean()
   @Field()

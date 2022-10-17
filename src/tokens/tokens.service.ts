@@ -5,9 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
+<<<<<<< HEAD
 import { ILike, Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
+=======
+import { Repository } from 'typeorm';
+import { CreateTokensInput } from './dto/create-tokens.input';
+>>>>>>> main
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
@@ -17,6 +22,8 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
+
+    private collectionsService: CollectionsService,
 
     private collectionsService: CollectionsService,
   ) {}
@@ -34,7 +41,12 @@ export class TokensService {
         collectionId,
       );
 
-      return await token.save();
+      token.collection = collection;
+      token.tokenId = collectionId + ':' + token.tokenId;
+
+      await token.save();
+      delete token.collection;
+      return token;
     } catch (error) {
       throw new BadRequestException(error);
     }

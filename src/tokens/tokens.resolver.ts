@@ -1,4 +1,4 @@
-import { BadRequestException, Body } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateTokenInput } from './dto/create-tokens.input';
