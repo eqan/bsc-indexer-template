@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
-import { CreateTokensInput } from './dto/create-tokens.input';
+import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
@@ -23,11 +23,11 @@ export class TokensService {
    * @param createTokensInput
    * @returns  Created Token
    */
-  async createToken(createTokensInput: CreateTokensInput): Promise<Tokens> {
+  async createToken(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const token = this.tokensRepo.create(createTokensInput);
 
-      return await token.save();
+      return await this.tokensRepo.save(token);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -44,13 +44,18 @@ export class TokensService {
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
-            tokenId: rest.tokenId,
-            name: ILike(`%${rest.name}%`),
+            tokenId: rest?.tokenId,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
-          skip: (page - 1) * limit,
-          take: limit,
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
         }),
-        this.tokensRepo.count(),
+        this.tokensRepo.count({
+          where: {
+            tokenId: rest.tokenId,
+            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
+          },
+        }),
       ]);
       return { items, total };
     } catch (err) {

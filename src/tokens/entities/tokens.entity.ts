@@ -11,6 +11,7 @@ export class Tokens extends BaseEntity {
   @PrimaryColumn({
     type: 'text',
     unique: true,
+    nullable: false,
   })
   tokenContract: string;
 

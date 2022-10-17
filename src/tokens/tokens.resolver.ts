@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
-import { CreateTokensInput as CreateTokenInput } from './dto/create-tokens.input';
+import { CreateTokenInput } from './dto/create-tokens.input';
 import { DeleteTokensInput } from './dto/delete-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
@@ -22,7 +22,7 @@ export class TokensResolver extends BaseProvider<Tokens> {
    */
   @Mutation(() => Tokens, { name: 'CreateToken' })
   async create(
-    @Args('CreateTokenInput')
+    @Args('CreateTokensInput')
     createTokenInput: CreateTokenInput,
   ): Promise<Tokens> {
     try {

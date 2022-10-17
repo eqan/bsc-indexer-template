@@ -48,8 +48,8 @@ export class CollectionsService {
             collectionId: rest?.collectionId,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
-          skip: (page - 1) * limit,
-          take: limit,
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
         }),
         this.collectionsRepo.count({
           where: {

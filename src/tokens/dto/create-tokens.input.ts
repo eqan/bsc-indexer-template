@@ -11,8 +11,8 @@ import {
  *
  */
 
-@InputType('CreateTokensInput')
-export class CreateTokensInput {
+@InputType('CreateTokenInput')
+export class CreateTokenInput {
   @IsNotEmpty({ message: 'token contract cannot be null' })
   @IsEthereumAddress()
   @Field()

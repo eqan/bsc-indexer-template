@@ -44,7 +44,7 @@ type Query {
 
 input FilterDto {
   page: Float
-  limit: Int
+  limit: Float
   collectionId: String
   name: String
 }
@@ -60,7 +60,7 @@ type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
-  CreateToken(CreateTokenInput: CreateTokensInput!): Tokens!
+  CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
 }
@@ -91,7 +91,7 @@ input DeleteCollectionsInput {
   id: [String!]!
 }
 
-input CreateTokensInput {
+input CreateTokenInput {
   tokenContract: String!
   tokenId: String!
   name: String!

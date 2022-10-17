@@ -48,7 +48,7 @@ export interface DeleteCollectionsInput {
     id: string[];
 }
 
-export interface CreateTokensInput {
+export interface CreateTokenInput {
     tokenContract: string;
     tokenId: string;
     name: string;
@@ -116,7 +116,7 @@ export interface IMutation {
     CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
     UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
     DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
-    CreateToken(CreateTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
+    CreateToken(CreateTokensInput: CreateTokenInput): Tokens | Promise<Tokens>;
     UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
     DeleteToken(DeleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
 }
