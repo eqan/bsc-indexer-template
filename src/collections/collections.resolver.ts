@@ -5,7 +5,7 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver,
+  Resolver
 } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
