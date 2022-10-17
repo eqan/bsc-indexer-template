@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { PaginationParam  } from './pagination.dto'
+import { PaginationParam } from './pagination.dto';
 
 @InputType()
 export class FilterTokenDto extends PaginationParam {

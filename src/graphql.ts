@@ -103,7 +103,7 @@ export interface GetAllTokens {
 export interface IQuery {
     GetAllCollections(filterCollectionDto: FilterDto): GetAllCollections | Promise<GetAllCollections>;
     ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
-    GetAllTokens(GetAllTokens: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
+    GetAllTokens(searchToken: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
     ShowTokenById(tokenId: string): Tokens | Promise<Tokens>;
 }
 
