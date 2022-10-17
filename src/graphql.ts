@@ -8,6 +8,20 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface FilterDto {
+    page?: Nullable<number>;
+    limit?: Nullable<number>;
+    collectionId?: Nullable<string>;
+    name?: Nullable<string>;
+}
+
+export interface FilterTokenDto {
+    page?: Nullable<number>;
+    limit?: Nullable<number>;
+    tokenId?: Nullable<string>;
+    name?: Nullable<string>;
+}
+
 export interface CreateCollectionsInput {
     collectionId: string;
     name: string;
@@ -34,7 +48,7 @@ export interface DeleteCollectionsInput {
     id: string[];
 }
 
-export interface CreateTokensInput {
+export interface CreateTokenInput {
     tokenId: string;
     collectionId: string;
     name: string;
@@ -88,9 +102,9 @@ export interface GetAllCollections {
 }
 
 export interface IQuery {
-    GetAllCollections(): GetAllCollections | Promise<GetAllCollections>;
+    GetAllCollections(filterCollectionDto: FilterDto): GetAllCollections | Promise<GetAllCollections>;
     ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
-    GetTokens(): GetAllTokens | Promise<GetAllTokens>;
+    GetAllTokens(searchToken: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
     ShowTokenById(tokenId: string): Tokens | Promise<Tokens>;
 }
 
@@ -98,7 +112,7 @@ export interface IMutation {
     CreateCollection(createCollection: CreateCollectionsInput): Collections | Promise<Collections>;
     UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput): Collections | Promise<Collections>;
     DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput): Nullable<Collections> | Promise<Nullable<Collections>>;
-    CreateToken(createTokenInput: CreateTokensInput): Tokens | Promise<Tokens>;
+    CreateToken(CreateTokensInput: CreateTokenInput): Tokens | Promise<Tokens>;
     UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
     DeleteToken(DeleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
 }

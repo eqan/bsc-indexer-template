@@ -6,7 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryColumn
 } from 'typeorm';
 
 /**Create tokens table in database
@@ -18,6 +18,7 @@ export class Tokens extends BaseEntity {
   @Field()
   @PrimaryColumn({
     type: 'text',
+    unique: true,
     nullable: false,
   })
   tokenId: string;
@@ -53,11 +54,7 @@ export class Tokens extends BaseEntity {
   })
   description?: string;
 
-  // @ManyToOne(() => Collections, (collection: Collections) => collection.collectionId, {primary: true})
-  // @JoinColumn({ name: 'collectionId' })
-  // collection: Collections;
-
   @ManyToOne(() => Collections, (collection) => collection.collectionId)
-  @JoinColumn({ name: 'collectionId' }) // <-- Add this
+  @JoinColumn({ name: 'collectionId' }) 
   collection: Collections;
 }

@@ -11,10 +11,9 @@ import {
  *
  */
 
-@InputType('CreateTokensInput')
-export class CreateTokensInput {
-  @IsNotEmpty({ message: 'Token ID cannot be null' })
-  @IsString()
+@InputType('CreateTokenInput')
+export class CreateTokenInput {
+  @IsNotEmpty({ message: 'token contract cannot be null' })
   @Field()
   tokenId: string;
 
@@ -26,11 +25,6 @@ export class CreateTokensInput {
   @IsString()
   @Field()
   name: string;
-
-  // @IsNotEmpty({ message: 'Collection Id cannot be null' })
-  // @IsString()
-  // @Field()
-  // collectionId: string;
 
   @IsBoolean()
   @Field()

@@ -6,8 +6,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
-import { Repository } from 'typeorm';
-import { CreateTokensInput } from './dto/create-tokens.input';
+import { ILike, Repository } from 'typeorm';
+import { CreateTokenInput } from './dto/create-tokens.input';
+import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
@@ -25,7 +26,7 @@ export class TokensService {
    * @param createTokensInput
    * @returns  Created Token
    */
-  async createToken(createTokensInput: CreateTokensInput): Promise<Tokens> {
+  async createToken(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
       const token = this.tokensRepo.create(restParams);
@@ -68,16 +69,28 @@ export class TokensService {
    * @@params No Params
    * @returns Array of Tokens and Total Number of Tokens
    */
-  async findAllTokens(): Promise<GetAllTokens> {
+  async findAllTokens(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
     try {
-      const items = await this.tokensRepo.find();
-      const total = await this.tokensRepo.count();
-      if (!items) {
-        throw new NotFoundException('No Tokens Found');
-      }
+      const { page, limit, ...rest } = filterTokenDto;
+      const [items, total] = await Promise.all([
+        this.tokensRepo.find({
+          where: {
+            tokenId: rest?.tokenId,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+        this.tokensRepo.count({
+          where: {
+            tokenId: rest.tokenId,
+            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
+          },
+        }),
+      ]);
       return { items, total };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 

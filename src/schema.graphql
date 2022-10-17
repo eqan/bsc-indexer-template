@@ -35,17 +35,31 @@ type GetAllCollections {
 }
 
 type Query {
-  GetAllCollections: GetAllCollections!
+  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
-  GetTokens: GetAllTokens!
+  GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
+}
+
+input FilterDto {
+  page: Float
+  limit: Float
+  collectionId: String
+  name: String
+}
+
+input FilterTokenDto {
+  page: Float
+  limit: Int
+  tokenId: String
+  name: String
 }
 
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
-  CreateToken(createTokenInput: CreateTokensInput!): Tokens!
+  CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
 }
@@ -76,7 +90,7 @@ input DeleteCollectionsInput {
   id: [String!]!
 }
 
-input CreateTokensInput {
+input CreateTokenInput {
   tokenId: String!
   collectionId: String!
   name: String!

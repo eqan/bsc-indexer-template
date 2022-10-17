@@ -4,10 +4,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, DataSource, ILike, Like, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
+import { FilterDto } from './dto/filter.dto';
 import { Collections } from './entities/collections.entity';
 
 @Injectable()
@@ -34,22 +35,32 @@ export class CollectionsService {
   }
 
   /**
-   * Get All Collections
+   * Get All Collections ... With Filters
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllCollections(): Promise<GetAllCollections> {
+  async findAllCollections(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
+      const { page, limit, ...rest } = filterDto;
       const [items, total] = await Promise.all([
-        this.collectionsRepo.find(),
-        this.collectionsRepo.count(),
+        this.collectionsRepo.find({
+          where: {
+            collectionId: rest?.collectionId,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+        this.collectionsRepo.count({
+          where: {
+            collectionId: rest.collectionId,
+            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
+          },
+        }),
       ]);
-      if (!items) {
-        throw new NotFoundException('No Collections Found');
-      }
       return { items, total };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 

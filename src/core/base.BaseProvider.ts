@@ -8,7 +8,7 @@ export default abstract class BaseProvider<T> {
   /**
    * To be used for paginated response
    */
-  abstract index(): Promise<{
+  abstract index(filterDto: Partial<T>): Promise<{
     items: T[];
     total: number;
   }>;

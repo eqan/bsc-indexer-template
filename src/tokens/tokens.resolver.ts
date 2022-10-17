@@ -1,8 +1,9 @@
-import { BadRequestException, Body } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
-import { CreateTokensInput as CreateTokenInput } from './dto/create-tokens.input';
+import { CreateTokenInput } from './dto/create-tokens.input';
 import { DeleteTokensInput } from './dto/delete-tokens.input';
+import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
@@ -21,8 +22,7 @@ export class TokensResolver extends BaseProvider<Tokens> {
    */
   @Mutation(() => Tokens, { name: 'CreateToken' })
   async create(
-    @Args('createTokenInput')
-    @Body()
+    @Args('CreateTokensInput')
     createTokenInput: CreateTokenInput,
   ): Promise<Tokens> {
     try {
@@ -36,10 +36,10 @@ export class TokensResolver extends BaseProvider<Tokens> {
    * GET All Tokens
    * @returns
    */
-  @Query(() => GetAllTokens, { name: 'GetTokens' })
-  async index() {
+  @Query(() => GetAllTokens, { name: 'GetAllTokens' })
+  async index(@Args('searchToken') filterTokenDto: FilterTokenDto) {
     try {
-      return this.tokenService.findAllTokens();
+      return this.tokenService.findAllTokens(filterTokenDto);
     } catch (error) {
       throw new BadRequestException(error);
     }
