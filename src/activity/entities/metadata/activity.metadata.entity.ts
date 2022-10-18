@@ -5,6 +5,7 @@ import { ActivityTypes } from '../enums/activity.types.enums';
 import { BlockChainInfo } from './blockchaininfo.metadata.entity';
 
 /*
+    @Example: Following is the format example
     "@type": "MINT",
     "id": "ETHEREUM:624fd23963c052298d2e4407",
     "date": "2022-04-08T06:12:02Z",
