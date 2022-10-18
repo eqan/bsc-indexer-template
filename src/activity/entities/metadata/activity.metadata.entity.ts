@@ -62,6 +62,6 @@ export class ActivityMetaData {
   transactionHash: string;
 
   @Field()
-  @Column({type: 'json'})
+  @Column({type: 'json', nullable: true})
   blockchaininfo: BlockChainInfo;
 }

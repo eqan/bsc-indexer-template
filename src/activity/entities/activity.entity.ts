@@ -22,6 +22,6 @@ export class Orders {
   cursor: string;
 
   @Field()
-  @Column({nullable: true})
+  @Column({type: 'json', nullable: true})
   activities: ActivityMetaData[];
 }
