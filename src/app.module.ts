@@ -7,6 +7,7 @@ import { join } from 'path';
 import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { TokensModule } from './tokens/tokens.module';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { TokensModule } from './tokens/tokens.module';
     }),
     CollectionsModule,
     TokensModule,
+    ActivityModule,
   ],
 })
 export class AppModule {}
