@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { ActivtyTypes } from '../enums/activity.types.enums';
+import { Column, Entity } from 'typeorm';
+import { ActivityTypes } from '../enums/activity.types.enums';
 import { BlockChainInfo } from './blockchaininfo.metadata.entity';
 
 /*
@@ -22,10 +22,8 @@ import { BlockChainInfo } from './blockchaininfo.metadata.entity';
 @Entity('ActivityMetaData')
 export class ActivityMetaData {
   @Field()
-  @PrimaryColumn({
-    type: 'text',
-  })
-  type: ActivtyTypes;
+  @Column({type: 'text'})
+  type: ActivityTypes;
 
   @Field()
   @Column({type: 'text'})
@@ -66,6 +64,4 @@ export class ActivityMetaData {
   @Field()
   @Column({type: 'json'})
   blockchaininfo: BlockChainInfo;
-
-  
 }

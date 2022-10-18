@@ -24,5 +24,4 @@ export class Orders {
   @Field()
   @Column({nullable: true})
   activities: ActivityMetaData[];
-
 }

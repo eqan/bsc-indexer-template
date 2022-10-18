@@ -1,4 +1,4 @@
-export enum ActivtyTypes
+export enum ActivityTypes
 {
     TRANSFER = "TRANSFER",
     MINT = "MINT",
