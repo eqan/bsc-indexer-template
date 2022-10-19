@@ -19,10 +19,10 @@ export class Activity {
   continuation: string;
 
   @Field()
-  @Column({type: 'text'})
+  @Column({type: 'text', nullable: true})
   cursor: string;
 
   @Field()
-  @Column({type: 'json', nullable: true})
+  @Column({type: 'array', nullable: true})
   activities: ActivityMetaData[];
 }
