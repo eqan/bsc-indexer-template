@@ -69,15 +69,6 @@ export interface DeleteTokensInput {
     id: string[];
 }
 
-export interface Tokens {
-    tokenId: string;
-    name: string;
-    metaDataIndexed: boolean;
-    imageUrl: string;
-    attributes: string;
-    description: string;
-}
-
 export interface Collections {
     collectionId: string;
     name: string;
@@ -88,15 +79,25 @@ export interface Collections {
     twitterUserName: string;
     discordUrl: string;
     description: string;
+    tokens?: Nullable<Tokens[]>;
 }
 
-export interface GetAllCollections {
-    items: Collections[];
-    total: number;
+export interface Tokens {
+    tokenId: string;
+    name: string;
+    metaDataIndexed: boolean;
+    imageUrl: string;
+    attributes: string;
+    description: string;
 }
 
 export interface GetAllTokens {
     items: Tokens[];
+    total: number;
+}
+
+export interface GetAllCollections {
+    items: Collections[];
     total: number;
 }
 

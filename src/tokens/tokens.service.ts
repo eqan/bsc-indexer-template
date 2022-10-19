@@ -1,7 +1,8 @@
+
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
@@ -17,7 +18,6 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
-
     private collectionsService: CollectionsService,
   ) {}
 
@@ -40,6 +40,25 @@ export class TokensService {
       await token.save();
       delete token.collection;
       return token;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get All Tokens Using Collection ID
+   * @@params CollectionID
+   * @returns Array of Tokens and Total Number of Tokens of that specific collection
+   */
+  async getAllTokensByCollectionId(collectionId: string): Promise<Tokens[]> {
+    try {
+      const items = await this.tokensRepo.find({
+        where: { collection: { collectionId } },
+      });
+      if (!items) {
+        throw new NotFoundException('No Tokens Found');
+      }
+      return items;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -86,7 +105,7 @@ export class TokensService {
         tokenId,
       });
       if (!found) {
-        throw new NotFoundException(`Token against ${tokenId}} not found`);
+        throw new NotFoundException(`Token against ${tokenId} not found`);
       }
       return found;
     } catch (error) {
