@@ -1,8 +1,9 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions,
+  TypeOrmModuleOptions
 } from '@nestjs/typeorm';
+import { Activity } from 'src/activity/entities/activity.entity';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 
@@ -15,7 +16,7 @@ export default class TypeOrmConfig {
       username: config.get('DB_USER'),
       password: config.get('POSTGRES_PASSWORD'),
       database: config.get('POSTGRES_DB'),
-      entities: [Tokens, Collections],
+      entities: [Tokens, Collections, Activity],
       synchronize: true,
     };
   }
