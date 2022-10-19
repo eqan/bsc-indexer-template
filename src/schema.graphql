@@ -28,9 +28,86 @@ type GetAllCollections {
   total: Int!
 }
 
+type DataOriginFee {
+  account: String!
+  value: Int!
+}
+
+type Data {
+  type: String!
+  originFees: DataOriginFee!
+}
+
+type MakeType {
+  type: String!
+  contract: String!
+  tokenId: Int!
+}
+
+type Make {
+  value: Int!
+  type: MakeType!
+}
+
+type Orders {
+  orderId: String!
+  fill: Float!
+  status: String!
+  makeStock: Float!
+  cancelled: Boolean!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  maker: String!
+  Make: Make!
+  take: Make!
+  salt: String!
+  data: Data!
+  startedAt: DateTime!
+  endedAt: DateTime!
+  optionalRoyalties: Boolean!
+  dbUpdatedAt: DateTime!
+  makePrice: Float!
+  takePrice: Float!
+  makePriceUsed: Float!
+  takePriceUsed: Float!
+  signature: String!
+  taker: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type GetAllTokens {
   items: [Tokens!]!
   total: Float!
+}
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
+input DataOrginFeeInput {
+  account: String!
+  value: Int!
+}
+
+input DataInput {
+  type: String!
+  originFees: DataOrginFeeInput!
+}
+
+input MakeTypeInput {
+  type: String!
+  contract: String!
+  tokenId: Int!
+}
+
+input MakeInput {
+  value: Int!
+  type: MakeTypeInput!
 }
 
 type Query {
@@ -38,6 +115,8 @@ type Query {
   ShowCollectionById(collectionId: String!): Collections!
   GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
+  GetOrderById(orderId: String!): Orders!
+  GetAllOrders(GetAllOrders: FilterOrderDto!): GetAllOrders!
 }
 
 input FilterDto {
@@ -54,6 +133,14 @@ input FilterTokenDto {
   name: String
 }
 
+input FilterOrderDto {
+  page: Float
+  limit: Float
+  orderId: String
+  maker: String
+  taker: String
+}
+
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
@@ -61,6 +148,9 @@ type Mutation {
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
+  CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
+  DeleteOrder(Delete: DeleteOrderInput!): Orders!
+  UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
 }
 
 input CreateCollectionsInput {
@@ -108,4 +198,38 @@ input UpdateTokensInput {
 
 input DeleteTokensInput {
   id: [String!]!
+}
+
+input CreateOrdersInput {
+  orderId: String!
+  fill: Float!
+  status: String!
+  makeStock: Float!
+  cancelled: Boolean!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  maker: String!
+  Make: MakeInput!
+  take: MakeInput!
+  salt: String!
+  data: DataInput!
+  startedAt: DateTime!
+  endedAt: DateTime!
+  optionalRoyalties: Boolean!
+  dbUpdatedAt: DateTime!
+  makePrice: Float!
+  takePrice: Float!
+  makePriceUsed: Float!
+  takePriceUsed: Float!
+  signature: String!
+  taker: String
+}
+
+input DeleteOrderInput {
+  id: [String!]!
+}
+
+input UpdateOrderStatus {
+  orderId: String!
+  status: String!
 }

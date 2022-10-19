@@ -8,6 +8,27 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface DataOrginFeeInput {
+    account: string;
+    value: number;
+}
+
+export interface DataInput {
+    type: string;
+    originFees: DataOrginFeeInput;
+}
+
+export interface MakeTypeInput {
+    type: string;
+    contract: string;
+    tokenId: number;
+}
+
+export interface MakeInput {
+    value: number;
+    type: MakeTypeInput;
+}
+
 export interface FilterDto {
     page?: Nullable<number>;
     limit?: Nullable<number>;
@@ -20,6 +41,14 @@ export interface FilterTokenDto {
     limit?: Nullable<number>;
     tokenId?: Nullable<string>;
     name?: Nullable<string>;
+}
+
+export interface FilterOrderDto {
+    page?: Nullable<number>;
+    limit?: Nullable<number>;
+    orderId?: Nullable<string>;
+    maker?: Nullable<string>;
+    taker?: Nullable<string>;
 }
 
 export interface CreateCollectionsInput {
@@ -69,6 +98,40 @@ export interface DeleteTokensInput {
     id: string[];
 }
 
+export interface CreateOrdersInput {
+    orderId: string;
+    fill: number;
+    status: string;
+    makeStock: number;
+    cancelled: boolean;
+    createdAt: DateTime;
+    lastUpdatedAt: DateTime;
+    maker: string;
+    Make: MakeInput;
+    take: MakeInput;
+    salt: string;
+    data: DataInput;
+    startedAt: DateTime;
+    endedAt: DateTime;
+    optionalRoyalties: boolean;
+    dbUpdatedAt: DateTime;
+    makePrice: number;
+    takePrice: number;
+    makePriceUsed: number;
+    takePriceUsed: number;
+    signature: string;
+    taker?: Nullable<string>;
+}
+
+export interface DeleteOrderInput {
+    id: string[];
+}
+
+export interface UpdateOrderStatus {
+    orderId: string;
+    status: string;
+}
+
 export interface Tokens {
     tokenId: string;
     name: string;
@@ -95,8 +158,59 @@ export interface GetAllCollections {
     total: number;
 }
 
+export interface DataOriginFee {
+    account: string;
+    value: number;
+}
+
+export interface Data {
+    type: string;
+    originFees: DataOriginFee;
+}
+
+export interface MakeType {
+    type: string;
+    contract: string;
+    tokenId: number;
+}
+
+export interface Make {
+    value: number;
+    type: MakeType;
+}
+
+export interface Orders {
+    orderId: string;
+    fill: number;
+    status: string;
+    makeStock: number;
+    cancelled: boolean;
+    createdAt: DateTime;
+    lastUpdatedAt: DateTime;
+    maker: string;
+    Make: Make;
+    take: Make;
+    salt: string;
+    data: Data;
+    startedAt: DateTime;
+    endedAt: DateTime;
+    optionalRoyalties: boolean;
+    dbUpdatedAt: DateTime;
+    makePrice: number;
+    takePrice: number;
+    makePriceUsed: number;
+    takePriceUsed: number;
+    signature: string;
+    taker: string;
+}
+
 export interface GetAllTokens {
     items: Tokens[];
+    total: number;
+}
+
+export interface GetAllOrders {
+    items: Orders[];
     total: number;
 }
 
@@ -105,6 +219,8 @@ export interface IQuery {
     ShowCollectionById(collectionId: string): Collections | Promise<Collections>;
     GetAllTokens(searchToken: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
     ShowTokenById(tokenId: string): Tokens | Promise<Tokens>;
+    GetOrderById(orderId: string): Orders | Promise<Orders>;
+    GetAllOrders(GetAllOrders: FilterOrderDto): GetAllOrders | Promise<GetAllOrders>;
 }
 
 export interface IMutation {
@@ -114,6 +230,10 @@ export interface IMutation {
     CreateToken(CreateTokensInput: CreateTokenInput): Tokens | Promise<Tokens>;
     UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput): Tokens | Promise<Tokens>;
     DeleteToken(DeleteTokenInput: DeleteTokensInput): Nullable<Tokens> | Promise<Nullable<Tokens>>;
+    CreateOrder(CreateOrderInput: CreateOrdersInput): Orders | Promise<Orders>;
+    DeleteOrder(Delete: DeleteOrderInput): Orders | Promise<Orders>;
+    UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus): Orders | Promise<Orders>;
 }
 
+export type DateTime = any;
 type Nullable<T> = T | null;
