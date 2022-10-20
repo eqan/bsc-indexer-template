@@ -5,7 +5,7 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver
+  Resolver,
 } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
@@ -20,7 +20,10 @@ import { Collections } from './entities/collections.entity';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
-  constructor(private readonly tokenService: TokensService, private readonly collectionsService: CollectionsService) {
+  constructor(
+    private readonly tokenService: TokensService,
+    private readonly collectionsService: CollectionsService,
+  ) {
     super();
   }
   /**
@@ -105,7 +108,6 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     }
   }
 
-  
   /**
    * Resolve field to link tokens with its collection
    * @param collection

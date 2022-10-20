@@ -6,7 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn
+  PrimaryColumn,
 } from 'typeorm';
 
 /**Create tokens table in database
@@ -55,6 +55,6 @@ export class Tokens extends BaseEntity {
   description?: string;
 
   @ManyToOne(() => Collections, (collection) => collection.collectionId)
-  @JoinColumn({ name: 'collectionId' }) 
+  @JoinColumn({ name: 'collectionId' })
   collection: Collections;
 }

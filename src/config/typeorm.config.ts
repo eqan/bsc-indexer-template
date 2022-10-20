@@ -16,7 +16,7 @@ export default class TypeOrmConfig {
       username: config.get('DB_USER'),
       password: config.get('POSTGRES_PASSWORD'),
       database: config.get('POSTGRES_DB'),
-      entities: [Tokens, Collections,Orders],
+      entities: [Tokens, Collections, Orders],
       synchronize: true,
     };
   }
