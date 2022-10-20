@@ -1,6 +1,6 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
 import { MakeType } from './make-type.dto';
 
 @ObjectType('Make')
@@ -9,7 +9,6 @@ export class Make {
   @Field(() => Int)
   value: number;
 
-  
   @ValidateNested()
   @Type(() => MakeType)
   @Field(() => MakeType)

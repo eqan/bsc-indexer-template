@@ -11,7 +11,7 @@ import { OrderType } from 'src/orders/entities/enums/order.type.enum';
 @InputType('MakeTypeInput')
 export class MakeType {
   @IsEnum(OrderType)
-  @Field()
+  @Field(() => OrderType)
   type: OrderType;
 
   @IsEthereumAddress()

@@ -1,11 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ValidateNested } from 'class-validator';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Data } from '../dto/nestedObjectsDto/data.object';
 import { Make } from '../dto/nestedObjectsDto/make.dto';
 import { OrderType } from './enums/order.type.enum';
 import { OrderStatus } from './enums/orders.status.enum';
-import { Type } from 'class-transformer';
 
 @ObjectType()
 @Entity('Orders')

@@ -8,6 +8,20 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum OrderTypeEnum {
+    BEP20 = "BEP20",
+    BEP721 = "BEP721",
+    BEP1155 = "BEP1155"
+}
+
+export enum OrderStatus {
+    Active = "Active",
+    Filled = "Filled",
+    Historical = "Historical",
+    InActive = "InActive",
+    Cancelled = "Cancelled"
+}
+
 export interface DataOrginFeeInput {
     account: string;
     value: number;
@@ -19,7 +33,7 @@ export interface DataInput {
 }
 
 export interface MakeTypeInput {
-    type: string;
+    type: OrderTypeEnum;
     contract: string;
     tokenId: number;
 }
@@ -101,7 +115,7 @@ export interface DeleteTokensInput {
 export interface CreateOrdersInput {
     orderId: string;
     fill: number;
-    status: string;
+    status: OrderStatus;
     makeStock: number;
     cancelled: boolean;
     createdAt: DateTime;
@@ -175,7 +189,7 @@ export interface Data {
 }
 
 export interface MakeType {
-    type: string;
+    type: OrderTypeEnum;
     contract: string;
     tokenId: number;
 }
@@ -221,7 +235,7 @@ export interface IQuery {
     GetAllTokens(searchToken: FilterTokenDto): GetAllTokens | Promise<GetAllTokens>;
     ShowTokenById(tokenId: string): Tokens | Promise<Tokens>;
     GetOrderById(orderId: string): Orders | Promise<Orders>;
-    GetAllOrders(GetAllOrders: FilterOrderDto): GetAllOrders | Promise<GetAllOrders>;
+    GetAllOrders(filterOrderDto: FilterOrderDto): GetAllOrders | Promise<GetAllOrders>;
 }
 
 export interface IMutation {

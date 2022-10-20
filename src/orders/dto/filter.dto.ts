@@ -16,6 +16,4 @@ export class FilterOrderDto extends PaginationParam {
   @IsOptional()
   @Field({ nullable: true, defaultValue: undefined })
   taker?: string;
-
-  
 }

@@ -15,10 +15,9 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     super();
   }
 
-
   /**
    * Create Order
-   * @param createOrdersInput 
+   * @param createOrdersInput
    * @returns Orders
    */
   @Mutation(() => Orders, { name: 'CreateOrder' })
@@ -34,7 +33,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
 
   /**
    * Delete Order
-   * @param deleteOrderInput 
+   * @param deleteOrderInput
    * @returns void
    */
   @Mutation(() => Orders, { name: 'DeleteOrder' })
@@ -65,7 +64,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
 
   /**
    * Get Order By Id
-   * @param orderId 
+   * @param orderId
    * @returns Order against specific id
    */
   @Query(() => Orders, { name: 'GetOrderById' })
@@ -77,15 +76,14 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     }
   }
 
-
   /**
    * Get ALl Orders
-   * @param filterOrderDto 
+   * @param filterOrderDto
    * @returns Searched or all orders
    */
   @Query(() => GetAllOrders, { name: 'GetAllOrders' })
   async index(
-    @Args('GetAllOrders') filterOrderDto: FilterOrderDto,
+    @Args('filterOrderDto') filterOrderDto: FilterOrderDto,
   ): Promise<GetAllOrders> {
     try {
       return await this.ordersService.findAllOrders(filterOrderDto);
