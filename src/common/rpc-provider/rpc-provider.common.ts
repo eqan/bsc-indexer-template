@@ -7,7 +7,7 @@ import { Global, Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 @Global()
-export default class RpcProvider {
+export class RpcProvider {
   constructor(private config: ConfigService) {}
 
   private readonly logger = new Logger('websocket-provider');

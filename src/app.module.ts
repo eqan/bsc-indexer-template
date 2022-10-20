@@ -11,6 +11,7 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
+import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
     ActivityModule,
     OrdersModule,
     RpcProviderModule,
+    MetadataApiModule,
   ],
 })
 export class AppModule {}

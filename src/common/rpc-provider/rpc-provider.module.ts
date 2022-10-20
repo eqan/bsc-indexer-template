@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import RpcProvider from './rpc-provider.common';
+import { RpcProvider } from './rpc-provider.common';
 
 /**
  * @RpcProviderModule
