@@ -132,15 +132,6 @@ export interface UpdateOrderStatus {
     status: string;
 }
 
-export interface Tokens {
-    tokenId: string;
-    name: string;
-    metaDataIndexed: boolean;
-    imageUrl: string;
-    attributes: string;
-    description: string;
-}
-
 export interface Collections {
     collectionId: string;
     name: string;
@@ -151,6 +142,21 @@ export interface Collections {
     twitterUserName: string;
     discordUrl: string;
     description: string;
+    tokens?: Nullable<Tokens[]>;
+}
+
+export interface Tokens {
+    tokenId: string;
+    name: string;
+    metaDataIndexed: boolean;
+    imageUrl: string;
+    attributes: string;
+    description: string;
+}
+
+export interface GetAllTokens {
+    items: Tokens[];
+    total: number;
 }
 
 export interface GetAllCollections {
@@ -202,11 +208,6 @@ export interface Orders {
     takePriceUsed: number;
     signature: string;
     taker: string;
-}
-
-export interface GetAllTokens {
-    items: Tokens[];
-    total: number;
 }
 
 export interface GetAllOrders {

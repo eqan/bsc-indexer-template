@@ -2,15 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Tokens {
-  tokenId: String!
-  name: String!
-  metaDataIndexed: Boolean!
-  imageUrl: String!
-  attributes: String!
-  description: String!
-}
-
 type Collections {
   collectionId: String!
   name: String!
@@ -21,6 +12,21 @@ type Collections {
   twitterUserName: String!
   discordUrl: String!
   description: String!
+  tokens: [Tokens!]
+}
+
+type Tokens {
+  tokenId: String!
+  name: String!
+  metaDataIndexed: Boolean!
+  imageUrl: String!
+  attributes: String!
+  description: String!
+}
+
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
 }
 
 type GetAllCollections {
@@ -78,11 +84,6 @@ type Orders {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type GetAllTokens {
-  items: [Tokens!]!
-  total: Float!
-}
 
 type GetAllOrders {
   items: [Orders!]!
