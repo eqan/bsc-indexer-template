@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -14,9 +14,6 @@ import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Data } from './nestedObjectsDto/data.object';
 import { Make } from './nestedObjectsDto/make.dto';
 
-registerEnumType(OrderStatus, {
-  name: 'OrderStatus',
-});
 @InputType()
 export class CreateOrdersInput {
   @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
