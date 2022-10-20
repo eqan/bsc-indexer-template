@@ -1,13 +1,15 @@
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
-import axios from 'axios';
-import { BadRequestException, Global, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Global, Injectable } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-
 @Injectable()
 @Global()
 export class MetadataApi {
-  constructor(private rpcProvider: RpcProvider) {}
+  constructor(
+    private rpcProvider: RpcProvider,
+    private readonly httpService: HttpService,
+  ) {}
 
   public async getTokenMetadata({
     token,
@@ -44,7 +46,7 @@ export class MetadataApi {
       //else if tokenURI is a https address like ipfs and any other central server
       else if (tokenURI?.includes('https://')) {
         console.log('hello mai andr aya', tokenURI);
-        const metda = await axios.get(tokenURI);
+        const metda = await this.httpService.get(tokenURI);
         console.log(metda, 'https data');
       } else console.log(tokenURI, 'koi teesra case');
     } catch (error) {
