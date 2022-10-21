@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { BlockChainInfo } from '../dto/metadatadto/blockchaininfo.metadata.dto';
+import { BlockChainInfo } from '../dto/nestedObjectDto/blockchaininfo.metadata.dto';
 import { ActivityTypes } from '../enums/activity.types.enums';
 
 @ObjectType()
@@ -14,7 +14,7 @@ export class Activity {
   @Field()
   @Column({
     type: 'enum',
-    enumName: 'ActivityTypes',
+    enumName: 'ActivityTypesEnum',
     enum: ActivityTypes,
     default: ActivityTypes.MINT
   })

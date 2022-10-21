@@ -18,5 +18,5 @@ export enum ActivityTypes
     AUCTION_ENDED = "AUCTION_ENDED"
 }
 registerEnumType(ActivityTypes, {
-    name: 'OrderTypeEnum',
+    name: 'ActivityTypeEnum',
   });

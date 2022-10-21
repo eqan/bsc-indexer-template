@@ -10,7 +10,7 @@ import { Tokens } from './entities/tokens.entity';
 import { TokensService as TokenService } from './tokens.service';
 
 @Resolver(() => Tokens)
-export class TokensResolver extends BaseProvider<Tokens> {
+export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   constructor(private readonly tokenService: TokenService) {
     super();
   }

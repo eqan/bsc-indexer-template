@@ -1,24 +1,38 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
-@InputType('UpdateTokensInput')
+import { Creator } from './nestedObjectDto/creator.dto';
+import { MetaData } from './nestedObjectDto/meta.dto';
+
+/**Create tokens table in database
+ *
+ */
+@InputType()
 export class UpdateTokensInput {
-  @IsNotEmpty({ message: 'Token Contract cannot be null' })
+  @IsNotEmpty()
   @Field()
-  tokenId!: string;
+  tokenId: string;
 
-  @Field({ nullable: true })
-  name?: string;
+  @IsNotEmpty()
+  @Field()
+  lastUpdatedAt: Date;
 
-  @Field({
-    nullable: true,
-  })
-  description?: string;
+  @IsNotEmpty()
+  @Field()
+  deleted: boolean;
 
-  @IsString()
-  @IsUrl({ message: 'Image URL must be a valid URL' })
-  @Field({
-    nullable: true,
-  })
-  imageUrl?: string;
+  @IsNotEmpty()
+  @Field()
+  sellers: number;
+
+  @Type(() => Creator)
+  @Field(() => Creator)
+  creator: Creator;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MetaData)
+  @Field(() => MetaData)
+  meta?: MetaData;
 }

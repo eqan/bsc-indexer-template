@@ -7,6 +7,7 @@ import { join } from 'path';
 import { ActivityModule } from './activity/activity.module';
 import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 
 @Module({
@@ -18,9 +19,9 @@ import { TokensModule } from './tokens/tokens.module';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
-      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      autoSchemaFile: join(process.cwd(), 'src/schemaFile.graphql'),
       definitions: {
-        path: join(process.cwd(), 'src/graphql.ts'),
+        path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
     }),
     /**
@@ -34,6 +35,7 @@ import { TokensModule } from './tokens/tokens.module';
     CollectionsModule,
     TokensModule,
     ActivityModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}
