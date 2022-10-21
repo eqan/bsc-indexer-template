@@ -85,6 +85,7 @@ export interface FilterTokenDto {
     page?: Nullable<number>;
     limit?: Nullable<number>;
     tokenId?: Nullable<string>;
+    name?: Nullable<MetaDataInput>;
 }
 
 export interface FilterOrderDto {

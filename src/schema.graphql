@@ -202,6 +202,7 @@ input FilterTokenDto {
   page: Float
   limit: Int
   tokenId: String
+  name: MetaDataInput
 }
 
 input FilterOrderDto {

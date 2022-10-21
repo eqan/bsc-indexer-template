@@ -81,7 +81,7 @@ export class TokensService {
         }),
         this.tokensRepo.count({
           where: {
-            tokenId: rest.tokenId,
+            tokenId: rest?.tokenId,
           },
         }),
       ]);
