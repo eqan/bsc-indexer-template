@@ -57,6 +57,7 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
     updateActivity: UpdateActivity,
   ): Promise<Activity> {
     try {
+      updateActivity['lastUpdatedAt'] = new Date();
       return await this.activityService.updateActivity(updateActivity);
     } catch (error) {
       throw new BadRequestException(error);

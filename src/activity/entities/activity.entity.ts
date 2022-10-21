@@ -8,7 +8,7 @@ import { ActivityTypes } from '../enums/activity.types.enums';
 @Entity('Activity')
 export class Activity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: string;
 
   @Field()
