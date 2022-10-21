@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+src/schemaFile.graphql
+src/graphqlFile.ts
+
 src/schema.graphql
 
 src/graphql.ts

@@ -75,15 +75,13 @@ export class TokensService {
         this.tokensRepo.find({
           where: {
             tokenId: rest?.tokenId,
-            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
         this.tokensRepo.count({
           where: {
-            tokenId: rest.tokenId,
-            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
+            tokenId: rest?.tokenId,
           },
         }),
       ]);

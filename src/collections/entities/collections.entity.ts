@@ -9,7 +9,6 @@ export class Collections {
   @PrimaryColumn({
     type: 'text',
     unique: true,
-    nullable: false,
   })
   collectionId: string;
 

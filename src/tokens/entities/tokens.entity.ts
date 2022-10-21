@@ -8,6 +8,8 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { MetaData } from '../dto/nestedObjectDto/meta.dto';
+import { TokenType } from './enum/token.type.enum';
 
 /**Create tokens table in database
  *
@@ -19,40 +21,89 @@ export class Tokens extends BaseEntity {
   @PrimaryColumn({
     type: 'text',
     unique: true,
-    nullable: false,
   })
   tokenId: string;
 
+  @Field({ nullable: true })
+  @Column('text', { default: null })
+  collectionId?: string;
+
   @Field()
-  @Column('text')
-  name: string;
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  contract?: string;
+
+  @Field()
+  @Column({
+    type: 'timestamptz',
+    default: null,
+  })
+  mintedAt: Date;
+
+  @Field()
+  @Column({
+    type: 'timestamptz',
+    default: null,
+  })
+  lastUpdatedAt: Date;
 
   @Field()
   @Column({
     type: 'boolean',
+    default: null,
   })
-  metaDataIndexed: boolean;
+  deleted: boolean;
 
   @Field()
   @Column({
-    type: 'text',
-    nullable: true,
+    type: 'int',
+    default: null,
   })
-  imageUrl?: string;
+  sellers: number;
 
-  @Field()
+  @Field(() => MetaData)
   @Column({
-    type: 'text',
-    nullable: true,
+    type: 'json',
+    default: null,
   })
-  attributes?: string;
+  creator: {
+    account: string;
+    value: number;
+  };
 
-  @Field()
+  @Field(() => MetaData)
   @Column({
-    type: 'text',
-    nullable: true,
+    type: 'json',
+    default: null,
   })
-  description?: string;
+  meta?: {
+    name: string;
+    description?: string;
+    tags?: string[];
+    genres?: string[];
+    originalMetaUri: string;
+    externalUri?: string;
+    rightsUri?: string;
+    attributes: {
+      key: string;
+      value: number;
+      type?: TokenType;
+      format?: string;
+    };
+    content?: {
+      fileName?: string;
+      url?: string;
+      representation?: string;
+      mimeType?: string;
+      size?: number;
+      available?: boolean;
+      type?: string;
+      width?: number;
+      height?: number;
+    };
+  };
 
   @ManyToOne(() => Collections, (collection) => collection.collectionId)
   @JoinColumn({ name: 'collectionId' })

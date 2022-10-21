@@ -18,9 +18,9 @@ import { OrdersModule } from './orders/orders.module';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
-      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      autoSchemaFile: join(process.cwd(), 'src/schemaFile.graphql'),
       definitions: {
-        path: join(process.cwd(), 'src/graphql.ts'),
+        path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
     }),
     /**

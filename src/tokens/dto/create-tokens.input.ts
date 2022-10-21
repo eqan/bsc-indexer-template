@@ -1,51 +1,51 @@
-import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsBoolean,
-  IsEthereumAddress,
-  IsNotEmpty,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { Collections } from 'src/collections/entities/collections.entity';
+
+import { TokenType } from '../entities/enum/token.type.enum';
+import { Creator } from './nestedObjectDto/creator.dto';
+import { MetaData } from './nestedObjectDto/meta.dto';
 
 /**Create tokens table in database
  *
  */
-
-@InputType('CreateTokenInput')
+@InputType()
 export class CreateTokenInput {
-  @IsNotEmpty({ message: 'token contract cannot be null' })
+  @IsNotEmpty()
   @Field()
   tokenId: string;
 
-  @IsNotEmpty({ message: 'Collection contract cannot be null' })
-  @IsEthereumAddress()
+  @IsNotEmpty()
   @Field()
-  collectionId: string;
+  collectionId?: string;
 
-  @IsString()
+  @IsNotEmpty()
   @Field()
-  name: string;
+  contract?: string;
 
-  @IsBoolean()
+  @IsOptional()
   @Field()
-  metaDataIndexed: boolean;
+  mintedAt: Date;
 
-  @IsString()
-  @IsUrl()
-  @Field({
-    nullable: true,
-  })
-  imageUrl?: string;
+  @Field()
+  lastUpdatedAt: Date;
 
-  @IsString()
-  @Field({
-    nullable: true,
-  })
-  attributes?: string;
+  @IsNotEmpty()
+  @Field()
+  deleted: boolean;
 
-  @IsString()
-  @Field({
-    nullable: true,
-  })
-  description?: string;
+  @IsNotEmpty()
+  @Field()
+  sellers: number;
+
+  @ValidateNested()
+  @Type(() => Creator)
+  @Field(() => Creator)
+  creator: Creator;
+
+  @ValidateNested()
+  @Type(() => MetaData)
+  @Field(() => MetaData)
+  meta?: MetaData;
 }
