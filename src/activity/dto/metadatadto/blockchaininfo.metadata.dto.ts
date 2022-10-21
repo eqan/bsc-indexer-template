@@ -1,8 +1,8 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @ObjectType("BlockChainInfo")
-@InputType("BlockChainInfo")
+@InputType("BlockChainInfoInput")
 export class BlockChainInfo {
   @IsString()
   @IsNotEmpty()
@@ -14,13 +14,13 @@ export class BlockChainInfo {
   @Field()
   blockHash: string;
 
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
-  @Field()
-  blockNumber: Number;
+  @Field(()=> Int)
+  blockNumber: number;
 
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
-  @Field()
-  logIndex: Number;
+  @Field(()=> Int)
+  logIndex: number;
 }

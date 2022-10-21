@@ -1,13 +1,14 @@
 import {
-    BadRequestException,
-    Injectable,
-    NotFoundException
+  BadRequestException,
+  Injectable,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter.activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
+import { UpdateActivity } from './dto/update-collections.input';
 import { Activity } from './entities/activity.entity';
   
   @Injectable()
@@ -42,15 +43,14 @@ import { Activity } from './entities/activity.entity';
         const [items, total] = await Promise.all([
           this.activityRepo.find({
             where: {
-              cursor: rest?.cursor,
-              continuation: rest?.continuation,
+              id: rest?.id,
             },
             skip: (page - 1) * limit || 0,
             take: limit || 10,
           }),
           this.activityRepo.count({
             where: {
-              continuation: rest.continuation,
+              id: rest?.id,
             },
           }),
         ]);
@@ -60,12 +60,12 @@ import { Activity } from './entities/activity.entity';
   
     /**
      * Get Activity By Id
-     * @param cursor
+     * @param continuation
      * @returns Activity against specific id
      */
-    async getActivityById(cursor: string): Promise<Activity> {
+    async getActivityById(id: string): Promise<Activity> {
       try {
-        const activity = this.activityRepo.findOneByOrFail({ cursor });
+        const activity = this.activityRepo.findOneByOrFail({ id });
         if (!activity) {
           throw new NotFoundException('No Activity Found');
         }
@@ -83,27 +83,27 @@ import { Activity } from './entities/activity.entity';
     async deleteActivity(deletewithIds: { id: string[] }): Promise<void> {
       try {
         const ids = deletewithIds.id;
-        await this.activityRepo.delete({ cursor: In(ids) });
+        await this.activityRepo.delete({ id: In(ids) });
         return null;
       } catch (error) {
         throw new BadRequestException(error);
       }
     }
   
-    // /**
-    //  *  Update Activity status
-    //  * @param updateActivityStatus
-    //  * @returns Updated Activity status
-    //  */
-    // async updateActivityStatus(
-    //   updateActivityStatus: UpdateActivityStatus,
-    // ): Promise<Activity> {
-    //   try {
-    //     const { activityId, ...rest } = updateActivityStatus;
-    //     await this.activityRepo.update({ activityId }, rest);
-    //     return this.getActivityById(activityId);
-    //   } catch (error) {
-    //     throw new BadRequestException(error);
-    //   }
-    // }
+    /**
+     *  Update Activity
+     * @param updateActivity
+     * @returns Updated Activity
+     */
+    async updateActivity(
+      updateActivity: UpdateActivity,
+    ): Promise<Activity> {
+      try {
+        const { id, ...rest } = updateActivity;
+        await this.activityRepo.update({ id }, rest);
+        return await this.getActivityById(id);
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
+    }
   }

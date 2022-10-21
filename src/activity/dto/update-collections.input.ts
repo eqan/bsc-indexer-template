@@ -4,27 +4,19 @@ import { ActivityTypes } from '../enums/activity.types.enums';
 import { BlockChainInfo } from './metadatadto/blockchaininfo.metadata.dto';
 
 @InputType()
-export class CreateActivityInput {
-  // @Field()
-  // @IsNotEmpty()
-  // @IsString()
-  // id: string;
+export class UpdateActivity {
+  @Field()
+  @IsNotEmpty({ message: 'Activity ID cannot be null' })
+  id: string;
 
   @IsEnum(ActivityTypes)
-  @IsNotEmpty()
   @Field(()=> ActivityTypes)
   type: ActivityTypes;
 
   @IsEthereumAddress({ message: 'Owner address should be an ethereum address' })
-  @IsNotEmpty()
   @Field()
   owner: string;
 
-  // @IsDate()
-  // @IsNotEmpty()
-  // @Field()
-  // date: Date;
- 
   // @IsDate()
   // @Field()
   // lastUpdatedAt: Date;
@@ -37,16 +29,15 @@ export class CreateActivityInput {
   @Field()
   reverted: boolean;
 
-  @IsEthereumAddress({ message: 'Contract should be an ethereum address' })
-  @Field()
-  contract: string;
+  // @IsEthereumAddress({ message: 'Contract should be an ethereum address' })
+  // @Field()
+  // contract: string;
 
-  @IsNumber()
-  @Field()
-  tokenId: number;
+  // @IsNumber()
+  // @Field()
+  // tokenId: number;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   itemId: string;
 
@@ -55,11 +46,10 @@ export class CreateActivityInput {
   value: number;
 
   @IsString()
-  @IsNotEmpty()
   @Field()
   transactionHash: string;
 
-  @Field(()=> BlockChainInfo)
+  @Field(()=>BlockChainInfo)
   blockChainInfo: {
     transactionHash: string,
     blockHash: string,

@@ -1,3 +1,5 @@
+import { registerEnumType } from "@nestjs/graphql";
+
 export enum ActivityTypes
 {
     TRANSFER = "TRANSFER",
@@ -15,3 +17,6 @@ export enum ActivityTypes
     AUCTION_STARTED = "AUCTION_STARTED",
     AUCTION_ENDED = "AUCTION_ENDED"
 }
+registerEnumType(ActivityTypes, {
+    name: 'OrderTypeEnum',
+  });

@@ -1,28 +1,72 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { ActivityMetaData } from './metadata/activity.metadata.entity';
-
-/*
-    @Example: Following is the format example
-    "continuation": "1649398291000_624fd21b63c052298d2e43f9",
-    "cursor": "ETHEREUM:1649398291000_624fd21b63c052298d2e43f9",
-    "activities": []
-*/
+import { IsEthereumAddress } from 'class-validator';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BlockChainInfo } from '../dto/metadatadto/blockchaininfo.metadata.dto';
+import { ActivityTypes } from '../enums/activity.types.enums';
 
 @ObjectType()
 @Entity('Activity')
 export class Activity {
   @Field()
-  @PrimaryColumn({
-    type: 'text',
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Field()
+  @Column({
+    type: 'enum',
+    enumName: 'ActivityTypes',
+    enum: ActivityTypes,
+    default: ActivityTypes.MINT
   })
-  continuation: string;
+  type: ActivityTypes;
+
+  @Field()
+  @IsEthereumAddress({ message: 'Owner address should be an ethereum address' })
+  @Column({type: 'text'})
+  owner: string;
+
+  @Field()
+  @CreateDateColumn({name: 'created_at'})
+  date: Date;
+ 
+  @Field()
+  @CreateDateColumn({name: 'updated_at'})
+  lastUpdatedAt?: Date;
 
   @Field()
   @Column({type: 'text', nullable: true})
-  cursor: string;
+  cursor?: string;
+ 
+  @Field()
+  @Column({type: 'boolean', nullable: true})
+  reverted?: boolean;
 
   @Field()
-  @Column({type: 'array', nullable: true})
-  activities: ActivityMetaData[];
+  @Column({type: 'text'})
+  contract: string;
+
+  @Field()
+  @Column({type: 'int', nullable: true})
+  tokenId?: number;
+
+  @Field()
+  @Column({type: 'text', nullable: true})
+  itemId?: string;
+
+  @Field()
+  @Column({type: 'int'})
+  value: number;
+
+  @Field()
+  @Column({type: 'text'})
+  transactionHash: string;
+
+  @Field(() => BlockChainInfo)
+  @Column({type: 'json'})
+  blockChainInfo: {
+    transactionHash: string,
+    blockHash: string,
+    blockNumber: number,
+    logIndex: number
+  };
 }
