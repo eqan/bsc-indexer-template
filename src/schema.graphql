@@ -15,14 +15,53 @@ type Collections {
   tokens: [Tokens!]
 }
 
+type MetadataAttribute {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+type MetadataContent {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+type MetaData {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: MetadataAttribute!
+  content: MetadataContent!
+}
+
 type Tokens {
   tokenId: String!
-  name: String!
-  metaDataIndexed: Boolean!
-  imageUrl: String!
-  attributes: String!
-  description: String!
+  collectionId: String
+  contract: String!
+  mintedAt: DateTime!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: MetaData!
+  meta: MetaData!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type GetAllTokens {
   items: [Tokens!]!
@@ -86,14 +125,40 @@ type Orders {
   taker: String!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
+}
+
+input AttributeInput {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+input MetadataContentInput {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+input MetaDataInput {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: AttributeInput!
+  content: MetadataContentInput!
 }
 
 input DataOrginFeeInput {
@@ -137,7 +202,6 @@ input FilterTokenDto {
   page: Float
   limit: Int
   tokenId: String
-  name: String
 }
 
 input FilterOrderDto {
@@ -150,7 +214,9 @@ input FilterOrderDto {
 
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
-  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  UpdateCollectionAttribute(
+    updateCollectionsInput: UpdateCollectionsInput!
+  ): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
@@ -189,18 +255,27 @@ input DeleteCollectionsInput {
 input CreateTokenInput {
   tokenId: String!
   collectionId: String!
-  name: String!
-  metaDataIndexed: Boolean!
-  imageUrl: String
-  attributes: String
-  description: String
+  contract: String!
+  mintedAt: DateTime!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: CreatorInput!
+  meta: MetaDataInput!
+}
+
+input CreatorInput {
+  account: String!
+  value: Int!
 }
 
 input UpdateTokensInput {
   tokenId: String!
-  name: String
-  description: String
-  imageUrl: String
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: CreatorInput!
+  meta: MetaDataInput!
 }
 
 input DeleteTokensInput {
