@@ -1,4 +1,3 @@
-import { MetadataApi } from '../utils/metadata-api/metadata-api.utils';
 import {
   BadRequestException,
   Injectable,
@@ -6,14 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { getEventData } from 'src/events/data';
 import { ILike, In, Repository } from 'typeorm';
+import { MetadataApi } from '../utils/metadata-api/metadata-api.utils';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto } from './dto/filter.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { getEventData } from 'src/events/data';
-import { Interface } from '@ethersproject/abi';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -27,30 +26,15 @@ export class CollectionsService {
       try {
         const blockNumber =
           await this.rpcProvider.baseProvider.getBlockNumber();
-        // const block = await this.rpcProvider.baseProvider.getBlock(blockNumber);
-        // const blockTransactions =
-        //   await this.rpcProvider.baseProvider.getBlockWithTransactions(
-        //     blockNumber,
-        //   );
-        console.log(blockNumber, 'logged out blockNumber');
-        // console.log(block, 'block', blockNumber);
-        // console.log(blockTransactions, 'blockTransactions');
-        // const data = getEventData(['erc721-transfer'])[0];
+        // console.log(blockNumber, 'logged out blockNumber');
         const filter: { fromBlock: number; toBlock: number } = {
-          fromBlock: blockNumber - 100,
-          toBlock: blockNumber + 95,
+          fromBlock: blockNumber - 1,
+          toBlock: blockNumber,
         };
         const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-        // console.log(logs, 'getting logs');
-        // ":/ipfs"
-        // "https://arweave"
-        // "://ar/"
+
         for (const log of logs) {
-          // console.log(log.topics);
-          // console.log(log.transactionHash);
-          // console.log(log.topics.length);
-          // console.log(logs, 'getting logs');
-          const availableEventData = getEventData(['erc1155-transfer-single']);
+          const availableEventData = getEventData(['erc721-transfer']);
           const eventData = availableEventData.find(
             ({ addresses, topic, numTopics }) =>
               log.topics[0] === topic &&
@@ -59,45 +43,11 @@ export class CollectionsService {
           );
 
           if (eventData) {
-            // console.log(eventData, 'eventdata');
-            // console.log(log?.address, 'contract address');
-
-            // console.log(eventData, 'logged EventData');
             const { args } = eventData.abi.parseLog(log);
-            // console.log(args, 'logged');
-            console.log(args?.tokenId.toString(), 'tokenid');
-            const iface = new Interface([
-              'function name() view returns (string)',
-              'function symbol() view returns (string)',
-              'function ownerOf(uint256 _tokenId) external view returns (address)',
-              'function tokenURI(uint256 _tokenId) external view returns (string)',
-            ]);
-
-            // const contract = new Contract(
-            //   log?.address,
-            //   iface,
-            //   this.rpcProvider.baseProvider,
-            // );
-
             const token = log?.address;
             const tokenId = args?.tokenId.toString();
             const meta = await metadataApi.getTokenMetadata({ token, tokenId });
             console.log(meta, 'metadata');
-
-            // const name = await contract.name();
-            // const symbol = await contract.symbol();
-            // const owner = await contract.ownerOf(args?.tokenId);
-            // console.log(owner, 'owner of nft');
-
-            // try {
-            //   const tokenURI =
-            //     (await contract.tokenURI(args?.tokenId)) || undefined;
-            //   console.log(tokenURI, 'token URI of nft');
-            // } catch (err) {
-            //   console.log(err, 'error i am failed');
-            // }
-            // console.log(name, 'name of nft');
-            // console.log(symbol, 'symbol of nft');
           }
         }
       } catch (e) {
@@ -105,10 +55,6 @@ export class CollectionsService {
       }
     };
     getBlock();
-    // metadataApi.getTokenMetadata({
-    //   token: '0x9f0225d5c92b9cee4024f6406c4f13e546fd91a8',
-    //   tokenId: '1035782',
-    // });
   }
 
   /**
