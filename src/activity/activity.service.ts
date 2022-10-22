@@ -55,7 +55,9 @@ import { Activity } from './entities/activity.entity';
           }),
         ]);
         return { items, total };
-      } catch (error) {}
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
     }
   
     /**

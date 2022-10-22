@@ -43,7 +43,9 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
   ): Promise<void> {
     try {
       return await this.activityService.deleteActivity(deleteActivityInput);
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -90,6 +92,8 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
   ): Promise<GetAllActivities> {
     try {
       return await this.activityService.findAllActivity(filterActivityDto);
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
