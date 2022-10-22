@@ -19,7 +19,7 @@ import { TokensModule } from './tokens/tokens.module';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
-      autoSchemaFile: join(process.cwd(), 'src/schemaFile.graphql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },

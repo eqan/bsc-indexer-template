@@ -8,7 +8,7 @@ import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter.activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
-import { UpdateActivity } from './dto/update-collections.input';
+import { UpdateActivity } from './dto/update-activity.input';
 import { Activity } from './entities/activity.entity';
   
   @Injectable()
