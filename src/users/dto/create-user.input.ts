@@ -21,6 +21,11 @@ export class CreateUserInput {
   userAddress: string;
 
   @IsNotEmpty()
+  @IsString()
+  @Field()
+  userMessage: string;
+
+  @IsNotEmpty()
   @IsEnum(UserTypes)
   @Field(()=> UserTypes)
   type: UserTypes;
