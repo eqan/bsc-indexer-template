@@ -9,6 +9,7 @@ import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -37,5 +38,6 @@ import { TokensModule } from './tokens/tokens.module';
     ActivityModule,
     OrdersModule,
   ],
+  providers: [UsersService],
 })
 export class AppModule {}
