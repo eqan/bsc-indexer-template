@@ -10,6 +10,9 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 import { UsersService } from './users/users.service';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -37,7 +40,9 @@ import { UsersService } from './users/users.service';
     TokensModule,
     ActivityModule,
     OrdersModule,
+    AuthModule,
+    UsersModule,
   ],
-  providers: [UsersService],
+  providers: [UsersService, AuthService],
 })
 export class AppModule {}

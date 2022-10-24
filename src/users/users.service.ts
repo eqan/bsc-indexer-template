@@ -1,16 +1,17 @@
 import { verifyMessage } from '@ethersproject/wallet';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
+import { LoginUserInput } from './dto/logged-user.input';
 import { Users } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(
-      @InjectRepository(Users)
-      private usersRepo: Repository<Users>,
-    ) {}
+  constructor(
+    private usersRepo: Repository<Users>,
+    private readonly authService: AuthService,
+  ) {}
     
     /**
      * Verift wallet and return signer address
@@ -58,5 +59,34 @@ export class UsersService {
       }
     }
 
-}
+    /**
+     * Get Data By User Address
+     * @param userAddress
+     * @returns user data
+     */
+    async getDataByUserAddress(userAddress: string): Promise<Users> {
+      try {
+        const userData = this.usersRepo.findOneByOrFail({ userAddress });
+        if (!userData) {
+          throw new NotFoundException('No Activity Found');
+        }
+        return userData;
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
+    }
+  
+    async loginUser(loginUserInput: LoginUserInput) {
+      const user = await this.authService.validateUser(
+        loginUserInput.userMessage,
+        loginUserInput.userSignature,
+        loginUserInput.userAddress,
+      );
+      if (!user) {
+        throw new BadRequestException(`Email or password are invalid`);
+      } else {
+        return this.authService.generateUserCredentials(user);
+      }
+    }
 
+}
