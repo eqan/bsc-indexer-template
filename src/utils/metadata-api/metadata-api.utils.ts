@@ -17,9 +17,7 @@ export class MetadataApi {
   constructor(
     private rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
-  ) {
-    this.fetchRequest();
-  }
+  ) {}
 
   async fetchRequest() {
     const response = await lastValueFrom(
