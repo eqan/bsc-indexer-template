@@ -1,6 +1,7 @@
 import { verifyMessage } from '@ethersproject/wallet';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service'; import { FilterUserDto } from 'src/users/dto/filter.users.dto';
+import { AuthService } from 'src/auth/auth.service';
+import { FilterUserDto } from 'src/users/dto/filter.users.dto';
 import { In, Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { GetAllUsers } from './dto/get-all-users.dto';
@@ -12,7 +13,7 @@ import { Users } from './entities/users.entity';
 export class UsersService {
     constructor(
       private usersRepo: Repository<Users>,
-      private readonly authService: AuthService,
+      private authService: AuthService,
     ) {}
     
     /**
@@ -64,9 +65,26 @@ export class UsersService {
     /**
      * Get Data By User Address
      * @param userAddress
-     * @returns user data
+     * @returns userData
      */
     async getDataByUserAddress(userAddress: string): Promise<Users> {
+      try {
+        const userData = await this.usersRepo.findOneByOrFail({ userAddress });
+        if (!userData) {
+          throw new NotFoundException('No Users Found');
+        }
+        return userData;
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
+    }
+  
+    /**
+     * Get Data By User Address
+     * @param userAddress
+     * @returns userData
+     */
+    async getUserDataById(userAddress: string): Promise<Users> {
       try {
         const userData = this.usersRepo.findOneByOrFail({ userAddress });
         if (!userData) {
@@ -98,7 +116,7 @@ export class UsersService {
   /**
    * Update Users Attributes
    * @param updateUsersInput
-   * @returns
+   * @returns updated user
    */
   async updateUsersAttribute(
     updateUsersInput: UpdateUsersInput,
@@ -115,7 +133,7 @@ export class UsersService {
   /**
    * DELETE Users
    * @param deleteUsers
-   * @returns Message that collection successfully deleted
+   * @returns Message that user successfully deleted
    */
   async deleteUsers(deleteWithIds: { id: string[] }): Promise<void> {
     try {

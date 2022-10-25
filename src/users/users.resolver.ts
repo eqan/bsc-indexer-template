@@ -1,14 +1,15 @@
-import { BadRequestException, Query } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateUserInput } from './dto/create-user.input';
 import { DeleteUsersInput } from './dto/delete-users.input';
+import { FilterUserDto } from './dto/filter.users.dto';
 import { GetAllUsers } from './dto/get-all-users.dto';
 import { LoginUserInput } from './dto/logged-user.input';
 import { LoggedUserOutput } from './dto/logged-user.output';
 import { UpdateUsersInput } from './dto/update-user.input';
 import { Users } from './entities/users.entity';
-import { FilterUserDto } from './dto/filter.users.dto';
 import { UsersService } from './users.service';
 
 @Resolver()
@@ -61,6 +62,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param updateUserStatus
    * @returns Updated User
    */
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Users, { name: 'UpdateUserStatus' })
   async edit(
     @Args('UpdateUserStatus')
@@ -78,6 +80,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param userAddress
    * @returns User
    */
+  @UseGuards(JwtAuthGuard)
   @Query(() => Users, { name: 'GetUserDataByUserAddress' })
   async show(@Args('userAddress') userAddress: string): Promise<Users> {
     try {
@@ -92,6 +95,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param filterUserDto
    * @returns Searched or all users
    */
+  @UseGuards(JwtAuthGuard)
   @Query(() => GetAllUsers, { name: 'GetAllUsers' })
   async index(
     @Args('filterUserDto') filterUserDto: FilterUserDto,
