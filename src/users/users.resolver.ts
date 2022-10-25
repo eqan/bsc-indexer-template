@@ -2,9 +2,13 @@ import { BadRequestException, Query } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateUserInput } from './dto/create-user.input';
+import { DeleteUsersInput } from './dto/delete-users.input';
+import { GetAllUsers } from './dto/get-all-users.dto';
 import { LoginUserInput } from './dto/logged-user.input';
 import { LoggedUserOutput } from './dto/logged-user.output';
+import { UpdateUsersInput } from './dto/update-user.input';
 import { Users } from './entities/users.entity';
+import { FilterUserDto } from './dto/filter.users.dto';
 import { UsersService } from './users.service';
 
 @Resolver()
@@ -12,7 +16,6 @@ export class UsersResolver extends BaseProvider<Users> {
     constructor(private readonly userService: UsersService) {
         super();
     }
-
   /**
    * Login User
    * @param LoggedUserInput: message, signature, address
@@ -46,10 +49,10 @@ export class UsersResolver extends BaseProvider<Users> {
    */
   @Mutation(() => Users, { name: 'DeleteUser' })
   async delete(
-    @Args('Delete') deleteUserInput: DeleteUserInput,
+    @Args('Delete') deleteUserInput: DeleteUsersInput,
   ): Promise<void> {
     try {
-      return await this.userService.deleteUser(deleteUserInput);
+      return await this.userService.deleteUsers(deleteUserInput);
     } catch (error) {}
   }
 
@@ -61,10 +64,10 @@ export class UsersResolver extends BaseProvider<Users> {
   @Mutation(() => Users, { name: 'UpdateUserStatus' })
   async edit(
     @Args('UpdateUserStatus')
-    updateUserStatus: UpdateUserStatus,
+    updateUserStatus: UpdateUsersInput,
   ): Promise<Users> {
     try {
-      return await this.userService.updateUserStatus(updateUserStatus);
+      return await this.userService.updateUsersAttribute(updateUserStatus);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -95,6 +98,8 @@ export class UsersResolver extends BaseProvider<Users> {
   ): Promise<GetAllUsers> {
     try {
       return await this.userService.findAllUsers(filterUserDto);
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

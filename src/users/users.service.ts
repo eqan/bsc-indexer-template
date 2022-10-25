@@ -1,20 +1,22 @@
 import { verifyMessage } from '@ethersproject/wallet';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
-import { Repository } from 'typeorm';
+import { AuthService } from 'src/auth/auth.service'; import { FilterUserDto } from 'src/users/dto/filter.users.dto';
+import { In, Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
+import { GetAllUsers } from './dto/get-all-users.dto';
 import { LoginUserInput } from './dto/logged-user.input';
+import { UpdateUsersInput } from './dto/update-user.input';
 import { Users } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private usersRepo: Repository<Users>,
-    private readonly authService: AuthService,
-  ) {}
+    constructor(
+      private usersRepo: Repository<Users>,
+      private readonly authService: AuthService,
+    ) {}
     
     /**
-     * Verift wallet and return signer address
+     * Verify wallet and return signer address
      * @params createActivityinput
      * @return signer address
      */
@@ -68,7 +70,7 @@ export class UsersService {
       try {
         const userData = this.usersRepo.findOneByOrFail({ userAddress });
         if (!userData) {
-          throw new NotFoundException('No Activity Found');
+          throw new NotFoundException('No Users Found');
         }
         return userData;
       } catch (error) {
@@ -76,6 +78,11 @@ export class UsersService {
       }
     }
   
+  /**
+   * Login User
+   * @param LoggedUserInput: message, signature, address
+   * @returns access token
+   */
     async loginUser(loginUserInput: LoginUserInput) {
       const user = await this.authService.validateUser(
         loginUserInput.userMessage,
@@ -88,5 +95,64 @@ export class UsersService {
         return this.authService.generateUserCredentials(user);
       }
     }
+  /**
+   * Update Users Attributes
+   * @param updateUsersInput
+   * @returns
+   */
+  async updateUsersAttribute(
+    updateUsersInput: UpdateUsersInput,
+  ): Promise<Users> {
+    try {
+      const { userAddress, ...rest } = updateUsersInput;
+      await this.usersRepo.update({ userAddress }, rest);
+      return this.getDataByUserAddress(userAddress);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * DELETE Users
+   * @param deleteUsers
+   * @returns Message that collection successfully deleted
+   */
+  async deleteUsers(deleteWithIds: { id: string[] }): Promise<void> {
+    try {
+      const ids = deleteWithIds.id;
+      await this.usersRepo.delete({ userId: In(ids) });
+      return null;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get All Users ... With Filters
+   * @@params No Params
+   * @returns Array of Users and Total Number of Users
+   */
+  async findAllUsers(filterDto: FilterUserDto): Promise<GetAllUsers> {
+    try {
+      const { page, limit, ...rest } = filterDto;
+      const [items, total] = await Promise.all([
+        this.usersRepo.find({
+          where: {
+            userAddress: rest?.userAddress
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+        this.usersRepo.count({
+          where: {
+            userAddress: rest.userAddress
+          },
+        }),
+      ]);
+      return { items, total };
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
 
 }

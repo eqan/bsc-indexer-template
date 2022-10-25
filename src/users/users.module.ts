@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
-// import { CommonModule } from '../common/common.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Users } from './entities/users.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [
-    // CommonModule,
-//     GraphQLModule.forFeature([
-//       {
-//         name: User.name,
-//         schema: UserSchema,
-//       },
-//     ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Users]),],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],
 })
