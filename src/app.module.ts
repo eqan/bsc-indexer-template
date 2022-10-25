@@ -4,10 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { ActivityModule } from './activity/activity.module';
 import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
-import { TokensModule } from './tokens/tokens.module';
 import { OrdersModule } from './orders/orders.module';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { OrdersModule } from './orders/orders.module';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
-      autoSchemaFile: join(process.cwd(), 'src/schemaFile.graphql'),
+      autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
@@ -33,6 +34,7 @@ import { OrdersModule } from './orders/orders.module';
     }),
     CollectionsModule,
     TokensModule,
+    ActivityModule,
     OrdersModule,
   ],
 })

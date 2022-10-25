@@ -1,9 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
-import { Collections } from 'src/collections/entities/collections.entity';
 
-import { TokenType } from '../entities/enum/token.type.enum';
 import { Creator } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
 

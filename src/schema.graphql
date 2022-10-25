@@ -1,0 +1,416 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BlockChainInfo {
+  transactionHash: String!
+  blockHash: String!
+  blockNumber: Int!
+  logIndex: Int!
+}
+
+type Activity {
+  id: String!
+  type: String!
+  owner: String!
+  date: DateTime!
+  lastUpdatedAt: DateTime!
+  cursor: String!
+  reverted: Boolean!
+  contract: String!
+  tokenId: Float!
+  itemId: String!
+  value: Float!
+  transactionHash: String!
+  blockChainInfo: BlockChainInfo!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
+type Collections {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  imageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+  tokens: [Tokens!]
+}
+
+type MetadataAttribute {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+type MetadataContent {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+type MetaData {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: MetadataAttribute!
+  content: MetadataContent!
+}
+
+type Tokens {
+  tokenId: String!
+  collectionId: String
+  contract: String!
+  mintedAt: DateTime!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: MetaData!
+  meta: MetaData!
+}
+
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
+type DataOriginFee {
+  account: String!
+  value: Int!
+}
+
+type Data {
+  type: String!
+  originFees: DataOriginFee!
+}
+
+type MakeType {
+  type: OrderTypeEnum!
+  contract: String!
+  tokenId: Int!
+}
+
+enum OrderTypeEnum {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type Make {
+  value: Int!
+  type: MakeType!
+}
+
+type Orders {
+  orderId: String!
+  fill: Float!
+  status: String!
+  makeStock: Float!
+  cancelled: Boolean!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  maker: String!
+  Make: Make!
+  take: Make!
+  salt: String!
+  data: Data!
+  startedAt: DateTime!
+  endedAt: DateTime!
+  optionalRoyalties: Boolean!
+  dbUpdatedAt: DateTime!
+  makePrice: Float!
+  takePrice: Float!
+  makePriceUsed: Float!
+  takePriceUsed: Float!
+  signature: String!
+  taker: String!
+}
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
+input BlockChainInfoInput {
+  transactionHash: String!
+  blockHash: String!
+  blockNumber: Int!
+  logIndex: Int!
+}
+
+input AttributeInput {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+input MetadataContentInput {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+input MetaDataInput {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: AttributeInput!
+  content: MetadataContentInput!
+}
+
+input DataOrginFeeInput {
+  account: String!
+  value: Int!
+}
+
+input DataInput {
+  type: String!
+  originFees: DataOrginFeeInput!
+}
+
+input MakeTypeInput {
+  type: OrderTypeEnum!
+  contract: String!
+  tokenId: Int!
+}
+
+input MakeInput {
+  value: Int!
+  type: MakeTypeInput!
+}
+
+type Query {
+  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
+  ShowCollectionById(collectionId: String!): Collections!
+  GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
+  ShowTokenById(tokenId: String!): Tokens!
+  GetActivityById(activityId: String!): Activity!
+  GetAllActivities(GetAllActivities: FilterActivityDto!): GetAllActivities!
+  GetOrderById(orderId: String!): Orders!
+  GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+}
+
+input FilterDto {
+  page: Float
+  limit: Float
+  collectionId: String
+  name: String
+}
+
+input FilterTokenDto {
+  page: Float
+  limit: Int
+  tokenId: String
+  name: MetaDataInput
+}
+
+input FilterActivityDto {
+  page: Float
+  limit: Float
+  id: String!
+}
+
+input FilterOrderDto {
+  page: Float
+  limit: Float
+  orderId: String
+  maker: String
+  taker: String
+}
+
+type Mutation {
+  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
+  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+  CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
+  UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
+  DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
+  CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
+  DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity!
+  UpdateActivityAttribute(UpdateActivityInput: UpdateActivity!): Activity!
+  CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
+  DeleteOrder(Delete: DeleteOrderInput!): Orders!
+  UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+}
+
+input CreateCollectionsInput {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input UpdateCollectionsInput {
+  collectionId: String!
+  bannerImageUrl: String
+  externalUrl: String
+  imageUrl: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+}
+
+input DeleteCollectionsInput {
+  id: [String!]!
+}
+
+input CreateTokenInput {
+  tokenId: String!
+  collectionId: String!
+  contract: String!
+  mintedAt: DateTime!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: CreatorInput!
+  meta: MetaDataInput!
+}
+
+input CreatorInput {
+  account: String!
+  value: Int!
+}
+
+input UpdateTokensInput {
+  tokenId: String!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: CreatorInput!
+  meta: MetaDataInput!
+}
+
+input DeleteTokensInput {
+  id: [String!]!
+}
+
+input CreateActivityInput {
+  type: ActivityTypeEnum!
+  owner: String!
+  cursor: String!
+  reverted: Boolean!
+  contract: String!
+  tokenId: Float!
+  itemId: String!
+  value: Float!
+  transactionHash: String!
+  blockChainInfo: BlockChainInfoInput!
+}
+
+enum ActivityTypeEnum {
+  TRANSFER
+  MINT
+  BURN
+  BID
+  LIST
+  SELL
+  CANCEL_LIST
+  CANCEL_BID
+  AUCTION_BID
+  AUCTION_CREATED
+  AUCTION_CANCEL
+  AUCTION_FINISHED
+  AUCTION_STARTED
+  AUCTION_ENDED
+}
+
+input DeleteActivityInput {
+  id: [String!]!
+}
+
+input UpdateActivity {
+  id: String!
+  type: ActivityTypeEnum!
+  owner: String!
+  cursor: String!
+  reverted: Boolean!
+  itemId: String!
+  value: Float!
+  transactionHash: String!
+  blockChainInfo: BlockChainInfoInput!
+}
+
+input CreateOrdersInput {
+  orderId: String!
+  fill: Float!
+  status: OrderStatus!
+  makeStock: Float!
+  cancelled: Boolean!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  maker: String!
+  Make: MakeInput!
+  take: MakeInput!
+  salt: String!
+  data: DataInput!
+  startedAt: DateTime!
+  endedAt: DateTime!
+  optionalRoyalties: Boolean!
+  dbUpdatedAt: DateTime!
+  makePrice: Float!
+  takePrice: Float!
+  makePriceUsed: Float!
+  takePriceUsed: Float!
+  signature: String!
+  taker: String
+}
+
+enum OrderStatus {
+  Active
+  Filled
+  Historical
+  InActive
+  Cancelled
+}
+
+input DeleteOrderInput {
+  id: [String!]!
+}
+
+input UpdateOrderStatus {
+  orderId: String!
+  status: String!
+}
