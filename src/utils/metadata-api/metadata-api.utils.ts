@@ -35,6 +35,7 @@ export class MetadataApi {
     token: string;
     tokenId: string;
   }) {
+    let tokenURI = '';
     try {
       const iface = new Interface([
         'function tokenURI(uint256 _tokenId) external view returns (string)',
@@ -49,8 +50,7 @@ export class MetadataApi {
 
       let meta;
 
-      const tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
-
+      tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
       console.log(tokenURI, 'token URI of nft');
 
       //if tokenURI is buffered base64 encoded
@@ -62,9 +62,7 @@ export class MetadataApi {
 
       //else if tokenURI is a https address like ipfs and any other central server
       else if (tokenURI?.match(regex.url)) {
-        const observable = this.httpService
-          .get(tokenURI)
-          .pipe(map((res) => res.data));
+        const observable = this.httpService.get(tokenURI);
 
         meta = await lastValueFrom(observable);
         console.log(meta, 'https data');
@@ -95,7 +93,7 @@ export class MetadataApi {
             message: 'Token does not exist',
           }
         : {
-            message: 'invalid or undefine uri',
+            message: `invalid or undefine uri ${tokenURI}`,
           };
     }
   }
