@@ -17,7 +17,18 @@ export class MetadataApi {
   constructor(
     private rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    this.fetchRequest();
+  }
+
+  async fetchRequest() {
+    const response = await lastValueFrom(
+      this.httpService.get(
+        'https://graphigo.prd.galaxy.eco/metadata/0x8ab86b6fa7158d0401c2fef9aeed3d492f70e34e/31814.json',
+      ),
+    );
+    console.log(response);
+  }
 
   public async getTokenMetadata({
     token,
