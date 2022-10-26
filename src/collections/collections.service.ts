@@ -28,7 +28,7 @@ export class CollectionsService {
           await this.rpcProvider.baseProvider.getBlockNumber();
         // console.log(blockNumber, 'logged out blockNumber');
         const filter: { fromBlock: number; toBlock: number } = {
-          fromBlock: blockNumber - 1,
+          fromBlock: blockNumber,
           toBlock: blockNumber,
         };
         const logs = await this.rpcProvider.baseProvider.getLogs(filter);
@@ -55,6 +55,10 @@ export class CollectionsService {
       }
     };
     getBlock();
+    // this.metadataApi.fetchRequest(
+    //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
+    //   '39',
+    // );
   }
 
   /**

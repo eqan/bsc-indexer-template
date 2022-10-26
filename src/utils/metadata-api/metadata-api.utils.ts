@@ -2,11 +2,12 @@ import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Global, Injectable } from '@nestjs/common';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { uploadImage } from '../../config/cloudinary.config';
 import {
   base64toJson,
+  ipfsDomain,
   isBase64Encoded,
   regex,
 } from './../../common/utils.common';
@@ -19,13 +20,17 @@ export class MetadataApi {
     private readonly httpService: HttpService,
   ) {}
 
-  async fetchRequest() {
-    const response = await lastValueFrom(
-      this.httpService.get(
-        'https://graphigo.prd.galaxy.eco/metadata/0x8ab86b6fa7158d0401c2fef9aeed3d492f70e34e/31814.json',
-      ),
-    );
-    console.log(response);
+  async fetchRequest(uri: string, id: string) {
+    try {
+      //replace query params
+      if (uri.match(regex.query)) uri = uri?.replace(regex.query, id);
+      //add ipfs domain uri
+      if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsDomain);
+      const response = await lastValueFrom(this.httpService.get(uri));
+      return response?.data;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async getTokenMetadata({
@@ -48,10 +53,9 @@ export class MetadataApi {
         this.rpcProvider.baseProvider,
       );
 
-      let meta;
+      let meta: any;
 
       tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
-      console.log(tokenURI, 'token URI of nft');
 
       //if tokenURI is buffered base64 encoded
       if (isBase64Encoded(tokenURI)) {
@@ -62,12 +66,7 @@ export class MetadataApi {
 
       //else if tokenURI is a https address like ipfs and any other central server
       else if (tokenURI?.match(regex.url)) {
-        const observable = this.httpService.get(tokenURI);
-
-        meta = await lastValueFrom(observable);
-        console.log(meta, 'https data');
-
-        //when uri is invalid or undefined
+        meta = await this.fetchRequest(tokenURI, tokenId);
       } else throw new BadRequestException('invalid or undefined tokenURI');
 
       if (typeof meta === 'object')
