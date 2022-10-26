@@ -26,7 +26,7 @@ export class CollectionsService {
       try {
         const blockNumber =
           await this.rpcProvider.baseProvider.getBlockNumber();
-        // console.log(blockNumber, 'logged out blockNumber');
+        console.log(blockNumber, 'logged out blockNumber');
         const filter: { fromBlock: number; toBlock: number } = {
           fromBlock: blockNumber,
           toBlock: blockNumber,

@@ -18,7 +18,9 @@ export class MetadataApi {
   constructor(
     private rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    this.fetchRequest();
+  }
 
   async fetchRequest(uri: string, id: string) {
     try {
