@@ -21,6 +21,8 @@ export class CollectionsService {
     private rpcProvider: RpcProvider,
     private metadataApi: MetadataApi,
   ) {
+    // 22512276;
+    // 22512293;
     //sample function to use JsonRpcProvider and getting blockNumber
     const getBlock = async () => {
       try {
