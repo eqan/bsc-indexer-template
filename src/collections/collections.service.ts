@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import RpcProvider from 'src/common/rpc-provider/rpc-provider.common';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto } from './dto/filter.dto';
@@ -16,7 +17,17 @@ export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>,
-  ) {}
+    private rpcProvider: RpcProvider,
+  ) {
+    //sample function to use JsonRpcProvider and getting blockNumber
+    const getBlock = async () => {
+      const blockNumber = await this.rpcProvider.baseProvider.getBlockNumber();
+      const block = await this.rpcProvider.baseProvider.getBlock(blockNumber);
+      console.log(blockNumber, 'logged out blockNumber');
+      console.log(block, 'block', blockNumber);
+    };
+    getBlock();
+  }
 
   /**
    * Create Collection in Database

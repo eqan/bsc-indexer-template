@@ -1,3 +1,4 @@
+import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -9,6 +10,7 @@ import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
+import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
 
 @Module({
   imports: [
@@ -29,13 +31,19 @@ import { TokensModule } from './tokens/tokens.module';
      * TypeORM Configurations
      */
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+    /**
+     * Config Module
+     * Custom Configurations Files
+     */
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [BlockchainConfig],
     }),
     CollectionsModule,
     TokensModule,
     ActivityModule,
     OrdersModule,
+    RpcProviderModule,
   ],
 })
 export class AppModule {}
