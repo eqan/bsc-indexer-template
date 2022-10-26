@@ -14,7 +14,6 @@ import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { getEventData } from 'src/events/data';
 import { Interface } from '@ethersproject/abi';
-import { Contract } from '@ethersproject/contracts';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -38,8 +37,8 @@ export class CollectionsService {
         // console.log(blockTransactions, 'blockTransactions');
         // const data = getEventData(['erc721-transfer'])[0];
         const filter: { fromBlock: number; toBlock: number } = {
-          fromBlock: 22311205,
-          toBlock: 22311210,
+          fromBlock: blockNumber - 100,
+          toBlock: blockNumber + 95,
         };
         const logs = await this.rpcProvider.baseProvider.getLogs(filter);
         // console.log(logs, 'getting logs');
@@ -51,7 +50,7 @@ export class CollectionsService {
           // console.log(log.transactionHash);
           // console.log(log.topics.length);
           // console.log(logs, 'getting logs');
-          const availableEventData = getEventData(['erc721-transfer']);
+          const availableEventData = getEventData(['erc1155-transfer-single']);
           const eventData = availableEventData.find(
             ({ addresses, topic, numTopics }) =>
               log.topics[0] === topic &&
@@ -82,7 +81,9 @@ export class CollectionsService {
 
             const token = log?.address;
             const tokenId = args?.tokenId.toString();
-            metadataApi.getTokenMetadata({ token, tokenId });
+            const meta = await metadataApi.getTokenMetadata({ token, tokenId });
+            console.log(meta, 'metadata');
+
             // const name = await contract.name();
             // const symbol = await contract.symbol();
             // const owner = await contract.ownerOf(args?.tokenId);
@@ -104,6 +105,10 @@ export class CollectionsService {
       }
     };
     getBlock();
+    // metadataApi.getTokenMetadata({
+    //   token: '0x9f0225d5c92b9cee4024f6406c4f13e546fd91a8',
+    //   tokenId: '1035782',
+    // });
   }
 
   /**
