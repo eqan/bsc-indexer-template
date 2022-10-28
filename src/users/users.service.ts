@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
 import { FilterUserDto } from 'src/users/dto/filter.users.dto';
@@ -24,34 +24,13 @@ export class UsersService {
      * @return Users
      */
     async createUser(createUserInput: CreateUserInput): Promise<Users> {
-      try {
-          const signerAddress = await this.authService.validateUser(createUserInput.userMessage, createUserInput.userSignature, createUserInput.userAddress);
-          if(signerAddress)
-          {
-            delete createUserInput.userMessage;
+      try{
             const user = this.usersRepo.create(createUserInput);
-            try
-            {
-              return await this.usersRepo.save(user);
-            }
-            catch(error)
-            {
-              if(error.code === '23505')
-              {
-                throw new ConflictException("User already exists");
-              }
-              else
-              {
-                throw new InternalServerErrorException();
-              }
-            }
-          }
-          else
-          {
-            throw new UnauthorizedException("User not verified!");
-          }
-      } catch (error) {
-        throw new BadRequestException(error);
+            return await this.usersRepo.save(user);
+      }
+      catch(error)
+      {
+        throw error;
       }
     }
 
@@ -104,7 +83,6 @@ export class UsersService {
       if (!user) {
         throw new UnauthorizedException(`Email or password are invalid`);
       } else {
-          // return loginUserInput.userAddress;
         return this.authService.generateUserAccessToken(loginUserInput.userMessage, loginUserInput.userSignature, user);
       }
     }

@@ -50,6 +50,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param deleteUserInput
    * @returns void
    */
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Users, { name: 'DeleteUser' })
   async delete(
     @Args('DeleteUserInput') deleteUserInput: DeleteUsersInput,
@@ -82,7 +83,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param userAddress
    * @returns User
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Query(() => Users, { name: 'GetUserDataByUserAddress' })
   async show(@Args('userAddress') userAddress: string): Promise<Users> {
     try {
@@ -97,7 +98,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param filterUserDto
    * @returns Searched or all users
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Query(() => GetAllUsers, { name: 'GetAllUsers' })
   async index(
     @Args('filterUserDto') filterUserDto: FilterUserDto,

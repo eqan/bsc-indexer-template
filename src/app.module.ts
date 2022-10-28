@@ -4,9 +4,13 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { AuctionsModule } from 'src/auctions/auctions.module';
+import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { BlockchainConfig } from 'src/config/blockchain.config';
+import { typeOrmConfigAsync } from 'src/config/typeorm.config';
+import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { ActivityModule } from './activity/activity.module';
 import { CollectionsModule } from './collections/collections.module';
-import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 import { UsersModule } from './users/users.module';
@@ -30,15 +34,22 @@ import { UsersModule } from './users/users.module';
      * TypeORM Configurations
      */
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+    /**
+     * Config Module
+     * Custom Configurations Files
+     */
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [BlockchainConfig],
     }),
     CollectionsModule,
     TokensModule,
     ActivityModule,
     OrdersModule,
-    UsersModule
-    // AuthModule,
+    UsersModule,
+    RpcProviderModule,
+    MetadataApiModule,
+    AuctionsModule,
   ],
 })
 export class AppModule {}

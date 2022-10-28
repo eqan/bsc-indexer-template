@@ -2,6 +2,96 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Payouts {
+  account: String!
+  value: Float!
+}
+
+type AuctionData {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+"""Data type of Auction i.e. RARIBLE_AUCTION_V1_DATA_V1"""
+enum AuctionDataType {
+  RARIBLE_AUCTION_V1_DATA_V1
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type LastBidData {
+  dataType: AuctionDataType!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+type LastBid {
+  buyer: String!
+  amount: Float!
+  date: DateTime!
+  status: AuctionStatus!
+  type: AuctionType!
+  data: LastBidData!
+}
+
+"""Status of Auctions i.e. Active,InActive,Pending"""
+enum AuctionStatus {
+  ACTIVE
+  IN_ACTIVE
+  PENDING
+}
+
+"""Type of the auction i.e. BEP20,BEP721,BEP1155"""
+enum AuctionType {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type SellType {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+type Sell {
+  type: SellType!
+  value: Float!
+}
+
+type Auction {
+  auctionId: Float!
+  contract: String!
+  seller: String!
+  type: AuctionType!
+  sell: Sell!
+  buy: SellType!
+  endTime: DateTime!
+  minimalStep: Float!
+  minimalPrice: Float!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  buyPrice: Float!
+  buyPriceUsd: Float!
+  status: AuctionStatus!
+  ongoing: Boolean!
+  hash: String!
+  lastBid: LastBid!
+  data: AuctionData!
+}
+
+type GetAllAuctions {
+  items: [Auction!]!
+  total: Int!
+}
+
 type BlockChainInfo {
   transactionHash: String!
   blockHash: String!
@@ -23,29 +113,6 @@ type Activity {
   value: Float!
   transactionHash: String!
   blockChainInfo: BlockChainInfo!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type GetAllActivities {
-  items: [Activity!]!
-  total: Int!
-}
-
-type Collections {
-  collectionId: String!
-  name: String!
-  slug: String!
-  bannerImageUrl: String!
-  externalUrl: String!
-  imageUrl: String!
-  twitterUserName: String!
-  discordUrl: String!
-  description: String!
-  tokens: [Tokens!]
 }
 
 type MetadataAttribute {
@@ -91,14 +158,17 @@ type Tokens {
   meta: MetaData!
 }
 
-type GetAllTokens {
-  items: [Tokens!]!
-  total: Float!
-}
-
-type GetAllCollections {
-  items: [Collections!]!
-  total: Int!
+type Collections {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  imageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+  tokens: [Tokens!]
 }
 
 type DataOriginFee {
@@ -165,6 +235,21 @@ type Users {
   type: String!
 }
 
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
@@ -178,6 +263,46 @@ type GetAllUsers {
 type LoggedUserOutput {
   """Generated access_token of the user"""
   access_token: String!
+}
+
+input PayoutsInput {
+  account: String!
+  value: Float!
+}
+
+input AuctionDataInput {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidDataInput {
+  dataType: AuctionDataType!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidInput {
+  buyer: String!
+  amount: Float!
+  date: DateTime!
+  status: AuctionStatus!
+  type: AuctionType!
+  data: LastBidDataInput!
+}
+
+input SellTypeInput {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+input SellInput {
+  type: SellTypeInput!
+  value: Float!
 }
 
 input BlockChainInfoInput {
@@ -251,6 +376,8 @@ type Query {
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   GetUserDataByUserAddress(userAddress: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
+  GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
+  GetAuctionById(GetAuctionById: Float!): Auction!
 }
 
 input FilterDto {
@@ -294,6 +421,13 @@ input FilterUserDto {
   userAddress: String
 }
 
+input FilterAuctionDto {
+  page: Float
+  limit: Float
+  auctionId: Float
+  contract: String
+}
+
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
@@ -310,6 +444,9 @@ type Mutation {
   CreateUser(CreateUserInput: CreateUserInput!): Users!
   DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
   UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
+  CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
+  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
+  DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
 }
 
 input CreateCollectionsInput {
@@ -480,4 +617,50 @@ input UpdateUsersInput {
   shortBio: String!
   websiteUrl: String!
   twitterUrl: String!
+}
+
+input CreateAuctionInput {
+  auctionId: Float!
+  contract: String!
+  seller: String!
+  type: AuctionType!
+  sell: SellInput!
+  buy: SellTypeInput!
+  endTime: DateTime!
+  minimalStep: Float!
+  minimalPrice: Float!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  buyPrice: Float!
+  buyPriceUsd: Float!
+  status: AuctionStatus!
+  ongoing: Boolean!
+  hash: String!
+  lastBid: LastBidInput!
+  data: AuctionDataInput!
+}
+
+input UpdateAuctionStatusInput {
+  auctionId: Int!
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus!
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
+}
+
+input DeleteAuctionsInput {
+  id: [Int!]!
 }

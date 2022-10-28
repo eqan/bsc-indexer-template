@@ -10,15 +10,16 @@ import { UpdateActivity } from './dto/update-activity.input';
 import { Activity } from './entities/activity.entity';
 
 @Resolver(() => Activity)
-export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto> {
+export class ActivityResolver extends BaseProvider<
+  Activity | FilterActivityDto
+> {
   constructor(private readonly activityService: ActivityService) {
     super();
   }
 
-
   /**
    * Create Activity
-   * @param createActivityInput 
+   * @param createActivityInput
    * @returns Activity
    */
   @Mutation(() => Activity, { name: 'CreateActivity' })
@@ -34,7 +35,7 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
 
   /**
    * Delete Activity
-   * @param deleteActivityInput 
+   * @param deleteActivityInput
    * @returns void
    */
   @Mutation(() => Activity, { name: 'DeleteActivity' })
@@ -68,7 +69,7 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
 
   /**
    * Get Activity By Id
-   * @param activityId 
+   * @param activityId
    * @returns Activity against specific id
    */
   @Query(() => Activity, { name: 'GetActivityById' })
@@ -80,10 +81,9 @@ export class ActivityResolver extends BaseProvider<Activity | FilterActivityDto>
     }
   }
 
-
   /**
    * Get ALl Activity
-   * @param filterActivityDto 
+   * @param filterActivityDto
    * @returns Searched or all activity
    */
   @Query(() => GetAllActivities, { name: 'GetAllActivities' })
