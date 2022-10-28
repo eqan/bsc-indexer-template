@@ -1,10 +1,11 @@
 import { verifyMessage } from '@ethersproject/wallet';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+@Injectable()
 export class AuthService {
   constructor(
-    private jwtTokenService: JwtService,
+    private readonly jwtTokenService: JwtService,
   ) {}
 
     /**
@@ -52,7 +53,6 @@ export class AuthService {
       signature: signature,
       message: message 
     };
-
     return {
       access_token: this.jwtTokenService.sign(payload, { secret: process.env.JWT_SECRET }),
     };
