@@ -29,7 +29,33 @@ export class MetadataApi {
       const response = await lastValueFrom(this.httpService.get(uri));
       return response?.data;
     } catch (error) {
-      console.log(error);
+      return { message: error?.message };
+    }
+  }
+
+  async returnMeta(meta: any, tokenURI: string) {
+    try {
+      if (typeof meta === 'object')
+        return {
+          name: meta?.name || '',
+          description: meta?.description || '',
+          originalMetaUri: tokenURI,
+          externalUri: meta?.external_url || '',
+          attributes:
+            meta?.attributes?.map((attribute: any) => ({
+              key: attribute?.trait_type || '',
+              value: attribute?.value || '',
+              type: attribute?.display_type || '',
+            })) || [],
+          content: {
+            url: meta?.image || '',
+          },
+        };
+      else throw new BadRequestException('unsupported format');
+    } catch (error) {
+      return {
+        message: error.message,
+      };
     }
   }
 
@@ -57,35 +83,21 @@ export class MetadataApi {
 
       tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
 
+      if (!tokenURI) throw new BadRequestException('Undefined tokenURI');
+
+      //if tokenURI is a https address like ipfs and any other central server
+      if (tokenURI?.match(regex.url)) {
+        meta = await this.fetchRequest(tokenURI, tokenId);
+        return this.returnMeta(meta, tokenURI);
+      }
+
       //if tokenURI is buffered base64 encoded
       if (isBase64Encoded(tokenURI)) {
         meta = base64toJson(tokenURI);
         const url = await uploadImage(meta?.image);
         meta.image = url;
+        return this.returnMeta(meta, tokenURI);
       }
-
-      //else if tokenURI is a https address like ipfs and any other central server
-      else if (tokenURI?.match(regex.url)) {
-        meta = await this.fetchRequest(tokenURI, tokenId);
-      } else throw new BadRequestException('invalid or undefined tokenURI');
-
-      if (typeof meta === 'object')
-        return {
-          name: meta?.name || '',
-          description: meta?.description || '',
-          originalMetaUri: tokenURI,
-          externalUri: meta?.external_url || '',
-          attributes:
-            meta?.attributes?.map((attribute: any) => ({
-              key: attribute?.trait_type || '',
-              value: attribute?.value || '',
-              type: attribute?.display_type || '',
-            })) || [],
-          content: {
-            url: meta?.image || '',
-          },
-        };
-      else throw new BadRequestException('unsupported format');
     } catch (error) {
       return error.code === 'CALL_EXCEPTION'
         ? {

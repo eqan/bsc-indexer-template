@@ -16,6 +16,7 @@ export const transferSingle: EventData = {
   ]),
 };
 
+//erc1155 tarnsfer batch event data
 export const transferBatch: EventData = {
   kind: 'erc1155-transfer-batch',
   topic: '0x4a39dc06d4c0dbc64b70af90fd698a233a518aa5d07e595d983b8c0526c8f7fb',

@@ -15,6 +15,7 @@ export type EventDataKind =
   | 'erc20-approval'
   | 'erc20-transfer';
 
+//type defining the format for filtering event
 export type EventData = {
   kind: EventDataKind;
   addresses?: { [address: string]: boolean };
@@ -23,6 +24,20 @@ export type EventData = {
   abi: Interface;
 };
 
+const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
+  switch (kind) {
+    case 'erc721-transfer':
+      return erc721.transfer;
+    case 'erc721/1155-approval-for-all':
+      return erc721.approvalForAll;
+    case 'erc1155-transfer-batch':
+      return erc1155.transferBatch;
+    case 'erc1155-transfer-single':
+      return erc1155.transferSingle;
+  }
+};
+
+//checks if the event kind exists ; returns its related event data eg; abi,topic,kind for erc721 events
 export const getEventData = (eventDataKinds?: EventDataKind[]) => {
   if (!eventDataKinds) {
     return [
@@ -39,18 +54,5 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
         // Force TS to remove `undefined`
         .map((x) => x!)
     );
-  }
-};
-
-const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
-  switch (kind) {
-    case 'erc721-transfer':
-      return erc721.transfer;
-    case 'erc721/1155-approval-for-all':
-      return erc721.approvalForAll;
-    case 'erc1155-transfer-batch':
-      return erc1155.transferBatch;
-    case 'erc1155-transfer-single':
-      return erc1155.transferSingle;
   }
 };

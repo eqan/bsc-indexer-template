@@ -10,11 +10,15 @@ import { Global, Injectable, Logger } from '@nestjs/common';
 export class RpcProvider {
   constructor(private config: ConfigService) {}
 
+  baseNetworkHttpUrl = this.config.get('baseNetworkHttpUrl');
+  chainId = this.config.get('chainId');
+  baseNetworkWsUrl = this.config.get('baseNetworkWsUrl');
+
   private readonly logger = new Logger('websocket-provider');
   // Use a static provider to avoid redundant `eth_chainId` calls
   baseProvider = new StaticJsonRpcProvider(
-    this.config.get('baseNetworkHttpUrl'),
-    this.config.get('chainId'),
+    this.baseNetworkHttpUrl,
+    this.chainId,
   );
 
   // https://github.com/ethers-io/ethers.js/issues/1053#issuecomment-808736570
@@ -23,9 +27,7 @@ export class RpcProvider {
   safeWebSocketSubscription = (
     callback: (provider: WebSocketProvider) => Promise<void>,
   ) => {
-    const webSocketProvider = new WebSocketProvider(
-      this.config.get('baseNetworkWsUrl'),
-    );
+    const webSocketProvider = new WebSocketProvider(this.baseNetworkWsUrl);
     webSocketProvider.on('error', (error) => {
       this.logger.error(`WebSocket subscription failed: ${error}`);
     });
