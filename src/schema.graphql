@@ -101,6 +101,86 @@ type GetAllCollections {
   total: Int!
 }
 
+type Payouts {
+  account: String!
+  value: Float!
+}
+
+type AuctionData {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+"""Data type of Auction i.e. RARIBLE_AUCTION_V1_DATA_V1"""
+enum AuctionDataType {
+  RARIBLE_AUCTION_V1_DATA_V1
+}
+
+type LastBidData {
+  dataType: AuctionDataType!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+type LastBid {
+  buyer: String!
+  amount: Float!
+  date: DateTime!
+  status: AuctionStatus!
+  type: AuctionType!
+  data: LastBidData!
+}
+
+"""Status of Auctions i.e. Active,InActive,Pending"""
+enum AuctionStatus {
+  ACTIVE
+  IN_ACTIVE
+  PENDING
+}
+
+"""Type of the auction i.e. BEP20,BEP721,BEP1155"""
+enum AuctionType {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type SellType {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+type Sell {
+  type: SellType!
+  value: Float!
+}
+
+type Auction {
+  auctionId: Float!
+  contract: String!
+  seller: String!
+  type: AuctionType!
+  sell: Sell!
+  buy: SellType!
+  endTime: DateTime!
+  minimalStep: Float!
+  minimalPrice: Float!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  buyPrice: Float!
+  buyPriceUsd: Float!
+  status: AuctionStatus!
+  ongoing: Boolean!
+  hash: String!
+  lastBid: LastBid!
+  data: AuctionData!
+}
+
 type DataOriginFee {
   account: String!
   value: Int!
@@ -158,6 +238,11 @@ type GetAllOrders {
   total: Int!
 }
 
+type GetAllAuctions {
+  items: [Auction!]!
+  total: Int!
+}
+
 input BlockChainInfoInput {
   transactionHash: String!
   blockHash: String!
@@ -196,6 +281,46 @@ input MetaDataInput {
   content: MetadataContentInput!
 }
 
+input PayoutsInput {
+  account: String!
+  value: Float!
+}
+
+input AuctionDataInput {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidDataInput {
+  dataType: AuctionDataType!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidInput {
+  buyer: String!
+  amount: Float!
+  date: DateTime!
+  status: AuctionStatus!
+  type: AuctionType!
+  data: LastBidDataInput!
+}
+
+input SellTypeInput {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+input SellInput {
+  type: SellTypeInput!
+  value: Float!
+}
+
 input DataOrginFeeInput {
   account: String!
   value: Int!
@@ -226,6 +351,8 @@ type Query {
   GetAllActivities(GetAllActivities: FilterActivityDto!): GetAllActivities!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+  GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
+  GetAuctionById(GetAuctionById: Float!): Auction!
 }
 
 input FilterDto {
@@ -256,6 +383,13 @@ input FilterOrderDto {
   taker: String
 }
 
+input FilterAuctionDto {
+  page: Float
+  limit: Float
+  auctionId: Float
+  contract: String
+}
+
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
@@ -269,6 +403,9 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
+  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionInput!): Auction!
+  DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
 }
 
 input CreateCollectionsInput {
@@ -413,4 +550,50 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: String!
+}
+
+input CreateAuctionInput {
+  auctionId: Float!
+  contract: String!
+  seller: String!
+  type: AuctionType!
+  sell: SellInput!
+  buy: SellTypeInput!
+  endTime: DateTime!
+  minimalStep: Float!
+  minimalPrice: Float!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  buyPrice: Float!
+  buyPriceUsd: Float!
+  status: AuctionStatus!
+  ongoing: Boolean!
+  hash: String!
+  lastBid: LastBidInput!
+  data: AuctionDataInput!
+}
+
+input UpdateAuctionInput {
+  auctionId: Int!
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus!
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
+}
+
+input DeleteAuctionsInput {
+  id: [Int!]!
 }
