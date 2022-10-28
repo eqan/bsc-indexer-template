@@ -12,6 +12,7 @@ import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
 import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
+import { AuctionsModule } from './auctions/auctions.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
     OrdersModule,
     RpcProviderModule,
     MetadataApiModule,
+    AuctionsModule,
   ],
 })
 export class AppModule {}
