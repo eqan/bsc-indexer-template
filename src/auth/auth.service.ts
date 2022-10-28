@@ -1,33 +1,60 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { verifyMessage } from '@ethersproject/wallet';
+import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Users } from 'src/users/entities/users.entity';
-import { UsersService } from 'src/users/users.service';
 
-@Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
     private jwtTokenService: JwtService,
   ) {}
 
+    /**
+     * Verify wallet and return signer address
+     * @params message, signature and address
+     * @return signer address
+     */
+    async verifyWalletAndReturnSignerAddress(message: string,signature: string, address: string)
+    {
+      try {
+        const signerAddr = await verifyMessage(message, signature);
+        if (signerAddr != address) {
+            return false;
+        }
+        return signerAddr;
+      } catch (error)
+      {
+        throw new BadRequestException(error);
+      }
+    }
+  
+
+    /**
+     * Validate user and return signer address or null value
+     * @params message, signature and address
+     * @return signer address
+     */
   async validateUser(message: string, signature: string, address: string): Promise<any>   {
-      const signerAddress = await this.usersService.verifyWalletAndReturnSignerAddress(message, signature, address);
-      if(signerAddress)
+      const signerAddress = await this.verifyWalletAndReturnSignerAddress(message, signature, address);
+      if(signerAddress) 
       {
         return signerAddress;
       }
       return null;
   }
 
-  async generateUserCredentials(user: Users) {
+    /**
+     * Generate User Access Token
+     * @params message, signature and address
+     * @return access token
+     */
+  async generateUserAccessToken(message: string, signature: string, address: string) {
     const payload = {
-      address: user.userAddress,
-      name: user.realName,
+      address: address,
+      signature: signature,
+      message: message 
     };
 
     return {
-      access_token: this.jwtTokenService.sign(payload),
+      access_token: this.jwtTokenService.sign(payload, { secret: process.env.JWT_SECRET }),
     };
   }
 }

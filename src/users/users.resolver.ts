@@ -14,16 +14,18 @@ import { UsersService } from './users.service';
 
 @Resolver()
 export class UsersResolver extends BaseProvider<Users> {
-    constructor(private readonly userService: UsersService) {
+    constructor(
+      private readonly userService: UsersService,
+      ) {
         super();
     }
   /**
    * Login User
    * @param LoggedUserInput: message, signature, address
    * @returns access token
-   */
-    @Mutation(() => LoggedUserOutput)
-    loginUser(@Args('loginUserInput') loginUserInput: LoginUserInput) {
+   */LoggdUerOutput
+    @Query(() => LoggedUserOutput, {name: "LoginUser"})
+    loginUser(@Args('LoginUserInput') loginUserInput: LoginUserInput): Promise<{access_token: String}> {
       return this.userService.loginUser(loginUserInput);
     }
 
@@ -50,7 +52,7 @@ export class UsersResolver extends BaseProvider<Users> {
    */
   @Mutation(() => Users, { name: 'DeleteUser' })
   async delete(
-    @Args('Delete') deleteUserInput: DeleteUsersInput,
+    @Args('DeleteUserInput') deleteUserInput: DeleteUsersInput,
   ): Promise<void> {
     try {
       return await this.userService.deleteUsers(deleteUserInput);
@@ -63,9 +65,9 @@ export class UsersResolver extends BaseProvider<Users> {
    * @returns Updated User
    */
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Users, { name: 'UpdateUserStatus' })
+  @Mutation(() => Users, { name: 'UpdateUser' })
   async edit(
-    @Args('UpdateUserStatus')
+    @Args('UpdateUserInput')
     updateUserStatus: UpdateUsersInput,
   ): Promise<Users> {
     try {
@@ -80,7 +82,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param userAddress
    * @returns User
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Query(() => Users, { name: 'GetUserDataByUserAddress' })
   async show(@Args('userAddress') userAddress: string): Promise<Users> {
     try {
@@ -95,7 +97,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param filterUserDto
    * @returns Searched or all users
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Query(() => GetAllUsers, { name: 'GetAllUsers' })
   async index(
     @Args('filterUserDto') filterUserDto: FilterUserDto,

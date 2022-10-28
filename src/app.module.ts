@@ -9,9 +9,6 @@ import { CollectionsModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
-import { UsersService } from './users/users.service';
-import { AuthService } from './auth/auth.service';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -40,9 +37,8 @@ import { UsersModule } from './users/users.module';
     TokensModule,
     ActivityModule,
     OrdersModule,
-    AuthModule,
-    UsersModule,
+    UsersModule
+    // AuthModule,
   ],
-  providers: [UsersService, AuthService],
 })
 export class AppModule {}

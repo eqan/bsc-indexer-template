@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
 import {
-  BaseEntity, Column, Entity, PrimaryGeneratedColumn
+  BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique
 } from 'typeorm';
 import { UserTypes } from './enum/user.types.enums';
 
@@ -10,6 +10,7 @@ import { UserTypes } from './enum/user.types.enums';
  */
 @ObjectType()
 @Entity('Users')
+@Unique(["userAddress", "userSignature", "userName"])
 export class Users extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('increment')

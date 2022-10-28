@@ -7,6 +7,7 @@ import { Activity } from 'src/activity/entities/activity.entity';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Orders } from 'src/orders/entities/orders.entity';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { Users } from 'src/users/entities/users.entity';
 
 export default class TypeOrmConfig {
   static getOrmConfig(config: ConfigService): TypeOrmModuleOptions {
@@ -17,7 +18,7 @@ export default class TypeOrmConfig {
       username: config.get('DB_USER'),
       password: config.get('POSTGRES_PASSWORD'),
       database: config.get('POSTGRES_DB'),
-      entities: [Tokens, Collections, Orders, Activity],
+      entities: [Tokens, Collections, Orders, Activity, Users],
       synchronize: true,
     };
   }

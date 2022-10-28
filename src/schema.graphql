@@ -153,9 +153,31 @@ type Orders {
   taker: String!
 }
 
+type Users {
+  userId: String!
+  userAddress: String!
+  userSignature: String!
+  realName: String!
+  userName: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
+  type: String!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
+}
+
+type GetAllUsers {
+  items: [Users!]!
+  total: Int!
+}
+
+type LoggedUserOutput {
+  """Generated access_token of the user"""
+  access_token: String!
 }
 
 input BlockChainInfoInput {
@@ -226,6 +248,9 @@ type Query {
   GetAllActivities(GetAllActivities: FilterActivityDto!): GetAllActivities!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
+  GetUserDataByUserAddress(userAddress: String!): Users!
+  GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
 }
 
 input FilterDto {
@@ -256,6 +281,19 @@ input FilterOrderDto {
   taker: String
 }
 
+input LoginUserInput {
+  userAddress: String!
+  userSignature: String!
+  userMessage: String!
+}
+
+input FilterUserDto {
+  page: Float
+  limit: Float
+  userId: String
+  userAddress: String
+}
+
 type Mutation {
   CreateCollection(createCollection: CreateCollectionsInput!): Collections!
   UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
@@ -269,6 +307,9 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  CreateUser(CreateUserInput: CreateUserInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
+  UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
 }
 
 input CreateCollectionsInput {
@@ -413,4 +454,30 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: String!
+}
+
+input CreateUserInput {
+  realName: String!
+  userSignature: String!
+  userAddress: String!
+  userMessage: String!
+  type: UserTypeEnum!
+}
+
+enum UserTypeEnum {
+  ADMIN
+  REGULARUSER
+}
+
+input DeleteUsersInput {
+  id: [String!]!
+}
+
+input UpdateUsersInput {
+  userAddress: String!
+  userName: String!
+  realName: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
 }
