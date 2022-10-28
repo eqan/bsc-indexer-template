@@ -1,7 +1,9 @@
 //environment variables
-describe('All Enviornment Variables Exist', () => {
+import * as dotenv from 'dotenv';
+
+describe('All Environment Variables Exist', () => {
+  dotenv.config();
   test.each([
-    'POSTGRES_USER_NAME',
     'POSTGRES_PASSWORD',
     'POSTGRES_DB',
     'POSTGRES_HOST',
@@ -14,7 +16,7 @@ describe('All Enviornment Variables Exist', () => {
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_SECRET',
     'CLOUDINARY_API_KEY',
-  ])('%s exists in enviroment', (variable) => {
+  ])('%s exists in environment', (variable) => {
     expect(process.env[variable]).not.toBeFalsy();
   });
 });

@@ -30,77 +30,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type GetAllActivities {
-  items: [Activity!]!
-  total: Int!
-}
-
-type Collections {
-  collectionId: String!
-  name: String!
-  slug: String!
-  bannerImageUrl: String!
-  externalUrl: String!
-  imageUrl: String!
-  twitterUserName: String!
-  discordUrl: String!
-  description: String!
-  tokens: [Tokens!]
-}
-
-type MetadataAttribute {
-  key: String!
-  value: String!
-  type: String!
-  format: String!
-}
-
-type MetadataContent {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
-}
-
-type MetaData {
-  name: String!
-  description: String!
-  tags: String!
-  genres: String!
-  originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: MetadataAttribute!
-  content: MetadataContent!
-}
-
-type Tokens {
-  tokenId: String!
-  collectionId: String
-  contract: String!
-  mintedAt: DateTime!
-  lastUpdatedAt: DateTime!
-  deleted: Boolean!
-  sellers: Float!
-  creator: MetaData!
-  meta: MetaData!
-}
-
-type GetAllTokens {
-  items: [Tokens!]!
-  total: Float!
-}
-
-type GetAllCollections {
-  items: [Collections!]!
-  total: Int!
-}
-
 type Payouts {
   account: String!
   value: Float!
@@ -181,6 +110,62 @@ type Auction {
   data: AuctionData!
 }
 
+type MetadataAttribute {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+type MetadataContent {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+type MetaData {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: MetadataAttribute!
+  content: MetadataContent!
+}
+
+type Tokens {
+  tokenId: String!
+  collectionId: String
+  contract: String!
+  mintedAt: DateTime!
+  lastUpdatedAt: DateTime!
+  deleted: Boolean!
+  sellers: Float!
+  creator: MetaData!
+  meta: MetaData!
+}
+
+type Collections {
+  collectionId: String!
+  name: String!
+  slug: String!
+  bannerImageUrl: String!
+  externalUrl: String!
+  imageUrl: String!
+  twitterUserName: String!
+  discordUrl: String!
+  description: String!
+  tokens: [Tokens!]
+}
+
 type DataOriginFee {
   account: String!
   value: Int!
@@ -233,6 +218,21 @@ type Orders {
   taker: String!
 }
 
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
@@ -248,37 +248,6 @@ input BlockChainInfoInput {
   blockHash: String!
   blockNumber: Int!
   logIndex: Int!
-}
-
-input AttributeInput {
-  key: String!
-  value: String!
-  type: String!
-  format: String!
-}
-
-input MetadataContentInput {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
-}
-
-input MetaDataInput {
-  name: String!
-  description: String!
-  tags: String!
-  genres: String!
-  originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: AttributeInput!
-  content: MetadataContentInput!
 }
 
 input PayoutsInput {
@@ -319,6 +288,37 @@ input SellTypeInput {
 input SellInput {
   type: SellTypeInput!
   value: Float!
+}
+
+input AttributeInput {
+  key: String!
+  value: String!
+  type: String!
+  format: String!
+}
+
+input MetadataContentInput {
+  fileName: String!
+  url: String!
+  representation: String!
+  mimeType: String!
+  size: Float!
+  avaiable: Boolean!
+  type: String!
+  width: Float!
+  height: Float!
+}
+
+input MetaDataInput {
+  name: String!
+  description: String!
+  tags: String!
+  genres: String!
+  originalMetaUri: String!
+  externalUri: String!
+  rightsUri: String!
+  attribute: AttributeInput!
+  content: MetadataContentInput!
 }
 
 input DataOrginFeeInput {
@@ -404,7 +404,7 @@ type Mutation {
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
-  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionInput!): Auction!
+  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
 }
 
@@ -573,7 +573,7 @@ input CreateAuctionInput {
   data: AuctionDataInput!
 }
 
-input UpdateAuctionInput {
+input UpdateAuctionStatusInput {
   auctionId: Int!
   contract: String
   seller: String

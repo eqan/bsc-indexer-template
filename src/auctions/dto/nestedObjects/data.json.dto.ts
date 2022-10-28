@@ -1,11 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  ValidateNested,
-} from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
 import { AuctionDataType } from 'src/auctions/entities/enums';
 import { Payouts } from './payouts.json.dto';
 
