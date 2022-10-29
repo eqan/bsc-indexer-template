@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { CollectionType } from './enum/collection.type.enum';
 
 @ObjectType()
 @Entity('Collections')
@@ -17,50 +18,65 @@ export class Collections {
   name: string;
 
   @Field()
-  @Column('text')
-  slug: string;
+  @Column({
+    type: 'enum',
+    enum: CollectionType,
+    enumName: 'CollectionType',
+    default: CollectionType.BEP721,
+  })
+  type: CollectionType;
+
+  // @Field()
+  // @Column('text')
+  // features: CollectionType;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  bannerImageUrl?: string;
+  parent?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  externalUrl?: string;
+  symbol?: string;
+
+  // @Field()
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // minters?: string;
 
   @Field()
   @Column({
     type: 'text',
     nullable: true,
   })
-  imageUrl?: string;
+  owner?: string;
 
   @Field()
   @Column({
-    type: 'text',
+    type: 'jsonb',
     nullable: true,
   })
-  twitterUserName?: string;
-
-  @Field()
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  discordUrl?: string;
-
-  @Field()
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  description?: string;
+  meta?: {
+    name?: string;
+    description?: string;
+    // tags?: string
+    // genres?: string
+    content: {
+      type?: string;
+      url?: string;
+      representation?: string;
+    };
+    externalLink?: string;
+    sellerFeeBasisPoints?: number;
+    feeRecipient?: string;
+  };
 
   @OneToMany(() => Tokens, (token) => token.tokenId)
   tokens: Tokens[];
