@@ -7,4 +7,9 @@ export class FilterAuctionDto extends PaginationParam {
 
   @Field({ nullable: true, defaultValue: undefined })
   contract?: string;
+
+  @Field({ nullable: true, defaultValue: undefined })
+  seller?: string;
+
+
 }

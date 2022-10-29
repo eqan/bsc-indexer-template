@@ -388,6 +388,7 @@ input FilterAuctionDto {
   limit: Float
   auctionId: Float
   contract: String
+  seller: String
 }
 
 type Mutation {
@@ -404,7 +405,7 @@ type Mutation {
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
-  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionInput!): Auction!
+  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
 }
 
@@ -573,7 +574,7 @@ input CreateAuctionInput {
   data: AuctionDataInput!
 }
 
-input UpdateAuctionInput {
+input UpdateAuctionStatusInput {
   auctionId: Int!
   contract: String
   seller: String
