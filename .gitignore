@@ -29,4 +29,5 @@ src/schema.gql
 /coverage
 /.nyc_output
 
-
+#npm config
+.npmrc

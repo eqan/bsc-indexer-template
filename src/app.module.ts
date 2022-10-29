@@ -1,15 +1,18 @@
+import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { ActivityModule } from './activity/activity.module';
-import { CollectionsModule } from './collections/collections.module';
-import { typeOrmConfigAsync } from './config/typeorm.config';
-import { OrdersModule } from './orders/orders.module';
-import { TokensModule } from './tokens/tokens.module';
-import { AuctionsModule } from './auctions/auctions.module';
+import { typeOrmConfigAsync } from 'src/config/typeorm.config';
+import { CollectionsModule } from 'src/collections/collections.module';
+import { TokensModule } from 'src/tokens/tokens.module';
+import { ActivityModule } from 'src/activity/activity.module';
+import { OrdersModule } from 'src/orders/orders.module';
+import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
+import { AuctionsModule } from 'src/auctions/auctions.module';
 
 @Module({
   imports: [
@@ -30,13 +33,20 @@ import { AuctionsModule } from './auctions/auctions.module';
      * TypeORM Configurations
      */
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
+    /**
+     * Config Module
+     * Custom Configurations Files
+     */
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [BlockchainConfig],
     }),
     CollectionsModule,
     TokensModule,
     ActivityModule,
     OrdersModule,
+    RpcProviderModule,
+    MetadataApiModule,
     AuctionsModule,
   ],
 })
