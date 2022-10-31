@@ -1,12 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Collection } from '@ts-morph/common/lib/typescript';
+import { Type } from 'class-transformer';
 import {
+  IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
   IsString,
-  IsUrl,
+  ValidateNested,
 } from 'class-validator';
+import { CollectionType } from '../entities/enum/collection.type.enum';
+import { CollectionMeta } from './netsedObjects/collections.meta.dto';
 
-@InputType()
+@InputType('CreateCollectionsInput')
 export class CreateCollectionsInput {
   @IsNotEmpty({ message: 'Id cannot be null' })
   @IsEthereumAddress({ message: 'Collection ID Must be a Ethereum Address' })
@@ -17,44 +22,30 @@ export class CreateCollectionsInput {
   @Field()
   name: string;
 
-  @IsString({ message: 'Slug must be String' })
-  @Field()
-  slug: string;
+  @IsEnum(CollectionType)
+  @Field(() => CollectionType)
+  type: CollectionType;
 
   @IsString()
-  @IsUrl({ message: 'Banner Image URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  bannerImageUrl: string;
+  parent?: string;
 
   @IsString()
-  @IsUrl({ message: 'External URL must be a valid URL' })
   @Field({
     nullable: true,
   })
-  externalUrl: string;
+  symbol?: string;
 
-  @IsUrl({ message: 'Image URL must be a valid URL' })
+  @IsEthereumAddress()
   @Field({
     nullable: true,
   })
-  imageUrl: string;
+  owner?: string;
 
-  @IsString({ message: 'Twitter User Name must be String' })
-  @Field({
-    nullable: true,
-  })
-  twitterUserName: string;
-
-  @IsUrl({ message: 'Discord URL must be a valid URL' })
-  @Field({
-    nullable: true,
-  })
-  discordUrl: string;
-
-  @Field({
-    nullable: true,
-  })
-  description: string;
+  @ValidateNested()
+  @Type(() => CollectionMeta)
+  @Field(() => CollectionMeta, { nullable: true })
+  meta?: CollectionMeta;
 }
