@@ -13,6 +13,8 @@ import { OrdersModule } from 'src/orders/orders.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.module';
 
 @Module({
   imports: [
@@ -41,6 +43,12 @@ import { AuctionsModule } from 'src/auctions/auctions.module';
       isGlobal: true,
       load: [BlockchainConfig],
     }),
+    /**
+     * ScheduleModule
+     * Cron Job Scheduling Module
+     */
+    ScheduleModule.forRoot(),
+    RealtimeSyncModule,
     CollectionsModule,
     TokensModule,
     ActivityModule,
@@ -48,6 +56,7 @@ import { AuctionsModule } from 'src/auctions/auctions.module';
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,
+    RealtimeSyncModule,
   ],
 })
 export class AppModule {}

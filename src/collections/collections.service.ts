@@ -13,6 +13,7 @@ import { FilterDto } from './dto/filter.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { CollectionType } from './entities/enum/collection.type.enum';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -21,11 +22,15 @@ export class CollectionsService {
     private rpcProvider: RpcProvider,
     private metadataApi: MetadataApi,
   ) {
-    // 22512276;
-    // 22512293;
     //sample function to use JsonRpcProvider and getting blockNumber
     const getBlock = async () => {
       try {
+        // const res = await this.metadataApi.fetchRequest(
+        //   'https://graphigo.prd.galaxy.eco/metadata/0xb034d6ba0b6593fa5107c6a55042b67746d44605/519709.json',
+        //   '519709',
+        // );
+        // console.log(res);
+
         const blockNumber =
           await this.rpcProvider.baseProvider.getBlockNumber();
         console.log(blockNumber, 'logged out blockNumber');
@@ -34,7 +39,6 @@ export class CollectionsService {
           toBlock: blockNumber,
         };
         const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-
         for (const log of logs) {
           const availableEventData = getEventData(['erc721-transfer']);
           const eventData = availableEventData.find(
@@ -43,13 +47,18 @@ export class CollectionsService {
               log.topics.length === numTopics &&
               (addresses ? addresses[log.address.toLowerCase()] : true),
           );
-
           if (eventData) {
-            const { args } = eventData.abi.parseLog(log);
+            // const { args } = eventData.abi.parseLog(log);
             const token = log?.address;
-            const tokenId = args?.tokenId.toString();
-            const meta = await metadataApi.getTokenMetadata({ token, tokenId });
-            console.log(meta, 'metadata');
+            const response = await this.metadataApi.getCollectionMetadata(
+              token,
+              CollectionType.BEP721,
+            );
+            console.log(response);
+
+            // const tokenId = args?.tokenId.toString();
+            // const meta = await metadataApi.getTokenMetadata({ token, tokenId });
+            // console.log(meta, 'metadata');
           }
         }
       } catch (e) {
@@ -57,10 +66,6 @@ export class CollectionsService {
       }
     };
     getBlock();
-    // this.metadataApi.fetchRequest(
-    //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
-    //   '39',
-    // );
   }
 
   /**

@@ -3,22 +3,30 @@ import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Global, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
+import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { uploadImage } from '../../config/cloudinary.config';
+import { AddressZero } from '@ethersproject/constants';
 import {
   base64toJson,
   ipfsDomain,
   isBase64Encoded,
   regex,
 } from './../../common/utils.common';
+import { CollectionsService } from 'src/collections/collections.service';
 
 @Injectable()
-@Global()
 export class MetadataApi {
   constructor(
+    private readonly collectionsService: CollectionsService,
     private rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    this.collectionsService
+      .findAllCollections({})
+      .then(console.log)
+      .catch(console.log);
+  }
 
   async fetchRequest(uri: string, id: string) {
     try {
@@ -29,11 +37,11 @@ export class MetadataApi {
       const response = await lastValueFrom(this.httpService.get(uri));
       return response?.data;
     } catch (error) {
-      return { message: error?.message };
+      throw new BadRequestException(error.message);
     }
   }
 
-  async returnMeta(meta: any, tokenURI: string) {
+  returnMeta(meta: any, tokenURI: string) {
     try {
       if (typeof meta === 'object')
         return {
@@ -67,6 +75,7 @@ export class MetadataApi {
     tokenId: string;
   }) {
     let tokenURI = '';
+
     try {
       const iface = new Interface([
         'function tokenURI(uint256 _tokenId) external view returns (string)',
@@ -94,18 +103,69 @@ export class MetadataApi {
       //if tokenURI is buffered base64 encoded
       if (isBase64Encoded(tokenURI)) {
         meta = base64toJson(tokenURI);
-        const url = await uploadImage(meta?.image);
-        meta.image = url;
+        if (meta?.image.match(regex.base64)) {
+          const url = await uploadImage(meta?.image);
+          meta.image = url;
+        }
         return this.returnMeta(meta, tokenURI);
       }
     } catch (error) {
-      return error.code === 'CALL_EXCEPTION'
+      return error.code === 'CALL_EXCEPTION' &&
+        error.reason === 'ERC721Metadata: URI query for nonexistent token'
         ? {
             message: 'Token does not exist',
           }
         : {
             message: `invalid or undefine uri ${tokenURI}`,
           };
+    }
+  }
+  public async getCollectionMetadata(
+    collection: string,
+    collectionType: CollectionType,
+  ) {
+    const iface = new Interface([
+      'function name() view returns (string)',
+      'function symbol() view returns (string)',
+      'function owner() public view returns (address)',
+    ]);
+    const collectionData = {
+      name: '',
+      symbol: '',
+      owner: AddressZero,
+      collection,
+      collectionType,
+      meta: {
+        name: '',
+        description: '',
+        tags: '',
+        genres: '',
+        content: {
+          type: '',
+          url: '',
+          representation: '',
+        },
+        externalLink: '',
+        sellerFeeBasisPoints: 0,
+        feeRecipient: '',
+      },
+    };
+    const contract = new Contract(
+      collection,
+      iface,
+      this.rpcProvider.baseProvider,
+    );
+    try {
+      const name = await contract.name();
+      collectionData.name = name;
+      const symbol = await contract.symbol();
+      collectionData.symbol = symbol;
+      const owner = await contract.owner();
+      collectionData.owner = owner;
+    } catch (error) {
+      console.log('error occured');
+    } finally {
+      return collectionData;
     }
   }
 }
