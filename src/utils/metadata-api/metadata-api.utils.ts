@@ -16,6 +16,7 @@ import {
 import { CollectionsService } from 'src/collections/collections.service';
 
 @Injectable()
+@Global()
 export class MetadataApi {
   constructor(
     private readonly collectionsService: CollectionsService,

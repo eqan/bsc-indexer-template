@@ -16,9 +16,8 @@ export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>,
-    private rpcProvider: RpcProvider,
-  ) // private metadataApi: MetadataApi,
-  {
+    private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
+  ) {
     //sample function to use JsonRpcProvider and getting blockNumber
     // const getBlock = async () => {
     //   try {
