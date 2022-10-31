@@ -9,7 +9,6 @@ import { UsersService } from './users.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Users]),
-    // AuthModule
     forwardRef(() => AuthModule)
   ],
   providers: [UsersResolver, UsersService, AuthService],
