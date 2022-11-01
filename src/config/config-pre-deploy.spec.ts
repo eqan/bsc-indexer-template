@@ -4,6 +4,8 @@ import * as dotenv from 'dotenv';
 describe('All Environment Variables Exist', () => {
   dotenv.config();
   test.each([
+    'REDIS_PORT',
+    'REDIS_HOST',
     'POSTGRES_PASSWORD',
     'POSTGRES_DB',
     'POSTGRES_HOST',

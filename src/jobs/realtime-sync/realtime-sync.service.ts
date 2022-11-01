@@ -16,16 +16,21 @@ export class RealtimeSyncService {
   private readonly logger = new Logger(RealtimeSyncService.name);
 
   async syncBlocks() {
-    await this.realtimeSyncEvents.add('realtime-sync-job', {
-      delay: 60000,
-      removeOnComplete: true,
-      removeOnFail: true,
-      timeout: 60000,
-    });
+    // const jobs = await this.realtimeSyncEvents.getJob()
+    const job = await this.realtimeSyncEvents.add(
+      { data: 1 },
+      {
+        delay: 3000,
+        removeOnComplete: true,
+        removeOnFail: true,
+        timeout: 60000,
+      },
+    );
+    console.log(job, 'job created ');
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
-  // @Cron('*/10 * * * * *')
+  @Cron('*/10 * * * * *')
   async handleRealtimeSync() {
     try {
       await this.syncBlocks();
