@@ -15,6 +15,8 @@ import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.module';
+import { BullModule } from '@nestjs/bull';
+import { BullConfig, queues } from './config/bull.config';
 
 @Module({
   imports: [
@@ -48,6 +50,14 @@ import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.module';
      * Cron Job Scheduling Module
      */
     ScheduleModule.forRoot(),
+    /**
+     * BullModule
+     * Bull Configuration
+     */
+    BullModule.forRootAsync({
+      useClass: BullConfig,
+    }),
+    // BullModule.registerQueue(...queues),
     RealtimeSyncModule,
     CollectionsModule,
     TokensModule,

@@ -6,7 +6,7 @@ const config = () => ({
 });
 
 cloudinary.config(config());
-export const uploadImage = async (image) => {
+export const uploadImage = async (image: string) => {
   const result = await cloudinary.uploader.upload(image);
   return result?.url || '';
 };

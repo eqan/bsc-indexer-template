@@ -1,7 +1,12 @@
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Global, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -16,9 +21,9 @@ import {
 import { CollectionsService } from 'src/collections/collections.service';
 
 @Injectable()
-@Global()
 export class MetadataApi {
   constructor(
+    @Inject(forwardRef(() => CollectionsService))
     private readonly collectionsService: CollectionsService,
     private rpcProvider: RpcProvider,
     private readonly httpService: HttpService,

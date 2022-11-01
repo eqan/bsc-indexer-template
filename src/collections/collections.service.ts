@@ -1,64 +1,71 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { getEventData } from 'src/events/data';
+import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto } from './dto/filter.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { CollectionType } from './entities/enum/collection.type.enum';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
+    @Inject(forwardRef(() => MetadataApi))
     private collectionsRepo: Repository<Collections>,
-    private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
+    private rpcProvider: RpcProvider,
+    private metadataApi: MetadataApi,
   ) {
-    //sample function to use JsonRpcProvider and getting blockNumber
-    // const getBlock = async () => {
-    //   try {
-    //     // const res = await this.metadataApi.fetchRequest(
-    //     //   'https://graphigo.prd.galaxy.eco/metadata/0xb034d6ba0b6593fa5107c6a55042b67746d44605/519709.json',
-    //     //   '519709',
-    //     // );
-    //     // console.log(res);
-    //     const blockNumber =
-    //       await this.rpcProvider.baseProvider.getBlockNumber();
-    //     console.log(blockNumber, 'logged out blockNumber');
-    //     const filter: { fromBlock: number; toBlock: number } = {
-    //       fromBlock: blockNumber,
-    //       toBlock: blockNumber,
-    //     };
-    //     const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-    //     for (const log of logs) {
-    //       const availableEventData = getEventData(['erc721-transfer']);
-    //       const eventData = availableEventData.find(
-    //         ({ addresses, topic, numTopics }) =>
-    //           log.topics[0] === topic &&
-    //           log.topics.length === numTopics &&
-    //           (addresses ? addresses[log.address.toLowerCase()] : true),
-    //       );
-    //       if (eventData) {
-    //         // const { args } = eventData.abi.parseLog(log);
-    //         const token = log?.address;
-    //         const response = await this.metadataApi.getCollectionMetadata(
-    //           token,
-    //           CollectionType.BEP721,
-    //         );
-    //         console.log(response);
-    //         // const tokenId = args?.tokenId.toString();
-    //         // const meta = await metadataApi.getTokenMetadata({ token, tokenId });
-    //         // console.log(meta, 'metadata');
-    //       }
-    //     }
-    //   } catch (e) {
-    //     console.log(e, 'error occured');
-    //   }
-    // };
+    // sample function to use JsonRpcProvider and getting blockNumber
+    const getBlock = async () => {
+      try {
+        // const res = await this.metadataApi.fetchRequest(
+        //   'https://graphigo.prd.galaxy.eco/metadata/0xb034d6ba0b6593fa5107c6a55042b67746d44605/519709.json',
+        //   '519709',
+        // );
+        // console.log(res);
+        const blockNumber =
+          await this.rpcProvider.baseProvider.getBlockNumber();
+        console.log(blockNumber, 'logged out blockNumber');
+        const filter: { fromBlock: number; toBlock: number } = {
+          fromBlock: blockNumber,
+          toBlock: blockNumber,
+        };
+        const logs = await this.rpcProvider.baseProvider.getLogs(filter);
+        for (const log of logs) {
+          const availableEventData = getEventData(['erc721-transfer']);
+          const eventData = availableEventData.find(
+            ({ addresses, topic, numTopics }) =>
+              log.topics[0] === topic &&
+              log.topics.length === numTopics &&
+              (addresses ? addresses[log.address.toLowerCase()] : true),
+          );
+          if (eventData) {
+            // const { args } = eventData.abi.parseLog(log);
+            const token = log?.address;
+            const response = await this.metadataApi.getCollectionMetadata(
+              token,
+              CollectionType.BEP721,
+            );
+            console.log(response);
+            // const tokenId = args?.tokenId.toString();
+            // const meta = await metadataApi.getTokenMetadata({ token, tokenId });
+            // console.log(meta, 'metadata');
+          }
+        }
+      } catch (e) {
+        console.log(e, 'error occured');
+      }
+    };
     // getBlock();
   }
 

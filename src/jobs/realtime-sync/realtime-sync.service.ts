@@ -1,6 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { Queue } from 'bull';
 
 /**
  * RealtimeSync Job
@@ -8,29 +10,48 @@ import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
  */
 @Injectable()
 export class RealtimeSyncService {
-  constructor(private rpcProvider: RpcProvider) {
-    const handleRealtimeSync = () => {
-      // Keep up with the head of the blockchain by polling for new blocks every once in a while
-      this.rpcProvider.safeWebSocketSubscription(async (provider) => {
-        provider.on('block', async (block) => {
-          this.logger.log('events-sync-catchup', `Detected new block ${block}`);
-
-          try {
-            //   await realtimeEventsSync.addToQueue();
-            console.log('Hello from RealTime Sync');
-          } catch (error) {
-            this.logger.error(
-              'events-sync-catchup',
-              `Failed to catch up events: ${error}`,
-            );
-          }
-        });
-      });
-      this.logger.log('Called when the current second is 45');
-    };
-    handleRealtimeSync();
-  }
+  constructor(
+    @InjectQueue('realtime-sync-events') private realtimeSyncEvents: Queue,
+  ) {}
   private readonly logger = new Logger(RealtimeSyncService.name);
 
-  // @Cron('10 * * * * *')
+  async syncBlocks() {
+    await this.realtimeSyncEvents.add('realtime-sync-job', {
+      delay: 60000,
+      removeOnComplete: true,
+      removeOnFail: true,
+      timeout: 60000,
+    });
+  }
+
+  // Keep up with the head of the blockchain by polling for new blocks every once in a while
+  // @Cron('*/10 * * * * *')
+  async handleRealtimeSync() {
+    try {
+      await this.syncBlocks();
+      this.logger.log('hello from realtime sync');
+    } catch (error) {
+      this.logger.error(
+        'events-sync-catchup',
+        `Failed to catch up events: ${error}`,
+      );
+    }
+  }
 }
+
+// websocket subscription to listening for onchain block events
+// this.rpcProvider.safeWebSocketSubscription(async (provider) => {
+//   provider.on('block', async (block) => {
+//     this.logger.log('events-sync-catchup', `Detected new block ${block}`);
+//     try {
+//       //   await realtimeEventsSync.addToQueue();
+//       console.log('Hello from RealTime Sync');
+//     } catch (error) {
+//       this.logger.error(
+//         'events-sync-catchup',
+//         `Failed to catch up events: ${error}`,
+//       );
+//     }
+//   });
+// });
+// this.logger.log('Called when the current second is 45');
