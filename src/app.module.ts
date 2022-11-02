@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { response } from 'express';
 import { join } from 'path';
 import { AuctionsModule } from 'src/auctions/auctions.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
@@ -25,6 +26,7 @@ import { UsersModule } from './users/users.module';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      context: response,
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },

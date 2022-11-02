@@ -10,6 +10,7 @@ export enum SystemErrors
     UPDATE_USER = "E06: Unable To Update User",
     DELETE_USER = "E07: Unable To Delete User",
     FIND_USERS = "E08: Unable To Find All Users",
+    COOKIES_NOT_FOUND = "E09: Unable to retrieve cookies",
 }
 
 registerEnumType(SystemErrors, {

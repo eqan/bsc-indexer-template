@@ -43,7 +43,7 @@ export class AuthService {
   }
 
     /**
-     * Generate User Access Token
+     * Generate User Access Token and save it into the cookies
      * @params message, signature and address
      * @return access token
      */
@@ -53,8 +53,9 @@ export class AuthService {
       signature: signature,
       message: message 
     };
+    const token = this.jwtTokenService.sign(payload, { secret: process.env.JWT_SECRET, expiresIn: '7d' });
     return {
-      access_token: this.jwtTokenService.sign(payload, { secret: process.env.JWT_SECRET }),
+      access_token: token
     };
   }
 }

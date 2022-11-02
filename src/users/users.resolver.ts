@@ -26,7 +26,10 @@ export class UsersResolver extends BaseProvider<Users> {
    */LoggdUerOutput
     @Mutation(() => LoggedUserOutput, {name: "LoginUser"})
     loginUser(@Args('LoginUserInput') loginUserInput: LoginUserInput): Promise<{access_token: String}> {
-      return this.userService.loginUser(loginUserInput);
+     const token = this.userService.loginUser(loginUserInput);
+    //  response.headers.set('Authorization', 'Bearer ' + token);
+    //  return response;
+     return token;
     }
 
   /**
