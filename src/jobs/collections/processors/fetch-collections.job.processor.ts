@@ -43,7 +43,7 @@ export class FetchCollectionsProcessor {
           const collection = await this.collectionsService.collectionExitOrNot(
             token,
           );
-          console.log(collection, 'collection dgg');
+          console.log(collection, 'collection');
 
           if (!collection) {
             const response = await this.metadataApi.getCollectionMetadata(

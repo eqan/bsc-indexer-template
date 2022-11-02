@@ -18,9 +18,10 @@ import {
   isBase64Encoded,
   regex,
 } from './../../common/utils.common';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { CollectionsService } from 'src/collections/collections.service';
 import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
-
+import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
 @Injectable()
 export class MetadataApi {
   constructor(
@@ -75,25 +76,63 @@ export class MetadataApi {
   }
 
   public async getTokenMetadata({
-    token,
+    collectionId,
     tokenId,
+    type,
   }: {
-    token: string;
+    collectionId: string;
     tokenId: string;
+    type: TokenType;
   }) {
     let tokenURI = '';
+
+    const data: CreateTokenInput = {
+      tokenId,
+      collectionId,
+      contract: collectionId,
+      deleted: false,
+      mintedAt: new Date(),
+      lastUpdatedAt: new Date(),
+      sellers: 0,
+      creator: {
+        account: AddressZero,
+        value: 0,
+      },
+      meta: {
+        name: '',
+        description: '',
+        tags: [],
+        genres: [],
+        originalMetaUri: '',
+        externalUri: '',
+        attribute: {
+          key: '',
+          value: '',
+          type,
+          format: '',
+        },
+        content: {
+          fileName: '',
+          url: '',
+          representation: '',
+        },
+      },
+    };
 
     try {
       const iface = new Interface([
         'function tokenURI(uint256 _tokenId) external view returns (string)',
         'function uri(uint256 _id) external view returns (string memory)',
+        'function ownerOf(uint256 _tokenId) external view returns (address)',
       ]);
 
       const contract = new Contract(
-        token,
+        collectionId,
         iface,
         this.rpcProvider.baseProvider,
       );
+
+      const ownerOf = (await contract.ownerOf(tokenId)) || AddressZero;
 
       let meta: any;
 
@@ -127,6 +166,7 @@ export class MetadataApi {
           };
     }
   }
+
   public async getCollectionMetadata(
     collectionId: string,
     type: CollectionType,
