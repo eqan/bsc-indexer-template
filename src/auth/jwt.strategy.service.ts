@@ -15,8 +15,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         try {
           if (req.headers.cookies) {
             const cookie = cookieParser(req.headers.cookies);
-            console.log("This is headers:", req.headers.cookies);
-            console.log("This is parsed: ", cookie);
             return cookie['JWT_SECRET'];
           }
           const jwtToken = req.headers?.authorization;
@@ -27,7 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           throw new Error(SystemErrors.COOKIES_NOT_FOUND);
         }
       },
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_SECRET'),
     });

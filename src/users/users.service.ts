@@ -40,8 +40,8 @@ export class UsersService {
     }
 
     /**
-     * Create User
-     * @params createUser
+     * Create User On Login
+     * @params createUserOnLoginInput
      * @return Users
      */
     async createUserOnLogin(createUserInput: CreateUserOnLoginInput): Promise<Users> {
