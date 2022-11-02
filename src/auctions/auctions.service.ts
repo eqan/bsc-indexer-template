@@ -43,6 +43,7 @@ export class AuctionsService {
           where: {
             auctionId: rest?.auctionId,
             contract: rest?.contract,
+            seller: rest?.seller,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,

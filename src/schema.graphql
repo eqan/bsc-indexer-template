@@ -388,6 +388,7 @@ input FilterAuctionDto {
   limit: Float
   auctionId: Float
   contract: String
+  seller: String
 }
 
 type Mutation {
