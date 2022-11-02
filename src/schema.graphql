@@ -153,16 +153,29 @@ type Tokens {
   meta: MetaData!
 }
 
+type CollectionMetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type CollectionMeta {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  content: CollectionMetaContent
+}
+
 type Collections {
   collectionId: String!
   name: String!
-  slug: String!
-  bannerImageUrl: String!
-  externalUrl: String!
-  imageUrl: String!
-  twitterUserName: String!
-  discordUrl: String!
-  description: String!
+  type: String!
+  parent: String!
+  symbol: String!
+  owner: String!
+  meta: CollectionMeta!
   tokens: [Tokens!]
 }
 
@@ -321,6 +334,21 @@ input MetaDataInput {
   content: MetadataContentInput!
 }
 
+input CollectionMetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
+input CollectionMetaInput {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  content: CollectionMetaContentInput
+}
+
 input DataOrginFeeInput {
   account: String!
   value: Int!
@@ -412,23 +440,28 @@ type Mutation {
 input CreateCollectionsInput {
   collectionId: String!
   name: String!
-  slug: String!
-  bannerImageUrl: String
-  externalUrl: String
-  imageUrl: String
-  twitterUserName: String
-  discordUrl: String
-  description: String
+  type: CollectionType!
+  parent: String
+  symbol: String
+  owner: String
+  meta: CollectionMetaInput
+}
+
+"""Types of tokens"""
+enum CollectionType {
+  BEP20
+  BEP721
+  BEP1155
 }
 
 input UpdateCollectionsInput {
   collectionId: String!
-  bannerImageUrl: String
-  externalUrl: String
-  imageUrl: String
-  twitterUserName: String
-  discordUrl: String
-  description: String
+  name: String
+  type: CollectionType
+  parent: String
+  symbol: String
+  owner: String
+  meta: CollectionMetaInput
 }
 
 input DeleteCollectionsInput {

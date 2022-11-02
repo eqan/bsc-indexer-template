@@ -14,9 +14,10 @@ import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.module';
+import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 import { BullModule } from '@nestjs/bull';
-import { BullConfig, queues } from './config/bull.config';
+import { BullConfig } from './config/bull.config';
+import { SyncEventsModule } from './events/sync-events/sync-events.module';
 
 @Module({
   imports: [
@@ -57,8 +58,6 @@ import { BullConfig, queues } from './config/bull.config';
     BullModule.forRootAsync({
       useClass: BullConfig,
     }),
-    // BullModule.registerQueue(...queues),
-    RealtimeSyncModule,
     CollectionsModule,
     TokensModule,
     ActivityModule,
@@ -66,7 +65,9 @@ import { BullConfig, queues } from './config/bull.config';
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,
+    //Jobs Module
     RealtimeSyncModule,
+    SyncEventsModule,
   ],
 })
 export class AppModule {}

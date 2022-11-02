@@ -25,3 +25,7 @@ export const base64toJson = (tokenURI: string) =>
   JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('ascii'));
 
 export const ipfsDomain = 'https://ipfs.io/ipfs/';
+
+//queue names
+export const realtimeQueue = 'realtime-sync-events';
+export const fetchCollectionQueue = 'fetch-collections';

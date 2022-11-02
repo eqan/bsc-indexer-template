@@ -136,6 +136,14 @@ export class CollectionsService {
     }
   }
 
+  async collectionExitOrNot(collectionId: string): Promise<Collections> {
+    try {
+      return await this.collectionsRepo.findOne({ where: { collectionId } });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
   /**
    * Update Collections Attributes
    * @param updateCollectionsInput

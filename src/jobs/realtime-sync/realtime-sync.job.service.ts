@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bull';
+import { randomUUID } from 'crypto';
+import { getNetworkSettings } from 'src/config/network.config';
+import { realtimeQueue } from 'src/common/utils.common';
 
 /**
  * RealtimeSync Job
@@ -10,31 +13,26 @@ import { Queue } from 'bull';
  */
 @Injectable()
 export class RealtimeSyncService {
-  constructor(
-    @InjectQueue('realtime-sync-events') private realtimeSyncEvents: Queue,
-  ) {}
-  private readonly logger = new Logger(RealtimeSyncService.name);
+  constructor(@InjectQueue(realtimeQueue) private realtimeSyncEvents: Queue) {}
+  private readonly logger = new Logger(realtimeQueue);
+  networkSettings = getNetworkSettings();
 
   async syncBlocks() {
-    // const jobs = await this.realtimeSyncEvents.getJob()
-    const job = await this.realtimeSyncEvents.add(
-      { data: 1 },
-      {
-        delay: 3000,
-        removeOnComplete: true,
-        removeOnFail: true,
-        timeout: 60000,
-      },
-    );
-    console.log(job, 'job created ');
+    await this.realtimeSyncEvents.add({
+      jobId: randomUUID(),
+      delay: 3000,
+      removeOnComplete: true,
+      removeOnFail: true,
+      timeout: 60000,
+    });
+    // console.log(job, 'job created ');
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
-  @Cron('*/10 * * * * *')
+  @Cron(`*/15 * * * * *`)
   async handleRealtimeSync() {
     try {
       await this.syncBlocks();
-      this.logger.log('hello from realtime sync');
     } catch (error) {
       this.logger.error(
         'events-sync-catchup',

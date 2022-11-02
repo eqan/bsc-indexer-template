@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { CollectionMeta } from '../dto/netsedObjects/collections.meta.dto';
 import { CollectionType } from './enum/collection.type.enum';
 
 @ObjectType()
@@ -58,7 +59,7 @@ export class Collections {
   })
   owner?: string;
 
-  @Field()
+  @Field(() => CollectionMeta)
   @Column({
     type: 'jsonb',
     nullable: true,

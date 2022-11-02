@@ -19,6 +19,7 @@ import {
   regex,
 } from './../../common/utils.common';
 import { CollectionsService } from 'src/collections/collections.service';
+import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 
 @Injectable()
 export class MetadataApi {
@@ -127,25 +128,25 @@ export class MetadataApi {
     }
   }
   public async getCollectionMetadata(
-    collection: string,
-    collectionType: CollectionType,
+    collectionId: string,
+    type: CollectionType,
   ) {
     const iface = new Interface([
       'function name() view returns (string)',
       'function symbol() view returns (string)',
       'function owner() public view returns (address)',
     ]);
-    const collectionData = {
+    const collectionData: CreateCollectionsInput = {
       name: '',
       symbol: '',
       owner: AddressZero,
-      collection,
-      collectionType,
+      collectionId,
+      type,
       meta: {
         name: '',
         description: '',
-        tags: '',
-        genres: '',
+        // tags: '',
+        // genres: '',
         content: {
           type: '',
           url: '',
@@ -157,7 +158,7 @@ export class MetadataApi {
       },
     };
     const contract = new Contract(
-      collection,
+      collectionId,
       iface,
       this.rpcProvider.baseProvider,
     );
@@ -169,7 +170,7 @@ export class MetadataApi {
       const owner = await contract.owner();
       collectionData.owner = owner;
     } catch (error) {
-      console.log('error occured');
+      console.log('error occured owner address not found');
     } finally {
       return collectionData;
     }
