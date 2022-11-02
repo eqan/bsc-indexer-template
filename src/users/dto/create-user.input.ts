@@ -8,22 +8,12 @@ export class CreateUserInput {
   @IsNotEmpty()
   @IsString()
   @Field()
-  realName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field()
   userSignature: string;
 
   @IsNotEmpty()
   @IsEthereumAddress({message: "User address should be valid"})
   @Field()
-  userAddress: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field()
-  userMessage: string;
+  userId: string;
 
   @IsNotEmpty()
   @IsEnum(UserTypes)

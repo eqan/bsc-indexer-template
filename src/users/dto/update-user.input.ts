@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import {
   IsEthereumAddress,
   IsNotEmpty,
+  IsOptional,
   IsString
 } from 'class-validator';
 
@@ -10,26 +11,35 @@ export class UpdateUsersInput {
   @IsNotEmpty()
   @IsEthereumAddress({message: "User address should be valid"})
   @Field()
-  userAddress: string;
+  userId: string;
 
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  userSignature: string;
+
+  @IsOptional()
   @IsString()
   @Field()
   userName: string;
 
+  @IsOptional()
   @IsString()
   @Field()
-  realName: string;
+  name: string;
 
+  @IsOptional()
   @IsString()
   @Field()
   shortBio: string;
 
+  @IsOptional()
   @IsString()
   @Field()
   websiteUrl: string;
 
+  @IsOptional()
   @IsString()
   @Field()
   twitterUrl: string;
-
 }

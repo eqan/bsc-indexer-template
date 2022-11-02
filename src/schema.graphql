@@ -225,9 +225,8 @@ type Orders {
 
 type Users {
   userId: String!
-  userAddress: String!
   userSignature: String!
-  realName: String!
+  name: String!
   userName: String!
   shortBio: String!
   websiteUrl: String!
@@ -373,8 +372,7 @@ type Query {
   GetAllActivities(GetAllActivities: FilterActivityDto!): GetAllActivities!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
-  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
-  GetUserDataByUserAddress(userAddress: String!): Users!
+  GetUserDataByuserId(userId: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
@@ -408,17 +406,10 @@ input FilterOrderDto {
   taker: String
 }
 
-input LoginUserInput {
-  userAddress: String!
-  userSignature: String!
-  userMessage: String!
-}
-
 input FilterUserDto {
   page: Float
   limit: Float
   userId: String
-  userAddress: String
 }
 
 input FilterAuctionDto {
@@ -441,6 +432,7 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   CreateUser(CreateUserInput: CreateUserInput!): Users!
   DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
   UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
@@ -593,11 +585,15 @@ input UpdateOrderStatus {
   status: String!
 }
 
-input CreateUserInput {
-  realName: String!
+input LoginUserInput {
+  userId: String!
   userSignature: String!
-  userAddress: String!
   userMessage: String!
+}
+
+input CreateUserInput {
+  userSignature: String!
+  userId: String!
   type: UserTypeEnum!
 }
 
@@ -611,9 +607,10 @@ input DeleteUsersInput {
 }
 
 input UpdateUsersInput {
-  userAddress: String!
+  userId: String!
+  userSignature: String!
   userName: String!
-  realName: String!
+  name: String!
   shortBio: String!
   websiteUrl: String!
   twitterUrl: String!

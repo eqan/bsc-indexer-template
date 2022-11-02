@@ -24,7 +24,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param LoggedUserInput: message, signature, address
    * @returns access token
    */LoggdUerOutput
-    @Query(() => LoggedUserOutput, {name: "LoginUser"})
+    @Mutation(() => LoggedUserOutput, {name: "LoginUser"})
     loginUser(@Args('LoginUserInput') loginUserInput: LoginUserInput): Promise<{access_token: String}> {
       return this.userService.loginUser(loginUserInput);
     }
@@ -80,14 +80,14 @@ export class UsersResolver extends BaseProvider<Users> {
 
   /**
    * Get User By address
-   * @param userAddress
+   * @param userId
    * @returns User
    */
   @UseGuards(JwtAuthGuard)
-  @Query(() => Users, { name: 'GetUserDataByUserAddress' })
-  async show(@Args('userAddress') userAddress: string): Promise<Users> {
+  @Query(() => Users, { name: 'GetUserDataByuserId' })
+  async show(@Args('userId') userId: string): Promise<Users> {
     try {
-      return await this.userService.getDataByUserAddress(userAddress);
+      return await this.userService.getDataByuserId(userId);
     } catch (error) {
       throw new BadRequestException(error);
     }

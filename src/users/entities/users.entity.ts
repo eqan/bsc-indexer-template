@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
 import {
-  BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique
+  BaseEntity, Column, Entity, PrimaryColumn, Unique
 } from 'typeorm';
 import { UserTypes } from './enum/user.types.enums';
 
@@ -10,16 +10,16 @@ import { UserTypes } from './enum/user.types.enums';
  */
 @ObjectType()
 @Entity('Users')
-@Unique(["userAddress", "userSignature", "userName"])
+@Unique(["userId", "userSignature", "userName"])
 export class Users extends BaseEntity {
-  @Field()
-  @PrimaryGeneratedColumn('increment')
-  userId: string;
-  
+
   @Field()
   @IsEthereumAddress({message: "User address should be valid"})
-  @Column({type: 'text'})
-  userAddress: string
+  @PrimaryColumn({
+    type: 'text',
+    unique: true,
+  })
+  userId: string
 
   @Field()
   @Column({type: 'text'})
@@ -27,7 +27,7 @@ export class Users extends BaseEntity {
 
   @Field()
   @Column({type: 'text', nullable: true})
-  realName: string
+  name: string
   
   @Field()
   @Column({type: 'text', nullable: true})
