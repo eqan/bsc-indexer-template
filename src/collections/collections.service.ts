@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getEventData } from 'src/events/data';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
@@ -50,16 +51,26 @@ export class CollectionsService {
               (addresses ? addresses[log.address.toLowerCase()] : true),
           );
           if (eventData) {
-            // const { args } = eventData.abi.parseLog(log);
-            const token = log?.address;
-            const response = await this.metadataApi.getCollectionMetadata(
-              token,
-              CollectionType.BEP721,
-            );
-            console.log(response);
-            // const tokenId = args?.tokenId.toString();
-            // const meta = await metadataApi.getTokenMetadata({ token, tokenId });
-            // console.log(meta, 'metadata');
+            const timestamp = (
+              await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
+            ).timestamp;
+            // console.log(timestamp);
+            const { args } = eventData.abi.parseLog(log);
+            // console.log(args);
+            const collectionId = log?.address;
+            // const response = await this.metadataApi.getCollectionMetadata(
+            //   token,
+            //   CollectionType.BEP721,
+            // );
+            // console.log(response);
+            const tokenId = args?.tokenId.toString();
+            const meta = await metadataApi.getTokenMetadata({
+              collectionId,
+              tokenId,
+              type: TokenType.BEP721,
+              timestamp,
+            });
+            console.log(meta, 'metadata');
           }
         }
       } catch (e) {

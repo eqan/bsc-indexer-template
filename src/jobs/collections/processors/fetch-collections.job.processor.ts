@@ -7,6 +7,8 @@ import { CollectionType } from 'src/collections/entities/enum/collection.type.en
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { fetchCollectionQueue } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
+import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
 @Processor(fetchCollectionQueue)
@@ -14,6 +16,7 @@ export class FetchCollectionsProcessor {
   constructor(
     private readonly rpcProvider: RpcProvider,
     private readonly collectionsService: CollectionsService,
+    private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
   ) {}
   private readonly logger = new Logger(fetchCollectionQueue);
@@ -38,16 +41,15 @@ export class FetchCollectionsProcessor {
             (addresses ? addresses[log.address.toLowerCase()] : true),
         );
         if (eventData) {
-          // const { args } = eventData.abi.parseLog(log);
-          const token = log?.address;
+          const { args } = eventData.abi.parseLog(log);
+          const collectionId = log?.address;
           const collection = await this.collectionsService.collectionExitOrNot(
-            token,
+            collectionId,
           );
-          console.log(collection, 'collection');
 
           if (!collection) {
             const response = await this.metadataApi.getCollectionMetadata(
-              token,
+              collectionId,
               CollectionType.BEP721,
             );
             const saved = await this.collectionsService.createCollection(
@@ -56,9 +58,19 @@ export class FetchCollectionsProcessor {
             console.log(saved, 'saved metadata');
           }
 
-          // const tokenId = args?.tokenId.toString();
-          // const meta = await metadataApi.getTokenMetadata({ token, tokenId });
-          // console.log(meta, 'metadata');
+          const timestamp = (
+            await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
+          ).timestamp;
+
+          const tokenId = args?.tokenId.toString();
+          const tokenMeta = await this.metadataApi.getTokenMetadata({
+            collectionId,
+            tokenId,
+            type: TokenType.BEP721,
+            timestamp,
+          });
+          const savedToken = await this.tokensService.createToken(tokenMeta);
+          console.log(savedToken, 'token saved in db');
         }
       }
     } catch (error) {
