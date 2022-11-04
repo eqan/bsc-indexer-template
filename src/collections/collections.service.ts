@@ -56,7 +56,7 @@ export class CollectionsService {
         console.log(e, 'error occured');
       }
     };
-    getBlock();
+    // getBlock();
     // this.metadataApi.fetchRequest(
     //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
     //   '39',
