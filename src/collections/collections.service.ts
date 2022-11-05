@@ -63,13 +63,21 @@ export class CollectionsService {
             //   CollectionType.BEP721,
             // );
             // console.log(response);
-            const tokenId = args?.tokenId.toString();
+
             const meta = await metadataApi.getTokenMetadata({
-              collectionId,
-              tokenId,
+              collectionId: '0x3d24C45565834377b59fCeAA6864D6C25144aD6c',
+              tokenId: '784735',
               type: TokenType.BEP721,
-              timestamp,
+              timestamp: 1667500191,
             });
+
+            // const tokenId = args?.tokenId.toString();
+            // const meta = await metadataApi.getTokenMetadata({
+            //   collectionId,
+            //   tokenId,
+            //   type: TokenType.BEP721,
+            //   timestamp,
+            // });
             console.log(meta, 'metadata');
           }
         }
@@ -78,6 +86,15 @@ export class CollectionsService {
       }
     };
     // getBlock();
+
+    // const hello = async () => {
+    //   try {
+    //     // console.log(this.rpcProvider.baseProvider, 'provider');
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+    // hello();
   }
 
   /**
@@ -147,7 +164,7 @@ export class CollectionsService {
     }
   }
 
-  async collectionExitOrNot(collectionId: string): Promise<Collections> {
+  async collectionExistOrNot(collectionId: string): Promise<Collections> {
     try {
       return await this.collectionsRepo.findOne({ where: { collectionId } });
     } catch (error) {

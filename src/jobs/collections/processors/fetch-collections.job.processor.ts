@@ -3,11 +3,9 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import Redis from 'ioredis';
 import { CollectionsService } from 'src/collections/collections.service';
-import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { fetchCollectionQueue } from 'src/common/utils.common';
+import { fetchCollectionQueue, getTypes } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
@@ -26,55 +24,69 @@ export class FetchCollectionsProcessor {
   @Process()
   async handleSync(job: Job) {
     try {
-      console.log('hello from handle Sync Collections ');
       const filter: { fromBlock: number; toBlock: number } = {
         fromBlock: job.data.fromBlock,
         toBlock: job.data.toBlock,
       };
+
       const logs = await this.rpcProvider.baseProvider.getLogs(filter);
       for (const log of logs) {
-        const availableEventData = getEventData(['erc721-transfer']);
+        const availableEventData = getEventData([
+          'erc721-transfer',
+          'erc1155-transfer-single',
+        ]);
+
         const eventData = availableEventData.find(
           ({ addresses, topic, numTopics }) =>
             log.topics[0] === topic &&
             log.topics.length === numTopics &&
             (addresses ? addresses[log.address.toLowerCase()] : true),
         );
+
         if (eventData) {
+          const { collectionType, type } = getTypes(eventData.kind);
           const { args } = eventData.abi.parseLog(log);
-          const collectionId = log?.address;
-          const collection = await this.collectionsService.collectionExitOrNot(
-            collectionId,
-          );
+          const tokenId = args?.tokenId.toString() || '';
+          const collectionId = log?.address || '';
+          console.log(tokenId, collectionId, 'logged ids');
 
-          if (!collection) {
-            const response = await this.metadataApi.getCollectionMetadata(
-              collectionId,
-              CollectionType.BEP721,
-            );
-            const saved = await this.collectionsService.createCollection(
-              response,
-            );
-            console.log(saved, 'saved metadata');
+          if (collectionId && tokenId) {
+            const collection =
+              await this.collectionsService.collectionExistOrNot(collectionId);
+            const token = await this.tokensService.tokenExistOrNot(tokenId);
+
+            if (!collection) {
+              const response = await this.metadataApi.getCollectionMetadata(
+                collectionId,
+                collectionType,
+              );
+              const saved = await this.collectionsService.createCollection(
+                response,
+              );
+              console.log(saved, 'saved metadata');
+            }
+
+            if (!token) {
+              const timestamp = (
+                await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
+              ).timestamp;
+
+              const tokenMeta = await this.metadataApi.getTokenMetadata({
+                collectionId,
+                tokenId,
+                type,
+                timestamp,
+              });
+              const savedToken = await this.tokensService.createToken(
+                tokenMeta,
+              );
+              console.log(savedToken, 'token saved in db');
+            }
           }
-
-          const timestamp = (
-            await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
-          ).timestamp;
-
-          const tokenId = args?.tokenId.toString();
-          const tokenMeta = await this.metadataApi.getTokenMetadata({
-            collectionId,
-            tokenId,
-            type: TokenType.BEP721,
-            timestamp,
-          });
-          const savedToken = await this.tokensService.createToken(tokenMeta);
-          console.log(savedToken, 'token saved in db');
         }
       }
     } catch (error) {
-      this.logger.error(`Failed fetching collections: ${error}`);
+      this.logger.error(`Failed fetching collection: ${error}`);
       throw error;
     }
   }

@@ -1,4 +1,4 @@
-import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
 import {
@@ -8,34 +8,35 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
+import { CollectionsService } from 'src/collections/collections.service';
+import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
+import { MetaData } from 'src/tokens/dto/nestedObjectDto/meta.dto';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { uploadImage } from '../../config/cloudinary.config';
-import { AddressZero } from '@ethersproject/constants';
 import {
   base64toJson,
+  CollectionIface,
+  getCollectionName,
+  getCollectionOwner,
+  getCollectionSymbol,
+  getNFTCreator,
+  getTokenURI,
   ipfsDomain,
   isBase64Encoded,
   regex,
+  TokenIface,
 } from './../../common/utils.common';
-import { MetaData } from 'src/tokens/dto/nestedObjectDto/meta.dto';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-import { CollectionsService } from 'src/collections/collections.service';
-import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
-import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
 @Injectable()
 export class MetadataApi {
   constructor(
     @Inject(forwardRef(() => CollectionsService))
     private readonly collectionsService: CollectionsService,
-    private rpcProvider: RpcProvider,
+    private readonly rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
-  ) {
-    this.collectionsService
-      .findAllCollections({})
-      .then(console.log)
-      .catch(console.log);
-  }
+  ) {}
 
   async fetchRequest(uri: string, id: string) {
     try {
@@ -44,13 +45,13 @@ export class MetadataApi {
       //add ipfs domain uri
       if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsDomain);
       const response = await lastValueFrom(this.httpService.get(uri));
-      return this.returnMeta(response.data, uri);
+      return response.data;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  returnMeta(meta: any, tokenURI: string) {
+  returnMeta(meta: any, tokenURI: string, type: TokenType) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -62,7 +63,7 @@ export class MetadataApi {
         {
           key: '',
           value: '',
-          type: TokenType.BEP721,
+          type,
           format: '',
         },
       ],
@@ -87,13 +88,15 @@ export class MetadataApi {
               type: TokenType.BEP721,
               format: attribute?.display_type || '',
             })) || [],
-          content: {
-            url: meta?.image || '',
-          },
+          content: meta?.image
+            ? {
+                url: meta?.image || '',
+              }
+            : {},
         };
       else throw new BadRequestException(`unsupported format ${tokenURI}`);
     } catch (error) {
-      return metadata;
+      return { ...metadata, attribute: [], content: {} };
     }
   }
 
@@ -117,59 +120,27 @@ export class MetadataApi {
       lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
-        account: AddressZero,
+        account: [],
         value: 10000,
-      },
-      meta: {
-        name: '',
-        description: '',
-        tags: [],
-        genres: [],
-        originalMetaUri: '',
-        externalUri: '',
-        attribute: [
-          {
-            key: '',
-            value: '',
-            type,
-            format: '',
-          },
-        ],
-        content: {
-          fileName: '',
-          url: '',
-          representation: '',
-        },
       },
     };
 
     try {
-      const iface = new Interface([
-        'function tokenURI(uint256 _tokenId) external view returns (string)',
-        'function uri(uint256 _id) external view returns (string memory)',
-        'function ownerOf(uint256 _tokenId) external view returns (address)',
-      ]);
-
       const contract = new Contract(
         collectionId,
-        iface,
+        TokenIface,
         this.rpcProvider.baseProvider,
       );
 
-      const creator = await contract.ownerOf(tokenId);
-      data.creator = creator;
+      data.creator.account = await getNFTCreator(contract, tokenId);
+      const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      const tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
-      data.meta.originalMetaUri = tokenURI;
-
-      if (!tokenURI) throw new BadRequestException('Undefined tokenURI');
+      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
 
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, meta };
-        // data.meta = meta;
-        // return this.returnMeta(meta, tokenURI);
+        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
 
       //if tokenURI is buffered base64 encoded
@@ -179,63 +150,36 @@ export class MetadataApi {
           const url = await uploadImage(meta?.image);
           meta.image = url ?? meta.image;
         }
-        const metadata = this.returnMeta(meta, tokenURI);
-        return { ...data, metadata };
+        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
     } catch (error) {
-      if (
-        error.code === 'CALL_EXCEPTION' &&
-        error.reason === 'ERC721Metadata: URI query for nonexistent token'
-      ) {
-        data.deleted = true;
-        console.log('Token does not exist');
-        return data;
-      } else
-        console.log(`invalid or undefine uri ${data.meta.originalMetaUri}`);
+      console.log('in catch');
       return data;
     }
   }
 
+  //CollectionMetadata
   public async getCollectionMetadata(
     collectionId: string,
     type: CollectionType,
   ) {
-    const iface = new Interface([
-      'function name() view returns (string)',
-      'function symbol() view returns (string)',
-      'function owner() public view returns (address)',
-    ]);
     const collectionData: CreateCollectionsInput = {
       name: '',
       symbol: '',
       owner: AddressZero,
       collectionId,
       type,
-      meta: {
-        name: '',
-        description: '',
-        content: {
-          type: '',
-          url: '',
-          representation: '',
-        },
-        externalLink: '',
-        sellerFeeBasisPoints: 0,
-        feeRecipient: '',
-      },
+      meta: {},
     };
-    const contract = new Contract(
-      collectionId,
-      iface,
-      this.rpcProvider.baseProvider,
-    );
     try {
-      const name = await contract.name();
-      collectionData.name = name;
-      const symbol = await contract.symbol();
-      collectionData.symbol = symbol;
-      const owner = await contract.owner();
-      collectionData.owner = owner;
+      const contract = new Contract(
+        collectionId,
+        CollectionIface,
+        this.rpcProvider.baseProvider,
+      );
+      collectionData.name = await getCollectionName(contract);
+      collectionData.symbol = await getCollectionSymbol(contract);
+      collectionData.owner = await getCollectionOwner(contract);
     } catch (error) {
       console.log('error occured owner address not found');
     } finally {

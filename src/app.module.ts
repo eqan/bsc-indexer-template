@@ -1,10 +1,10 @@
-import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { BlockchainConfig } from 'src/config/blockchain.config';
 import { typeOrmConfigAsync } from 'src/config/typeorm.config';
 import { CollectionsModule } from 'src/collections/collections.module';
 import { TokensModule } from 'src/tokens/tokens.module';

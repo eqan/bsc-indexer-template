@@ -69,7 +69,7 @@ export class Tokens extends BaseEntity {
     default: null,
   })
   creator: {
-    account: string;
+    account: string[];
     value: number;
   };
 
