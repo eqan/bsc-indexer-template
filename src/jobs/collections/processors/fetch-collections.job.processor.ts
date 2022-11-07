@@ -21,7 +21,7 @@ export class FetchCollectionsProcessor {
   redis = new Redis();
   QUEUE_NAME = fetchCollectionQueue;
 
-  @Process()
+  // @Process()
   async handleSync(job: Job) {
     try {
       const filter: { fromBlock: number; toBlock: number } = {
@@ -48,7 +48,6 @@ export class FetchCollectionsProcessor {
           const { args } = eventData.abi.parseLog(log);
           const tokenId = args?.tokenId.toString() || '';
           const collectionId = log?.address || '';
-          console.log(tokenId, collectionId, 'logged ids');
 
           if (collectionId && tokenId) {
             const collection =

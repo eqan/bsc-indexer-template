@@ -29,7 +29,7 @@ export class RealtimeSyncService {
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
-  @Cron(`*/15 * * * * *`)
+  @Cron(`*/24 * * * * *`)
   async handleRealtimeSync() {
     try {
       await this.syncBlocks();

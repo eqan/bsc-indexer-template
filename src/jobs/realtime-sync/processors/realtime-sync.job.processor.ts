@@ -1,20 +1,23 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import Redis from 'ioredis';
+import { Cache } from 'cache-manager';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { realtimeQueue } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
 
 @Processor(realtimeQueue)
+@Injectable()
 export class RealtimeSyncProcessor {
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly rpcProvider: RpcProvider,
     private readonly syncEventsService: SyncEventsService,
   ) {}
+
   private readonly logger = new Logger(realtimeQueue);
-  redis = new Redis();
+  // redis = new Redis();
   QUEUE_NAME = realtimeQueue;
 
   @Process()
@@ -27,11 +30,19 @@ export class RealtimeSyncProcessor {
       const maxBlocks = getNetworkSettings().realtimeSyncMaxBlockLag;
 
       const headBlock = await this.rpcProvider.baseProvider.getBlockNumber();
+      console.log(this.cacheManager);
 
-      // Fetch the last synced blocked
-      let localBlock = Number(
-        await this.redis.get(`${this.QUEUE_NAME}-last-block`),
+      await this.cacheManager.set(
+        `${this.QUEUE_NAME}-last-block`,
+        headBlock - 5,
       );
+
+      // Fetch the last synced block
+      let localBlock =
+        Number(await this.cacheManager.get(`${this.QUEUE_NAME}-last-block`)) ||
+        0;
+      console.log(localBlock, 'local number');
+
       if (localBlock >= headBlock) {
         // Nothing to sync
         return;
@@ -48,7 +59,7 @@ export class RealtimeSyncProcessor {
         `Events realtime syncing block range [${fromBlock}, ${headBlock}]`,
       );
 
-      await this.syncEventsService.syncEvents(fromBlock, headBlock);
+      // await this.syncEventsService.syncEvents(fromBlock, headBlock);
 
       // Send any remaining blocks to the backfill queue
       if (localBlock < fromBlock) {
@@ -63,8 +74,11 @@ export class RealtimeSyncProcessor {
       // once, which is exactly what we are looking for (since events for the
       // latest blocks might be missing due to upstream chain reorgs):
       // https://ethereum.stackexchange.com/questions/109660/eth-getlogs-and-some-missing-logs
-
-      await this.redis.set(`${this.QUEUE_NAME}-last-block`, headBlock - 5);
+      // await this.cacheManager.set(
+      //   `${this.QUEUE_NAME}-last-block`,
+      //   headBlock - 5,
+      //   0,
+      // );
     } catch (error) {
       this.logger.error(`Events realtime syncing failed: ${error}`);
       throw error;

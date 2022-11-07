@@ -1,5 +1,5 @@
 import { ApolloDriver } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -58,6 +58,11 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
     BullModule.forRootAsync({
       useClass: BullConfig,
     }),
+    /**
+     * CacheModule
+     * Cache Configuration using in-memory caching
+     */
+    CacheModule.register({ isGlobal: true, ttl: 5 }),
     CollectionsModule,
     TokensModule,
     ActivityModule,
