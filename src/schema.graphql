@@ -30,6 +30,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
 type Payouts {
   account: String!
   value: Float!
@@ -110,6 +115,37 @@ type Auction {
   data: AuctionData!
 }
 
+type GetAllAuctions {
+  items: [Auction!]!
+  total: Int!
+}
+
+type CollectionMetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type CollectionMeta {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  content: CollectionMetaContent
+}
+
+type Collections {
+  collectionId: String!
+  name: String!
+  type: String!
+  parent: String!
+  symbol: String!
+  owner: String!
+  meta: CollectionMeta!
+  tokens: [Tokens!]
+}
+
 type MetadataAttribute {
   key: String!
   value: String!
@@ -153,30 +189,14 @@ type Tokens {
   meta: MetaData!
 }
 
-type CollectionMetaContent {
-  type: String
-  url: String
-  representation: String
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
 }
 
-type CollectionMeta {
-  name: String
-  description: String
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
-  content: CollectionMetaContent
-}
-
-type Collections {
-  collectionId: String!
-  name: String!
-  type: String!
-  parent: String!
-  symbol: String!
-  owner: String!
-  meta: CollectionMeta!
-  tokens: [Tokens!]
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
 }
 
 type DataOriginFee {
@@ -231,28 +251,8 @@ type Orders {
   taker: String!
 }
 
-type GetAllTokens {
-  items: [Tokens!]!
-  total: Float!
-}
-
-type GetAllCollections {
-  items: [Collections!]!
-  total: Int!
-}
-
-type GetAllActivities {
-  items: [Activity!]!
-  total: Int!
-}
-
 type GetAllOrders {
   items: [Orders!]!
-  total: Int!
-}
-
-type GetAllAuctions {
-  items: [Auction!]!
   total: Int!
 }
 
@@ -303,6 +303,21 @@ input SellInput {
   value: Float!
 }
 
+input CollectionMetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
+input CollectionMetaInput {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  content: CollectionMetaContentInput
+}
+
 input AttributeInput {
   key: String!
   value: String!
@@ -332,21 +347,6 @@ input MetaDataInput {
   rightsUri: String!
   attribute: AttributeInput!
   content: MetadataContentInput!
-}
-
-input CollectionMetaContentInput {
-  type: String
-  url: String
-  representation: String
-}
-
-input CollectionMetaInput {
-  name: String
-  description: String
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
-  content: CollectionMetaContentInput
 }
 
 input DataOrginFeeInput {

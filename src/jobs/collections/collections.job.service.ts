@@ -23,7 +23,7 @@ export class FetchCollectionsService {
       await this.fetchCollections.add(
         { data: { fromBlock, toBlock } },
         {
-          delay: 45000,
+          delay: 1000,
           removeOnComplete: true,
           removeOnFail: true,
           timeout: 60000,

@@ -1,24 +1,27 @@
 import { ApolloDriver } from '@nestjs/apollo';
+import { BullModule } from '@nestjs/bull';
 import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as redisStore from 'cache-manager-redis-store';
 import { join } from 'path';
+import { ClientOpts } from 'redis';
+import { ActivityModule } from 'src/activity/activity.module';
+import { AuctionsModule } from 'src/auctions/auctions.module';
+import { CollectionsModule } from 'src/collections/collections.module';
+import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { BlockchainConfig } from 'src/config/blockchain.config';
 import { typeOrmConfigAsync } from 'src/config/typeorm.config';
-import { CollectionsModule } from 'src/collections/collections.module';
-import { TokensModule } from 'src/tokens/tokens.module';
-import { ActivityModule } from 'src/activity/activity.module';
 import { OrdersModule } from 'src/orders/orders.module';
-import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { TokensModule } from 'src/tokens/tokens.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
-import { AuctionsModule } from 'src/auctions/auctions.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
-import { BullModule } from '@nestjs/bull';
 import { BullConfig } from './config/bull.config';
 import { SyncEventsModule } from './events/sync-events/sync-events.module';
-
+import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
+// import { clientOptions } from 'Redis';
+import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
 @Module({
   imports: [
     /**
@@ -62,7 +65,13 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
      * CacheModule
      * Cache Configuration using in-memory caching
      */
-    CacheModule.register({ isGlobal: true, ttl: 5 }),
+    // CacheModule.register({ isGlobal: true }),
+    CacheModule.register<ClientOpts>({
+      isGlobal: true,
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+    }),
     CollectionsModule,
     TokensModule,
     ActivityModule,
@@ -73,6 +82,7 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
     //Jobs Module
     RealtimeSyncModule,
     SyncEventsModule,
+    MidwaySyncModule,
   ],
 })
 export class AppModule {}

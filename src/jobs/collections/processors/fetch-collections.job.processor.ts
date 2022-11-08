@@ -21,8 +21,8 @@ export class FetchCollectionsProcessor {
   redis = new Redis();
   QUEUE_NAME = fetchCollectionQueue;
 
-  // @Process()
-  async handleSync(job: Job) {
+  @Process()
+  async FetchCollection(job: Job) {
     try {
       const filter: { fromBlock: number; toBlock: number } = {
         fromBlock: job.data.fromBlock,

@@ -4,6 +4,7 @@ import { CollectionType } from 'src/collections/entities/enum/collection.type.en
 import { EventDataKind } from 'src/events/data';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { AddressZero } from '@ethersproject/constants';
+import { getNetworkSettings } from 'src/config/network.config';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -46,6 +47,8 @@ export const ipfsDomain = 'https://ipfs.io/ipfs/';
 
 //queue names
 export const realtimeQueue = 'realtime-sync-events';
+export const midwayQueue = 'midway-sync-events';
+export const backfillQueue = 'backfill-sync-events';
 export const fetchCollectionQueue = 'fetch-collections';
 
 //Contract Interfaces
@@ -108,4 +111,12 @@ export const getTokenURI = async (
   } catch (error) {
     return '';
   }
+};
+
+//helper functions to create chunks
+export const createChunks = (blocksToProcess: number) => {
+  const maxBlocks = getNetworkSettings().realtimeSyncMaxBlockLag;
+  return new Array(Math.floor(blocksToProcess / maxBlocks))
+    ?.fill(maxBlocks)
+    ?.concat(Math.floor(blocksToProcess % maxBlocks));
 };

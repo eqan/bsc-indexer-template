@@ -2,10 +2,12 @@ import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { Cache } from 'cache-manager';
+import Redis from 'ioredis';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { realtimeQueue } from 'src/common/utils.common';
+import { createChunks, realtimeQueue } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { MidwaySyncService } from 'src/midway-sync/midway-sync.job.service';
 
 @Processor(realtimeQueue)
 @Injectable()
@@ -14,10 +16,11 @@ export class RealtimeSyncProcessor {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly rpcProvider: RpcProvider,
     private readonly syncEventsService: SyncEventsService,
+    private readonly midwaySyncService: MidwaySyncService,
   ) {}
 
   private readonly logger = new Logger(realtimeQueue);
-  // redis = new Redis();
+  redis = new Redis();
   QUEUE_NAME = realtimeQueue;
 
   @Process()
@@ -25,60 +28,44 @@ export class RealtimeSyncProcessor {
     try {
       // We allow syncing of up to `maxBlocks` blocks behind the head
       // of the blockchain. If we lag behind more than that, then all
-      // previous blocks that we cannot cover here will be relayed to
-      // the backfill queue.
+      // previous blocks that we cannot cover here will be divided into chunks
+      //to be processed by mid-way-processor
       const maxBlocks = getNetworkSettings().realtimeSyncMaxBlockLag;
-
       const headBlock = await this.rpcProvider.baseProvider.getBlockNumber();
-      console.log(this.cacheManager);
-
-      await this.cacheManager.set(
-        `${this.QUEUE_NAME}-last-block`,
-        headBlock - 5,
-      );
 
       // Fetch the last synced block
-      let localBlock =
-        Number(await this.cacheManager.get(`${this.QUEUE_NAME}-last-block`)) ||
-        0;
-      console.log(localBlock, 'local number');
-
-      if (localBlock >= headBlock) {
-        // Nothing to sync
-        return;
-      }
-
-      if (localBlock === 0) {
-        localBlock = headBlock;
-      } else {
-        localBlock++;
-      }
-
-      const fromBlock = Math.max(localBlock, headBlock - maxBlocks + 1);
-      this.logger.log(
-        `Events realtime syncing block range [${fromBlock}, ${headBlock}]`,
+      const localBlock = Number(
+        (await this.redis.get(`${this.QUEUE_NAME}-last-block`)) || 0,
       );
+      const blocksToProcess = headBlock - localBlock;
+      let fromBlock = localBlock;
+      let toBlock = headBlock;
 
-      // await this.syncEventsService.syncEvents(fromBlock, headBlock);
+      // Nothing to sync
+      if (localBlock >= headBlock) return;
 
-      // Send any remaining blocks to the backfill queue
-      if (localBlock < fromBlock) {
-        this.logger.log(
-          `Out of sync: local block ${localBlock} and upstream block ${fromBlock}`,
-        );
-        // await eventsSyncBackfill.addToQueue(localBlock, fromBlock - 1);
+      //if localBlock is zero add job of the current head Block
+      if (localBlock === 0) {
+        fromBlock = headBlock;
+        await this.syncEventsService.syncEvents(fromBlock, toBlock);
+        //if blocks to process are 8 or less
+      } else if (blocksToProcess <= maxBlocks) {
+        fromBlock = Math.max(localBlock, headBlock - blocksToProcess + 1);
+        await this.syncEventsService.syncEvents(fromBlock, toBlock);
+      } else {
+        //if greater than 8 divide in chunks then process
+        const chunks = createChunks(blocksToProcess);
+        for (const chunk of chunks) {
+          toBlock = fromBlock + chunk;
+          await this.midwaySyncService.syncMidwayBlocks(fromBlock, toBlock);
+          fromBlock = toBlock;
+        }
       }
-
-      // To avoid missing any events, save the last synced block with a delay
-      // in order to ensure that the latest blocks will get queried more than
-      // once, which is exactly what we are looking for (since events for the
-      // latest blocks might be missing due to upstream chain reorgs):
-      // https://ethereum.stackexchange.com/questions/109660/eth-getlogs-and-some-missing-logs
-      // await this.cacheManager.set(
-      //   `${this.QUEUE_NAME}-last-block`,
-      //   headBlock - 5,
-      //   0,
-      // );
+      this.logger.log(
+        `Event Sync BlockRange ${fromBlock}-${toBlock}`,
+        headBlock,
+      );
+      await this.redis.set(`${this.QUEUE_NAME}-last-block`, headBlock);
     } catch (error) {
       this.logger.error(`Events realtime syncing failed: ${error}`);
       throw error;

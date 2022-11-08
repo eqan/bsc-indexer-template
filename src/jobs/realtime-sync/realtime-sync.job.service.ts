@@ -17,7 +17,7 @@ export class RealtimeSyncService {
   private readonly logger = new Logger(realtimeQueue);
   networkSettings = getNetworkSettings();
 
-  async syncBlocks() {
+  async syncRealTimeBlocks() {
     await this.realtimeSyncEvents.add({
       jobId: randomUUID(),
       delay: 3000,
@@ -25,14 +25,13 @@ export class RealtimeSyncService {
       removeOnFail: true,
       timeout: 60000,
     });
-    // console.log(job, 'job created ');
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
   @Cron(`*/24 * * * * *`)
   async handleRealtimeSync() {
     try {
-      await this.syncBlocks();
+      await this.syncRealTimeBlocks();
     } catch (error) {
       this.logger.error(
         'events-sync-catchup',
