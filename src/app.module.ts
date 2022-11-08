@@ -22,6 +22,7 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 // import { clientOptions } from 'Redis';
 import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
+import { BackfillSyncModule } from './jobs/collections/backfill-sync/processor/backfill-sync.job.module';
 @Module({
   imports: [
     /**
@@ -83,6 +84,7 @@ import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
     RealtimeSyncModule,
     SyncEventsModule,
     MidwaySyncModule,
+    BackfillSyncModule,
   ],
 })
 export class AppModule {}
