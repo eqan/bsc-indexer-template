@@ -8,7 +8,7 @@ import { createChunks, realtimeQueue } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
 import { MidwaySyncService } from 'src/midway-sync/midway-sync.job.service';
-
+import { backfillQueue } from 'src/common/utils.common';
 @Processor(realtimeQueue)
 @Injectable()
 export class RealtimeSyncProcessor {
@@ -47,6 +47,7 @@ export class RealtimeSyncProcessor {
       //if localBlock is zero add job of the current head Block
       if (localBlock === 0) {
         fromBlock = headBlock;
+        await this.redis.set(`${backfillQueue}-last-block`, fromBlock);
         await this.syncEventsService.syncEvents(fromBlock, toBlock);
         //if blocks to process are 8 or less
       } else if (blocksToProcess <= maxBlocks) {
@@ -61,10 +62,7 @@ export class RealtimeSyncProcessor {
           fromBlock = toBlock;
         }
       }
-      this.logger.log(
-        `Event Sync BlockRange ${fromBlock}-${toBlock}`,
-        headBlock,
-      );
+      this.logger.log(`Event Sync BlockRange ${fromBlock}-${toBlock}`);
       await this.redis.set(`${this.QUEUE_NAME}-last-block`, headBlock);
     } catch (error) {
       this.logger.error(`Events realtime syncing failed: ${error}`);

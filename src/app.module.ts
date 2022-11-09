@@ -19,10 +19,11 @@ import { TokensModule } from 'src/tokens/tokens.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { BullConfig } from './config/bull.config';
 import { SyncEventsModule } from './events/sync-events/sync-events.module';
+import { BackfillSyncModule } from './jobs/collections/backfill-sync/backfill-sync.job.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 // import { clientOptions } from 'Redis';
 import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
-import { BackfillSyncModule } from './jobs/collections/backfill-sync/processor/backfill-sync.job.module';
+
 @Module({
   imports: [
     /**
