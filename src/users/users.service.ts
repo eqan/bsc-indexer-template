@@ -1,7 +1,8 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
@@ -37,8 +38,7 @@ export class UsersService {
       const user = this.usersRepo.create(createUserInput);
       return await this.usersRepo.save(user);
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.CREATE_USER;
+      throw new BadRequestException(SystemErrors.CREATE_USER);
     }
   }
 
@@ -54,28 +54,38 @@ export class UsersService {
       const user = this.usersRepo.create(createUserInput);
       return await this.usersRepo.save(user);
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.CREATE_USER_ON_LOGIN;
+      throw new BadRequestException(SystemErrors.CREATE_USER_ON_LOGIN);
     }
   }
 
   /**
    * Get Data By User Address
-   * @param userId
+   * @param id
    * @returns userData
    */
-  async getDataByuserId(userId: string): Promise<Users> {
+  async getDataByuserId(id: string): Promise<Users> {
     try {
-      const userData = await this.usersRepo.findOneByOrFail({ userId });
+      const userData = await this.usersRepo.findOneByOrFail({ id: id });
       if (!userData) {
         throw new NotFoundException('No Users Found');
       }
       return userData;
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.GET_USER_DATA_BY_ID;
-      // throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.GET_USER_DATA_BY_ID);
     }
+  }
+  /*
+    Checks if
+    User available -> Updates the information of the available user such user signature, user message etc.
+    User not available -> Creates the user.
+  */
+  async modifyUserOnLogin(availableUser: any, loginUserInput: LoginUserInput){
+      if (availableUser) {
+        await this.updateUserOnLogin(loginUserInput);
+      } else {
+        availableUser = await this.createUserOnLogin(loginUserInput);
+      }
+      return availableUser;
   }
 
   /**
@@ -87,35 +97,28 @@ export class UsersService {
     loginUserInput: LoginUserInput,
   ): Promise<{ access_token: string }> {
     loginUserInput.userMessage = returnMessage(loginUserInput.userMessage);
-    console.log(loginUserInput.userMessage);
+    let availableUser = null;
     const user = await this.authService.validateUser(
       loginUserInput.userMessage,
       loginUserInput.userSignature,
-      loginUserInput.userId,
+      loginUserInput.id,
     );
 
-    if (!user) {
-      throw new UnauthorizedException(SystemErrors.LOGIN_AUTHORIZATION);
-    }
-    let availableUser = null;
-    try {
-      availableUser = await this.usersRepo.findOneBy({ userId: user });
-      if (availableUser) {
-        await this.updateUserOnLogin(loginUserInput);
-      } else {
-        availableUser = await this.createUserOnLogin(loginUserInput);
+    if (user) {
+      try {
+        availableUser = await this.usersRepo.findOneBy({ id: user });
+        availableUser = this.modifyUserOnLogin(availableUser, loginUserInput)
+      } catch (error) {
+        throw new BadRequestException(SystemErrors.LOGIN_USER_CREATION_OR_UPDATION);
       }
-    } catch (error) {
-      console.log(error);
-      throw SystemErrors.LOGIN_USER_CREATION_OR_UPDATION;
-      // return error;
     }
-    console.log(availableUser, 'availableUser');
+    else
+      throw new UnauthorizedException(SystemErrors.LOGIN_AUTHORIZATION);
 
     return this.authService.generateUserAccessToken(
       loginUserInput.userMessage,
       loginUserInput.userSignature,
-      user,
+      availableUser,
     );
   }
 
@@ -128,13 +131,11 @@ export class UsersService {
     updateUsersInput: UpdateUserOnLoginInput,
   ): Promise<Users> {
     try {
-      const { userId, userSignature } = updateUsersInput;
-      await this.usersRepo.update({ userId }, { userSignature });
-      return this.getDataByuserId(userId);
+      const { id, userSignature } = updateUsersInput;
+      await this.usersRepo.update({ id }, { userSignature });
+      return this.getDataByuserId(id);
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.UPDATE_USER;
-      // throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.UPDATE_USER);
     }
   }
 
@@ -147,14 +148,11 @@ export class UsersService {
     updateUsersInput: UpdateUsersInput,
   ): Promise<Users> {
     try {
-      const { userId, ...rest } = updateUsersInput;
-
-      await this.usersRepo.update({ userId }, rest);
-      return this.getDataByuserId(userId);
+      const { id, ...rest } = updateUsersInput;
+      await this.usersRepo.update({ id: id }, rest);
+      return this.getDataByuserId(id);
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.UPDATE_USER;
-      // throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.UPDATE_USER);
     }
   }
 
@@ -166,12 +164,11 @@ export class UsersService {
   async deleteUsers(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      await this.usersRepo.delete({ userId: In(ids) });
+      await this.usersRepo.delete({ id: In(ids) });
       return null;
     } catch (error) {
       console.log(error);
-      throw SystemErrors.DELETE_USER;
-      // throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.DELETE_USER);
     }
   }
 
@@ -186,22 +183,20 @@ export class UsersService {
       const [items, total] = await Promise.all([
         this.usersRepo.find({
           where: {
-            userId: rest?.userId,
+            id: rest?.id,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
         this.usersRepo.count({
           where: {
-            userId: rest.userId,
+            id: rest.id,
           },
         }),
       ]);
       return { items, total };
     } catch (error) {
-      console.log(error);
-      throw SystemErrors.FIND_USERS;
-      // throw new BadRequestException(err);
+      throw new BadRequestException(SystemErrors.FIND_USERS);
     }
   }
 }

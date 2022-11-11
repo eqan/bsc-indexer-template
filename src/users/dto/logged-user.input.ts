@@ -5,7 +5,7 @@ import { IsEthereumAddress, IsString } from 'class-validator';
 export class LoginUserInput {
   @IsEthereumAddress({message: "User address must be valid"})
   @Field()
-  userId: string;
+  id: string;
   
   @IsString()
   @Field()

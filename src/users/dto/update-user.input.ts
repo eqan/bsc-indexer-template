@@ -11,7 +11,7 @@ export class UpdateUsersInput {
   @IsNotEmpty()
   @IsEthereumAddress({message: "User address should be valid"})
   @Field()
-  userId: string;
+  id: string;
 
   @IsNotEmpty()
   @IsString()

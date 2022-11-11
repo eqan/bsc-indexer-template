@@ -10,7 +10,7 @@ import { UserTypes } from './enum/user.types.enums';
  */
 @ObjectType()
 @Entity('Users')
-@Unique(["userId", "userSignature", "userName"])
+@Unique(["id", "userSignature", "userName"])
 export class Users extends BaseEntity {
 
   @Field()
@@ -19,7 +19,7 @@ export class Users extends BaseEntity {
     type: 'text',
     unique: true,
   })
-  userId: string
+  id: string
 
   @Field()
   @Column({type: 'text'})

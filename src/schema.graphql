@@ -224,7 +224,7 @@ type Orders {
 }
 
 type Users {
-  userId: String!
+  id: String!
   userSignature: String!
   name: String!
   userName: String!
@@ -409,7 +409,7 @@ input FilterOrderDto {
 input FilterUserDto {
   page: Float
   limit: Float
-  userId: String
+  id: String
 }
 
 input FilterAuctionDto {
@@ -586,14 +586,14 @@ input UpdateOrderStatus {
 }
 
 input LoginUserInput {
-  userId: String!
+  id: String!
   userSignature: String!
   userMessage: String!
 }
 
 input CreateUserInput {
   userSignature: String!
-  userId: String!
+  id: String!
   type: UserTypeEnum!
 }
 
@@ -607,7 +607,7 @@ input DeleteUsersInput {
 }
 
 input UpdateUsersInput {
-  userId: String!
+  id: String!
   userSignature: String!
   userName: String!
   name: String!

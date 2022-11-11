@@ -83,14 +83,14 @@ export class UsersResolver extends BaseProvider<Users> {
 
   /**
    * Get User By address
-   * @param userId
+   * @param id
    * @returns User
    */
   @UseGuards(JwtAuthGuard)
   @Query(() => Users, { name: 'GetUserDataByuserId' })
-  async show(@Args('userId') userId: string): Promise<Users> {
+  async show(@Args('userId') id: string): Promise<Users> {
     try {
-      return await this.userService.getDataByuserId(userId);
+      return await this.userService.getDataByuserId(id);
     } catch (error) {
       throw new BadRequestException(error);
     }

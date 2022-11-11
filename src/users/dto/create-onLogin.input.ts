@@ -12,5 +12,5 @@ export class CreateUserOnLoginInput {
   @IsNotEmpty()
   @IsEthereumAddress({message: "User address should be valid"})
   @Field()
-  userId: string;
+  id: string;
 }

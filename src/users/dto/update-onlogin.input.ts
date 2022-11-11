@@ -6,7 +6,7 @@ export class UpdateUserOnLoginInput {
   @IsNotEmpty()
   @IsEthereumAddress({message: "User address must be valid"})
   @Field()
-  userId: string;
+  id: string;
   
   @IsOptional()
   @IsString()
