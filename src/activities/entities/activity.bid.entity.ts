@@ -1,13 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { Make } from 'src/orders/dto/nestedObjectsDto/make.dto';
-import { ChildEntity, Column } from 'typeorm';
-import { Activity } from './activity.entity';
+import { Column } from 'typeorm';
 import { ActivityType } from './enums/activity.type.enum';
 
-@ObjectType()
-@ChildEntity()
-export class ActivityBid extends Activity {
+@ObjectType('ActivityBid')
+@InputType('ActivityBidInput')
+export class ActivityBid{
   @Field(() => ActivityType)
   @Column({
     type: 'enum',

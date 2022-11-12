@@ -8,10 +8,6 @@ import { Activity } from './entities/activity.entity';
   imports: [
     TypeOrmModule.forFeature([
       Activity,
-      // ActivityTransfer,
-      // // ActivityMint,
-      // ActivityBid,
-      // ActivityBurn,
     ]),
   ],
   providers: [ActivitiesResolver, ActivitiesService],

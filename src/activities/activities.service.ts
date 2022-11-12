@@ -25,13 +25,6 @@ export class ActivitiesService {
    */
   async create(createActivityInput: CreateActivityInput): Promise<Activity> {
     try {
-      // console.log(createActivityInput.type);
-      // let createActivity:any = null
-
-      // if(createActivityInput.type=== ActivityType.MINT){
-      //   createActivity ={ ...createActivityInput.createBidActivityInput}
-      // }
-      // console.log(createActivity)
       console.log(createActivityInput)
       const activity = this.activityRepo.create(createActivityInput);
       return await this.activityRepo.save(activity);
@@ -60,13 +53,14 @@ export class ActivitiesService {
         }),
         this.activityRepo.count({
           where: {
-            id: rest?.id,
+            id: rest.id,
+            type: rest?.type,
           },
         }),
       ]);
       return { items, total };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (err) {
+      throw new BadRequestException(err);
     }
   }
 

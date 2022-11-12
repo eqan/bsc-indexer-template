@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { ActivityType } from '../entities/enums/activity.type.enum';
 import { CreateBidActivityInput } from './create-activity.bid.input';
+import { CreateActivityBurnInput } from './create-activity.burn.input';
 import { CreateActivityMintInput } from './create-activity.mint.input';
 import { CreateActivityTransferInput } from './create-activity.transfer.input';
 import { BlockChainInfoDto } from './nestedActivityObject/activity.blockchain.info.dto';
@@ -18,7 +19,6 @@ export class CreateActivityInput {
   @Field(() => String)
   id: string;
 
-  // @IsEnum(ActivityType)
   @IsOptional()
   @Field(() => ActivityType)
   type?: ActivityType;
@@ -39,61 +39,33 @@ export class CreateActivityInput {
   @Field()
   reverted: boolean;
 
-
   @IsOptional()
   @ValidateNested()
   @Type(() => BlockChainInfoDto)
   @Field(() => BlockChainInfoDto, { nullable: true })
   blockchainInfo?: BlockChainInfoDto;
 
-  //Type Mint
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateActivityMintInput)
   @Field(() => CreateActivityMintInput, { nullable: true })
-  MINT?: CreateActivityMintInput;
+  mint?: CreateActivityMintInput;
 
-  //Type Transfer
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateActivityTransferInput)
   @Field(() => CreateActivityTransferInput, { nullable: true })
-  TRANSFER?: CreateActivityTransferInput;
+  transfer?: CreateActivityTransferInput;
 
-  //Type Bid
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateBidActivityInput)
   @Field(() => CreateBidActivityInput, { nullable: true })
-  createBidActivityInput?: CreateBidActivityInput;
+  bid?: CreateBidActivityInput;
 
-  //Mint
-  // @Field()
-  // tokenId: string;
-
-  // @Field()
-  // value: string;
-
-  // @Field()
-  // owner: string;
-
-  // @Field()
-  // contract: string;
-
-  // @Field()
-  // itemId: string;
-
-  // @Field()
-  // transactionHash: string;
-
-  //transfer
-  // @Field()
-  // from: string;
-
-  // @Field()
-  // purchase: boolean;
-
-  //burn
-
-  //bid
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateActivityBurnInput)
+  @Field(() => CreateActivityBurnInput, { nullable: true })
+  burn?: CreateActivityBurnInput;
 }

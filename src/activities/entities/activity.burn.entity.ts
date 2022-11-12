@@ -1,9 +1,9 @@
-import { Field } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Column } from 'typeorm';
 
-// @ObjectType()
-// @ChildEntity()
+@ObjectType('ActivityBurn')
+@InputType('ActivityBurnInput')
 export class ActivityBurn{
   @Field()
   @Column({

@@ -6,6 +6,7 @@ import {
   Entity, PrimaryColumn
 } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
+import { ActivityBid } from './activity.bid.entity';
 import { ActivityBurn } from './activity.burn.entity';
 import { ActivityMint } from './activity.mint.entity';
 import { ActivityTransfer } from './activity.transfer.entity';
@@ -69,19 +70,22 @@ export abstract class Activity extends BaseEntity {
   };
 
   @IsOptional()
-  // @IsEmpty()
-  @Column(() => ActivityMint)
-  MINT: ActivityMint;
+  @Field(() => ActivityMint)
+  @Column({nullable: true, type: 'jsonb'})
+  mint?: ActivityMint;
 
-  // @IsEmpty()
   @IsOptional()
-  @Column(() => ActivityBurn)
-  BURN: ActivityBurn;
+  @Field(() => ActivityBurn)
+  @Column({nullable: true, type: 'jsonb'})
+  burn: ActivityBurn;
 
-  // @IsEmpty()
   @IsOptional()
-  @Column(() => ActivityTransfer)
-  TRANSFER: ActivityTransfer;
-  // @Column(()=>ActivityTransfer)
-  // activityTransfer: ActivityTransfer
+  @Field(() => ActivityTransfer)
+  @Column({nullable: true, type: 'jsonb'})
+  transfer: ActivityTransfer;
+
+  @IsOptional()
+  @Field(() => ActivityBid)
+  @Column({nullable: true, type: 'jsonb'})
+  bid: ActivityBid;
 }

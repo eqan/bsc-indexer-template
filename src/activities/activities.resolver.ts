@@ -34,7 +34,9 @@ export class ActivitiesResolver {
   ): Promise<GetAllActivities> {
     try {
       console.log("Hello world")
-      return await this.activitiesService.index(filterDto);
+      let data = await this.activitiesService.index(filterDto);
+      console.log(data.items)
+      return data;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -44,14 +46,13 @@ export class ActivitiesResolver {
   async show(@Args('GetActivityByIdInput') id: string): Promise<Activity> {
     try {
       console.log("Hello world")
-      return await this.activitiesService.getActivityById(id);
+      let data = await this.activitiesService.getActivityById(id);
+      console.log(data)
+      return data;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
-
-  // @Mutation(() => Activity)
-  // edit(editDto: Partial<any>): Promise<any> {}
 
   @Mutation(() => Activity, { nullable: true, name: 'DeleteActivity' })
   async delete(

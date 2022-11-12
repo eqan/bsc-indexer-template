@@ -1,8 +1,10 @@
-import { Field } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column } from 'typeorm';
 
 // @ObjectType()
 // @ChildEntity()
+@ObjectType('ActivityTransfer')
+@InputType('ActivityTransferInput')
 export class ActivityTransfer{
   @Field()
   @Column({

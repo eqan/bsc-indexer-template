@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, In, Repository } from 'typeorm';
@@ -41,6 +41,7 @@ export class CollectionsService {
    */
   async findAllCollections(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
+      console.log(filterDto)
       const { page, limit, ...rest } = filterDto;
       const [items, total] = await Promise.all([
         this.collectionsRepo.find({
