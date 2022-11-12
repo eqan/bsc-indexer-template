@@ -1,6 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
-import { CreateActivityInput } from './create-activity.input';
 
 @InputType('CreateActivityMintInput')
 export class CreateActivityMintInput {

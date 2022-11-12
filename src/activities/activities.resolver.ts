@@ -1,17 +1,13 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActivitiesService } from './activities.service';
-import { Activity } from './entities/activity.entity';
 import { CreateActivityInput } from './dto/create-activity.input';
-import { UpdateActivityInput } from './dto/update-activity.input';
-import BaseProvider from 'src/core/base.BaseProvider';
+import { Activity } from './entities/activity.entity';
 // import { CreateActivityTransferInput } from './dto/create-activity.transfer.input';
 import { BadRequestException } from '@nestjs/common';
-import { ActivityTransfer } from './entities/activity.transfer.entity';
 // import { CreateActivityMintInput } from './dto/create-activity.mint.input';
-import { ActivityMint } from './entities/activity.mint.entity';
+import { DeleteActivityInput } from './dto/delete-activity.input.dto';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
-import { DeleteActivityInput } from './dto/delete-activity.input.dto';
 
 @Resolver(() => Activity)
 export class ActivitiesResolver {
@@ -25,6 +21,7 @@ export class ActivitiesResolver {
     createActivityInput: CreateActivityInput,
   ): Promise<Activity> {
     try {
+      console.log("Hello world")
       return await this.activitiesService.create(createActivityInput);
     } catch (error) {
       throw new BadRequestException(error);

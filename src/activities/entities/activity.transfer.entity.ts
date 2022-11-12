@@ -1,57 +1,64 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ChildEntity, Column, Entity, TableInheritance } from 'typeorm';
+import { ChildEntity, Column } from 'typeorm';
 import { Activity } from './activity.entity';
-import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType()
 @ChildEntity()
 export class ActivityTransfer extends Activity {
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   tokenId: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   value: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   from: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   owner: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   contract: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
-    unique: true,
+    nullable: true
   })
   transactionHash: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'boolean',
+    nullable: true
   })
   purchase: boolean;
-  @Field()
+
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
     unique: true,
+    nullable: true
   })
   itemId: string;
 }

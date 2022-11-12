@@ -1,13 +1,12 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import {
   BaseEntity,
   Column,
   Entity,
   PrimaryColumn,
-  TableInheritance,
+  TableInheritance
 } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
-import { ActivityTransfer } from './activity.transfer.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType()
@@ -15,7 +14,7 @@ import { ActivityType } from './enums/activity.type.enum';
 @TableInheritance({
   column: {
     type: 'varchar',
-    name: 'type',
+    name: 'type'
   },
 })
 export abstract class Activity extends BaseEntity {
@@ -28,9 +27,7 @@ export abstract class Activity extends BaseEntity {
 
   @Field(() => ActivityType)
   @Column({
-    type: 'enum',
     enum: ActivityType,
-    enumName: 'ActivityType',
     default: ActivityType.TRANSFER,
   })
   type: ActivityType;

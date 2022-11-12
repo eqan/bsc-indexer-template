@@ -1,18 +1,16 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
-  IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { ActivityType } from '../entities/enums/activity.type.enum';
 import { CreateBidActivityInput } from './create-activity.bid.input';
 import { CreateActivityMintInput } from './create-activity.mint.input';
 import { CreateActivityTransferInput } from './create-activity.transfer.input';
 import { BlockChainInfoDto } from './nestedActivityObject/activity.blockchain.info.dto';
-import { Make } from './nestedActivityObject/make.dto';
 
 @InputType('CreateActivityInput')
 export class CreateActivityInput {
@@ -35,12 +33,15 @@ export class CreateActivityInput {
   @Field(() => Date)
   date: Date;
 
-  @Field()
+  @IsNotEmpty()
+  @Field(() => Date)
   lastUpdatedAt: Date;
 
+  @IsNotEmpty()
   @Field()
   cursor: string;
 
+  @IsNotEmpty()
   @Field()
   reverted: boolean;
 
@@ -53,14 +54,7 @@ export class CreateActivityInput {
   //Type Mint
   @IsOptional()
   @ValidateNested()
-  @Type(() => CreateActivityMintInput,{
-    // discriminator: {
-    //   property: '',
-    //   subTypes: [
-
-    //   ]
-    // }
-  })
+  @Type(() => CreateActivityMintInput)
   @Field(() => CreateActivityMintInput, { nullable: true })
   MINT?: CreateActivityMintInput;
 

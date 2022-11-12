@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { Make } from 'src/orders/dto/nestedObjectsDto/make.dto';
-import { ChildEntity, Column, Entity, TableInheritance } from 'typeorm';
+import { ChildEntity, Column } from 'typeorm';
 import { Activity } from './activity.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
@@ -17,15 +17,17 @@ export class ActivityBid extends Activity {
   })
   type: ActivityType;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   hash: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column({
     type: 'varchar',
+    nullable: true
   })
   maker: string;
 

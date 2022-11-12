@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,7 +10,6 @@ import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
 import { UpdateActivityInput } from './dto/update-activity.input';
 import { Activity } from './entities/activity.entity';
-import { ActivityType } from './entities/enums/activity.type.enum';
 
 @Injectable()
 export class ActivitiesService {
@@ -26,7 +25,7 @@ export class ActivitiesService {
    */
   async create(createActivityInput: CreateActivityInput): Promise<Activity> {
     try {
-      console.log(createActivityInput);
+      // console.log(createActivityInput.type);
       // let createActivity:any = null
 
       // if(createActivityInput.type=== ActivityType.MINT){

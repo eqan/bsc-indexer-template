@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ChildEntity, Column, Entity, TableInheritance } from 'typeorm';
+import { ChildEntity, Column } from 'typeorm';
 import { Activity } from './activity.entity';
-import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType()
 @ChildEntity()
