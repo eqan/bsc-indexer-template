@@ -1,11 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsEthereumAddress } from 'class-validator';
 import { ActivityType } from '../entities/enums/activity.type.enum';
 import { PaginationParam } from './pagination.dto';
 @InputType()
 export class FilterActivityDto extends PaginationParam {
+  @IsEthereumAddress()
   @Field({ nullable: true })
-  activityId?: string;
+  id: string;
 
   @IsEnum(ActivityType)
   @Field(() => ActivityType, { nullable: true })

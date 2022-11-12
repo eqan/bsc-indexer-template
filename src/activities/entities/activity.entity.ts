@@ -1,29 +1,32 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsEthereumAddress, IsOptional } from 'class-validator';
 import {
   BaseEntity,
   Column,
-  Entity,
-  PrimaryColumn,
-  TableInheritance
+  Entity, PrimaryColumn
 } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
+import { ActivityBurn } from './activity.burn.entity';
+import { ActivityMint } from './activity.mint.entity';
+import { ActivityTransfer } from './activity.transfer.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType()
 @Entity()
-@TableInheritance({
-  column: {
-    type: 'varchar',
-    name: 'type'
-  },
-})
+// @TableInheritance({
+//   column: {
+//     type: 'varchar',
+//     name: 'type'
+//   },
+// })
 export abstract class Activity extends BaseEntity {
   @Field()
+  @IsEthereumAddress()
   @PrimaryColumn({
-    type: 'text',
+    type: 'varchar',
     unique: true,
   })
-  activityId: string;
+  id: string;
 
   @Field(() => ActivityType)
   @Column({
@@ -65,6 +68,20 @@ export abstract class Activity extends BaseEntity {
     logIndex?: number;
   };
 
+  @IsOptional()
+  // @IsEmpty()
+  @Column(() => ActivityMint)
+  MINT: ActivityMint;
+
+  // @IsEmpty()
+  @IsOptional()
+  @Column(() => ActivityBurn)
+  BURN: ActivityBurn;
+
+  // @IsEmpty()
+  @IsOptional()
+  @Column(() => ActivityTransfer)
+  TRANSFER: ActivityTransfer;
   // @Column(()=>ActivityTransfer)
   // activityTransfer: ActivityTransfer
 }

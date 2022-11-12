@@ -1,29 +1,37 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { CreateActivityInput } from './create-activity.input';
+import { IsOptional } from 'class-validator';
 
 @InputType('CreateActivityTransferInput')
 export class CreateActivityTransferInput {
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   tokenId: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   value: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   from: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   owner: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   contract: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   itemId: string;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   purchase: boolean;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   transactionHash: string;
 }

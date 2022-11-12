@@ -1,8 +1,10 @@
+import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { IsEthereumAddress } from 'class-validator';
 import { CreateActivityInput } from './create-activity.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateActivityInput extends PartialType(CreateActivityInput) {
-  @Field(() => Int)
-  id: number;
+  @IsEthereumAddress()
+  @Field()
+  id: string;
 }

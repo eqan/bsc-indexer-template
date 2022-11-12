@@ -1,31 +1,33 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { ChildEntity, Column } from 'typeorm';
-import { Activity } from './activity.entity';
+import { Field } from '@nestjs/graphql';
+import { Column } from 'typeorm';
 
-@ObjectType()
-@ChildEntity()
-export class ActivityMint extends Activity {
+// @ChildEntity()
+export class ActivityMint {
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
   tokenId?: string;
 
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
   value?: string;
 
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
   owner?: string;
 
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
   contract?: string;
 
@@ -41,6 +43,7 @@ export class ActivityMint extends Activity {
   @Column({
     type: 'varchar',
     unique: true,
+    nullable: true
   })
   itemId?: string;
 }

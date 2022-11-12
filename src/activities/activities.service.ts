@@ -32,6 +32,7 @@ export class ActivitiesService {
       //   createActivity ={ ...createActivityInput.createBidActivityInput}
       // }
       // console.log(createActivity)
+      console.log(createActivityInput)
       const activity = this.activityRepo.create(createActivityInput);
       return await this.activityRepo.save(activity);
     } catch (error) {
@@ -51,7 +52,7 @@ export class ActivitiesService {
       const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
-            activityId: rest?.activityId,
+            id: rest?.id,
             type: rest?.type,
           },
           skip: (page - 1) * limit || 0,
@@ -59,7 +60,7 @@ export class ActivitiesService {
         }),
         this.activityRepo.count({
           where: {
-            activityId: rest?.activityId,
+            id: rest?.id,
           },
         }),
       ]);
@@ -69,13 +70,33 @@ export class ActivitiesService {
     }
   }
 
-  async show(activityId: string): Promise<Activity[]> {
+  /**
+   * GET Activity By Id
+   * @param id
+   * @returns Token against Provided Id
+   */
+  async getActivityById(id: string): Promise<Activity> {
     try {
-      const found = await this.activityRepo.findBy({
-        activityId,
+      console.log("Hello world")
+      const found = await this.activityRepo.findOneBy({
+        id,
       });
       if (!found) {
-        throw new NotFoundException(`Activity against ${activityId} not found`);
+        throw new NotFoundException(`Activity against ${id} not found`);
+      }
+      return found;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async show(id: string): Promise<Activity[]> {
+    try {
+      const found = await this.activityRepo.findBy({
+        id: id,
+      });
+      if (!found) {
+        throw new NotFoundException(`Activity against ${id} not found`);
       }
       return found;
     } catch (error) {}

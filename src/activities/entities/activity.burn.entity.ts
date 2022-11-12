@@ -1,39 +1,48 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { ChildEntity, Column, Entity, TableInheritance } from 'typeorm';
-import { Activity } from './activity.entity';
-import { ActivityType } from './enums/activity.type.enum';
+import { Field } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
+import { Column } from 'typeorm';
 
-@ObjectType()
-@ChildEntity()
-export class ActivityBurn extends Activity {
+// @ObjectType()
+// @ChildEntity()
+export class ActivityBurn{
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
+
   tokenId: string;
 
   @Field()
+  @IsOptional()
   @Column({
     type: 'varchar',
+    nullable: true
   })
+  // @Column()
   value: string;
 
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
+  // @Column()
   owner: string;
 
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true
   })
+  // @Column()
   contract: string;
 
   @Field()
   @Column({
     type: 'varchar',
     unique: true,
+    nullable: true
   })
   transactionHash: string;
 }

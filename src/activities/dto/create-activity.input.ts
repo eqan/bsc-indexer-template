@@ -14,20 +14,14 @@ import { BlockChainInfoDto } from './nestedActivityObject/activity.blockchain.in
 
 @InputType('CreateActivityInput')
 export class CreateActivityInput {
+  @IsEthereumAddress()
+  @Field(() => String)
+  id: string;
+
   // @IsEnum(ActivityType)
   @IsOptional()
   @Field(() => ActivityType)
   type?: ActivityType;
-
-  // @IsEnum(ActivityType)
-  // @IsOptional()
-  // @Field(() => ActivityType)
-  // ActivityType?: ActivityType;
-
-  @IsEthereumAddress()
-  @IsNotEmpty()
-  @Field(() => String)
-  activityId: string;
 
   @IsNotEmpty()
   @Field(() => Date)
@@ -44,6 +38,7 @@ export class CreateActivityInput {
   @IsNotEmpty()
   @Field()
   reverted: boolean;
+
 
   @IsOptional()
   @ValidateNested()
@@ -66,9 +61,9 @@ export class CreateActivityInput {
   TRANSFER?: CreateActivityTransferInput;
 
   //Type Bid
+  @IsOptional()
   @ValidateNested()
   @Type(() => CreateBidActivityInput)
-  @IsOptional()
   @Field(() => CreateBidActivityInput, { nullable: true })
   createBidActivityInput?: CreateBidActivityInput;
 

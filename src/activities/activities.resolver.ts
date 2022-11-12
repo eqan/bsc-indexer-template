@@ -15,13 +15,12 @@ export class ActivitiesResolver {
     // super();
   }
 
-  @Mutation(() => Activity)
+  @Mutation(() => Activity, { name: 'CreateActivity' })
   async create(
     @Args('CreateActivityInput')
     createActivityInput: CreateActivityInput,
   ): Promise<Activity> {
     try {
-      console.log("Hello world")
       return await this.activitiesService.create(createActivityInput);
     } catch (error) {
       throw new BadRequestException(error);
@@ -34,6 +33,7 @@ export class ActivitiesResolver {
     filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {
+      console.log("Hello world")
       return await this.activitiesService.index(filterDto);
     } catch (error) {
       throw new BadRequestException(error);
@@ -41,9 +41,10 @@ export class ActivitiesResolver {
   }
 
   @Query(() => Activity, { name: 'GetActivityById' })
-  async show(@Args('GetActivityById') activityId: string): Promise<Activity[]> {
+  async show(@Args('GetActivityByIdInput') id: string): Promise<Activity> {
     try {
-      return await this.activitiesService.show(activityId);
+      console.log("Hello world")
+      return await this.activitiesService.getActivityById(id);
     } catch (error) {
       throw new BadRequestException(error);
     }
