@@ -12,14 +12,8 @@ import { ActivityMint } from './activity.mint.entity';
 import { ActivityTransfer } from './activity.transfer.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
-@ObjectType()
-@Entity()
-// @TableInheritance({
-//   column: {
-//     type: 'varchar',
-//     name: 'type'
-//   },
-// })
+@ObjectType('Activity')
+@Entity('ActivityInput')
 export abstract class Activity extends BaseEntity {
   @Field()
   @IsEthereumAddress()

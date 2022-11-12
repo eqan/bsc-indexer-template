@@ -1,7 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column } from 'typeorm';
 
-// @ChildEntity()
 @ObjectType('ActivityMint')
 @InputType('ActivityMintInput')
 export class ActivityMint {

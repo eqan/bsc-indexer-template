@@ -4,7 +4,7 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
@@ -67,7 +67,7 @@ export class ActivitiesService {
   /**
    * GET Activity By Id
    * @param id
-   * @returns Token against Provided Id
+   * @returns Activity against Provided Id
    */
   async getActivityById(id: string): Promise<Activity> {
     try {
@@ -84,6 +84,11 @@ export class ActivitiesService {
     }
   }
 
+  /**
+   * Show Activity
+   * @param id
+   * @returns Updated Activity
+   */
   async show(id: string): Promise<Activity[]> {
     try {
       const found = await this.activityRepo.findBy({
@@ -96,22 +101,28 @@ export class ActivitiesService {
     } catch (error) {}
   }
 
+  /**
+   * Edit Activity
+   * @param activityId
+   * @returns Updated Activity
+   */
   edit(id: number, updateActivityInput: UpdateActivityInput) {
     return `This action updates a #${id} activity`;
   }
 
   /**
-   * DEETE Token
-   * @param tokenIds
+   * DEETE Activity
+   * @param activityIds
    * @returns
    */
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      const values = await this.activityRepo.delete(ids);
+      const values = await this.activityRepo.delete({ id: In(ids) });
       if (!values) {
-        throw new NotFoundException('Token not found');
+        throw new NotFoundException('Activity not found');
       }
+      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }
