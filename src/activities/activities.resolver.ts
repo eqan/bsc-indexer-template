@@ -27,16 +27,19 @@ export class ActivitiesResolver {
     }
   }
 
-  @Query(() => [Activity], { name: 'GetAllActivities' })
+  /**
+   * GET All Collections
+   * @returns Collections Array and their total count
+   */
+  @Query(() => GetAllActivities, { name: 'GetAllActivities' })
   async index(
-    @Args('GetAllActivities')
-    filterDto: FilterActivityDto,
+    @Args('GetAllActivitiesInput') filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
-    try {
-      let data = await this.activitiesService.index(filterDto);
-      console.log(data.items);
-      return data;
-    } catch (error) {
+    try{
+      return await this.activitiesService.findAllActivities(filterDto);
+    }
+    catch(error)
+    {
       throw new BadRequestException(error);
     }
   }
@@ -52,13 +55,13 @@ export class ActivitiesResolver {
   }
 
   /**
-   * Remove Collection
-   * @param collectionId
+   * Remove Activity
+   * @param activityId
    * @returns Nothing
    */
-  @Query(() => Activity, { name: 'DeleteActivity', nullable: true })
+  @Mutation(() => Activity, { name: 'DeleteActivity', nullable: true })
   async delete(
-    @Args('deleteActivityInput') deleteActivityInput: DeleteActivityInput,
+    @Args({name: 'DeleteActivityInput'}) deleteActivityInput: DeleteActivityInput,
   ): Promise<void> {
     try {
       console.log(deleteActivityInput, 'deleteActivityInput');

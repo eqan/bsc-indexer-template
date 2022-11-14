@@ -49,23 +49,23 @@ export class CreateActivityInput {
   @ValidateNested()
   @Type(() => CreateActivityMintInput)
   @Field(() => CreateActivityMintInput, { nullable: true })
-  mint?: CreateActivityMintInput;
+  MINT?: CreateActivityMintInput;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateActivityTransferInput)
   @Field(() => CreateActivityTransferInput, { nullable: true })
-  transfer?: CreateActivityTransferInput;
+  TRANSFER?: CreateActivityTransferInput;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateBidActivityInput)
   @Field(() => CreateBidActivityInput, { nullable: true })
-  bid?: CreateBidActivityInput;
+  BID?: CreateBidActivityInput;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateActivityBurnInput)
   @Field(() => CreateActivityBurnInput, { nullable: true })
-  burn?: CreateActivityBurnInput;
+  BURN?: CreateActivityBurnInput;
 }

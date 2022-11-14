@@ -1,11 +1,9 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions,
+  TypeOrmModuleOptions
 } from '@nestjs/typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
-import { ActivityMint } from 'src/activities/entities/activity.mint.entity';
-import { ActivityTransfer } from 'src/activities/entities/activity.transfer.entity';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Orders } from 'src/orders/entities/orders.entity';
 import { Tokens } from 'src/tokens/entities/tokens.entity';

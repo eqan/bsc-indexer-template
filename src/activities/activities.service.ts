@@ -35,6 +35,37 @@ export class ActivitiesService {
   }
 
   /**
+   * Get All Collections ... With Filters
+   * @@params No Params
+   * @returns Array of Collections and Total Number of Collections
+   */
+  async findAllActivities(filterDto: FilterActivityDto): Promise<GetAllActivities> {
+    try {
+      console.log(filterDto)
+      const { page, limit, ...rest } = filterDto;
+      const [items, total] = await Promise.all([
+        this.activityRepo.find({
+          where: {
+            id: rest?.id,
+            type: rest?.type,
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+        this.activityRepo.count({
+          where: {
+            id: rest.id,
+            type: rest?.type,
+          },
+        }),
+      ]);
+      return { items, total };
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
+
+  /**
    * Get All Activities
    * @param filterActivity
    * @returns All Activities

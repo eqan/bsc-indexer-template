@@ -66,20 +66,20 @@ export abstract class Activity extends BaseEntity {
   @IsOptional()
   @Field(() => ActivityMint)
   @Column({nullable: true, type: 'jsonb'})
-  mint?: ActivityMint;
+  MINT?: ActivityMint;
 
   @IsOptional()
   @Field(() => ActivityBurn)
   @Column({nullable: true, type: 'jsonb'})
-  burn: ActivityBurn;
+  BURN: ActivityBurn;
 
   @IsOptional()
   @Field(() => ActivityTransfer)
   @Column({nullable: true, type: 'jsonb'})
-  transfer: ActivityTransfer;
+  TRANSFER: ActivityTransfer;
 
   @IsOptional()
   @Field(() => ActivityBid)
   @Column({nullable: true, type: 'jsonb'})
-  bid: ActivityBid;
+  BID: ActivityBid;
 }
