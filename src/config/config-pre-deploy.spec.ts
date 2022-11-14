@@ -9,7 +9,6 @@ describe('All Environment Variables Exist', () => {
     'POSTGRES_HOST',
     'POSTGRES_PORT',
     'DB_USER',
-    'PORT',
     'CHAIN_ID',
     'BASE_NETWORK_HTTP_URL',
     'BASE_NETWORK_WS_URL',
