@@ -5,12 +5,8 @@ import { ActivitiesService } from './activities.service';
 import { Activity } from './entities/activity.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Activity,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Activity])],
   providers: [ActivitiesResolver, ActivitiesService],
-  exports: [ActivitiesService],
+  exports: [ActivitiesService]
 })
 export class ActivitiesModule {}

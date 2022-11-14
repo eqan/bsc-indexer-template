@@ -10,10 +10,10 @@ import { HttpModule } from '@nestjs/axios';
   imports: [
     HttpModule.register({
       timeout: 60000,
-      maxRedirects: 5,
-    }),
+      maxRedirects: 5
+    })
   ],
   providers: [MetadataApi],
-  exports: [MetadataApi],
+  exports: [MetadataApi]
 })
 export class MetadataApiModule {}

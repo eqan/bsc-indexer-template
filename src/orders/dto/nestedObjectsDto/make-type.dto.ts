@@ -3,7 +3,7 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
-  IsOptional,
+  IsOptional
 } from 'class-validator';
 import { OrderType } from 'src/orders/entities/enums/order.type.enum';
 

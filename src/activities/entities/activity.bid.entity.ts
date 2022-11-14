@@ -6,24 +6,24 @@ import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType('ActivityBid')
 @InputType('ActivityBidInput')
-export class ActivityBid{
+export class ActivityBid {
   @Field(() => ActivityType)
   @Column({
     type: 'enum',
     enum: ActivityType,
     enumName: 'ActivityType',
-    default: ActivityType.BID,
+    default: ActivityType.BID
   })
   type: ActivityType;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true
   })
   hash: string;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true
@@ -33,21 +33,21 @@ export class ActivityBid{
   @Field()
   @Column({
     type: 'decimal',
-    nullable: true,
+    nullable: true
   })
   price?: number;
 
   @Field()
   @Column({
     type: 'decimal',
-    nullable: true,
+    nullable: true
   })
   priceUsd?: number;
 
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true,
+    nullable: true
   })
   take?: {
     type: {
@@ -61,7 +61,7 @@ export class ActivityBid{
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true,
+    nullable: true
   })
   make?: {
     type: {

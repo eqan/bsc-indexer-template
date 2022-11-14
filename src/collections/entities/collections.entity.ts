@@ -8,7 +8,7 @@ export class Collections {
   @Field()
   @PrimaryColumn({
     type: 'text',
-    unique: true,
+    unique: true
   })
   collectionId: string;
 
@@ -23,42 +23,42 @@ export class Collections {
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   bannerImageUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   externalUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   imageUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   twitterUserName?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   discordUrl?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   description?: string;
 

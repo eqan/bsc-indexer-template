@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
@@ -17,7 +17,7 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
-    private collectionsService: CollectionsService,
+    private collectionsService: CollectionsService
   ) {}
 
   /**
@@ -30,7 +30,7 @@ export class TokensService {
       const { collectionId, ...restParams } = createTokensInput;
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.getCollectionById(
-        collectionId,
+        collectionId
       );
 
       token.collection = collection;
@@ -52,7 +52,7 @@ export class TokensService {
   async getAllTokensByCollectionId(collectionId: string): Promise<Tokens[]> {
     try {
       const items = await this.tokensRepo.find({
-        where: { collection: { collectionId } },
+        where: { collection: { collectionId } }
       });
       if (!items) {
         throw new NotFoundException('No Tokens Found');
@@ -74,16 +74,16 @@ export class TokensService {
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
-            tokenId: rest?.tokenId,
+            tokenId: rest?.tokenId
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10,
+          take: limit || 10
         }),
         this.tokensRepo.count({
           where: {
-            tokenId: rest?.tokenId,
-          },
-        }),
+            tokenId: rest?.tokenId
+          }
+        })
       ]);
       return { items, total };
     } catch (err) {
@@ -99,7 +99,7 @@ export class TokensService {
   async getTokenById(tokenId: string): Promise<Tokens> {
     try {
       const found = await this.tokensRepo.findOneBy({
-        tokenId,
+        tokenId
       });
       if (!found) {
         throw new NotFoundException(`Token against ${tokenId} not found`);
@@ -116,7 +116,7 @@ export class TokensService {
    * @returns
    */
   async updateTokenAttribute(
-    updateTokensInput: UpdateTokensInput,
+    updateTokensInput: UpdateTokensInput
   ): Promise<Tokens> {
     try {
       const { tokenId, ...rest } = updateTokensInput;

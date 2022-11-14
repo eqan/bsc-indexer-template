@@ -10,7 +10,7 @@ export const toBuffer = (hexValue: string) =>
 export const regex = {
   url: /(\b(https|http?|ftp|file):\/\/[\-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-z0-9+&@#\/%=~_|/*])/,
   query: /(\{[a-z]*id\})/g,
-  ipfs: /(^(ipfs:|ipns:)\/\/*)/,
+  ipfs: /(^(ipfs:|ipns:)\/\/*)/
 };
 
 // ---- returns true if url is base64 encoded

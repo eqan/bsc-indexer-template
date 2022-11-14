@@ -3,7 +3,7 @@ import { Column } from 'typeorm';
 
 @ObjectType('ActivityTransfer')
 @InputType('ActivityTransferInput')
-export class ActivityTransfer{
+export class ActivityTransfer {
   @Field()
   @Column({
     type: 'varchar',

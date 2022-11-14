@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -14,7 +14,7 @@ import { FilterAuctionDto } from './dto/filter.dto';
 export class AuctionsService {
   constructor(
     @InjectRepository(Auction)
-    private readonly auctionRepo: Repository<Auction>,
+    private readonly auctionRepo: Repository<Auction>
   ) {}
   /**
    * Create Auction
@@ -42,17 +42,17 @@ export class AuctionsService {
         this.auctionRepo.find({
           where: {
             auctionId: rest?.auctionId,
-            contract: rest?.contract,
+            contract: rest?.contract
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10,
+          take: limit || 10
         }),
         this.auctionRepo.count({
           where: {
             auctionId: rest.auctionId,
-            contract: rest?.contract,
-          },
-        }),
+            contract: rest?.contract
+          }
+        })
       ]);
       return { items, total };
     } catch (error) {
@@ -68,7 +68,7 @@ export class AuctionsService {
   async show(auctionId: number): Promise<Auction> {
     try {
       const found = await this.auctionRepo.findOneByOrFail({
-        auctionId,
+        auctionId
       });
       if (!found) {
         throw new NotFoundException(`Auction against ${auctionId}} not found`);

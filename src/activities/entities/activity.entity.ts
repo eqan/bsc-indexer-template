@@ -1,10 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsOptional } from 'class-validator';
-import {
-  BaseEntity,
-  Column,
-  Entity, PrimaryColumn
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
 import { ActivityBid } from './activity.bid.entity';
 import { ActivityBurn } from './activity.burn.entity';
@@ -19,42 +15,42 @@ export abstract class Activity extends BaseEntity {
   @IsEthereumAddress()
   @PrimaryColumn({
     type: 'varchar',
-    unique: true,
+    unique: true
   })
   id: string;
 
   @Field(() => ActivityType)
   @Column({
     enum: ActivityType,
-    default: ActivityType.TRANSFER,
+    default: ActivityType.TRANSFER
   })
   type: ActivityType;
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   date: Date;
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   lastUpdatedAt: Date;
   @Field()
   @Column({
-    type: 'varchar',
+    type: 'varchar'
   })
   cursor: string;
   @Field()
   @Column({
-    type: 'boolean',
+    type: 'boolean'
   })
   reverted: boolean;
 
   @Field(() => BlockChainInfoDto)
   @Column({
     type: 'jsonb',
-    nullable: true,
+    nullable: true
   })
   blockchainInfo?: {
     transactionHash?: string;
@@ -65,21 +61,21 @@ export abstract class Activity extends BaseEntity {
 
   @IsOptional()
   @Field(() => ActivityMint)
-  @Column({nullable: true, type: 'jsonb'})
+  @Column({ nullable: true, type: 'jsonb' })
   MINT?: ActivityMint;
 
   @IsOptional()
   @Field(() => ActivityBurn)
-  @Column({nullable: true, type: 'jsonb'})
+  @Column({ nullable: true, type: 'jsonb' })
   BURN: ActivityBurn;
 
   @IsOptional()
   @Field(() => ActivityTransfer)
-  @Column({nullable: true, type: 'jsonb'})
+  @Column({ nullable: true, type: 'jsonb' })
   TRANSFER: ActivityTransfer;
 
   @IsOptional()
   @Field(() => ActivityBid)
-  @Column({nullable: true, type: 'jsonb'})
+  @Column({ nullable: true, type: 'jsonb' })
   BID: ActivityBid;
 }

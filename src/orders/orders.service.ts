@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -15,7 +15,7 @@ import { Orders } from './entities/orders.entity';
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
-    private ordersRepo: Repository<Orders>,
+    private ordersRepo: Repository<Orders>
   ) {}
 
   /**
@@ -45,16 +45,16 @@ export class OrdersService {
           where: {
             orderId: rest?.orderId,
             maker: rest?.maker,
-            taker: rest?.taker,
+            taker: rest?.taker
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10,
+          take: limit || 10
         }),
         this.ordersRepo.count({
           where: {
-            orderId: rest.orderId,
-          },
-        }),
+            orderId: rest.orderId
+          }
+        })
       ]);
       return { items, total };
     } catch (error) {}
@@ -98,7 +98,7 @@ export class OrdersService {
    * @returns Updated Order status
    */
   async updateOrderStatus(
-    updateOrderStatus: UpdateOrderStatus,
+    updateOrderStatus: UpdateOrderStatus
   ): Promise<Orders> {
     try {
       const { orderId, ...rest } = updateOrderStatus;

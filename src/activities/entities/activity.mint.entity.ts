@@ -36,7 +36,7 @@ export class ActivityMint {
   @Column({
     type: 'varchar',
     unique: true,
-    nullable: true,
+    nullable: true
   })
   transactionHash?: string;
 

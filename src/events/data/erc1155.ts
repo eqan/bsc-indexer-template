@@ -12,8 +12,8 @@ export const transferSingle: EventData = {
       address indexed to,
       uint256 tokenId,
       uint256 amount
-    )`,
-  ]),
+    )`
+  ])
 };
 
 //erc1155 tarnsfer batch event data
@@ -28,6 +28,6 @@ export const transferBatch: EventData = {
       address indexed to,
       uint256[] tokenIds,
       uint256[] amounts
-    )`,
-  ]),
+    )`
+  ])
 };

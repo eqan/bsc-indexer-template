@@ -3,7 +3,7 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
-  IsOptional,
+  IsOptional
 } from 'class-validator';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 

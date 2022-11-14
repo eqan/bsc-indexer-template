@@ -8,7 +8,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested,
+  ValidateNested
 } from 'class-validator';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Data } from './nestedObjectsDto/data.object';

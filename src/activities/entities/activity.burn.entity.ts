@@ -4,13 +4,12 @@ import { Column } from 'typeorm';
 
 @ObjectType('ActivityBurn')
 @InputType('ActivityBurnInput')
-export class ActivityBurn{
+export class ActivityBurn {
   @Field()
   @Column({
     type: 'varchar',
     nullable: true
   })
-
   tokenId: string;
 
   @Field()

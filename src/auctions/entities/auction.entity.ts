@@ -12,19 +12,19 @@ export class Auction {
   @Field()
   @PrimaryColumn({
     type: 'decimal',
-    unique: true,
+    unique: true
   })
   auctionId: number;
 
   @Field()
   @Column({
-    type: 'varchar',
+    type: 'varchar'
   })
   contract: string;
 
   @Field()
   @Column({
-    type: 'varchar',
+    type: 'varchar'
   })
   seller: string;
 
@@ -33,13 +33,13 @@ export class Auction {
     type: 'enum',
     enum: AuctionType,
     enumName: 'AuctionType',
-    default: AuctionType.BEP721,
+    default: AuctionType.BEP721
   })
   type: AuctionType;
 
   @Field(() => Sell)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   sell: {
     type: {
@@ -52,7 +52,7 @@ export class Auction {
 
   @Field(() => SellTypeDto)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   buy: {
     type: string;
@@ -62,43 +62,43 @@ export class Auction {
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   endTime: Date;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   minimalStep: number;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   minimalPrice: number;
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   createdAt: Date;
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   buyPrice: number;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   buyPriceUsd: number;
 
@@ -111,25 +111,25 @@ export class Auction {
     type: 'enum',
     enum: AuctionStatus,
     enumName: 'AuctionStatus',
-    default: AuctionStatus.ACTIVE,
+    default: AuctionStatus.ACTIVE
   })
   status: AuctionStatus;
 
   @Field()
   @Column({
-    type: 'boolean',
+    type: 'boolean'
   })
   ongoing: boolean;
 
   @Field()
   @Column({
-    type: 'varchar',
+    type: 'varchar'
   })
   hash: string;
 
   @Field(() => LsatBid)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   lastBid: {
     buyer: string;
@@ -152,7 +152,7 @@ export class Auction {
 
   @Field(() => DataInput)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   data: {
     dataType: AuctionDataType;

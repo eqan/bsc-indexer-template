@@ -12,13 +12,13 @@ export class Orders {
   @PrimaryColumn({
     type: 'text',
     unique: true,
-    nullable: false,
+    nullable: false
   })
   orderId: string;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   fill: number;
 
@@ -27,48 +27,48 @@ export class Orders {
     type: 'enum',
     enumName: 'OrderStatus',
     enum: OrderStatus,
-    default: OrderStatus.Active,
+    default: OrderStatus.Active
   })
   status: OrderStatus;
 
   @Field()
   @Column({
     type: 'int',
-    nullable: false,
+    nullable: false
   })
   makeStock: number;
 
   @Field()
   @Column({
     type: 'boolean',
-    nullable: false,
+    nullable: false
   })
   cancelled: boolean;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    nullable: false,
+    nullable: false
   })
   createdAt: Date;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    nullable: false,
+    nullable: false
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: false
   })
   maker: string;
 
   @Field(() => Make)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   Make: {
     type: {
@@ -81,7 +81,7 @@ export class Orders {
 
   @Field(() => Make)
   @Column({
-    type: 'jsonb',
+    type: 'jsonb'
   })
   take: {
     type: {
@@ -94,14 +94,14 @@ export class Orders {
 
   @Field()
   @Column({
-    type: 'text',
+    type: 'text'
   })
   salt: string;
 
   @Field(() => Data)
   @Column({
     type: 'json',
-    nullable: false,
+    nullable: false
   })
   data: {
     type: string;
@@ -114,64 +114,64 @@ export class Orders {
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   startedAt?: Date;
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   endedAt?: Date;
 
   @Field()
   @Column({
-    type: 'boolean',
+    type: 'boolean'
   })
   optionalRoyalties?: boolean;
 
   @Field()
   @Column({
-    type: 'timestamptz',
+    type: 'timestamptz'
   })
   dbUpdatedAt?: Date;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   makePrice?: number;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   takePrice?: number;
 
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'decimal'
   })
   makePriceUsed?: number;
 
   @Field()
   @Column({
     type: 'float',
-    nullable: true,
+    nullable: true
   })
   takePriceUsed?: number;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   signature?: string;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: true
   })
   taker?: string;
 }

@@ -9,7 +9,7 @@ import {
   base64toJson,
   ipfsDomain,
   isBase64Encoded,
-  regex,
+  regex
 } from './../../common/utils.common';
 
 @Injectable()
@@ -17,7 +17,7 @@ import {
 export class MetadataApi {
   constructor(
     private rpcProvider: RpcProvider,
-    private readonly httpService: HttpService,
+    private readonly httpService: HttpService
   ) {}
 
   async fetchRequest(uri: string, id: string) {
@@ -45,23 +45,23 @@ export class MetadataApi {
             meta?.attributes?.map((attribute: any) => ({
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
-              type: attribute?.display_type || '',
+              type: attribute?.display_type || ''
             })) || [],
           content: {
-            url: meta?.image || '',
-          },
+            url: meta?.image || ''
+          }
         };
       else throw new BadRequestException('unsupported format');
     } catch (error) {
       return {
-        message: error.message,
+        message: error.message
       };
     }
   }
 
   public async getTokenMetadata({
     token,
-    tokenId,
+    tokenId
   }: {
     token: string;
     tokenId: string;
@@ -70,13 +70,13 @@ export class MetadataApi {
     try {
       const iface = new Interface([
         'function tokenURI(uint256 _tokenId) external view returns (string)',
-        'function uri(uint256 _id) external view returns (string memory)',
+        'function uri(uint256 _id) external view returns (string memory)'
       ]);
 
       const contract = new Contract(
         token,
         iface,
-        this.rpcProvider.baseProvider,
+        this.rpcProvider.baseProvider
       );
 
       let meta: any;
@@ -101,10 +101,10 @@ export class MetadataApi {
     } catch (error) {
       return error.code === 'CALL_EXCEPTION'
         ? {
-            message: 'Token does not exist',
+            message: 'Token does not exist'
           }
         : {
-            message: `invalid or undefine uri ${tokenURI}`,
+            message: `invalid or undefine uri ${tokenURI}`
           };
     }
   }

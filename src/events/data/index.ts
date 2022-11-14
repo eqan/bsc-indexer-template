@@ -44,7 +44,7 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
       erc721.transfer,
       erc721.approvalForAll,
       erc1155.transferSingle,
-      erc1155.transferBatch,
+      erc1155.transferBatch
     ];
   } else {
     return (

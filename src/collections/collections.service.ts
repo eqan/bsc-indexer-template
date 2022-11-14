@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -86,7 +86,7 @@ export class CollectionsService {
    */
   async findAllCollections(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
-      console.log(filterDto)
+      console.log(filterDto);
       const { page, limit, ...rest } = filterDto;
       const [items, total] = await Promise.all([
         this.collectionsRepo.find({

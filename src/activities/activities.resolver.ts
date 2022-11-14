@@ -18,7 +18,7 @@ export class ActivitiesResolver {
   @Mutation(() => Activity, { name: 'CreateActivity' })
   async create(
     @Args('CreateActivityInput')
-    createActivityInput: CreateActivityInput,
+    createActivityInput: CreateActivityInput
   ): Promise<Activity> {
     try {
       return await this.activitiesService.create(createActivityInput);
@@ -33,13 +33,11 @@ export class ActivitiesResolver {
    */
   @Query(() => GetAllActivities, { name: 'GetAllActivities' })
   async index(
-    @Args('GetAllActivitiesInput') filterDto: FilterActivityDto,
+    @Args('GetAllActivitiesInput') filterDto: FilterActivityDto
   ): Promise<GetAllActivities> {
-    try{
+    try {
       return await this.activitiesService.findAllActivities(filterDto);
-    }
-    catch(error)
-    {
+    } catch (error) {
       throw new BadRequestException(error);
     }
   }
@@ -61,7 +59,8 @@ export class ActivitiesResolver {
    */
   @Mutation(() => Activity, { name: 'DeleteActivity', nullable: true })
   async delete(
-    @Args({name: 'DeleteActivityInput'}) deleteActivityInput: DeleteActivityInput,
+    @Args({ name: 'DeleteActivityInput' })
+    deleteActivityInput: DeleteActivityInput
   ): Promise<void> {
     try {
       console.log(deleteActivityInput, 'deleteActivityInput');
