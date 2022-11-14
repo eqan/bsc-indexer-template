@@ -1,9 +1,8 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { Cache } from 'cache-manager';
 import Redis from 'ioredis';
-import { backfillQueue, createChunks } from 'src/common/utils.common';
+import { createChunks } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
 import { BackfillSyncService } from 'src/jobs/backfill-sync/backfill-sync.job.service';
@@ -42,7 +41,7 @@ export class RealtimeSyncProcessor {
 
       // Nothing to sync
       if (localBlock >= headBlock) return;
-      console.log(localBlock, 'realtime-local');
+      // console.log(localBlock, 'realtime-local');
 
       //if localBlock is zero add job of the current head Block
       if (localBlock === 0) {

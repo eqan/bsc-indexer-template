@@ -12,7 +12,7 @@ import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { FilterDto } from './dto/filter.dto';
+import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -95,6 +95,10 @@ export class CollectionsService {
     //   }
     // };
     // hello();
+    // this.metadataApi.fetchRequest(
+    //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
+    //   '39',
+    // );
   }
 
   /**

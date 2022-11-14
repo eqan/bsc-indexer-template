@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { response } from 'express';
 import { join } from 'path';
 import { ActivityModule } from 'src/activity/activity.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
@@ -20,6 +21,7 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
 import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      context: response,
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
@@ -75,6 +78,7 @@ import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
     TokensModule,
     ActivityModule,
     OrdersModule,
+    UsersModule,
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,
