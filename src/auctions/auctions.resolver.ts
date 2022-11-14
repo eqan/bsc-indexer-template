@@ -4,7 +4,7 @@ import { Auction } from './entities/auction.entity';
 import { CreateAuctionInput } from './dto/create-auction.input';
 import { UpdateAuctionInput } from './dto/update-auction.input';
 import BaseProvider from 'src/core/base.BaseProvider';
-import { FilterAuctionDto } from './dto/filter.dto';
+import { FilterAuctionDto } from './dto/filter-auctions.dto';
 import { BadRequestException } from '@nestjs/common';
 import { GetAllAuctions } from './dto/get-all-auctions.dto';
 import { DeleteAuctionsInput } from './dto/delete.auction.input';

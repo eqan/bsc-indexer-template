@@ -6,7 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn
+  PrimaryColumn,
 } from 'typeorm';
 import { MetaData } from '../dto/nestedObjectDto/meta.dto';
 import { TokenType } from './enum/token.type.enum';
@@ -20,7 +20,7 @@ export class Tokens extends BaseEntity {
   @Field()
   @PrimaryColumn({
     type: 'text',
-    unique: true
+    unique: true,
   })
   tokenId: string;
 
@@ -31,42 +31,42 @@ export class Tokens extends BaseEntity {
   @Field()
   @Column({
     type: 'text',
-    nullable: true
+    nullable: true,
   })
   contract?: string;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    default: null
+    default: null,
   })
   mintedAt: Date;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    default: null
+    default: null,
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
     type: 'boolean',
-    default: null
+    default: null,
   })
   deleted: boolean;
 
   @Field()
   @Column({
     type: 'int',
-    default: null
+    default: null,
   })
   sellers: number;
 
   @Field(() => MetaData)
   @Column({
     type: 'json',
-    default: null
+    default: null,
   })
   creator: {
     account: string;
@@ -76,7 +76,7 @@ export class Tokens extends BaseEntity {
   @Field(() => MetaData)
   @Column({
     type: 'json',
-    default: null
+    default: null,
   })
   meta?: {
     name: string;
@@ -105,7 +105,7 @@ export class Tokens extends BaseEntity {
     };
   };
 
-  @ManyToOne(() => Collections, (collection) => collection.collectionId)
+  @ManyToOne(() => Collections, (collection) => collection.id)
   @JoinColumn({ name: 'collectionId' })
   collection: Collections;
 }

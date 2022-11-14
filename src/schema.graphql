@@ -203,16 +203,32 @@ type GetAllAuctions {
   total: Int!
 }
 
-type Collections {
-  collectionId: String!
+type MetaContent {
+  type: String!
+  url: String!
+  representation: String!
+}
+
+type CollectionsMeta {
   name: String!
-  slug: String!
-  bannerImageUrl: String!
-  externalUrl: String!
-  imageUrl: String!
+  description: String!
+  Content: MetaContent!
+  externalLink: String!
+  sellerFeeBasisPoints: Float!
+  feeRecipient: String!
+}
+
+type Collections {
+  id: String!
+  name: String!
+  type: String!
+  parent: String!
+  symbol: String!
+  owner: String!
   twitterUserName: String!
   discordUrl: String!
   description: String!
+  Meta: CollectionsMeta!
   tokens: [Tokens!]
 }
 
@@ -262,6 +278,12 @@ type Tokens {
 type GetAllTokens {
   items: [Tokens!]!
   total: Float!
+}
+
+type CollectionMetaContent {
+  type: String
+  url: String
+  representation: String
 }
 
 type GetAllCollections {
@@ -410,6 +432,21 @@ input SellInput {
   value: Float!
 }
 
+input MetaContentInput {
+  type: String!
+  url: String!
+  representation: String!
+}
+
+input CollectionsMetaInput {
+  name: String!
+  description: String!
+  Content: MetaContentInput!
+  externalLink: String!
+  sellerFeeBasisPoints: Float!
+  feeRecipient: String!
+}
+
 input AttributeInput {
   key: String!
   value: String!
@@ -441,6 +478,12 @@ input MetaDataInput {
   content: MetadataContentInput!
 }
 
+input CollectionMetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
 input DataOrginFeeInput {
   account: String!
   value: Int!
@@ -467,7 +510,7 @@ type Query {
 input FilterDto {
   page: Float
   limit: Float
-  collectionId: String
+  id: String
   name: String
 }
 
@@ -498,6 +541,7 @@ input FilterAuctionDto {
   limit: Float
   auctionId: Float
   contract: String
+  seller: String
 }
 
 type Mutation {
@@ -518,25 +562,38 @@ type Mutation {
 }
 
 input CreateCollectionsInput {
-  collectionId: String!
+  id: String!
   name: String!
-  slug: String!
-  bannerImageUrl: String
-  externalUrl: String
-  imageUrl: String
+  type: CollectionType!
+  parent: String
+  symbol: String
+  owner: String
   twitterUserName: String
   discordUrl: String
   description: String
+  Meta: CollectionMetaInput
+}
+
+input CollectionMetaInput {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  Content: CollectionMetaContentInput
 }
 
 input UpdateCollectionsInput {
-  collectionId: String!
+  id: String!
   bannerImageUrl: String
-  externalUrl: String
-  imageUrl: String
-  twitterUserName: String
+  name: String
+  type: CollectionType
+  parent: String
+  symbol: String
+  owner: String
   discordUrl: String
   description: String
+  Meta: CollectionMetaInput
 }
 
 input DeleteCollectionsInput {

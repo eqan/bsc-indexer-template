@@ -115,7 +115,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    */
   @ResolveField('tokens', () => [Tokens], { nullable: true })
   async getTokens(@Parent() collection: Collections) {
-    const { collectionId } = collection;
+    const { id: collectionId } = collection;
     return await this.tokenService.getAllTokensByCollectionId(collectionId);
   }
 }

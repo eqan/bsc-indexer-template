@@ -91,7 +91,7 @@ export class CollectionsService {
       const [items, total] = await Promise.all([
         this.collectionsRepo.find({
           where: {
-            collectionId: rest?.collectionId,
+            id: rest?.id,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
           skip: (page - 1) * limit || 0,
@@ -99,7 +99,7 @@ export class CollectionsService {
         }),
         this.collectionsRepo.count({
           where: {
-            collectionId: rest.collectionId,
+            id: rest.id,
             name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
           },
         }),
@@ -115,15 +115,13 @@ export class CollectionsService {
    * @param id
    * @returns Collection against Provided Id
    */
-  async getCollectionById(collectionId: string): Promise<Collections> {
+  async getCollectionById(id: string): Promise<Collections> {
     try {
       const found = await this.collectionsRepo.findOneByOrFail({
-        collectionId,
+        id,
       });
       if (!found) {
-        throw new NotFoundException(
-          `Collection against ${collectionId}} not found`,
-        );
+        throw new NotFoundException(`Collection against ${id}} not found`);
       }
       return found;
     } catch (error) {
@@ -140,9 +138,9 @@ export class CollectionsService {
     updateCollectionsInput: UpdateCollectionsInput,
   ): Promise<Collections> {
     try {
-      const { collectionId, ...rest } = updateCollectionsInput;
-      await this.collectionsRepo.update({ collectionId }, rest);
-      return this.getCollectionById(collectionId);
+      const { id, ...rest } = updateCollectionsInput;
+      await this.collectionsRepo.update({ id }, rest);
+      return this.getCollectionById(id);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -156,7 +154,7 @@ export class CollectionsService {
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      await this.collectionsRepo.delete({ collectionId: In(ids) });
+      await this.collectionsRepo.delete({ id: In(ids) });
       return null;
     } catch (error) {
       throw new BadRequestException(error);
