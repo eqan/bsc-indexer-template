@@ -1,7 +1,9 @@
-import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsArray, MinLength } from 'class-validator';
 
-@ArgsType()
 @InputType()
 export class DeleteActivityInput {
-  @Field(() => [String]) id: string[];
+  @Field(() => [String])
+  @IsArray()
+  id: string[];
 }

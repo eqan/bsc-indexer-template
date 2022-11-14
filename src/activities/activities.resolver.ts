@@ -34,7 +34,7 @@ export class ActivitiesResolver {
   ): Promise<GetAllActivities> {
     try {
       let data = await this.activitiesService.index(filterDto);
-      console.log(data.items)
+      console.log(data.items);
       return data;
     } catch (error) {
       throw new BadRequestException(error);
@@ -44,7 +44,7 @@ export class ActivitiesResolver {
   @Query(() => Activity, { name: 'GetActivityById' })
   async show(@Args('GetActivityByIdInput') id: string): Promise<Activity> {
     try {
-      let data = await this.activitiesService.getActivityById(id);
+      const data = await this.activitiesService.getActivityById(id);
       return data;
     } catch (error) {
       throw new BadRequestException(error);
@@ -56,15 +56,13 @@ export class ActivitiesResolver {
    * @param collectionId
    * @returns Nothing
    */
-  @Mutation(() => Activity, { name: 'DeleteActivity', nullable: true })
+  @Query(() => Activity, { name: 'DeleteActivity', nullable: true })
   async delete(
-    @Args({
-      name: 'DeleteActivityInput',
-    })
-    deleteActivityInput: DeleteActivityInput,
+    @Args('deleteActivityInput') deleteActivityInput: DeleteActivityInput,
   ): Promise<void> {
     try {
-      console.log(deleteActivityInput)
+      console.log(deleteActivityInput, 'deleteActivityInput');
+      return;
       await this.activitiesService.delete(deleteActivityInput);
     } catch (error) {
       throw new BadRequestException(error);
