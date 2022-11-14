@@ -10,11 +10,12 @@ describe('All Environment Variables Exist', () => {
     'POSTGRES_PORT',
     'DB_USER',
     'CHAIN_ID',
+    'PORT',
     'BASE_NETWORK_HTTP_URL',
     'BASE_NETWORK_WS_URL',
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_SECRET',
-    'CLOUDINARY_API_KEY'
+    'CLOUDINARY_API_KEY',
   ])('%s exists in environment', (variable) => {
     expect(process.env[variable]).not.toBeFalsy();
   });
