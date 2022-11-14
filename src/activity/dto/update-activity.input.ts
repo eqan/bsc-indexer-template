@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsEnum, IsEthereumAddress, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { ActivityTypes } from '../enums/activity.types.enums';
+import { ActivityTypes } from '../entities/enums/activity.types.enums';
 import { BlockChainInfo } from './nestedObjectDto/blockchaininfo.metadata.dto';
 
 @InputType()

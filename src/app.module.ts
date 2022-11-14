@@ -1,18 +1,20 @@
-import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { response } from 'express';
 import { join } from 'path';
-import { typeOrmConfigAsync } from 'src/config/typeorm.config';
-import { CollectionsModule } from 'src/collections/collections.module';
-import { TokensModule } from 'src/tokens/tokens.module';
-import { ActivityModule } from 'src/activity/activity.module';
-import { OrdersModule } from 'src/orders/orders.module';
-import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
-import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
+import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { BlockchainConfig } from 'src/config/blockchain.config';
+import { typeOrmConfigAsync } from 'src/config/typeorm.config';
+import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
+import { ActivityModule } from './activity/activity.module';
+import { CollectionsModule } from './collections/collections.module';
+import { OrdersModule } from './orders/orders.module';
+import { TokensModule } from './tokens/tokens.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { AuctionsModule } from 'src/auctions/auctions.module';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      context: response,
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
@@ -45,6 +48,7 @@ import { AuctionsModule } from 'src/auctions/auctions.module';
     TokensModule,
     ActivityModule,
     OrdersModule,
+    UsersModule,
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,

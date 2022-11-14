@@ -2,34 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type BlockChainInfo {
-  transactionHash: String!
-  blockHash: String!
-  blockNumber: Int!
-  logIndex: Int!
-}
-
-type Activity {
-  id: String!
-  type: String!
-  owner: String!
-  date: DateTime!
-  lastUpdatedAt: DateTime!
-  cursor: String!
-  reverted: Boolean!
-  contract: String!
-  tokenId: Float!
-  itemId: String!
-  value: Float!
-  transactionHash: String!
-  blockChainInfo: BlockChainInfo!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Payouts {
   account: String!
   value: Float!
@@ -48,6 +20,11 @@ type AuctionData {
 enum AuctionDataType {
   RARIBLE_AUCTION_V1_DATA_V1
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type LastBidData {
   dataType: AuctionDataType!
@@ -108,6 +85,34 @@ type Auction {
   hash: String!
   lastBid: LastBid!
   data: AuctionData!
+}
+
+type GetAllAuctions {
+  items: [Auction!]!
+  total: Int!
+}
+
+type BlockChainInfo {
+  transactionHash: String!
+  blockHash: String!
+  blockNumber: Int!
+  logIndex: Int!
+}
+
+type Activity {
+  id: String!
+  type: String!
+  owner: String!
+  date: DateTime!
+  lastUpdatedAt: DateTime!
+  cursor: String!
+  reverted: Boolean!
+  contract: String!
+  tokenId: Float!
+  itemId: String!
+  value: Float!
+  transactionHash: String!
+  blockChainInfo: BlockChainInfo!
 }
 
 type MetadataAttribute {
@@ -218,6 +223,22 @@ type Orders {
   taker: String!
 }
 
+type Users {
+  id: String!
+  userSignature: String!
+  name: String!
+  userName: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
+  type: String!
+}
+
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
 type GetAllTokens {
   items: [Tokens!]!
   total: Float!
@@ -228,26 +249,19 @@ type GetAllCollections {
   total: Int!
 }
 
-type GetAllActivities {
-  items: [Activity!]!
-  total: Int!
-}
-
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
 }
 
-type GetAllAuctions {
-  items: [Auction!]!
+type GetAllUsers {
+  items: [Users!]!
   total: Int!
 }
 
-input BlockChainInfoInput {
-  transactionHash: String!
-  blockHash: String!
-  blockNumber: Int!
-  logIndex: Int!
+type LoggedUserOutput {
+  """Generated access_token of the user"""
+  access_token: String!
 }
 
 input PayoutsInput {
@@ -288,6 +302,13 @@ input SellTypeInput {
 input SellInput {
   type: SellTypeInput!
   value: Float!
+}
+
+input BlockChainInfoInput {
+  transactionHash: String!
+  blockHash: String!
+  blockNumber: Int!
+  logIndex: Int!
 }
 
 input AttributeInput {
@@ -351,6 +372,8 @@ type Query {
   GetAllActivities(GetAllActivities: FilterActivityDto!): GetAllActivities!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+  GetUserDataByuserId(userId: String!): Users!
+  GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
 }
@@ -383,6 +406,12 @@ input FilterOrderDto {
   taker: String
 }
 
+input FilterUserDto {
+  page: Float
+  limit: Float
+  id: String
+}
+
 input FilterAuctionDto {
   page: Float
   limit: Float
@@ -404,6 +433,10 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
+  CreateUser(CreateUserInput: CreateUserInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
+  UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
@@ -551,6 +584,37 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: String!
+}
+
+input LoginUserInput {
+  id: String!
+  userSignature: String!
+  userMessage: String!
+}
+
+input CreateUserInput {
+  userSignature: String!
+  id: String!
+  type: UserTypeEnum!
+}
+
+enum UserTypeEnum {
+  ADMIN
+  REGULARUSER
+}
+
+input DeleteUsersInput {
+  id: [String!]!
+}
+
+input UpdateUsersInput {
+  id: String!
+  userSignature: String!
+  userName: String!
+  name: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
 }
 
 input CreateAuctionInput {

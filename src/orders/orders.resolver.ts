@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { DeleteOrderInput } from './dto/delete-orders.input';
-import { FilterOrderDto } from './dto/filter.dto';
+import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
