@@ -14,23 +14,23 @@ import { UsersService } from './users.service';
 
 @Resolver()
 export class UsersResolver extends BaseProvider<Users> {
-    constructor(
-      private readonly userService: UsersService,
-      ) {
-        super();
-    }
+  constructor(private readonly userService: UsersService) {
+    super();
+  }
   /**
    * Login User
    * @param LoggedUserInput: message, signature, address
    * @returns access token
-   */LoggdUerOutput
-    @Mutation(() => LoggedUserOutput, {name: "LoginUser"})
-    loginUser(@Args('LoginUserInput') loginUserInput: LoginUserInput): Promise<{access_token: String}> {
-     const token = this.userService.loginUser(loginUserInput);
+   */ LoggdUerOutput;
+  @Mutation(() => LoggedUserOutput, { name: 'LoginUser' })
+  loginUser(
+    @Args('LoginUserInput') loginUserInput: LoginUserInput,
+  ): Promise<{ access_token: string }> {
+    const token = this.userService.loginUser(loginUserInput);
     //  response.headers.set('Authorization', 'Bearer ' + token);
     //  return response;
-     return token;
-    }
+    return token;
+  }
 
   /**
    * Create User

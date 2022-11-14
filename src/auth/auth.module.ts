@@ -7,7 +7,7 @@ import { JwtStrategy } from './jwt.strategy.service';
 
 @Module({
   imports: [
-    PassportModule.register({defaultStrategy: 'jwt'}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -17,6 +17,6 @@ import { JwtStrategy } from './jwt.strategy.service';
     }),
   ],
   providers: [AuthService, JwtStrategy, JwtService],
-  exports: [AuthService, JwtService ],
+  exports: [AuthService, JwtService],
 })
 export class AuthModule {}
