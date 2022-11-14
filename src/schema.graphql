@@ -326,9 +326,30 @@ type Orders {
   taker: String!
 }
 
+type Users {
+  id: String!
+  userSignature: String!
+  name: String!
+  userName: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
+  type: String!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
+}
+
+type GetAllUsers {
+  items: [Users!]!
+  total: Int!
+}
+
+type LoggedUserOutput {
+  """Generated access_token of the user"""
+  access_token: String!
 }
 
 input BlockchainInfoInput {
@@ -503,6 +524,8 @@ type Query {
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto!): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
+  GetUserDataByuserId(userId: String!): Users!
+  GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
 }
@@ -536,6 +559,12 @@ input FilterActivityDto {
   type: ActivityType
 }
 
+input FilterUserDto {
+  page: Float
+  limit: Float
+  id: String
+}
+
 input FilterAuctionDto {
   page: Float
   limit: Float
@@ -556,6 +585,10 @@ type Mutation {
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
+  CreateUser(CreateUserInput: CreateUserInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
+  UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
@@ -728,6 +761,37 @@ input CreateActivityBurnInput {
 
 input DeleteActivityInput {
   id: [String!]!
+}
+
+input LoginUserInput {
+  id: String!
+  userSignature: String!
+  userMessage: String!
+}
+
+input CreateUserInput {
+  userSignature: String!
+  id: String!
+  type: UserTypeEnum!
+}
+
+enum UserTypeEnum {
+  ADMIN
+  REGULARUSER
+}
+
+input DeleteUsersInput {
+  id: [String!]!
+}
+
+input UpdateUsersInput {
+  id: String!
+  userSignature: String!
+  userName: String!
+  name: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
 }
 
 input CreateAuctionInput {

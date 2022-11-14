@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { response } from 'express';
 import { join } from 'path';
 import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ActivitiesModule } from './activities/activities.module';
@@ -13,6 +14,7 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
 import { OrdersModule } from './orders/orders.module';
 import { TokensModule } from './tokens/tokens.module';
 import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
+      context: response,
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },
@@ -45,6 +48,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
     TokensModule,
     OrdersModule,
     ActivitiesModule,
+    UsersModule,
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,
