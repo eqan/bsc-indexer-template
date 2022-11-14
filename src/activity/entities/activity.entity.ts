@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BlockChainInfo } from '../dto/nestedObjectDto/blockchaininfo.metadata.dto';
-import { ActivityTypes } from '../enums/activity.types.enums';
+import { ActivityTypes } from './enums/activity.types.enums';
 
 @ObjectType()
 @Entity('Activity')

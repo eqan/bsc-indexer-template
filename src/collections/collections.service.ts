@@ -9,7 +9,7 @@ import { getEventData } from 'src/events/data';
 import { ILike, In, Repository } from 'typeorm';
 import { MetadataApi } from '../utils/metadata-api/metadata-api.utils';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { FilterDto } from './dto/filter.dto';
+import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -56,7 +56,7 @@ export class CollectionsService {
         console.log(e, 'error occured');
       }
     };
-    getBlock();
+    // getBlock();
     // this.metadataApi.fetchRequest(
     //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
     //   '39',
