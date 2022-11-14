@@ -62,7 +62,6 @@ export class ActivitiesResolver {
   ): Promise<void> {
     try {
       console.log(deleteActivityInput, 'deleteActivityInput');
-      return;
       await this.activitiesService.delete(deleteActivityInput);
     } catch (error) {
       throw new BadRequestException(error);
