@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { midwayQueue } from 'src/common/utils.common';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { MidWayJobType } from 'src/jobs/types/job.types';
 
 @Processor(midwayQueue)
 @Injectable()
@@ -13,10 +14,8 @@ export class MidwaySyncProcessor {
   QUEUE_NAME = midwayQueue;
 
   @Process()
-  async handleMidwaySync(job: Job) {
+  async handleMidwaySync({ data: { fromBlock, toBlock } }: Job<MidWayJobType>) {
     try {
-      const fromBlock = job.data.fromBlock;
-      const toBlock = job.data.toBlock;
       this.logger.log(
         `Events midway syncing block range [${fromBlock}, ${toBlock}]`,
       );

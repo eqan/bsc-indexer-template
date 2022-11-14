@@ -3,18 +3,20 @@ import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { Cache } from 'cache-manager';
 import Redis from 'ioredis';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { createChunks, realtimeQueue } from 'src/common/utils.common';
+import {
+  backfillQueue,
+  createChunks,
+  realtimeQueue,
+} from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { RealTimeJobType } from 'src/jobs/types/job.types';
 import { MidwaySyncService } from 'src/midway-sync/midway-sync.job.service';
-import { backfillQueue } from 'src/common/utils.common';
 @Processor(realtimeQueue)
 @Injectable()
 export class RealtimeSyncProcessor {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly rpcProvider: RpcProvider,
     private readonly syncEventsService: SyncEventsService,
     private readonly midwaySyncService: MidwaySyncService,
   ) {}
@@ -24,14 +26,13 @@ export class RealtimeSyncProcessor {
   QUEUE_NAME = realtimeQueue;
 
   @Process()
-  async handleSync() {
+  async handleSync({ data: { headBlock } }: Job<RealTimeJobType>) {
     try {
       // We allow syncing of up to `maxBlocks` blocks behind the head
       // of the blockchain. If we lag behind more than that, then all
       // previous blocks that we cannot cover here will be divided into chunks
       //to be processed by mid-way-processor
       const maxBlocks = getNetworkSettings().realtimeSyncMaxBlockLag;
-      const headBlock = await this.rpcProvider.baseProvider.getBlockNumber();
 
       // Fetch the last synced block
       const localBlock = Number(

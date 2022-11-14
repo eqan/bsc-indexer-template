@@ -1,11 +1,11 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bull';
 import { randomUUID } from 'crypto';
+import { realtimeQueue, REAL_TIME_CRON } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
-import { realtimeQueue } from 'src/common/utils.common';
+import { RpcProvider } from './../../common/rpc-provider/rpc-provider.common';
 
 /**
  * RealtimeSync Job
@@ -13,25 +13,35 @@ import { realtimeQueue } from 'src/common/utils.common';
  */
 @Injectable()
 export class RealtimeSyncService {
-  constructor(@InjectQueue(realtimeQueue) private realtimeSyncEvents: Queue) {}
+  constructor(
+    @InjectQueue(realtimeQueue) private realtimeSyncEvents: Queue,
+    private readonly rpcProvider: RpcProvider,
+  ) {}
   private readonly logger = new Logger(realtimeQueue);
   networkSettings = getNetworkSettings();
 
-  async syncRealTimeBlocks() {
-    await this.realtimeSyncEvents.add({
-      jobId: randomUUID(),
-      delay: 3000,
-      removeOnComplete: true,
-      removeOnFail: true,
-      timeout: 60000,
-    });
+  async syncRealTimeBlocks(headBlock: number) {
+    await this.realtimeSyncEvents.add(
+      {
+        headBlock,
+      },
+      {
+        jobId: randomUUID(),
+        delay: 3000,
+        removeOnComplete: true,
+        removeOnFail: true,
+        timeout: 60000,
+      },
+    );
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
-  @Cron(`*/24 * * * * *`)
+  @Cron(`*/24 * * * * *`, { name: REAL_TIME_CRON })
   async handleRealtimeSync() {
     try {
-      await this.syncRealTimeBlocks();
+      const headBlock = await this.rpcProvider.baseProvider.getBlockNumber();
+      console.log(headBlock, 'head blokc');
+      await this.syncRealTimeBlocks(headBlock);
     } catch (error) {
       this.logger.error(
         'events-sync-catchup',
