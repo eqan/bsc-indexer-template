@@ -30,4 +30,4 @@ src/schema.gql
 /.nyc_output
 
 #npm config
-.npmrc
+# .npmrc
