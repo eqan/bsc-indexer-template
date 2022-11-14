@@ -14,10 +14,10 @@ export enum ActivityType {
   AUCTION_CANCEL = 'AUCTION_CANCEL',
   AUCTION_FINISHED = 'AUCTION_FINISHED',
   AUCTION_STARTED = 'AUCTION_STARTED',
-  AUCTION_ENDED = 'AUCTION_ENDED'
+  AUCTION_ENDED = 'AUCTION_ENDED',
 }
 
 registerEnumType(ActivityType, {
   name: 'ActivityType',
-  description: 'Types of activities'
+  description: 'Types of activities',
 });

@@ -15,42 +15,42 @@ export abstract class Activity extends BaseEntity {
   @IsEthereumAddress()
   @PrimaryColumn({
     type: 'varchar',
-    unique: true
+    unique: true,
   })
   id: string;
 
   @Field(() => ActivityType)
   @Column({
     enum: ActivityType,
-    default: ActivityType.TRANSFER
+    default: ActivityType.TRANSFER,
   })
   type: ActivityType;
 
   @Field()
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   date: Date;
   @Field()
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
   })
   lastUpdatedAt: Date;
   @Field()
   @Column({
-    type: 'varchar'
+    type: 'varchar',
   })
   cursor: string;
   @Field()
   @Column({
-    type: 'boolean'
+    type: 'boolean',
   })
   reverted: boolean;
 
   @Field(() => BlockChainInfoDto)
   @Column({
     type: 'jsonb',
-    nullable: true
+    nullable: true,
   })
   blockchainInfo?: {
     transactionHash?: string;

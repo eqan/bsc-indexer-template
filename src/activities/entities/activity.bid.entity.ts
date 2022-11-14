@@ -12,42 +12,42 @@ export class ActivityBid {
     type: 'enum',
     enum: ActivityType,
     enumName: 'ActivityType',
-    default: ActivityType.BID
+    default: ActivityType.BID,
   })
   type: ActivityType;
 
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   hash: string;
 
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   maker: string;
 
   @Field()
   @Column({
     type: 'decimal',
-    nullable: true
+    nullable: true,
   })
   price?: number;
 
   @Field()
   @Column({
     type: 'decimal',
-    nullable: true
+    nullable: true,
   })
   priceUsd?: number;
 
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true
+    nullable: true,
   })
   take?: {
     type: {
@@ -61,7 +61,7 @@ export class ActivityBid {
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true
+    nullable: true,
   })
   make?: {
     type: {

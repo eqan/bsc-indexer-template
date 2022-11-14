@@ -7,49 +7,49 @@ export class ActivityTransfer {
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   tokenId: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   value: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   from: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   owner: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   contract: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   transactionHash: string;
 
   @Field()
   @Column({
     type: 'boolean',
-    nullable: true
+    nullable: true,
   })
   purchase: boolean;
 
@@ -57,7 +57,7 @@ export class ActivityTransfer {
   @Column({
     type: 'varchar',
     unique: true,
-    nullable: true
+    nullable: true,
   })
   itemId: string;
 }

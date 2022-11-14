@@ -7,28 +7,28 @@ export class ActivityMint {
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   tokenId?: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   value?: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   owner?: string;
 
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   contract?: string;
 
@@ -36,7 +36,7 @@ export class ActivityMint {
   @Column({
     type: 'varchar',
     unique: true,
-    nullable: true
+    nullable: true,
   })
   transactionHash?: string;
 
@@ -44,7 +44,7 @@ export class ActivityMint {
   @Column({
     type: 'varchar',
     unique: true,
-    nullable: true
+    nullable: true,
   })
   itemId?: string;
 }

@@ -4,7 +4,7 @@ import {
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { ActivityType } from '../entities/enums/activity.type.enum';
 import { CreateBidActivityInput } from './create-activity.bid.input';

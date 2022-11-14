@@ -8,7 +8,7 @@ export class ActivityBurn {
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   tokenId: string;
 
@@ -16,7 +16,7 @@ export class ActivityBurn {
   @IsOptional()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   // @Column()
   value: string;
@@ -24,7 +24,7 @@ export class ActivityBurn {
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   // @Column()
   owner: string;
@@ -32,7 +32,7 @@ export class ActivityBurn {
   @Field()
   @Column({
     type: 'varchar',
-    nullable: true
+    nullable: true,
   })
   // @Column()
   contract: string;
@@ -41,7 +41,7 @@ export class ActivityBurn {
   @Column({
     type: 'varchar',
     unique: true,
-    nullable: true
+    nullable: true,
   })
   transactionHash: string;
 }

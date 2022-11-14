@@ -18,7 +18,7 @@ export class ActivitiesResolver {
   @Mutation(() => Activity, { name: 'CreateActivity' })
   async create(
     @Args('CreateActivityInput')
-    createActivityInput: CreateActivityInput
+    createActivityInput: CreateActivityInput,
   ): Promise<Activity> {
     try {
       return await this.activitiesService.create(createActivityInput);
@@ -28,12 +28,12 @@ export class ActivitiesResolver {
   }
 
   /**
-   * GET All Collections
-   * @returns Collections Array and their total count
+   * GET All Activities
+   * @returns Activities Array and their total count
    */
   @Query(() => GetAllActivities, { name: 'GetAllActivities' })
   async index(
-    @Args('GetAllActivitiesInput') filterDto: FilterActivityDto
+    @Args('GetAllActivitiesInput') filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {
       return await this.activitiesService.findAllActivities(filterDto);
@@ -60,7 +60,7 @@ export class ActivitiesResolver {
   @Mutation(() => Activity, { name: 'DeleteActivity', nullable: true })
   async delete(
     @Args({ name: 'DeleteActivityInput' })
-    deleteActivityInput: DeleteActivityInput
+    deleteActivityInput: DeleteActivityInput,
   ): Promise<void> {
     try {
       console.log(deleteActivityInput, 'deleteActivityInput');

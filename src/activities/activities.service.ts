@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -15,7 +15,7 @@ import { Activity } from './entities/activity.entity';
 export class ActivitiesService {
   constructor(
     @InjectRepository(Activity)
-    private activityRepo: Repository<Activity>
+    private activityRepo: Repository<Activity>,
   ) {}
 
   /**
@@ -40,7 +40,7 @@ export class ActivitiesService {
    * @returns Array of Collections and Total Number of Collections
    */
   async findAllActivities(
-    filterDto: FilterActivityDto
+    filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {
       console.log(filterDto);
@@ -49,17 +49,17 @@ export class ActivitiesService {
         this.activityRepo.find({
           where: {
             id: rest?.id,
-            type: rest?.type
+            type: rest?.type,
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10
+          take: limit || 10,
         }),
         this.activityRepo.count({
           where: {
             id: rest.id,
-            type: rest?.type
-          }
-        })
+            type: rest?.type,
+          },
+        }),
       ]);
       return { items, total };
     } catch (err) {
@@ -79,17 +79,17 @@ export class ActivitiesService {
         this.activityRepo.find({
           where: {
             id: rest?.id,
-            type: rest?.type
+            type: rest?.type,
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10
+          take: limit || 10,
         }),
         this.activityRepo.count({
           where: {
             id: rest.id,
-            type: rest?.type
-          }
-        })
+            type: rest?.type,
+          },
+        }),
       ]);
       return { items, total };
     } catch (err) {
@@ -106,7 +106,7 @@ export class ActivitiesService {
     try {
       console.log('Hello world');
       const found = await this.activityRepo.findOneBy({
-        id
+        id,
       });
       if (!found) {
         throw new NotFoundException(`Activity against ${id} not found`);
@@ -125,7 +125,7 @@ export class ActivitiesService {
   async show(id: string): Promise<Activity[]> {
     try {
       const found = await this.activityRepo.findBy({
-        id: id
+        id: id,
       });
       if (!found) {
         throw new NotFoundException(`Activity against ${id} not found`);
