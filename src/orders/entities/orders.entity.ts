@@ -95,7 +95,6 @@ export class Orders {
   @Field()
   @Column({
     type: 'text',
-    nullable: false,
   })
   salt: string;
 

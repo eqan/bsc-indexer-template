@@ -4,19 +4,64 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { getEventData } from 'src/events/data';
 import { ILike, In, Repository } from 'typeorm';
+import { MetadataApi } from '../utils/metadata-api/metadata-api.utils';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto } from './dto/filter.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>,
-  ) {}
+    private rpcProvider: RpcProvider,
+    private metadataApi: MetadataApi,
+  ) {
+    // 22512276;
+    // 22512293;
+    //sample function to use JsonRpcProvider and getting blockNumber
+    const getBlock = async () => {
+      try {
+        const blockNumber =
+          await this.rpcProvider.baseProvider.getBlockNumber();
+        console.log(blockNumber, 'logged out blockNumber');
+        const filter: { fromBlock: number; toBlock: number } = {
+          fromBlock: blockNumber,
+          toBlock: blockNumber,
+        };
+        const logs = await this.rpcProvider.baseProvider.getLogs(filter);
+
+        for (const log of logs) {
+          const availableEventData = getEventData(['erc721-transfer']);
+          const eventData = availableEventData.find(
+            ({ addresses, topic, numTopics }) =>
+              log.topics[0] === topic &&
+              log.topics.length === numTopics &&
+              (addresses ? addresses[log.address.toLowerCase()] : true),
+          );
+
+          if (eventData) {
+            const { args } = eventData.abi.parseLog(log);
+            const token = log?.address;
+            const tokenId = args?.tokenId.toString();
+            const meta = await metadataApi.getTokenMetadata({ token, tokenId });
+            console.log(meta, 'metadata');
+          }
+        }
+      } catch (e) {
+        console.log(e, 'error occured');
+      }
+    };
+    getBlock();
+    // this.metadataApi.fetchRequest(
+    //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
+    //   '39',
+    // );
+  }
 
   /**
    * Create Collection in Database
