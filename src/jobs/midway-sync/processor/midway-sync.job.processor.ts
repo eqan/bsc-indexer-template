@@ -1,17 +1,17 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { midwayQueue } from 'src/common/utils.common';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { MidWayJobType } from 'src/jobs/types/job.types';
 
-@Processor(midwayQueue)
+@Processor(QueueType.MIDWAY_QUEUE)
 @Injectable()
 export class MidwaySyncProcessor {
   constructor(private readonly syncEventsService: SyncEventsService) {}
 
-  private readonly logger = new Logger(midwayQueue);
-  QUEUE_NAME = midwayQueue;
+  private readonly logger = new Logger(QueueType.MIDWAY_QUEUE);
+  QUEUE_NAME = QueueType.MIDWAY_QUEUE;
 
   @Process()
   async handleMidwaySync({ data: { fromBlock, toBlock } }: Job<MidWayJobType>) {

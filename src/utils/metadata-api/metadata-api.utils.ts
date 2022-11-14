@@ -153,7 +153,7 @@ export class MetadataApi {
         return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
     } catch (error) {
-      console.log('in catch');
+      // console.log('in catch');
       return data;
     }
   }

@@ -48,6 +48,7 @@ export const ipfsDomain = 'https://ipfs.io/ipfs/';
 //queue names
 export const realtimeQueue = 'realtime-sync-events';
 export const REAL_TIME_CRON = 'REAL_TIME_CRON';
+export const BACKFILL_CRON = 'BACKFILL_CRON';
 export const midwayQueue = 'midway-sync-events';
 export const backfillQueue = 'backfill-sync-events';
 export const fetchCollectionQueue = 'fetch-collections';
@@ -114,7 +115,7 @@ export const getTokenURI = async (
   }
 };
 
-//helper functions to create chunks
+//helper functions to create chunks of blocks
 export const createChunks = (blocksToProcess: number) => {
   const maxBlocks = getNetworkSettings().realtimeSyncMaxBlockLag;
   return new Array(Math.floor(blocksToProcess / maxBlocks))

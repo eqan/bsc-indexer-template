@@ -4,6 +4,7 @@ import { Logger } from '@nestjs/common';
 import { Queue } from 'bull';
 import { getNetworkSettings } from 'src/config/network.config';
 import { fetchCollectionQueue } from 'src/common/utils.common';
+import { QueueType } from '../enums/jobs.enums';
 
 /**
  * Fetch Collections
@@ -13,9 +14,10 @@ import { fetchCollectionQueue } from 'src/common/utils.common';
 @Injectable()
 export class FetchCollectionsService {
   constructor(
-    @InjectQueue(fetchCollectionQueue) private fetchCollections: Queue,
+    @InjectQueue(QueueType.FETCH_COLLECTIONS_QUEUE)
+    private fetchCollections: Queue,
   ) {}
-  private readonly logger = new Logger(fetchCollectionQueue);
+  private readonly logger = new Logger(QueueType.FETCH_COLLECTIONS_QUEUE);
   networkSettings = getNetworkSettings();
 
   async fetchCollection(fromBlock: number, toBlock: number) {

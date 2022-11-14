@@ -5,12 +5,13 @@ import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { fetchCollectionQueue } from 'src/common/utils.common';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
+import { QueueType } from '../enums/jobs.enums';
 import { FetchCollectionsService } from './collections.job.service';
 import { FetchCollectionsProcessor } from './processors/fetch-collections.job.processor';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: fetchCollectionQueue }),
+    BullModule.registerQueue({ name: QueueType.FETCH_COLLECTIONS_QUEUE }),
     CollectionsModule,
     TokensModule,
     MetadataApiModule,

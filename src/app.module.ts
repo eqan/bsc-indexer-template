@@ -1,13 +1,11 @@
 import { ApolloDriver } from '@nestjs/apollo';
 import { BullModule } from '@nestjs/bull';
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as redisStore from 'cache-manager-redis-store';
 import { join } from 'path';
-import { ClientOpts } from 'redis';
 import { ActivityModule } from 'src/activity/activity.module';
 import { AuctionsModule } from 'src/auctions/auctions.module';
 import { CollectionsModule } from 'src/collections/collections.module';
@@ -19,10 +17,9 @@ import { TokensModule } from 'src/tokens/tokens.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { BullConfig } from './config/bull.config';
 import { SyncEventsModule } from './events/sync-events/sync-events.module';
-import { BackfillSyncModule } from './jobs/collections/backfill-sync/backfill-sync.job.module';
+import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
-// import { clientOptions } from 'Redis';
-import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
+import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
 
 @Module({
   imports: [
@@ -68,12 +65,12 @@ import { MidwaySyncModule } from './midway-sync/midway-sync.job.module';
      * Cache Configuration using in-memory caching
      */
     // CacheModule.register({ isGlobal: true }),
-    CacheModule.register<ClientOpts>({
-      isGlobal: true,
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-    }),
+    // CacheModule.register<ClientOpts>({
+    //   isGlobal: true,
+    //   store: redisStore,
+    //   host: 'localhost',
+    //   port: 6379,
+    // }),
     CollectionsModule,
     TokensModule,
     ActivityModule,

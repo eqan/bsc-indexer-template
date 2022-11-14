@@ -3,27 +3,25 @@ import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { Cache } from 'cache-manager';
 import Redis from 'ioredis';
-import {
-  backfillQueue,
-  createChunks,
-  realtimeQueue,
-} from 'src/common/utils.common';
+import { backfillQueue, createChunks } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { BackfillSyncService } from 'src/jobs/backfill-sync/backfill-sync.job.service';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
+import { MidwaySyncService } from 'src/jobs/midway-sync/midway-sync.job.service';
 import { RealTimeJobType } from 'src/jobs/types/job.types';
-import { MidwaySyncService } from 'src/midway-sync/midway-sync.job.service';
-@Processor(realtimeQueue)
+@Processor(QueueType.REALTIME_QUEUE)
 @Injectable()
 export class RealtimeSyncProcessor {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly syncEventsService: SyncEventsService,
     private readonly midwaySyncService: MidwaySyncService,
+    private readonly backfillSyncService: BackfillSyncService,
   ) {}
 
-  private readonly logger = new Logger(realtimeQueue);
+  private readonly logger = new Logger(QueueType.REALTIME_QUEUE);
   redis = new Redis();
-  QUEUE_NAME = realtimeQueue;
+  QUEUE_NAME = QueueType.REALTIME_QUEUE;
 
   @Process()
   async handleSync({ data: { headBlock } }: Job<RealTimeJobType>) {
@@ -44,11 +42,16 @@ export class RealtimeSyncProcessor {
 
       // Nothing to sync
       if (localBlock >= headBlock) return;
+      console.log(localBlock, 'realtime-local');
 
       //if localBlock is zero add job of the current head Block
       if (localBlock === 0) {
         fromBlock = headBlock;
-        await this.redis.set(`${backfillQueue}-last-block`, fromBlock);
+        await this.redis.set(
+          `${QueueType.BACKFILL_QUEUE}-last-block`,
+          fromBlock,
+        );
+        this.backfillSyncService.addBackFillCron();
         await this.syncEventsService.syncEvents(fromBlock, toBlock);
         //if blocks to process are 8 or less
       } else if (blocksToProcess <= maxBlocks) {

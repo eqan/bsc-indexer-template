@@ -2,7 +2,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bull';
 import { randomUUID } from 'crypto';
-import { midwayQueue } from 'src/common/utils.common';
+import { QueueType } from '../enums/jobs.enums';
 
 /**
  * MidwaySync Job
@@ -10,8 +10,10 @@ import { midwayQueue } from 'src/common/utils.common';
  */
 @Injectable()
 export class MidwaySyncService {
-  constructor(@InjectQueue(midwayQueue) private midwaySyncEvents: Queue) {}
-  private readonly logger = new Logger(midwayQueue);
+  constructor(
+    @InjectQueue(QueueType.MIDWAY_QUEUE) private midwaySyncEvents: Queue,
+  ) {}
+  private readonly logger = new Logger(QueueType.MIDWAY_QUEUE);
 
   async syncMidwayBlocks(fromBlock: number, toBlock: number) {
     try {

@@ -1,22 +1,23 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { Job } from 'bull';
-import { backfillQueue } from 'src/common/utils.common';
-import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
-import { Cache } from 'cache-manager';
 import Redis from 'ioredis';
+import { BACKFILL_CRON } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
+import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
 
-@Processor(backfillQueue)
+@Processor(QueueType.BACKFILL_QUEUE)
 @Injectable()
 export class BackfillSyncProcessor {
   constructor(
+    private schedulerRegistry: SchedulerRegistry,
     private readonly syncEventsService: SyncEventsService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  private readonly logger = new Logger(backfillQueue);
-  QUEUE_NAME = backfillQueue;
+  QUEUE_NAME = QueueType.BACKFILL_QUEUE;
+  private readonly logger = new Logger(this.QUEUE_NAME);
   redis = new Redis();
 
   @Process()
@@ -26,13 +27,19 @@ export class BackfillSyncProcessor {
       const lastBackfillBlock = Number(
         await this.redis.get(`${this.QUEUE_NAME}-last-block`),
       );
-      if (lastBackfillBlock) {
+      console.log('last backfilled block', lastBackfillBlock);
+      //if genesis block is reached while backfilling stop cron
+      if (lastBackfillBlock > 0) {
         const fromBlock = lastBackfillBlock - maxBlocks;
         await this.syncEventsService.syncEvents(fromBlock, lastBackfillBlock);
         this.logger.log(
           `Events Backfill syncing block range [${fromBlock}, ${lastBackfillBlock}]`,
         );
         await this.redis.set(`${this.QUEUE_NAME}-last-block`, fromBlock);
+      } else {
+        this.logger.log('Events backfill syncing completed till genesis block');
+        const job = this.schedulerRegistry.getCronJob(QueueType.BACKFILL_CRON);
+        job.stop();
       }
     } catch (error) {
       this.logger.error(`Events backfill syncing failed: ${error}`);

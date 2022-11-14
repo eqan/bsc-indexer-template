@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bull';
 import { randomUUID } from 'crypto';
-import { realtimeQueue, REAL_TIME_CRON } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
+import { QueueType } from '../enums/jobs.enums';
 import { RpcProvider } from './../../common/rpc-provider/rpc-provider.common';
 
 /**
@@ -14,10 +14,10 @@ import { RpcProvider } from './../../common/rpc-provider/rpc-provider.common';
 @Injectable()
 export class RealtimeSyncService {
   constructor(
-    @InjectQueue(realtimeQueue) private realtimeSyncEvents: Queue,
+    @InjectQueue(QueueType.REALTIME_QUEUE) private realtimeSyncEvents: Queue,
     private readonly rpcProvider: RpcProvider,
   ) {}
-  private readonly logger = new Logger(realtimeQueue);
+  private readonly logger = new Logger(QueueType.REALTIME_QUEUE);
   networkSettings = getNetworkSettings();
 
   async syncRealTimeBlocks(headBlock: number) {
@@ -36,11 +36,10 @@ export class RealtimeSyncService {
   }
 
   // Keep up with the head of the blockchain by polling for new blocks every once in a while
-  @Cron(`*/24 * * * * *`, { name: REAL_TIME_CRON })
+  @Cron(`*/24 * * * * *`, { name: QueueType.REAL_TIME_CRON })
   async handleRealtimeSync() {
     try {
       const headBlock = await this.rpcProvider.baseProvider.getBlockNumber();
-      console.log(headBlock, 'head blokc');
       await this.syncRealTimeBlocks(headBlock);
     } catch (error) {
       this.logger.error(

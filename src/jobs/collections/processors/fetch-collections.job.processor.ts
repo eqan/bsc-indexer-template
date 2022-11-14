@@ -4,12 +4,13 @@ import { Job } from 'bull';
 import Redis from 'ioredis';
 import { CollectionsService } from 'src/collections/collections.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { fetchCollectionQueue, getTypes } from 'src/common/utils.common';
+import { getTypes } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
-@Processor(fetchCollectionQueue)
+@Processor(QueueType.FETCH_COLLECTIONS_QUEUE)
 export class FetchCollectionsProcessor {
   constructor(
     private readonly rpcProvider: RpcProvider,
@@ -17,9 +18,9 @@ export class FetchCollectionsProcessor {
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
   ) {}
-  private readonly logger = new Logger(fetchCollectionQueue);
+  QUEUE_NAME = QueueType.FETCH_COLLECTIONS_QUEUE;
+  private readonly logger = new Logger(this.QUEUE_NAME);
   redis = new Redis();
-  QUEUE_NAME = fetchCollectionQueue;
 
   @Process()
   async FetchCollection(job: Job) {
