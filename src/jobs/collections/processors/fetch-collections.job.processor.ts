@@ -70,7 +70,7 @@ export class FetchCollectionsProcessor {
               const timestamp = (
                 await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
               ).timestamp;
-
+              console.log(collectionId, tokenId, 'logged out');
               const tokenMeta = await this.metadataApi.getTokenMetadata({
                 collectionId,
                 tokenId,
