@@ -49,7 +49,7 @@ export class Collections {
   })
   owner?: string;
 
-  @Field()
+  @Field(() => CollectionsMeta)
   @Column({
     type: 'text',
     nullable: true,

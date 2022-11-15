@@ -91,6 +91,14 @@ export class TokensService {
     }
   }
 
+  async tokenExistOrNot(tokenId: string): Promise<Tokens> {
+    try {
+      return await this.tokensRepo.findOne({ where: { tokenId } });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
   /**
    * GET Token By Id
    * @param id

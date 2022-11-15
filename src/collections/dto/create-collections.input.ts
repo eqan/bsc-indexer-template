@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   ValidateNested,
@@ -44,18 +45,21 @@ export class CreateCollectionsInput {
   })
   owner?: string;
 
+  @IsOptional()
   @IsString({ message: 'Twitter User Name must be String' })
   @Field({
     nullable: true,
   })
   twitterUserName: string;
 
+  @IsOptional()
   @IsUrl({ message: 'Discord URL must be a valid URL' })
   @Field({
     nullable: true,
   })
   discordUrl: string;
 
+  @IsOptional()
   @Field({
     nullable: true,
   })

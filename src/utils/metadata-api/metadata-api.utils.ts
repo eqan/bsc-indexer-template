@@ -1,23 +1,41 @@
-import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Global, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
+import { CollectionsService } from 'src/collections/collections.service';
+import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
+import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
+import { MetaData } from 'src/tokens/dto/nestedObjectDto/meta.dto';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { uploadImage } from '../../config/cloudinary.config';
 import {
   base64toJson,
+  CollectionIface,
+  getCollectionName,
+  getCollectionOwner,
+  getCollectionSymbol,
+  getNFTCreator,
+  getTokenURI,
   ipfsDomain,
   isBase64Encoded,
-  regex
+  regex,
+  TokenIface,
 } from './../../common/utils.common';
-
 @Injectable()
-@Global()
 export class MetadataApi {
   constructor(
-    private rpcProvider: RpcProvider,
-    private readonly httpService: HttpService
+    @Inject(forwardRef(() => CollectionsService))
+    private readonly collectionsService: CollectionsService,
+    private readonly rpcProvider: RpcProvider,
+    private readonly httpService: HttpService,
   ) {}
 
   async fetchRequest(uri: string, id: string) {
@@ -27,85 +45,148 @@ export class MetadataApi {
       //add ipfs domain uri
       if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsDomain);
       const response = await lastValueFrom(this.httpService.get(uri));
-      return response?.data;
+      return response.data;
     } catch (error) {
-      return { message: error?.message };
+      throw new BadRequestException(error.message);
     }
   }
 
-  async returnMeta(meta: any, tokenURI: string) {
+  returnMeta(meta: any, tokenURI: string, type: TokenType) {
+    const metadata: MetaData = {
+      name: '',
+      description: '',
+      tags: [],
+      genres: [],
+      originalMetaUri: tokenURI,
+      externalUri: '',
+      attribute: [
+        {
+          key: '',
+          value: '',
+          type,
+          format: '',
+        },
+      ],
+      content: {
+        fileName: '',
+        url: '',
+        representation: '',
+      },
+    };
     try {
       if (typeof meta === 'object')
         return {
+          ...metadata,
           name: meta?.name || '',
           description: meta?.description || '',
           originalMetaUri: tokenURI,
           externalUri: meta?.external_url || '',
-          attributes:
+          attribute:
             meta?.attributes?.map((attribute: any) => ({
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
-              type: attribute?.display_type || ''
+              type: TokenType.BEP721,
+              format: attribute?.display_type || '',
             })) || [],
-          content: {
-            url: meta?.image || ''
-          }
+          content: meta?.image
+            ? {
+                url: meta?.image || '',
+              }
+            : {},
         };
-      else throw new BadRequestException('unsupported format');
+      else throw new BadRequestException(`unsupported format ${tokenURI}`);
     } catch (error) {
-      return {
-        message: error.message
-      };
+      return { ...metadata, attribute: [], content: {} };
     }
   }
 
   public async getTokenMetadata({
-    token,
-    tokenId
+    collectionId,
+    tokenId,
+    type,
+    timestamp,
   }: {
-    token: string;
+    collectionId: string;
     tokenId: string;
+    type: TokenType;
+    timestamp: number;
   }) {
-    let tokenURI = '';
-    try {
-      const iface = new Interface([
-        'function tokenURI(uint256 _tokenId) external view returns (string)',
-        'function uri(uint256 _id) external view returns (string memory)'
-      ]);
+    const data: CreateTokenInput = {
+      tokenId,
+      collectionId,
+      contract: collectionId,
+      deleted: false,
+      mintedAt: new Date(timestamp),
+      lastUpdatedAt: new Date(),
+      sellers: 0,
+      creator: {
+        account: [],
+        value: 10000,
+      },
+    };
 
+    try {
       const contract = new Contract(
-        token,
-        iface,
-        this.rpcProvider.baseProvider
+        collectionId,
+        TokenIface,
+        this.rpcProvider.baseProvider,
       );
 
-      let meta: any;
+      data.creator.account = await getNFTCreator(contract, tokenId);
+      const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      tokenURI = (await contract.tokenURI(tokenId)) || undefined; //erc721
-
-      if (!tokenURI) throw new BadRequestException('Undefined tokenURI');
+      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
 
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
-        meta = await this.fetchRequest(tokenURI, tokenId);
-        return this.returnMeta(meta, tokenURI);
+        const meta = await this.fetchRequest(tokenURI, tokenId);
+        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
 
       //if tokenURI is buffered base64 encoded
       if (isBase64Encoded(tokenURI)) {
-        meta = base64toJson(tokenURI);
-        const url = await uploadImage(meta?.image);
-        meta.image = url;
-        return this.returnMeta(meta, tokenURI);
+        const meta = base64toJson(tokenURI);
+        if (meta?.image.match(regex.base64)) {
+          const url = await uploadImage(meta?.image);
+          meta.image = url ?? meta.image;
+        }
+        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
     } catch (error) {
-      return error.code === 'CALL_EXCEPTION'
-        ? {
-            message: 'Token does not exist'
-          }
-        : {
-            message: `invalid or undefine uri ${tokenURI}`
-          };
+      // console.log('in catch');
+      return data;
+    }
+  }
+
+  //CollectionMetadata
+  public async getCollectionMetadata(
+    collectionId: string,
+    type: CollectionType,
+  ) {
+    const collectionData: CreateCollectionsInput = {
+      name: '',
+      symbol: '',
+      owner: AddressZero,
+      id: collectionId,
+      type,
+      Meta: {},
+      discordUrl: '',
+      twitterUserName: '',
+      description: '',
+    };
+    try {
+      const contract = new Contract(
+        collectionId,
+        CollectionIface,
+        this.rpcProvider.baseProvider,
+      );
+      collectionData.name = await getCollectionName(contract);
+      collectionData.symbol = await getCollectionSymbol(contract);
+      collectionData.owner = await getCollectionOwner(contract);
+    } catch (error) {
+      console.log('error occured owner address not found');
+    } finally {
+      return collectionData;
     }
   }
 }

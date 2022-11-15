@@ -7,7 +7,7 @@ export class Creator {
   @IsOptional()
   @IsEthereumAddress()
   @Field(() => String)
-  account?: string;
+  account?: string[];
 
   @IsOptional()
   @Field(() => Int)

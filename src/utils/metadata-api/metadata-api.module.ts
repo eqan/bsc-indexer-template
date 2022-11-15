@@ -1,6 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { MetadataApi } from './metadata-api.utils';
 import { HttpModule } from '@nestjs/axios';
+import { CollectionsModule } from 'src/collections/collections.module';
+
 /**
  * @MetadataApiModule
  * global module for fetching metadata of tokens and collections
@@ -8,6 +10,8 @@ import { HttpModule } from '@nestjs/axios';
 @Global()
 @Module({
   imports: [
+    CollectionsModule,
+
     HttpModule.register({
       timeout: 60000,
       maxRedirects: 5

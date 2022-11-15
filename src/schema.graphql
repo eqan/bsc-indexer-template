@@ -225,7 +225,7 @@ type Collections {
   parent: String!
   symbol: String!
   owner: String!
-  twitterUserName: String!
+  twitterUserName: CollectionsMeta!
   discordUrl: String!
   description: String!
   Meta: CollectionsMeta!
@@ -340,6 +340,10 @@ type Users {
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
+}
+
+type CronType {
+  isDone: Boolean!
 }
 
 type GetAllUsers {
@@ -592,6 +596,10 @@ type Mutation {
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
+  StopRealTimeCron: CronType
+  StartRealTimeCron: CronType
+  StopBackFillCron: CronType
+  StartBackFillCron: CronType
 }
 
 input CreateCollectionsInput {

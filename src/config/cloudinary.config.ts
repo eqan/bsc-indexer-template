@@ -6,7 +6,11 @@ const config = () => ({
 });
 
 cloudinary.config(config());
-export const uploadImage = async (image) => {
-  const result = await cloudinary.uploader.upload(image);
-  return result?.url || '';
+export const uploadImage = async (image: string) => {
+  try {
+    const result = await cloudinary.uploader.upload(image);
+    return result?.url || '';
+  } catch (error) {
+    return '';
+  }
 };
