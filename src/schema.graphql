@@ -267,6 +267,10 @@ type GetAllOrders {
   total: Int!
 }
 
+type CronType {
+  isDone: Boolean!
+}
+
 type GetAllUsers {
   items: [Users!]!
   total: Int!
@@ -468,6 +472,10 @@ type Mutation {
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
+  StopRealTimeCron: CronType
+  StartRealTimeCron: CronType
+  StopBackFillCron: CronType
+  StartBackFillCron: CronType
 }
 
 input CreateCollectionsInput {

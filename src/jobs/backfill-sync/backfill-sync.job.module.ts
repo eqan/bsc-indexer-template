@@ -2,6 +2,7 @@ import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { SyncEventsModule } from 'src/events/sync-events/sync-events.module';
 import { QueueType } from '../enums/jobs.enums';
+import { BackFillJobResolver } from '../resolvers/backfill.job.reolver';
 import { BackfillSyncService } from './backfill-sync.job.service';
 import { BackfillSyncProcessor } from './processor/backfill.job.processor';
 
@@ -10,7 +11,7 @@ import { BackfillSyncProcessor } from './processor/backfill.job.processor';
     BullModule.registerQueue({ name: QueueType.BACKFILL_QUEUE }),
     SyncEventsModule,
   ],
-  providers: [BackfillSyncService, BackfillSyncProcessor],
+  providers: [BackfillSyncService, BackfillSyncProcessor, BackFillJobResolver],
   exports: [BackfillSyncService],
 })
 export class BackfillSyncModule {}

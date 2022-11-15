@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Job } from 'bull';
 import Redis from 'ioredis';
-import { BACKFILL_CRON } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
@@ -27,7 +26,7 @@ export class BackfillSyncProcessor {
       const lastBackfillBlock = Number(
         await this.redis.get(`${this.QUEUE_NAME}-last-block`),
       );
-      console.log('last backfilled block', lastBackfillBlock);
+      console.log('hello last backfilled block', lastBackfillBlock);
       //if genesis block is reached while backfilling stop cron
       if (lastBackfillBlock > 0) {
         const fromBlock = lastBackfillBlock - maxBlocks;

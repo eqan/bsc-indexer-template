@@ -1,9 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bull';
 import { getNetworkSettings } from 'src/config/network.config';
-import { fetchCollectionQueue } from 'src/common/utils.common';
 import { QueueType } from '../enums/jobs.enums';
 
 /**
