@@ -125,18 +125,21 @@ export class MetadataApi {
       },
     };
 
-    try {
-      const contract = new Contract(
-        collectionId,
-        TokenIface,
-        this.rpcProvider.baseProvider,
-      );
+    let urlFailed = '';
 
+    const contract = new Contract(
+      collectionId,
+      TokenIface,
+      this.rpcProvider.baseProvider,
+    );
+    try {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
       if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
 
+      console.log(tokenURI);
+      urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const meta = await this.fetchRequest(tokenURI, tokenId);
@@ -153,7 +156,12 @@ export class MetadataApi {
         return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
     } catch (error) {
-      // console.log('in catch');
+      console.log(
+        'finding issue url, remain this console',
+        { type, tokenId },
+        urlFailed,
+        error,
+      );
       return data;
     }
   }

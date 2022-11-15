@@ -7,7 +7,7 @@ import { BackfillSyncModule } from '../backfill-sync/backfill-sync.job.module';
 import { QueueType } from '../enums/jobs.enums';
 import { RealTimeJobResolver } from '../resolvers/realtime.job.resolver';
 import { RealtimeSyncProcessor } from './processors/realtime-sync.job.processor';
-import { RealtimeSyncService } from './realtime-sync.job.service';
+import { RealtimeSyncCronService } from './realtime-sync-cron.service';
 
 @Module({
   imports: [
@@ -17,10 +17,10 @@ import { RealtimeSyncService } from './realtime-sync.job.service';
     BackfillSyncModule,
   ],
   providers: [
-    RealtimeSyncService,
     RealtimeSyncProcessor,
-    RpcProviderModule,
     RealTimeJobResolver,
+    RealtimeSyncCronService,
+    RpcProviderModule,
   ],
 })
 export class RealtimeSyncModule {}

@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { SyncEventsModule } from 'src/events/sync-events/sync-events.module';
 import { QueueType } from '../enums/jobs.enums';
 import { BackFillJobResolver } from '../resolvers/backfill.job.reolver';
-import { BackfillSyncService } from './backfill-sync.job.service';
+import { BackfillSyncService } from './backfill-sync.cron.service';
 import { BackfillSyncProcessor } from './processor/backfill.job.processor';
 
 @Module({
