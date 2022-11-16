@@ -5,8 +5,8 @@ import Redis from 'ioredis';
 import { CollectionsService } from 'src/collections/collections.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getTypes } from 'src/common/utils.common';
-import { getEventData } from 'src/events/data';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
+import { FetchCollectionTypeJob } from 'src/jobs/types/job.types';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
@@ -23,66 +23,74 @@ export class FetchCollectionsProcessor {
   redis = new Redis();
 
   @Process()
-  async FetchCollection(job: Job) {
+  async FetchCollection({
+    data: { eventData, log },
+  }: Job<FetchCollectionTypeJob>) {
     try {
-      const filter: { fromBlock: number; toBlock: number } = {
-        fromBlock: job.data.fromBlock,
-        toBlock: job.data.toBlock,
-      };
+      // const eventData = job.data.eventData;
+      // const log = job.data.log;
+      // const { eventData , log } = job;
+      // console.log(log);
+      // console.log(eventData.abi.parseLog(log));
+      // const filter: { fromBlock: number; toBlock: number } = {
+      //   fromBlock: job.data.fromBlock,
+      //   toBlock: job.data.toBlock,
+      // };
 
-      const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-      for (const log of logs) {
-        const availableEventData = getEventData([
-          'erc721-transfer',
-          'erc1155-transfer-single',
-        ]);
+      // const logs = await this.rpcProvider.baseProvider.getLogs(filter);
+      // for (const log of logs) {
+      //   const availableEventData = getEventData([
+      //     'erc721-transfer',
+      //     'erc1155-transfer-single',
+      //   ]);
 
-        const eventData = availableEventData.find(
-          ({ addresses, topic, numTopics }) =>
-            log.topics[0] === topic &&
-            log.topics.length === numTopics &&
-            (addresses ? addresses[log.address.toLowerCase()] : true),
+      //   const eventData = availableEventData.find(
+      //     ({ addresses, topic, numTopics }) =>
+      //       log.topics[0] === topic &&
+      //       log.topics.length === numTopics &&
+      //       (addresses ? addresses[log.address.toLowerCase()] : true),
+      //   );
+
+      //   if (eventData) {
+      const { collectionType, type } = getTypes(eventData?.kind);
+      const { args } = eventData.abi.parseLog(log);
+      const tokenId = args?.tokenId.toString() || '';
+      const collectionId = log?.address || '';
+
+      if (collectionId && tokenId) {
+        const collection = await this.collectionsService.collectionExistOrNot(
+          collectionId,
         );
+        const token = await this.tokensService.tokenExistOrNot(tokenId);
 
-        if (eventData) {
-          const { collectionType, type } = getTypes(eventData.kind);
-          const { args } = eventData.abi.parseLog(log);
-          const tokenId = args?.tokenId.toString() || '';
-          const collectionId = log?.address || '';
+        if (!collection) {
+          const response = await this.metadataApi.getCollectionMetadata(
+            collectionId,
+            collectionType,
+          );
+          await this.collectionsService.createCollection(response);
+        }
 
-          if (collectionId && tokenId) {
-            const collection =
-              await this.collectionsService.collectionExistOrNot(collectionId);
-            const token = await this.tokensService.tokenExistOrNot(tokenId);
+        if (!token) {
+          const timestamp = (
+            await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
+          ).timestamp;
 
-            if (!collection) {
-              const response = await this.metadataApi.getCollectionMetadata(
-                collectionId,
-                collectionType,
-              );
-              await this.collectionsService.createCollection(response);
-            }
+          try {
+            const tokenMeta = await this.metadataApi.getTokenMetadata({
+              collectionId,
+              tokenId,
+              type,
+              timestamp,
+            });
 
-            if (!token) {
-              const timestamp = (
-                await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
-              ).timestamp;
-
-              try {
-                const tokenMeta = await this.metadataApi.getTokenMetadata({
-                  collectionId,
-                  tokenId,
-                  type,
-                  timestamp,
-                });
-
-                await this.tokensService.createToken(tokenMeta);
-              } catch (err) {
-                console.log(err, collectionId);
-                throw err;
-              }
-            }
+            await this.tokensService.createToken(tokenMeta);
+          } catch (err) {
+            console.log(err, collectionId);
+            throw err;
           }
+          // }
+          // }
         }
       }
     } catch (error) {
