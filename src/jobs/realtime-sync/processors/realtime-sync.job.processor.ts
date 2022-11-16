@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import { createChunks } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
-import { BackfillSyncService } from 'src/jobs/backfill-sync/backfill-sync.job.service';
+import { BackfillSyncService } from 'src/jobs/backfill-sync/backfill-sync.cron.service';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { MidwaySyncService } from 'src/jobs/midway-sync/midway-sync.job.service';
 import { RealTimeJobType } from 'src/jobs/types/job.types';

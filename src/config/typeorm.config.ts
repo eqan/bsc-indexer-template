@@ -1,7 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
-  TypeOrmModuleOptions
+  TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Auction } from 'src/auctions/entities/auction.entity';

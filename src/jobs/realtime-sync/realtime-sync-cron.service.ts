@@ -12,7 +12,7 @@ import { RpcProvider } from './../../common/rpc-provider/rpc-provider.common';
  * Cron Job to detect new block onchain and activate event syncing offchain
  */
 @Injectable()
-export class RealtimeSyncService {
+export class RealtimeSyncCronService {
   constructor(
     @InjectQueue(QueueType.REALTIME_QUEUE) private realtimeSyncEvents: Queue,
     private readonly rpcProvider: RpcProvider,

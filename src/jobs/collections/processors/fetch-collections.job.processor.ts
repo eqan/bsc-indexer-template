@@ -60,27 +60,27 @@ export class FetchCollectionsProcessor {
                 collectionId,
                 collectionType,
               );
-              const saved = await this.collectionsService.createCollection(
-                response,
-              );
-              console.log(saved, 'saved metadata');
+              await this.collectionsService.createCollection(response);
             }
 
             if (!token) {
               const timestamp = (
                 await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
               ).timestamp;
-              console.log(collectionId, tokenId, 'logged out');
-              const tokenMeta = await this.metadataApi.getTokenMetadata({
-                collectionId,
-                tokenId,
-                type,
-                timestamp,
-              });
-              const savedToken = await this.tokensService.createToken(
-                tokenMeta,
-              );
-              console.log(savedToken, 'token saved in db');
+
+              try {
+                const tokenMeta = await this.metadataApi.getTokenMetadata({
+                  collectionId,
+                  tokenId,
+                  type,
+                  timestamp,
+                });
+
+                await this.tokensService.createToken(tokenMeta);
+              } catch (err) {
+                console.log(err, collectionId);
+                throw err;
+              }
             }
           }
         }

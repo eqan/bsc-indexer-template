@@ -14,8 +14,8 @@ export const transfer: EventData = {
       address indexed from,
       address indexed to,
       uint256 indexed tokenId
-    )`
-  ])
+    )`,
+  ]),
 };
 
 // The `ApprovalForAll` event is the same for erc721 and erc1155
@@ -28,6 +28,6 @@ export const approvalForAll: EventData = {
       address indexed owner,
       address indexed operator,
       bool approved
-    )`
-  ])
+    )`,
+  ]),
 };
