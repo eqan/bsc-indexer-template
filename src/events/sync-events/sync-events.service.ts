@@ -54,9 +54,19 @@ export class SyncEventsService {
             case 'erc1155-transfer-single': {
               console.log(eventData.abi.parseLog(log), 'service');
               // const { args } = eventData.abi.parseLog(log);
+              const { args } = eventData.abi.parseLog(log);
+              const tokenId = args?.tokenId.toString() || '';
+              const collectionId = log?.address || '';
+              const kind = eventData.kind;
+              const timestamp = (
+                await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
+              ).timestamp;
+              console.log(typeof timestamp, timestamp, 'timestamptimestamp');
               await this.fetchCollectionsService.fetchCollection(
-                eventData,
-                log,
+                collectionId,
+                tokenId,
+                timestamp,
+                kind,
               );
               break;
             }

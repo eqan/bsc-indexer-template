@@ -24,9 +24,11 @@ export class FetchCollectionsProcessor {
 
   @Process()
   async FetchCollection({
-    data: { eventData, log },
+    data: { collectionId, tokenId, timestamp, kind },
   }: Job<FetchCollectionTypeJob>) {
     try {
+      console.log(timestamp, 'timestamp');
+
       // const eventData = job.data.eventData;
       // const log = job.data.log;
       // const { eventData , log } = job;
@@ -52,10 +54,10 @@ export class FetchCollectionsProcessor {
       //   );
 
       //   if (eventData) {
-      const { collectionType, type } = getTypes(eventData?.kind);
-      const { args } = eventData.abi.parseLog(log);
-      const tokenId = args?.tokenId.toString() || '';
-      const collectionId = log?.address || '';
+      const { collectionType, type } = getTypes(kind);
+      // const { args } = eventData.abi.parseLog(log);
+      // const tokenId = args?.tokenId.toString() || '';
+      // const collectionId = log?.address || '';
 
       if (collectionId && tokenId) {
         const collection = await this.collectionsService.collectionExistOrNot(
@@ -72,9 +74,9 @@ export class FetchCollectionsProcessor {
         }
 
         if (!token) {
-          const timestamp = (
-            await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
-          ).timestamp;
+          // const timestamp = (
+          //   await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
+          // ).timestamp;
 
           try {
             const tokenMeta = await this.metadataApi.getTokenMetadata({

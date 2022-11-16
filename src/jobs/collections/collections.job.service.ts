@@ -3,7 +3,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { getNetworkSettings } from 'src/config/network.config';
-import { EventData } from 'src/events/data';
+import { EventData, EventDataKind } from 'src/events/data';
 import { QueueType } from '../enums/jobs.enums';
 import { FetchCollectionTypeJob } from '../types/job.types';
 
@@ -21,10 +21,17 @@ export class FetchCollectionsService {
   private readonly logger = new Logger(QueueType.FETCH_COLLECTIONS_QUEUE);
   networkSettings = getNetworkSettings();
 
-  async fetchCollection(eventData: EventData, log: Log) {
+  async fetchCollection(
+    collectionId: string,
+    tokenId: string,
+    timestamp: number,
+    kind: EventDataKind,
+  ) {
     try {
+      console.log(timestamp, 'in time');
+
       await this.fetchCollections.add(
-        { eventData, log },
+        { collectionId, tokenId, timestamp, kind },
         {
           delay: 1000,
           removeOnComplete: true,
