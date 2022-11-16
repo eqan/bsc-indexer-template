@@ -27,8 +27,6 @@ export class FetchCollectionsProcessor {
     data: { collectionId, tokenId, timestamp, kind },
   }: Job<FetchCollectionTypeJob>) {
     try {
-      console.log(timestamp, 'timestamp');
-
       // const eventData = job.data.eventData;
       // const log = job.data.log;
       // const { eventData , log } = job;

@@ -28,8 +28,6 @@ export class FetchCollectionsService {
     kind: EventDataKind,
   ) {
     try {
-      console.log(timestamp, 'in time');
-
       await this.fetchCollections.add(
         { collectionId, tokenId, timestamp, kind },
         {
