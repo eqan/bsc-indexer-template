@@ -10,6 +10,7 @@ import { QueueType } from '../enums/jobs.enums';
  * BackfillSync Job
  * to backfill the events back from the first RealTimeBlock Processed upto the genesis block
  */
+
 @Injectable()
 export class BackfillSyncService {
   constructor(
@@ -17,7 +18,7 @@ export class BackfillSyncService {
     @InjectQueue(QueueType.BACKFILL_QUEUE) private backfillSyncEvents: Queue,
   ) {}
   private readonly logger = new Logger(QueueType.BACKFILL_QUEUE);
-  private readonly seconds = 10;
+  private readonly seconds = '*';
   CRON_NAME = QueueType.BACKFILL_CRON;
   async syncBackFillBlocks() {
     try {
@@ -36,6 +37,7 @@ export class BackfillSyncService {
   addBackFillCron() {
     const job = new CronJob(`${this.seconds} * * * * *`, async () => {
       try {
+        console.log('BackFill');
         await this.syncBackFillBlocks();
       } catch (error) {
         this.logger.error(
@@ -49,7 +51,7 @@ export class BackfillSyncService {
     });
 
     this.schedulerRegistry.addCronJob(this.CRON_NAME, job);
-    job.start();
+    // job.start();
   }
 
   //   @Cron(`*/10 * * * * *`, { name: QueueType.BACKFILL_CRON })
