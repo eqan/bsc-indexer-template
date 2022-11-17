@@ -38,6 +38,8 @@ export class SyncEventsService {
         const availableEventData = getEventData([
           'erc721-transfer',
           'erc1155-transfer-single',
+          // 'erc721/1155-approval-for-all',
+          'erc1155-transfer-batch',
         ]);
 
         const eventData = availableEventData.find(
@@ -48,19 +50,18 @@ export class SyncEventsService {
         );
 
         if (eventData) {
+          const timestamp = (
+            await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
+          ).timestamp;
+
           switch (eventData?.kind) {
             // NFT Collections
             case 'erc721-transfer':
             case 'erc1155-transfer-single': {
-              // const { args } = eventData.abi.parseLog(log);
-              const { args } = eventData.abi.parseLog(log);
-              const tokenId = args?.tokenId.toString() || '';
+              const parsedLog = eventData.abi.parseLog(log);
+              const tokenId = parsedLog.args['tokenId'].toString();
               const collectionId = log?.address || '';
               const kind = eventData.kind;
-              const timestamp = (
-                await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
-              ).timestamp;
-
               await this.fetchCollectionsService.fetchCollection(
                 collectionId,
                 tokenId,
@@ -69,11 +70,37 @@ export class SyncEventsService {
               );
               break;
             }
+            case 'erc1155-transfer-batch': {
+              const parsedLog = eventData.abi.parseLog(log);
+              const tokenIds = parsedLog.args['tokenIds'].map(String);
+              const amounts = parsedLog.args['amounts'].map(String);
+              const count = Math.min(tokenIds.length, amounts.length);
+              const collectionId = log?.address || '';
+              const kind = eventData.kind;
+              for (let i = 0; i < count; i++) {
+                await this.fetchCollectionsService.fetchCollection(
+                  collectionId,
+                  tokenIds[i],
+                  timestamp,
+                  kind,
+                );
+              }
+              break;
+            }
+            case 'erc721/1155-approval-for-all': {
+              // const parsedLog = eventData.abi.parseLog(log);
+              // const owner = parsedLog.args['owner'].toLowerCase();
+              // const operator = parsedLog.args['operator'].toLowerCase();
+              // const approved = parsedLog.args['approved'];
+              break;
+            }
+            default:
+              break;
           }
         }
       }
     } catch (error) {
-      this.logger.error('Event Sync Failed');
+      this.logger.error('Event Sync Failed', error);
     }
   };
 }
