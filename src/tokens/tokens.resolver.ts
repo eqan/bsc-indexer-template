@@ -94,4 +94,13 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
       throw new BadRequestException(error);
     }
   }
+
+  @Mutation(() => Tokens, { name: 'ResetMetaDataofTokens' })
+  async reserMetaData(@Args('ResetMetaData') tokenId: string): Promise<void> {
+    try {
+      return await this.tokenService.resetMetaData(tokenId);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }

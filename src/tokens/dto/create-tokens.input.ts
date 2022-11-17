@@ -22,6 +22,10 @@ export class CreateTokenInput {
   @Field()
   contract?: string;
 
+  @IsNotEmpty()
+  @Field()
+  owner?: string;
+
   @IsOptional()
   @Field()
   mintedAt: Date;
@@ -43,7 +47,12 @@ export class CreateTokenInput {
   creator: Creator;
 
   @ValidateNested()
+  @Type(() => Creator)
+  @Field(() => Creator, { nullable: true })
+  royalties: Creator;
+
+  @ValidateNested()
   @Type(() => MetaData)
-  @Field(() => MetaData)
+  @Field(() => MetaData, { nullable: true })
   meta?: MetaData;
 }

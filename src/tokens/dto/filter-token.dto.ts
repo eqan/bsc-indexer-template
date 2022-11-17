@@ -7,6 +7,11 @@ export class FilterTokenDto extends PaginationParam {
   @Field({ nullable: true })
   tokenId?: string;
 
-  @Field({ nullable: true })
-  name: MetaData;
+  @Field()
+  contract?: string;
+
+  @Field()
+  owner?: string;
+
+
 }

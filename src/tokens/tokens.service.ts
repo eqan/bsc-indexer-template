@@ -9,6 +9,7 @@ import { ILike, Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
+import { MetaData } from './dto/nestedObjectDto/meta.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
 
@@ -75,6 +76,11 @@ export class TokensService {
         this.tokensRepo.find({
           where: {
             tokenId: rest?.tokenId,
+            contract: rest?.contract,
+            owner: rest?.owner,
+          },
+          order: {
+            mintedAt: 'ASC' || 'DESC',
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -85,6 +91,7 @@ export class TokensService {
           },
         }),
       ]);
+
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);
@@ -144,11 +151,25 @@ export class TokensService {
     try {
       const ids = deleteWithIds.id;
       const values = await this.tokensRepo.delete(ids);
+
       if (!values) {
         throw new NotFoundException('Token not found');
       }
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Reset Token Meta
+   * @param tokenId
+   * @returns  Nothing
+   */
+  async resetMetaData(tokenId: string): Promise<void> {
+    try {
+      await this.tokensRepo.update(tokenId, { meta: null });
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }
