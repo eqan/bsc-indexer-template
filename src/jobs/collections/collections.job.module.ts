@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { ActivitiesModule } from 'src/activities/activities.module';
 import { CollectionsModule } from 'src/collections/collections.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { TokensModule } from 'src/tokens/tokens.module';
@@ -13,6 +14,7 @@ import { FetchCollectionsProcessor } from './processors/fetch-collections.job.pr
     BullModule.registerQueue({ name: QueueType.FETCH_COLLECTIONS_QUEUE }),
     CollectionsModule,
     TokensModule,
+    ActivitiesModule,
     MetadataApiModule,
   ],
   providers: [

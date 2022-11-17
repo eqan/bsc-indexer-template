@@ -9,6 +9,7 @@ import * as erc1155 from './erc1155';
 
 export type EventDataKind =
   | 'erc721-transfer'
+  | 'erc721-mint'
   | 'erc1155-transfer-single'
   | 'erc1155-transfer-batch'
   | 'erc721/1155-approval-for-all'
@@ -44,7 +45,7 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
       erc721.transfer,
       erc721.approvalForAll,
       erc1155.transferSingle,
-      erc1155.transferBatch
+      erc1155.transferBatch,
     ];
   } else {
     return (
