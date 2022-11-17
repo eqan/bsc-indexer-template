@@ -49,7 +49,7 @@ export class CreateTokenInput {
   @ValidateNested()
   @Type(() => Creator)
   @Field(() => Creator, { nullable: true })
-  royalties: Creator;
+  royalties?: Creator;
 
   @ValidateNested()
   @Type(() => MetaData)

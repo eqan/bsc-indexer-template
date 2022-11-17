@@ -81,13 +81,13 @@ export class Tokens extends BaseEntity {
     value: number;
   };
 
-  @Field(() => Creator)
+  @Field(() => [Creator])
   @Column({
     type: 'jsonb',
     nullable: true,
   })
   royalties?: {
-    account?: string;
+    account?: string[];
     value?: number;
   };
 
