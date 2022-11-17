@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import Redis from 'ioredis';
 import { CollectionsService } from 'src/collections/collections.service';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getTypes } from 'src/common/utils.common';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { FetchCollectionTypeJob } from 'src/jobs/types/job.types';
@@ -13,7 +12,6 @@ import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 @Processor(QueueType.FETCH_COLLECTIONS_QUEUE)
 export class FetchCollectionsProcessor {
   constructor(
-    private readonly rpcProvider: RpcProvider,
     private readonly collectionsService: CollectionsService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
@@ -72,10 +70,6 @@ export class FetchCollectionsProcessor {
         }
 
         if (!token) {
-          // const timestamp = (
-          //   await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
-          // ).timestamp;
-
           try {
             const tokenMeta = await this.metadataApi.getTokenMetadata({
               collectionId,
@@ -89,8 +83,6 @@ export class FetchCollectionsProcessor {
             console.log(err, collectionId);
             throw err;
           }
-          // }
-          // }
         }
       }
     } catch (error) {

@@ -60,7 +60,7 @@ export class MetadataApi {
       originalMetaUri: tokenURI,
       externalUri: '',
       attribute: [
-      {
+        {
           key: '',
           value: '',
           type,
