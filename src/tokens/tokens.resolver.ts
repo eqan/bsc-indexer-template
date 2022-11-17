@@ -23,7 +23,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   @Mutation(() => Tokens, { name: 'CreateToken' })
   async create(
     @Args('CreateTokensInput')
-    createTokenInput: CreateTokenInput
+    createTokenInput: CreateTokenInput,
   ): Promise<Tokens> {
     try {
       return await this.tokenService.createToken(createTokenInput);
@@ -67,7 +67,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   @Mutation(() => Tokens, { name: 'UpdateTokenAttribute' })
   async edit(
     @Args('UpdateTokensInput')
-    updateTokenInput: UpdateTokensInput
+    updateTokenInput: UpdateTokensInput,
   ): Promise<Tokens> {
     try {
       return await this.tokenService.updateTokenAttribute(updateTokenInput);
@@ -84,12 +84,21 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   @Mutation(() => Tokens, { nullable: true, name: 'DeleteToken' })
   async delete(
     @Args({
-      name: 'DeleteTokenInput'
+      name: 'DeleteTokenInput',
     })
-    deleteTokenInput: DeleteTokensInput
+    deleteTokenInput: DeleteTokensInput,
   ): Promise<void> {
     try {
       await this.tokenService.delete(deleteTokenInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Mutation(() => Tokens, { name: 'ResetMetaDataofTokens' })
+  async reserMetaData(@Args('ResetMetaData') tokenId: string): Promise<void> {
+    try {
+      return await this.tokenService.resetMetaData(tokenId);
     } catch (error) {
       throw new BadRequestException(error);
     }
