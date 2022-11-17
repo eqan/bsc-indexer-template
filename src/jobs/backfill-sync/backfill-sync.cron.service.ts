@@ -1,3 +1,4 @@
+import Redis from 'ioredis';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
@@ -16,10 +17,15 @@ export class BackfillSyncService {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     @InjectQueue(QueueType.BACKFILL_QUEUE) private backfillSyncEvents: Queue,
-  ) {}
+  ) {
+    this.addBackFillCron();
+  }
+  private readonly redis = new Redis();
+
   private readonly logger = new Logger(QueueType.BACKFILL_QUEUE);
-  private readonly seconds = '*';
+  private readonly seconds = '*/5';
   CRON_NAME = QueueType.BACKFILL_CRON;
+
   async syncBackFillBlocks() {
     try {
       await this.backfillSyncEvents.add({
@@ -37,8 +43,13 @@ export class BackfillSyncService {
   addBackFillCron() {
     const job = new CronJob(`${this.seconds} * * * * *`, async () => {
       try {
-        console.log('BackFill');
-        await this.syncBackFillBlocks();
+        const eventFromRunTheBackFill = await this.redis.get(
+          `${QueueType.BACKFILL_QUEUE}-last-block`,
+        );
+
+        if (eventFromRunTheBackFill) {
+          await this.syncBackFillBlocks();
+        }
       } catch (error) {
         this.logger.error(
           'events-sync-catchup-backfill',
@@ -51,18 +62,6 @@ export class BackfillSyncService {
     });
 
     this.schedulerRegistry.addCronJob(this.CRON_NAME, job);
-    // job.start();
+    job.start();
   }
-
-  //   @Cron(`*/10 * * * * *`, { name: QueueType.BACKFILL_CRON })
-  // async handleBackfill() {
-  //   try {
-  //     await this.syncBackFillBlocks();
-  //   } catch (error) {
-  //     this.logger.error(
-  //       'events-sync-catchup-backfill',
-  //       `Failed to catch up events: ${error}`,
-  //     );
-  //   }
-  // }
 }
