@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivitiesService } from 'src/activities/activities.service';
-import { EnhancedEvent, getEventData } from 'src/events/data';
+import { getEventData } from 'src/events/data';
 import { ActivityType } from 'src/graphqlFile';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
 import { AddressZero } from '@ethersproject/constants';
+import { EnhancedEvent } from 'src/events/types/events.types';
 
 @Injectable()
 export class ERC721Handler {

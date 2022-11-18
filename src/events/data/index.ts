@@ -1,30 +1,11 @@
-import { Interface } from '@ethersproject/abi';
-import * as erc721 from './erc721';
-import * as erc1155 from './erc1155';
 import { Log } from '@ethersproject/providers';
-
-// All events we're syncing should have an associated `EventData`
-// entry which dictates the way the event will be parsed and then
-// handled (eg. persisted to the database and relayed for further
-// processing to any job queues).
-
-export type EventDataKind =
-  | 'erc721-transfer'
-  | 'erc721-mint'
-  | 'erc1155-transfer-single'
-  | 'erc1155-transfer-batch'
-  | 'erc721/1155-approval-for-all'
-  | 'erc20-approval'
-  | 'erc20-transfer';
-
-//type defining the format for filtering event
-export type EventData = {
-  kind: EventDataKind;
-  addresses?: { [address: string]: boolean };
-  topic: string;
-  numTopics: number;
-  abi: Interface;
-};
+import {
+  BaseEventParams,
+  EventData,
+  EventDataKind,
+} from '../types/events.types';
+import * as erc1155 from './erc1155';
+import * as erc721 from './erc721';
 
 const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
   switch (kind) {
@@ -59,23 +40,6 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
   }
 };
 
-export type Block = {
-  hash: string;
-  number: number;
-  timestamp: number;
-};
-
-export type BaseEventParams = {
-  address: string;
-  blockNumber: number;
-  blockHash: string;
-  txHash: string;
-  txIndex: number;
-  logIndex: number;
-  timestamp: number;
-  batchIndex: number;
-};
-
 export const parseEvent = async (
   log: Log,
   timestamp: number,
@@ -98,10 +62,4 @@ export const parseEvent = async (
     timestamp,
     batchIndex,
   };
-};
-
-export type EnhancedEvent = {
-  kind: EventDataKind;
-  baseEventParams: BaseEventParams;
-  log: Log;
 };
