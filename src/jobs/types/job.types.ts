@@ -1,5 +1,4 @@
-import { Log } from '@ethersproject/providers';
-import { EventData, EventDataKind } from 'src/events/data';
+import { EventDataKind } from 'src/events/types/events.types';
 
 export class RealTimeJobType {
   headBlock: number;

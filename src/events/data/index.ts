@@ -1,9 +1,6 @@
 import { Log } from '@ethersproject/providers';
-import {
-  BaseEventParams,
-  EventData,
-  EventDataKind,
-} from '../types/events.types';
+import { BaseEventParams, EventData } from '../types/events.types';
+import { EventDataKind } from '../types/events.types';
 import * as erc1155 from './erc1155';
 import * as erc721 from './erc721';
 

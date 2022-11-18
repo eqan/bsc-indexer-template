@@ -1,11 +1,9 @@
-import { Log } from '@ethersproject/providers';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
-import { Job, Queue } from 'bull';
+import { Queue } from 'bull';
 import { getNetworkSettings } from 'src/config/network.config';
-import { EventData, EventDataKind } from 'src/events/data';
 import { QueueType } from '../enums/jobs.enums';
-import { FetchCollectionTypeJob } from '../types/job.types';
+import { EventDataKind } from 'src/events/types/events.types';
 
 /**
  * Fetch Collections
