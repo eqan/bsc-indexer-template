@@ -1,6 +1,7 @@
 import { Interface } from '@ethersproject/abi';
 import * as erc721 from './erc721';
 import * as erc1155 from './erc1155';
+import { Log } from '@ethersproject/providers';
 
 // All events we're syncing should have an associated `EventData`
 // entry which dictates the way the event will be parsed and then
@@ -56,4 +57,51 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
         .map((x) => x!)
     );
   }
+};
+
+export type Block = {
+  hash: string;
+  number: number;
+  timestamp: number;
+};
+
+export type BaseEventParams = {
+  address: string;
+  blockNumber: number;
+  blockHash: string;
+  txHash: string;
+  txIndex: number;
+  logIndex: number;
+  timestamp: number;
+  batchIndex: number;
+};
+
+export const parseEvent = async (
+  log: Log,
+  timestamp: number,
+  batchIndex = 1,
+): Promise<BaseEventParams> => {
+  const address = log.address.toLowerCase();
+  const blockNumber = log.blockNumber;
+  const blockHash = log.blockHash.toLowerCase();
+  const txHash = log.transactionHash.toLowerCase();
+  const txIndex = log.transactionIndex;
+  const logIndex = log.logIndex;
+
+  return {
+    address,
+    txHash,
+    txIndex,
+    blockNumber,
+    blockHash,
+    logIndex,
+    timestamp,
+    batchIndex,
+  };
+};
+
+export type EnhancedEvent = {
+  kind: EventDataKind;
+  baseEventParams: BaseEventParams;
+  log: Log;
 };

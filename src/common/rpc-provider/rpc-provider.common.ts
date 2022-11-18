@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import {
   StaticJsonRpcProvider,
-  WebSocketProvider
+  WebSocketProvider,
 } from '@ethersproject/providers';
 import { Global, Injectable, Logger } from '@nestjs/common';
 
@@ -18,14 +18,14 @@ export class RpcProvider {
   // Use a static provider to avoid redundant `eth_chainId` calls
   baseProvider = new StaticJsonRpcProvider(
     this.baseNetworkHttpUrl,
-    this.chainId
+    this.chainId,
   );
 
   // https://github.com/ethers-io/ethers.js/issues/1053#issuecomment-808736570
   // WebSocket subscriptions to fetch the
   // latest events as soon as they're hapenning on-chain.
   safeWebSocketSubscription = (
-    callback: (provider: WebSocketProvider) => Promise<void>
+    callback: (provider: WebSocketProvider) => Promise<void>,
   ) => {
     const webSocketProvider = new WebSocketProvider(this.baseNetworkWsUrl);
     webSocketProvider.on('error', (error) => {

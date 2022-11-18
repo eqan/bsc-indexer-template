@@ -36,7 +36,7 @@ export const getTypes = (kind: EventDataKind) => {
     collectionType: CollectionType.BEP721,
     type: TokenType.BEP721,
   };
-  if (kind !== 'erc721-transfer') {
+  if (!kind?.startsWith('erc721')) {
     types.collectionType = CollectionType.BEP1155;
     types.type = TokenType.BEP1155;
   }

@@ -1,16 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ActivitiesService } from 'src/activities/activities.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { ActivityType } from 'src/graphqlFile';
-import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
-import { getEventData } from '../data';
-
+import { EnhancedEvent, getEventData, parseEvent } from '../data';
+import { ERC1155Handler } from '../handlers/erc721/erc1155/erc1155.handler';
+import { ERC721Handler } from '../handlers/erc721/erc721.handler';
 @Injectable()
 export class SyncEventsService {
   constructor(
-    private readonly fetchCollectionsService: FetchCollectionsService,
     private readonly rpcProvider: RpcProvider,
-    private readonly activitiesService: ActivitiesService,
+    private readonly erc721Handler: ERC721Handler,
+    private readonly erc1155Handler: ERC1155Handler,
   ) {}
   private readonly logger = new Logger('Sync Events');
 
@@ -37,6 +35,7 @@ export class SyncEventsService {
       };
 
       const logs = await this.rpcProvider.baseProvider.getLogs(filter);
+
       for (const log of logs) {
         const availableEventData = getEventData([
           'erc721-transfer',
@@ -56,105 +55,29 @@ export class SyncEventsService {
           const timestamp = (
             await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
           ).timestamp;
-
+          const baseEventParams = await parseEvent(log, timestamp);
+          const enhancedEvents: EnhancedEvent = {
+            kind: eventData?.kind,
+            baseEventParams,
+            log,
+          };
           switch (eventData?.kind) {
             // NFT Collections
-            case 'erc721-transfer':
+            case 'erc721-transfer': {
+              await this.erc721Handler.handleTransferEvent(enhancedEvents);
+              await this.erc721Handler.handleActivity(enhancedEvents);
+              break;
+            }
             case 'erc1155-transfer-single': {
-              const genesisBlock = '0x0000000000000000000000000000000000000000';
-              const parsedLog = eventData.abi.parseLog(log);
-              const tokenId = parsedLog.args['tokenId'].toString();
-              const collectionId = log?.address || '';
-              const kind = eventData.kind;
-              const fromBlock = parsedLog.args['from'].toLowerCase();
-              const toBlock = parsedLog.args['to'].toLowerCase();
-
-              // Activity Data
-              const blockNumber = log?.blockNumber || null;
-              const blockHash = log?.blockHash || '';
-              const reverted = log?.removed || false;
-              const logIndex = log?.logIndex || null;
-              const transactionHash = log?.transactionHash || '';
-              let activityType = ActivityType.TRANSFER;
-              let mint = null;
-              let burn = null;
-              let transfer = null;
-              const bid = null;
-
-              // console.log('Args Data: ', args, '\n');
-              // console.log('Logs Data: ', log, '\n');
-
-              if (fromBlock === genesisBlock) {
-                activityType = ActivityType.MINT;
-                mint = {
-                  tokenId: tokenId,
-                  transactionHash: transactionHash,
-                };
-              } else if (toBlock === genesisBlock) {
-                activityType = ActivityType.BURN;
-                burn = {
-                  tokenId: tokenId,
-                  transactionHash: transactionHash,
-                };
-              } else {
-                activityType = ActivityType.TRANSFER;
-                transfer = {
-                  tokenId: tokenId,
-                  transactionHash: transactionHash,
-                  from: fromBlock,
-                };
-              }
-              const activityData = {
-                id: transactionHash,
-                type: activityType,
-                cursor: blockHash,
-                reverted: reverted,
-                date: new Date(),
-                lastUpdatedAt: new Date(),
-                blockchainInfo: {
-                  transactionHash: transactionHash,
-                  blockHash: blockHash,
-                  blockNumber: blockNumber,
-                  logIndex: logIndex,
-                },
-                MINT: mint,
-                BURN: burn,
-                TRANSFER: transfer,
-                BID: bid,
-              };
-
-              await this.fetchCollectionsService.fetchCollection(
-                collectionId,
-                tokenId,
-                timestamp,
-                kind,
+              await this.erc1155Handler.handleTransferSingleEvent(
+                enhancedEvents,
               );
-
-              try {
-                await this.activitiesService.create(activityData);
-                console.log(`Activity ${activityType} Saved!`);
-              } catch (error) {
-                this.logger.error(`Failed creating activity : ${error}`);
-                throw error;
-              }
-
               break;
             }
             case 'erc1155-transfer-batch': {
-              const parsedLog = eventData.abi.parseLog(log);
-              const tokenIds = parsedLog.args['tokenIds'].map(String);
-              const amounts = parsedLog.args['amounts'].map(String);
-              const count = Math.min(tokenIds.length, amounts.length);
-              const collectionId = log?.address || '';
-              const kind = eventData.kind;
-              for (let i = 0; i < count; i++) {
-                await this.fetchCollectionsService.fetchCollection(
-                  collectionId,
-                  tokenIds[i],
-                  timestamp,
-                  kind,
-                );
-              }
+              await this.erc1155Handler.handleTransferBatchEvent(
+                enhancedEvents,
+              );
               break;
             }
             case 'erc721/1155-approval-for-all': {
