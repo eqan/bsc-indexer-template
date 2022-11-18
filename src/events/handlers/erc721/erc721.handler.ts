@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivitiesService } from 'src/activities/activities.service';
 import { EnhancedEvent, getEventData } from 'src/events/data';
-import { ActivityType } from 'src/graphqlFile';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
-import { AddressZero } from '@ethersproject/constants';
+import { extractActivityData } from '../common/activity.handler.common';
 
 @Injectable()
 export class ERC721Handler {
@@ -38,6 +37,24 @@ export class ERC721Handler {
     }
   };
 
+  handleApprovalForAll = async (events: EnhancedEvent) => {
+    const {
+      baseEventParams: { timestamp },
+      log,
+      kind,
+    } = events;
+
+    try {
+      const eventData = getEventData([kind])[0];
+      const parsedLog = eventData.abi.parseLog(log);
+      const owner = parsedLog.args['owner'].toLowerCase();
+      const operator = parsedLog.args['operator'].toLowerCase();
+      const approved = parsedLog.args['approved'];
+    } catch (error) {
+      this.logger.error(`failed handling ApprovalForAll ${error}`);
+    }
+  };
+
   handleActivity = async (events: EnhancedEvent) => {
     const {
       baseEventParams: { blockHash, logIndex, txHash, blockNumber },
@@ -52,55 +69,24 @@ export class ERC721Handler {
       const to = parsedLog.args['to'].toLowerCase();
       const reverted = log?.removed || false;
       const tokenId = parsedLog.args['tokenId'].toString();
-      // const transactionHash = log?.transactionHash || '';
-
-      let activityType = ActivityType.TRANSFER;
-      let mint = null;
-      let burn = null;
-      let transfer = null;
-      const bid = null;
-
-      if (from === AddressZero) {
-        activityType = ActivityType.MINT;
-        mint = {
-          tokenId,
-          txHash,
-        };
-      } else if (to === AddressZero) {
-        activityType = ActivityType.BURN;
-        burn = {
-          tokenId,
-          txHash,
-        };
-      } else {
-        activityType = ActivityType.TRANSFER;
-        transfer = {
-          tokenId,
-          txHash,
-          from,
-        };
+      let value = '';
+      try {
+        value = parsedLog.args['amount'].toString();
+      } catch (error) {
+        value = null;
       }
-      const activityData = {
-        id: txHash,
-        type: activityType,
-        cursor: blockHash,
-        reverted: reverted,
-        date: new Date(),
-        lastUpdatedAt: new Date(),
-        blockchainInfo: {
-          transactionHash: txHash,
-          blockHash,
-          blockNumber,
-          logIndex,
-        },
-        MINT: mint,
-        BURN: burn,
-        TRANSFER: transfer,
-        BID: bid,
-      };
-
+      const activityData = extractActivityData(
+        tokenId,
+        logIndex,
+        blockHash,
+        blockNumber,
+        txHash,
+        value,
+        reverted,
+        to,
+        from,
+      );
       await this.activitiesService.create(activityData);
-      console.log(`Activity ${activityType} Saved!`);
     } catch (error) {
       this.logger.error(`Failed creating activity : ${error}`);
       throw error;
