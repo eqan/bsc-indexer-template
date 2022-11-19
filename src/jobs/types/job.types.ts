@@ -1,3 +1,6 @@
+import { Log } from '@ethersproject/providers';
+import { EventData, EventDataKind } from 'src/events/data';
+
 export class RealTimeJobType {
   headBlock: number;
 }
@@ -8,6 +11,8 @@ export class MidWayJobType {
 }
 
 export class FetchCollectionTypeJob {
-  fromBlock: number;
-  toBlock: number;
+  collectionId: string;
+  tokenId: string;
+  timestamp: number;
+  kind: EventDataKind;
 }
