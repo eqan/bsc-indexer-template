@@ -69,22 +69,18 @@ export class ERC721Handler {
       const to = parsedLog.args['to'].toLowerCase();
       const reverted = log?.removed || false;
       const tokenId = parsedLog.args['tokenId'].toString();
-      let value = '';
-      try {
-        value = parsedLog.args['amount'].toString();
-      } catch (error) {
-        value = null;
-      }
+      // const owner = parsedLog.args['owner'].toLowerCase();
       const activityData = extractActivityData(
         tokenId,
         logIndex,
         blockHash,
         blockNumber,
         txHash,
-        value,
+        '',
         reverted,
         to,
         from,
+        null,
       );
       await this.activitiesService.create(activityData);
     } catch (error) {

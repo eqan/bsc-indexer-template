@@ -11,6 +11,7 @@ export function extractActivityData(
   reverted: boolean,
   to: string,
   from: string,
+  owner: string,
 ) {
   let activityType = ActivityType.TRANSFER;
   let mint = null;
@@ -24,6 +25,7 @@ export function extractActivityData(
       tokenId,
       txHash,
       value,
+      owner,
     };
   } else if (to === AddressZero) {
     activityType = ActivityType.BURN;
@@ -31,6 +33,7 @@ export function extractActivityData(
       tokenId,
       txHash,
       value,
+      owner,
     };
   } else {
     activityType = ActivityType.TRANSFER;
@@ -39,6 +42,7 @@ export function extractActivityData(
       txHash,
       from,
       value,
+      owner,
     };
   }
   const activityData = {

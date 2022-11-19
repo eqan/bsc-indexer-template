@@ -55,6 +55,12 @@ export class ERC1155Handler {
       const from = parsedLog.args['from'].toLowerCase();
       const to = parsedLog.args['to'].toLowerCase();
       const kind = eventData.kind;
+      let owner = '';
+      try {
+        owner = parsedLog.args['owner'].toLowerCase();
+      } catch (error) {
+        owner = null;
+      }
       console.log(parsedLog);
       for (let i = 0; i < count; i++) {
         await this.fetchCollectionsService.fetchCollection(
@@ -74,6 +80,7 @@ export class ERC1155Handler {
             false,
             to,
             from,
+            owner,
           );
           await this.activitiesService.create(activityData);
         } catch (error) {
