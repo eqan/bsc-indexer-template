@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { isDeleted } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
@@ -24,12 +25,15 @@ export class ERC1155Handler {
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address || '';
       const kind = eventData.kind;
+      const to = parsedLog.args['to'].toString();
+      const deleted = isDeleted(to);
       //   const amount = parsedLog.args["amount"].toString();
       await this.fetchCollectionsService.fetchCollection(
         collectionId,
         tokenId,
         timestamp,
         kind,
+        deleted,
       );
     } catch (error) {
       this.logger.error(`failed handling SingletransferEvent ${error}`);
@@ -50,12 +54,15 @@ export class ERC1155Handler {
       const count = Math.min(tokenIds.length, amounts.length);
       const collectionId = log?.address || '';
       const kind = eventData.kind;
+      const to = parsedLog.args['to'].toString();
+      const deleted = isDeleted(to);
       for (let i = 0; i < count; i++) {
         await this.fetchCollectionsService.fetchCollection(
           collectionId,
           tokenIds[i],
           timestamp,
           kind,
+          deleted,
         );
       }
     } catch (error) {

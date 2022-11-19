@@ -105,17 +105,19 @@ export class MetadataApi {
     tokenId,
     type,
     timestamp,
+    deleted,
   }: {
     collectionId: string;
     tokenId: string;
     type: TokenType;
     timestamp: number;
+    deleted: boolean;
   }) {
     const data: CreateTokenInput = {
       tokenId,
       collectionId,
       contract: collectionId,
-      deleted: false,
+      deleted,
       mintedAt: new Date(timestamp),
       lastUpdatedAt: new Date(),
       sellers: 0,
@@ -146,19 +148,21 @@ export class MetadataApi {
         return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
       }
 
-      //if tokenURI is buffered base64 encoded
-      if (isBase64Encoded(tokenURI)) {
+      //else if tokenURI is buffered base64 encoded
+      else if (isBase64Encoded(tokenURI)) {
         const meta = base64toJson(tokenURI);
         if (meta?.image.match(regex.base64)) {
           const url = await uploadImage(meta?.image);
           meta.image = url ?? meta.image;
         }
         return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
+      } else {
+        return { ...data, meta: this.returnMeta({}, tokenURI, type) };
       }
     } catch (error) {
       console.log(
         'finding issue url, remain this console',
-        { type, tokenId },
+        { type, tokenId, collectionId },
         urlFailed,
         error,
       );

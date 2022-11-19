@@ -64,12 +64,12 @@ export class CollectionsService {
             // );
             // console.log(response);
 
-            const meta = await metadataApi.getTokenMetadata({
-              collectionId: '0x3d24C45565834377b59fCeAA6864D6C25144aD6c',
-              tokenId: '784735',
-              type: TokenType.BEP721,
-              timestamp: 1667500191,
-            });
+            // const meta = await metadataApi.getTokenMetadata({
+            //   collectionId: '0x3d24C45565834377b59fCeAA6864D6C25144aD6c',
+            //   tokenId: '784735',
+            //   type: TokenType.BEP721,
+            //   timestamp: 1667500191,
+            // });
 
             // const tokenId = args?.tokenId.toString();
             // const meta = await metadataApi.getTokenMetadata({
@@ -78,7 +78,7 @@ export class CollectionsService {
             //   type: TokenType.BEP721,
             //   timestamp,
             // });
-            console.log(meta, 'metadata');
+            // console.log(meta, 'metadata');
           }
         }
       } catch (e) {

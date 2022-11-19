@@ -14,4 +14,5 @@ export class FetchCollectionTypeJob {
   tokenId: string;
   timestamp: number;
   kind: EventDataKind;
+  deleted: boolean;
 }

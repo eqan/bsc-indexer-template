@@ -5,6 +5,7 @@ import { ActivityType } from 'src/graphqlFile';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
 import { AddressZero } from '@ethersproject/constants';
 import { EnhancedEvent } from 'src/events/types/events.types';
+import { isDeleted } from 'src/common/utils.common';
 
 @Injectable()
 export class ERC721Handler {
@@ -28,11 +29,14 @@ export class ERC721Handler {
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address || '';
       const kind = eventData.kind;
+      const to = parsedLog.args['to'].toString();
+      const deleted = isDeleted(to);
       await this.fetchCollectionsService.fetchCollection(
         collectionId,
         tokenId,
         timestamp,
         kind,
+        deleted,
       );
     } catch (error) {
       this.logger.error(`failed handling trnasferEvent ${error}`);
@@ -101,7 +105,7 @@ export class ERC721Handler {
       };
 
       await this.activitiesService.create(activityData);
-      console.log(`Activity ${activityType} Saved!`);
+      // console.log(`Activity ${activityType} Saved!`);
     } catch (error) {
       this.logger.error(`Failed creating activity : ${error}`);
       throw error;
