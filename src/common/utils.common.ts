@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
-import { EventDataKind } from 'src/events/data';
+import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { AddressZero } from '@ethersproject/constants';
 import { getNetworkSettings } from 'src/config/network.config';
@@ -36,7 +36,7 @@ export const getTypes = (kind: EventDataKind) => {
     collectionType: CollectionType.BEP721,
     type: TokenType.BEP721,
   };
-  if (kind !== 'erc721-transfer') {
+  if (!kind?.startsWith('erc721')) {
     types.collectionType = CollectionType.BEP1155;
     types.type = TokenType.BEP1155;
   }

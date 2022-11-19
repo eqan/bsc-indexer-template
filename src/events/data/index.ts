@@ -1,29 +1,8 @@
-import { Interface } from '@ethersproject/abi';
-import * as erc721 from './erc721';
+import { Log } from '@ethersproject/providers';
+import { BaseEventParams, EventData } from '../types/events.types';
+import { EventDataKind } from '../types/events.types';
 import * as erc1155 from './erc1155';
-
-// All events we're syncing should have an associated `EventData`
-// entry which dictates the way the event will be parsed and then
-// handled (eg. persisted to the database and relayed for further
-// processing to any job queues).
-
-export type EventDataKind =
-  | 'erc721-transfer'
-  | 'erc721-mint'
-  | 'erc1155-transfer-single'
-  | 'erc1155-transfer-batch'
-  | 'erc721/1155-approval-for-all'
-  | 'erc20-approval'
-  | 'erc20-transfer';
-
-//type defining the format for filtering event
-export type EventData = {
-  kind: EventDataKind;
-  addresses?: { [address: string]: boolean };
-  topic: string;
-  numTopics: number;
-  abi: Interface;
-};
+import * as erc721 from './erc721';
 
 const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
   switch (kind) {
@@ -56,4 +35,28 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
         .map((x) => x!)
     );
   }
+};
+
+export const parseEvent = async (
+  log: Log,
+  timestamp: number,
+  batchIndex = 1,
+): Promise<BaseEventParams> => {
+  const address = log.address.toLowerCase();
+  const blockNumber = log.blockNumber;
+  const blockHash = log.blockHash.toLowerCase();
+  const txHash = log.transactionHash.toLowerCase();
+  const txIndex = log.transactionIndex;
+  const logIndex = log.logIndex;
+
+  return {
+    address,
+    txHash,
+    txIndex,
+    blockNumber,
+    blockHash,
+    logIndex,
+    timestamp,
+    batchIndex,
+  };
 };

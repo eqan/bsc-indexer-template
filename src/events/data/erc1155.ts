@@ -1,4 +1,4 @@
-import { EventData } from './index';
+import { EventData } from '../types/events.types';
 import { Interface } from '@ethersproject/abi';
 
 export const transferSingle: EventData = {

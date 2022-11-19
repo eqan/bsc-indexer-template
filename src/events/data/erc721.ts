@@ -1,4 +1,4 @@
-import { EventData } from './index';
+import { EventData } from '../types/events.types';
 import { Interface } from '@ethersproject/abi';
 
 // There are some NFTs which do not strictly adhere to the ERC721
