@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { EnhancedEvent, getEventData, parseEvent } from '../data';
+import { getEventData, parseEvent } from '../data';
 import { ERC1155Handler } from '../handlers/erc721/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
+import { EnhancedEvent } from '../types/events.types';
 @Injectable()
 export class SyncEventsService {
   constructor(

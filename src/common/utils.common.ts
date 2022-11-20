@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
-import { EventDataKind } from 'src/events/data';
+import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { AddressZero } from '@ethersproject/constants';
 import { getNetworkSettings } from 'src/config/network.config';

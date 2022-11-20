@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EnhancedEvent, getEventData } from 'src/events/data';
+import { getEventData } from 'src/events/data';
+import { EnhancedEvent } from 'src/events/types/events.types';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
 import { extractActivityData } from '../../common/activity.handler.common';
 import { ActivitiesService } from 'src/activities/activities.service';
