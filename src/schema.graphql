@@ -539,7 +539,7 @@ type Query {
   ShowTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
-  GetAllActivities(GetAllActivitiesInput: FilterActivityDto!): GetAllActivities!
+  GetAllActivities(GetAllActivitiesInput: FilterActivityDto): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
@@ -571,8 +571,8 @@ input FilterOrderDto {
 }
 
 input FilterActivityDto {
-  page: Float
-  limit: Int
+  page: Float = 1
+  limit: Int = 10
   id: String
   type: ActivityType
 }

@@ -6,9 +6,9 @@ import { PaginationParam } from './pagination.dto';
 export class FilterActivityDto extends PaginationParam {
   @IsEthereumAddress()
   @Field({ nullable: true, defaultValue: undefined })
-  id: string;
+  id?: string;
 
   @IsEnum(ActivityType)
   @Field(() => ActivityType, { nullable: true, defaultValue: undefined })
-  type: ActivityType;
+  type?: ActivityType;
 }
