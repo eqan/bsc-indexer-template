@@ -33,7 +33,7 @@ export class ActivitiesResolver {
    */
   @Query(() => GetAllActivities, { name: 'GetAllActivities' })
   async index(
-    @Args('GetAllActivitiesInput', { nullable: true })
+    @Args('GetAllActivitiesInput', { nullable: true, defaultValue: {} })
     filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {

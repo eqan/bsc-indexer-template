@@ -83,7 +83,7 @@ type ActivityTransfer {
 }
 
 type Activity {
-  id: String!
+  id: String
   type: ActivityType!
   date: DateTime!
   lastUpdatedAt: DateTime!
@@ -91,7 +91,7 @@ type Activity {
   reverted: Boolean!
   blockchainInfo: BlockchainInfo!
   MINT: ActivityMint!
-  BURN: ActivityBurn!
+  BURN: ActivityBurn
   TRANSFER: ActivityTransfer!
   BID: ActivityBid!
 }
@@ -535,11 +535,11 @@ input DataInput {
 type Query {
   GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
-  GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
+  GetAllTokens(searchToken: FilterTokenDto): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
-  GetAllActivities(GetAllActivitiesInput: FilterActivityDto): GetAllActivities!
+  GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
