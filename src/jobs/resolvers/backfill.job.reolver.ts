@@ -3,11 +3,14 @@ import { CronType } from '../types/cron.types';
 import { Mutation, Resolver } from '@nestjs/graphql';
 import { BadRequestException } from '@nestjs/common';
 import { QueueType } from '../enums/jobs.enums';
+import Redis from 'ioredis';
 
 @Resolver()
 export class BackFillJobResolver {
   constructor(private schedulerRegistry: SchedulerRegistry) {}
   CRON_NAME = QueueType.BACKFILL_CRON;
+
+  private readonly redis = new Redis();
 
   @Mutation(() => CronType, { name: 'StopBackFillCron', nullable: true })
   async StopBackFillCron(): Promise<CronType> {
@@ -22,6 +25,12 @@ export class BackFillJobResolver {
   @Mutation(() => CronType, { name: 'StartBackFillCron', nullable: true })
   async startBackFillCron(): Promise<CronType> {
     try {
+      const eventFromRunTheBackFill = await this.redis.get(
+        `${QueueType.BACKFILL_QUEUE}-last-block`,
+      );
+      if (!eventFromRunTheBackFill) {
+        return { isDone: false };
+      }
       this.schedulerRegistry.getCronJob(this.CRON_NAME).start();
       return { isDone: true };
     } catch (error) {

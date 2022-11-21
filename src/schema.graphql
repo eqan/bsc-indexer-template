@@ -232,6 +232,11 @@ type Collections {
   tokens: [Tokens!]
 }
 
+type Creator {
+  account: String!
+  value: Int!
+}
+
 type MetadataAttribute {
   key: String!
   value: String!
@@ -267,11 +272,13 @@ type Tokens {
   tokenId: String!
   collectionId: String
   contract: String!
+  owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
   deleted: Boolean!
   sellers: Float!
-  creator: MetaData!
+  creator: Creator!
+  royalties: [Creator!]!
   meta: MetaData!
 }
 
@@ -472,6 +479,11 @@ input CollectionsMetaInput {
   feeRecipient: String!
 }
 
+input CreatorInput {
+  account: String!
+  value: Int!
+}
+
 input AttributeInput {
   key: String!
   value: String!
@@ -545,7 +557,8 @@ input FilterTokenDto {
   page: Float
   limit: Int
   tokenId: String
-  name: MetaDataInput
+  contract: String
+  owner: String
 }
 
 input FilterOrderDto {
@@ -584,6 +597,7 @@ type Mutation {
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
+  ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
@@ -645,17 +659,14 @@ input CreateTokenInput {
   tokenId: String!
   collectionId: String!
   contract: String!
+  owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
   deleted: Boolean!
   sellers: Float!
   creator: CreatorInput!
-  meta: MetaDataInput!
-}
-
-input CreatorInput {
-  account: String!
-  value: Int!
+  royalties: CreatorInput
+  meta: MetaDataInput
 }
 
 input UpdateTokensInput {

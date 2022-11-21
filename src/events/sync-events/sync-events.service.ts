@@ -82,10 +82,7 @@ export class SyncEventsService {
               break;
             }
             case 'erc721/1155-approval-for-all': {
-              // const parsedLog = eventData.abi.parseLog(log);
-              // const owner = parsedLog.args['owner'].toLowerCase();
-              // const operator = parsedLog.args['operator'].toLowerCase();
-              // const approved = parsedLog.args['approved'];
+              await this.erc721Handler.handleApprovalForAll(enhancedEvents);
               break;
             }
             default:

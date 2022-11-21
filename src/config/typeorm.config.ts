@@ -21,7 +21,6 @@ export default class TypeOrmConfig {
       database: config.get('POSTGRES_DB'),
       entities: [Tokens, Collections, Orders, Activity, Users, Auction],
       synchronize: true,
-      dropSchema: true,
     };
   }
 }

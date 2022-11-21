@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { Creator } from '../dto/nestedObjectDto/creator.dto';
 import { MetaData } from '../dto/nestedObjectDto/meta.dto';
 import { TokenType } from './enum/token.type.enum';
 
@@ -37,6 +38,13 @@ export class Tokens extends BaseEntity {
 
   @Field()
   @Column({
+    type: 'text',
+    nullable: true,
+  })
+  owner?: string;
+
+  @Field()
+  @Column({
     type: 'timestamptz',
     default: null,
   })
@@ -63,7 +71,7 @@ export class Tokens extends BaseEntity {
   })
   sellers: number;
 
-  @Field(() => MetaData)
+  @Field(() => Creator)
   @Column({
     type: 'json',
     default: null,
@@ -73,10 +81,21 @@ export class Tokens extends BaseEntity {
     value: number;
   };
 
+  @Field(() => [Creator])
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  royalties?: {
+    account?: string[];
+    value?: number;
+  };
+
   @Field(() => MetaData)
   @Column({
     type: 'json',
     default: null,
+    nullable: true,
   })
   meta?: {
     name: string;
