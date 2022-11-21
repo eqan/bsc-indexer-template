@@ -122,3 +122,8 @@ export const createChunks = (blocksToProcess: number) => {
     ?.fill(maxBlocks)
     ?.concat(Math.floor(blocksToProcess % maxBlocks));
 };
+
+//returns true if token got burnt
+export const isDeleted = (to: string): boolean => {
+  return to === AddressZero ? true : false;
+};
