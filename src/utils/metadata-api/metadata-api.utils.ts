@@ -138,7 +138,7 @@ export class MetadataApi {
 
       if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
 
-      console.log(tokenURI);
+      // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {

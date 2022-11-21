@@ -259,7 +259,7 @@ type MetadataContent {
 type MetaData {
   name: String!
   description: String!
-  tags: String!
+  tags: [String!]!
   genres: String!
   originalMetaUri: String!
   externalUri: String!
@@ -279,7 +279,7 @@ type Tokens {
   sellers: Float!
   creator: Creator!
   royalties: [Creator!]!
-  meta: MetaData!
+  meta: MetaData
 }
 
 type GetAllTokens {
@@ -506,7 +506,7 @@ input MetadataContentInput {
 input MetaDataInput {
   name: String!
   description: String!
-  tags: String!
+  tags: [String!]!
   genres: String!
   originalMetaUri: String!
   externalUri: String!
@@ -614,6 +614,7 @@ type Mutation {
   StartRealTimeCron: CronType
   StopBackFillCron: CronType
   StartBackFillCron: CronType
+  RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): CronType!
 }
 
 input CreateCollectionsInput {
@@ -857,4 +858,9 @@ input UpdateAuctionStatusInput {
 
 input DeleteAuctionsInput {
   id: [Int!]!
+}
+
+input RefreshMetadataInput {
+  collectionId: String!
+  tokenId: String!
 }

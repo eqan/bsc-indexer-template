@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, Float } from '@nestjs/graphql';
 import { Collections } from 'src/collections/entities/collections.entity';
 import {
   BaseEntity,
@@ -64,7 +64,7 @@ export class Tokens extends BaseEntity {
   })
   deleted: boolean;
 
-  @Field()
+  @Field(() => Float)
   @Column({
     type: 'int',
     default: null,
@@ -91,7 +91,7 @@ export class Tokens extends BaseEntity {
     value?: number;
   };
 
-  @Field(() => MetaData)
+  @Field(() => MetaData, { nullable: true })
   @Column({
     type: 'json',
     default: null,

@@ -25,35 +25,7 @@ export class FetchCollectionsProcessor {
     data: { collectionId, tokenId, timestamp, kind },
   }: Job<FetchCollectionTypeJob>) {
     try {
-      // const eventData = job.data.eventData;
-      // const log = job.data.log;
-      // const { eventData , log } = job;
-      // console.log(log);
-      // console.log(eventData.abi.parseLog(log));
-      // const filter: { fromBlock: number; toBlock: number } = {
-      //   fromBlock: job.data.fromBlock,
-      //   toBlock: job.data.toBlock,
-      // };
-
-      // const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-      // for (const log of logs) {
-      //   const availableEventData = getEventData([
-      //     'erc721-transfer',
-      //     'erc1155-transfer-single',
-      //   ]);
-
-      //   const eventData = availableEventData.find(
-      //     ({ addresses, topic, numTopics }) =>
-      //       log.topics[0] === topic &&
-      //       log.topics.length === numTopics &&
-      //       (addresses ? addresses[log.address.toLowerCase()] : true),
-      //   );
-
-      //   if (eventData) {
       const { collectionType, type } = getTypes(kind);
-      // const { args } = eventData.abi.parseLog(log);
-      // const tokenId = args?.tokenId.toString() || '';
-      // const collectionId = log?.address || '';
 
       if (collectionId && tokenId) {
         const collection = await this.collectionsService.collectionExistOrNot(

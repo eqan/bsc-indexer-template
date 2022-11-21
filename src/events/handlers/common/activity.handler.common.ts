@@ -63,6 +63,6 @@ export function extractActivityData(
     TRANSFER: transfer,
     BID: bid,
   };
-  console.log(`Activity ${activityType} Saved!`);
+
   return activityData;
 }

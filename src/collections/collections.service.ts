@@ -16,7 +16,6 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { CollectionType } from './entities/enum/collection.type.enum';
 @Injectable()
 export class CollectionsService {
   constructor(

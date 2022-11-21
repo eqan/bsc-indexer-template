@@ -22,6 +22,7 @@ import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.modul
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
 import { UsersModule } from './users/users.module';
+import { RefreshMetadataModule } from './jobs/refresh-metadata/refresh-metadata.job.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { UsersModule } from './users/users.module';
     SyncEventsModule,
     MidwaySyncModule,
     BackfillSyncModule,
+    RefreshMetadataModule,
   ],
 })
 export class AppModule {}
