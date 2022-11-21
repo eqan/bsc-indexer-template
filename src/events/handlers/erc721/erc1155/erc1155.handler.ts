@@ -67,7 +67,6 @@ export class ERC1155Handler {
       } catch (error) {
         owner = null;
       }
-      console.log(parsedLog);
       for (let i = 0; i < count; i++) {
         await this.fetchCollectionsService.fetchCollection(
           collectionId,

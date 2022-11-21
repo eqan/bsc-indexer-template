@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivitiesService } from 'src/activities/activities.service';
+import { isDeleted } from 'src/common/utils.common';
+import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
 import { extractActivityData } from '../common/activity.handler.common';
-import { getEventData } from 'src/events/data';
-import { AddressZero } from '@ethersproject/constants';
-import { isDeleted } from 'src/common/utils.common';
 
 @Injectable()
 export class ERC721Handler {
