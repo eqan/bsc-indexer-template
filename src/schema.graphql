@@ -240,7 +240,6 @@ type Creator {
 type MetadataAttribute {
   key: String!
   value: String!
-  type: String!
   format: String!
 }
 
@@ -272,6 +271,7 @@ type Tokens {
   tokenId: String!
   collectionId: String
   contract: String!
+  type: String!
   owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
@@ -279,7 +279,7 @@ type Tokens {
   sellers: Float!
   creator: Creator!
   royalties: [Creator!]!
-  meta: MetaData
+  meta: MetaData!
 }
 
 type GetAllTokens {
@@ -487,7 +487,6 @@ input CreatorInput {
 input AttributeInput {
   key: String!
   value: String!
-  type: String!
   format: String!
 }
 
@@ -660,6 +659,7 @@ input CreateTokenInput {
   tokenId: String!
   collectionId: String!
   contract: String!
+  type: TokenType!
   owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
@@ -668,6 +668,12 @@ input CreateTokenInput {
   creator: CreatorInput!
   royalties: CreatorInput
   meta: MetaDataInput
+}
+
+"""Types of tokens"""
+enum TokenType {
+  BEP721
+  BEP1155
 }
 
 input UpdateTokensInput {

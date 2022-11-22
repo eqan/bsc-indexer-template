@@ -11,11 +11,6 @@ export class MetadataAttribute {
   @Field()
   value: string;
 
-  @IsEnum(TokenType)
-  @IsOptional()
-  @Field()
-  type?: TokenType;
-
   @IsOptional()
   @Field()
   format?: string;

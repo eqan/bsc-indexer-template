@@ -63,7 +63,6 @@ export class MetadataApi {
         {
           key: '',
           value: '',
-          type,
           format: '',
         },
       ],
@@ -113,6 +112,7 @@ export class MetadataApi {
   }) {
     const data: CreateTokenInput = {
       tokenId,
+      type,
       collectionId,
       contract: collectionId,
       deleted: false,
