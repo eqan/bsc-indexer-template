@@ -154,7 +154,7 @@ export class MetadataApi {
           meta.image = url ?? meta.image;
         }
         return { ...data, meta: this.returnMeta(meta, tokenURI) };
-      }
+      } else return { ...data, meta: this.returnMeta({}, tokenURI) };
     } catch (error) {
       console.log(
         'finding issue url, remain this console',

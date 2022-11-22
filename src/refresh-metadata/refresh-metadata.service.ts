@@ -1,27 +1,28 @@
-import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { Job } from 'bull';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CollectionsService } from 'src/collections/collections.service';
-import { QueueType } from 'src/jobs/enums/jobs.enums';
-import { RefreshMetadataJobType } from 'src/jobs/types/job.types';
+import { getNetworkSettings } from 'src/config/network.config';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
-@Processor(QueueType.REFRESH_METADATA_QUEUE)
+import { ReturnRefreshMeta } from './dto/return.refresh-meta.dto';
+
+/**
+ * RefreshMetadata
+ * @param RefreshMetadataInput
+ * @returns  RefreshMetadata
+ */
 @Injectable()
-export class RefreshMetadataProcessor {
+export class RefreshMetadataService {
   constructor(
     private readonly tokensService: TokensService,
     private readonly collectionsService: CollectionsService,
     private readonly metadataApi: MetadataApi,
   ) {}
+  networkSettings = getNetworkSettings();
 
-  private readonly logger = new Logger(QueueType.REFRESH_METADATA_QUEUE);
-  QUEUE_NAME = QueueType.REFRESH_METADATA_QUEUE;
-
-  @Process()
-  async handleSync({
-    data: { collectionId, tokenId },
-  }: Job<RefreshMetadataJobType>) {
+  async refrsehMetadata(
+    collectionId: string,
+    tokenId: string,
+  ): Promise<ReturnRefreshMeta> {
     try {
       const collection = await this.collectionsService.collectionExistOrNot(
         collectionId,
@@ -37,7 +38,8 @@ export class RefreshMetadataProcessor {
           collection.type,
         );
 
-        await this.collectionsService.createCollection(response);
+        const refreshedCollection =
+          await this.collectionsService.createCollection(response);
 
         const token = await this.tokensService.getTokenById(
           `${collectionId}:${tokenId}`,
@@ -47,22 +49,15 @@ export class RefreshMetadataProcessor {
           collectionId,
           tokenId,
           type: token.type,
-          timestamp: token.mintedAt.getTime(),
+          timestamp: token.mintedAt.getTime() / 1000,
           deleted: token.deleted,
         });
 
-        await this.tokensService.createToken(tokenMeta);
-        this.logger.log(`Refreshed Metadata ${collectionId}-${tokenId}`);
-        // return { refreshedCollection, refreshedToken };
+        const refreshedToken = await this.tokensService.createToken(tokenMeta);
+        return { collection: refreshedCollection, token: refreshedToken };
       } else throw new BadRequestException('Token or Collection Id not found');
     } catch (error) {
-      this.logger.error(`Refresh Metadata failed: ${error}`);
       throw error;
     }
-  }
-
-  @OnQueueError()
-  onError(error: Error, job: Job) {
-    this.logger.error(`Queue ${job.id} refresh metadata failed : ${error}`);
   }
 }
