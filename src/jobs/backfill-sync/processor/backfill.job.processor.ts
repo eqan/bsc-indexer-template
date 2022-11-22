@@ -20,7 +20,7 @@ export class BackfillSyncProcessor {
   redis = new Redis();
 
   @Process()
-  async handleMidwaySync() {
+  async handleBackFillSync() {
     try {
       const maxBlocksLimits = getNetworkSettings().realtimeSyncMaxBlockLag;
       const lastBackfillBlock = Number(

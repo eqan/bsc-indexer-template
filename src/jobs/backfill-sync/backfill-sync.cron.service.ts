@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { Queue } from 'bull';
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
@@ -40,6 +40,8 @@ export class BackfillSyncService {
     }
   }
 
+  //starting back-fill cron after 24sec so that real-time cron executes first
+  @Timeout(25000)
   addBackFillCron() {
     const job = new CronJob(`${this.seconds} * * * * *`, async () => {
       try {
