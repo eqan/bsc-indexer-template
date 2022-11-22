@@ -6,6 +6,7 @@ import { Queue } from 'bull';
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
 import { QueueType } from '../enums/jobs.enums';
+import { getNetworkSettings } from 'src/config/network.config';
 
 /**
  * BackfillSync Job
@@ -17,9 +18,7 @@ export class BackfillSyncService {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     @InjectQueue(QueueType.BACKFILL_QUEUE) private backfillSyncEvents: Queue,
-  ) {
-    this.addBackFillCron();
-  }
+  ) {}
   private readonly redis = new Redis();
 
   private readonly logger = new Logger(QueueType.BACKFILL_QUEUE);
@@ -41,7 +40,7 @@ export class BackfillSyncService {
   }
 
   //starting back-fill cron after 24sec so that real-time cron executes first
-  @Timeout(25000)
+  @Timeout(getNetworkSettings().backfillSyncTimeout)
   addBackFillCron() {
     const job = new CronJob(`${this.seconds} * * * * *`, async () => {
       try {
@@ -58,9 +57,9 @@ export class BackfillSyncService {
           `Failed to catch up events: ${error}`,
         );
       }
-      // this.logger.warn(
-      //   `time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
-      // );
+      this.logger.warn(
+        `Backfill time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
+      );
     });
 
     this.schedulerRegistry.addCronJob(this.CRON_NAME, job);
