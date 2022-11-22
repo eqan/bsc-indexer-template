@@ -1,12 +1,9 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { CollectionsService } from 'src/collections/collections.service';
-import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
-import { SyncEventsService } from 'src/events/sync-events/sync-events.service';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { RefreshMetadataJobType } from 'src/jobs/types/job.types';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 @Processor(QueueType.REFRESH_METADATA_QUEUE)
@@ -26,7 +23,6 @@ export class RefreshMetadataProcessor {
     data: { collectionId, tokenId },
   }: Job<RefreshMetadataJobType>) {
     try {
-      console.log('called');
       const collection = await this.collectionsService.collectionExistOrNot(
         collectionId,
       );
@@ -37,13 +33,12 @@ export class RefreshMetadataProcessor {
       if (collection && token) {
         const response = await this.metadataApi.getCollectionMetadata(
           collectionId,
-          CollectionType.BEP721,
+          collection.type,
         );
         console.log(response, 'response');
         const updatedCollection =
           await this.collectionsService.createCollection(response);
 
-        // try {
         const token = await this.tokensService.getTokenById(
           `${collectionId}:${tokenId}`,
         );
@@ -51,21 +46,18 @@ export class RefreshMetadataProcessor {
         const tokenMeta = await this.metadataApi.getTokenMetadata({
           collectionId,
           tokenId,
-          type: TokenType.BEP721,
+          type: token.type,
           timestamp: Number(token.mintedAt),
+          deleted: token.deleted,
         });
 
         console.log(tokenMeta, 'TOKENmETa');
 
         const updatedToken = await this.tokensService.createToken(tokenMeta);
-        // } catch (err) {
-        //   console.log(err, collectionId);
-        //   throw err;
-        // }
 
         console.log(updatedCollection, updatedToken, 'updatedMeta Logged');
         this.logger.log(`Event Sync BlockRange ${collectionId}-${tokenId}`);
-      }
+      } else throw new BadRequestException('Token or Collection Id not found');
     } catch (error) {
       this.logger.error(`Refresh Metadata failed: ${error}`);
       throw error;

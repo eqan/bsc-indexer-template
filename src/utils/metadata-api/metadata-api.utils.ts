@@ -51,7 +51,7 @@ export class MetadataApi {
     }
   }
 
-  returnMeta(meta: any, tokenURI: string, type: TokenType) {
+  returnMeta(meta: any, tokenURI: string) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -104,19 +104,21 @@ export class MetadataApi {
     tokenId,
     type,
     timestamp,
+    deleted,
   }: {
     collectionId: string;
     tokenId: string;
     type: TokenType;
     timestamp: number;
+    deleted: boolean;
   }) {
     const data: CreateTokenInput = {
       tokenId,
       type,
       collectionId,
       contract: collectionId,
-      deleted: false,
-      mintedAt: new Date(timestamp),
+      deleted,
+      mintedAt: new Date(timestamp * 1000),
       lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
@@ -136,29 +138,29 @@ export class MetadataApi {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
+      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '') };
 
-      // console.log(tokenURI);
+      console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
+        return { ...data, meta: this.returnMeta(meta, tokenURI) };
       }
 
-      //if tokenURI is buffered base64 encoded
-      if (isBase64Encoded(tokenURI)) {
+      //else if tokenURI is buffered base64 encoded
+      else if (isBase64Encoded(tokenURI)) {
         const meta = base64toJson(tokenURI);
         if (meta?.image.match(regex.base64)) {
           const url = await uploadImage(meta?.image);
           meta.image = url ?? meta.image;
         }
-        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
+        return { ...data, meta: this.returnMeta(meta, tokenURI) };
       }
     } catch (error) {
       console.log(
         'finding issue url, remain this console',
-        { type, tokenId },
+        { type, tokenId, collectionId },
         urlFailed,
         error,
       );

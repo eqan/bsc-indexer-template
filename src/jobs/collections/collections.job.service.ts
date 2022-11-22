@@ -24,10 +24,11 @@ export class FetchCollectionsService {
     tokenId: string,
     timestamp: number,
     kind: EventDataKind,
+    deleted: boolean,
   ) {
     try {
       await this.fetchCollections.add(
-        { collectionId, tokenId, timestamp, kind },
+        { collectionId, tokenId, timestamp, kind, deleted },
         {
           delay: 1000,
           removeOnComplete: true,

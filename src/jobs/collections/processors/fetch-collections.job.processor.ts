@@ -22,7 +22,7 @@ export class FetchCollectionsProcessor {
 
   @Process()
   async FetchCollection({
-    data: { collectionId, tokenId, timestamp, kind },
+    data: { collectionId, tokenId, timestamp, kind, deleted },
   }: Job<FetchCollectionTypeJob>) {
     try {
       const { collectionType, type } = getTypes(kind);
@@ -48,6 +48,7 @@ export class FetchCollectionsProcessor {
               tokenId,
               type,
               timestamp,
+              deleted,
             });
 
             await this.tokensService.createToken(tokenMeta);
