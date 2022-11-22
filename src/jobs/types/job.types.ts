@@ -16,8 +16,3 @@ export class FetchCollectionTypeJob {
   kind: EventDataKind;
   deleted: boolean;
 }
-
-export class RefreshMetadataJobType {
-  collectionId: string;
-  tokenId: string;
-}

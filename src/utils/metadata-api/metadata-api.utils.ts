@@ -1,14 +1,8 @@
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { CollectionsService } from 'src/collections/collections.service';
 import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
