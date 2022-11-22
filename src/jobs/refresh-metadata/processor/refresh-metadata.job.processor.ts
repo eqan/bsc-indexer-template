@@ -26,18 +26,18 @@ export class RefreshMetadataProcessor {
       const collection = await this.collectionsService.collectionExistOrNot(
         collectionId,
       );
+
       const token = await this.tokensService.tokenExistOrNot(
         `${collectionId}:${tokenId}`,
       );
-      console.log(collection, token);
+
       if (collection && token) {
         const response = await this.metadataApi.getCollectionMetadata(
           collectionId,
           collection.type,
         );
-        console.log(response, 'response');
-        const updatedCollection =
-          await this.collectionsService.createCollection(response);
+
+        await this.collectionsService.createCollection(response);
 
         const token = await this.tokensService.getTokenById(
           `${collectionId}:${tokenId}`,
@@ -47,16 +47,13 @@ export class RefreshMetadataProcessor {
           collectionId,
           tokenId,
           type: token.type,
-          timestamp: Number(token.mintedAt),
+          timestamp: token.mintedAt.getTime(),
           deleted: token.deleted,
         });
 
-        console.log(tokenMeta, 'TOKENmETa');
-
-        const updatedToken = await this.tokensService.createToken(tokenMeta);
-
-        console.log(updatedCollection, updatedToken, 'updatedMeta Logged');
-        this.logger.log(`Event Sync BlockRange ${collectionId}-${tokenId}`);
+        await this.tokensService.createToken(tokenMeta);
+        this.logger.log(`Refreshed Metadata ${collectionId}-${tokenId}`);
+        // return { refreshedCollection, refreshedToken };
       } else throw new BadRequestException('Token or Collection Id not found');
     } catch (error) {
       this.logger.error(`Refresh Metadata failed: ${error}`);

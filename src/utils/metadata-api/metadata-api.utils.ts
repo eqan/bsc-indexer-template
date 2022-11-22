@@ -32,8 +32,6 @@ import {
 @Injectable()
 export class MetadataApi {
   constructor(
-    @Inject(forwardRef(() => CollectionsService))
-    private readonly collectionsService: CollectionsService,
     private readonly rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
   ) {}
@@ -172,7 +170,7 @@ export class MetadataApi {
   public async getCollectionMetadata(
     collectionId: string,
     type: CollectionType,
-  ) {
+  ): Promise<CreateCollectionsInput> {
     const collectionData: CreateCollectionsInput = {
       name: '',
       symbol: '',
@@ -196,7 +194,17 @@ export class MetadataApi {
     } catch (error) {
       console.log('error occured owner address not found');
     } finally {
-      return collectionData;
+      return {
+        name: '',
+        symbol: '',
+        owner: AddressZero,
+        id: collectionId,
+        type,
+        Meta: {},
+        discordUrl: '',
+        twitterUserName: '',
+        description: '',
+      };
     }
   }
 }
