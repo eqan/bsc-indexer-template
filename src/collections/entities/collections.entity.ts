@@ -28,42 +28,42 @@ export class Collections {
   })
   type: CollectionType;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   parent?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   symbol?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   owner?: string;
 
-  @Field(() => CollectionsMeta)
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   twitterUserName?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   discordUrl?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
@@ -71,7 +71,7 @@ export class Collections {
   description?: string;
 
   @IsOptional()
-  @Field(() => CollectionsMeta)
+  @Field(() => CollectionsMeta, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
   Meta: CollectionsMeta;
 

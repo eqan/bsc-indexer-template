@@ -204,31 +204,31 @@ type GetAllAuctions {
 }
 
 type MetaContent {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 type CollectionsMeta {
   name: String!
-  description: String!
-  Content: MetaContent!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContent
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 type Collections {
   id: String!
   name: String!
   type: String!
-  parent: String!
-  symbol: String!
-  owner: String!
-  twitterUserName: CollectionsMeta!
-  discordUrl: String!
-  description: String!
-  Meta: CollectionsMeta!
+  parent: String
+  symbol: String
+  owner: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
+  Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
@@ -240,46 +240,46 @@ type Creator {
 type MetadataAttribute {
   key: String!
   value: String!
-  format: String!
+  format: String
 }
 
 type MetadataContent {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 type MetaData {
   name: String!
-  description: String!
+  description: String
   tags: [String!]!
-  genres: String!
+  genres: [String!]
   originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: MetadataAttribute!
-  content: MetadataContent!
+  externalUri: String
+  rightsUri: String
+  attribute: [MetadataAttribute!]
+  content: MetadataContent
 }
 
 type Tokens {
   tokenId: String!
   collectionId: String
-  contract: String!
+  contract: String
   type: String!
-  owner: String!
+  owner: String
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
   deleted: Boolean!
   sellers: Float!
   creator: Creator!
-  royalties: [Creator!]!
-  meta: MetaData!
+  royalties: [Creator!]
+  meta: MetaData
 }
 
 type GetAllTokens {
@@ -470,18 +470,18 @@ input SellInput {
 }
 
 input MetaContentInput {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 input CollectionsMetaInput {
   name: String!
-  description: String!
-  Content: MetaContentInput!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContentInput
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 input CreatorInput {
@@ -492,31 +492,31 @@ input CreatorInput {
 input AttributeInput {
   key: String!
   value: String!
-  format: String!
+  format: String
 }
 
 input MetadataContentInput {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 input MetaDataInput {
   name: String!
-  description: String!
+  description: String
   tags: [String!]!
-  genres: String!
+  genres: [String!]
   originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: AttributeInput!
-  content: MetadataContentInput!
+  externalUri: String
+  rightsUri: String
+  attribute: [AttributeInput!]
+  content: MetadataContentInput
 }
 
 input CollectionMetaContentInput {
