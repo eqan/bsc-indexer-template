@@ -1,8 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
-import {
-  BaseEntity, Column, Entity, PrimaryColumn, Unique
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn, Unique } from 'typeorm';
 import { UserTypes } from './enum/user.types.enums';
 
 /**Create users table in database
@@ -10,47 +8,47 @@ import { UserTypes } from './enum/user.types.enums';
  */
 @ObjectType()
 @Entity('Users')
-@Unique(["id", "userSignature", "userName"])
+@Unique(['id', 'userSignature', 'userName'])
 export class Users extends BaseEntity {
-
   @Field()
-  @IsEthereumAddress({message: "User address should be valid"})
+  @IsEthereumAddress({ message: 'User address should be valid' })
   @PrimaryColumn({
     type: 'text',
     unique: true,
   })
-  id: string
+  id: string;
 
   @Field()
-  @Column({type: 'text'})
-  userSignature: string
+  @Column({ type: 'text', nullable: true })
+  userSignature: string;
 
   @Field()
-  @Column({type: 'text', nullable: true})
-  name: string
-  
-  @Field()
-  @Column({type: 'text', nullable: true})
-  userName: string
+  @Column({ type: 'text', nullable: true })
+  name: string;
 
   @Field()
-  @Column({type: 'text', nullable: true})
-  shortBio: string
+  @Column({ type: 'text', nullable: true })
+  userName: string;
 
   @Field()
-  @Column({type: 'text', nullable: true})
-  websiteUrl: string
+  @Column({ type: 'text', nullable: true })
+  shortBio: string;
 
   @Field()
-  @Column({type: 'text', nullable: true})
-  twitterUrl: string
+  @Column({ type: 'text', nullable: true })
+  websiteUrl: string;
+
+  @Field()
+  @Column({ type: 'text', nullable: true })
+  twitterUrl: string;
 
   @Field()
   @Column({
     type: 'enum',
     enumName: 'UserTypeEnum',
     enum: UserTypes,
-    default: UserTypes.REGULARUSER
+    default: UserTypes.REGULARUSER,
+    nullable: true,
   })
   type: UserTypes;
 }

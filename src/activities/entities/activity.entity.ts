@@ -23,27 +23,34 @@ export abstract class Activity extends BaseEntity {
   @Column({
     enum: ActivityType,
     default: ActivityType.TRANSFER,
+    nullable: true,
   })
   type: ActivityType;
 
   @Field()
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
   date: Date;
+
   @Field()
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
   lastUpdatedAt: Date;
+
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true,
   })
   cursor: string;
   @Field()
   @Column({
     type: 'boolean',
+    nullable: true,
   })
   reverted: boolean;
 

@@ -800,7 +800,7 @@ enum UserTypeEnum {
 }
 
 input DeleteUsersInput {
-  id: [String!]!
+  id: [String!]
 }
 
 input UpdateUsersInput {

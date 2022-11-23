@@ -4,9 +4,9 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
-import { AuctionStatus, AuctionType } from '../entities/enums';
+import { AuctionStatus, AuctionType } from '../entities/enums/enums';
 import { DataInput } from './nestedObjects/data.json.dto';
 import { LsatBid } from './nestedObjects/lastBid.json.dto';
 import { Sell } from './nestedObjects/sell.json.dto';
