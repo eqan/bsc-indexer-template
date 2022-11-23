@@ -24,6 +24,7 @@ export class UpdateCollectionsInput {
     nullable: true,
   })
   bannerImageUrl?: string;
+
   @IsString({ message: 'Name must be a String' })
   @Field({ nullable: true })
   name?: string;
@@ -45,10 +46,8 @@ export class UpdateCollectionsInput {
   symbol?: string;
 
   @IsEthereumAddress()
-  @Field({
-    nullable: true,
-  })
-  owner?: string;
+  @Field()
+  owner: string;
 
   @IsUrl({ message: 'Discord URL must be a valid URL' })
   @Field({
@@ -60,6 +59,7 @@ export class UpdateCollectionsInput {
     nullable: true,
   })
   description?: string;
+
   @ValidateNested()
   @Type(() => CollectionMeta)
   @Field(() => CollectionMeta, { nullable: true })

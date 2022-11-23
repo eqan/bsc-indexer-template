@@ -228,6 +228,7 @@ type Collections {
   twitterUserName: CollectionsMeta!
   discordUrl: String!
   description: String!
+  bannerImageUrl: String!
   Meta: CollectionsMeta!
   tokens: [Tokens!]
 }
@@ -627,7 +628,7 @@ input CreateCollectionsInput {
   type: CollectionType!
   parent: String
   symbol: String
-  owner: String
+  owner: String!
   twitterUserName: String
   discordUrl: String
   description: String
@@ -650,7 +651,7 @@ input UpdateCollectionsInput {
   type: CollectionType
   parent: String
   symbol: String
-  owner: String
+  owner: String!
   discordUrl: String
   description: String
   Meta: CollectionMetaInput
