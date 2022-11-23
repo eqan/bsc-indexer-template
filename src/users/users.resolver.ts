@@ -59,8 +59,10 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('DeleteUserInput') deleteUserInput: DeleteUsersInput,
   ): Promise<void> {
     try {
-      return await this.userService.deleteUsers(deleteUserInput);
-    } catch (error) {}
+      await this.userService.deleteUsers(deleteUserInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**

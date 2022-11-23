@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
@@ -28,8 +29,7 @@ export class ActivitiesService {
       const activity = this.activityRepo.create(createActivityInput);
       return await this.activityRepo.save(activity);
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.CREATE_ACTIVITY);
     }
   }
 
@@ -112,7 +112,7 @@ export class ActivitiesService {
       }
       return found;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.FIND_ACTIVITY);
     }
   }
 
@@ -130,7 +130,9 @@ export class ActivitiesService {
         throw new NotFoundException(`Activity against ${id} not found`);
       }
       return found;
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -156,7 +158,7 @@ export class ActivitiesService {
       }
       return null;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.DELETE_ACTIVITY);
     }
   }
 }
