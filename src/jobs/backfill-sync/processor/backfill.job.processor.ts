@@ -20,14 +20,16 @@ export class BackfillSyncProcessor {
   redis = new Redis();
 
   @Process()
-  async handleMidwaySync() {
+  async handleBackFillSync() {
     try {
       const maxBlocksLimits = getNetworkSettings().realtimeSyncMaxBlockLag;
       const lastBackfillBlock = Number(
         await this.redis.get(`${this.QUEUE_NAME}-last-block`),
       );
-      // console.log('hello last backfilled block', lastBackfillBlock);
-      //if genesis block is reached while backfilling stop cron
+      console.log('hello last backfilled block', lastBackfillBlock);
+      /**
+       * if genesis block reached while backfilling stop cron
+       */
       if (lastBackfillBlock > 0) {
         const fromBlock = lastBackfillBlock - maxBlocksLimits;
         await this.syncEventsService.syncEvents(fromBlock, lastBackfillBlock);

@@ -4,6 +4,7 @@ type NetworkSettings = {
   reorgCheckFrequency: number[];
   realtimeSyncFrequencySeconds: number;
   realtimeSyncMaxBlockLag: number;
+  backfillSyncTimeout: number;
   backfillBlockBatchSize: number;
 };
 
@@ -14,6 +15,7 @@ export const getNetworkSettings = (): NetworkSettings => {
     realtimeSyncFrequencySeconds: 15,
     realtimeSyncMaxBlockLag: 8,
     backfillBlockBatchSize: 16,
+    backfillSyncTimeout: 30,
     reorgCheckFrequency: [1, 5, 10, 30, 60], // In Minutes
   };
   return defaultNetworkSettings;

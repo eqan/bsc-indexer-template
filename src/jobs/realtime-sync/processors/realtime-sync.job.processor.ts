@@ -62,7 +62,9 @@ export class RealtimeSyncProcessor {
         );
         await this.syncEventsService.syncEvents(fromBlock, toBlock);
       } else {
-        //if greater than 8 divide in chunks then process
+        /**
+         * execution block for greater than 8 divide in chunks and process
+         */
         const chunks = createChunks(blocksToProcess);
         for (const chunk of chunks) {
           toBlock = fromBlock + chunk;
