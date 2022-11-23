@@ -42,8 +42,8 @@ export class ActivitiesService {
     filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {
-      console.log(filterDto);
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterDto;
+
       const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
@@ -62,6 +62,7 @@ export class ActivitiesService {
       ]);
       return { items, total };
     } catch (err) {
+      console.log(err);
       throw new BadRequestException(err);
     }
   }
