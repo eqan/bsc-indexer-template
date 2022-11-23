@@ -57,9 +57,9 @@ export class BackfillSyncService {
           `Failed to catch up events: ${error}`,
         );
       }
-      this.logger.warn(
-        `Backfill time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
-      );
+      // this.logger.warn(
+      //   `Backfill time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
+      // );
     });
 
     this.schedulerRegistry.addCronJob(this.CRON_NAME, job);

@@ -27,7 +27,9 @@ export class BackfillSyncProcessor {
         await this.redis.get(`${this.QUEUE_NAME}-last-block`),
       );
       console.log('hello last backfilled block', lastBackfillBlock);
-      //if genesis block is reached while backfilling stop cron
+      /**
+       * if genesis block reached while backfilling stop cron
+       */
       if (lastBackfillBlock > 0) {
         const fromBlock = lastBackfillBlock - maxBlocksLimits;
         await this.syncEventsService.syncEvents(fromBlock, lastBackfillBlock);
