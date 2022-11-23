@@ -103,7 +103,6 @@ export class ActivitiesService {
    */
   async getActivityById(id: string): Promise<Activity> {
     try {
-      console.log('Hello world');
       const found = await this.activityRepo.findOneBy({
         id,
       });

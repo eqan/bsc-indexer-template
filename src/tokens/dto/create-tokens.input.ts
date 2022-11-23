@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { TokenType } from '../entities/enum/token.type.enum';
 
 import { Creator } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
@@ -21,6 +27,10 @@ export class CreateTokenInput {
   @IsNotEmpty()
   @Field()
   contract?: string;
+
+  @IsEnum(TokenType)
+  @Field(() => TokenType)
+  type: TokenType;
 
   @IsNotEmpty()
   @Field()

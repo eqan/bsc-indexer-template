@@ -87,6 +87,7 @@ export class ERC1155Handler {
             to,
             from,
             owner,
+            timestamp,
           );
           await this.activitiesService.create(activityData);
         } catch (error) {

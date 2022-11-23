@@ -62,7 +62,7 @@ export class ERC721Handler {
 
   handleActivity = async (events: EnhancedEvent) => {
     const {
-      baseEventParams: { blockHash, logIndex, txHash, blockNumber },
+      baseEventParams: { blockHash, logIndex, txHash, blockNumber, timestamp },
       log,
       kind,
     } = events;
@@ -86,6 +86,7 @@ export class ERC721Handler {
         to,
         from,
         null,
+        timestamp,
       );
       await this.activitiesService.create(activityData);
     } catch (error) {

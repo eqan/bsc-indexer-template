@@ -8,7 +8,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getEventData } from 'src/events/data';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
@@ -16,7 +15,6 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { CollectionType } from './entities/enum/collection.type.enum';
 @Injectable()
 export class CollectionsService {
   constructor(

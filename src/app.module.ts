@@ -22,6 +22,7 @@ import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.modul
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
 import { UsersModule } from './users/users.module';
+import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { UsersModule } from './users/users.module';
     RpcProviderModule,
     MetadataApiModule,
     AuctionsModule,
+    RefreshMetadataModule,
     //Jobs Module
     RealtimeSyncModule,
     SyncEventsModule,
