@@ -1,11 +1,10 @@
 import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
+import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-import { AddressZero } from '@ethersproject/constants';
-import { getNetworkSettings } from 'src/config/network.config';
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -172,3 +171,9 @@ export const createChunks = (blocksToProcess: number) => {
 export const isDeleted = (to: string): boolean => {
   return to === AddressZero ? true : false;
 };
+
+//absolute path to pem files
+export const PATH_TO_PRIVATE_KEY =
+  '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
+export const PATH_TO_PUBLIC_KEY =
+  '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
