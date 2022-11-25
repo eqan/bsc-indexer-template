@@ -83,7 +83,7 @@ type ActivityTransfer {
 }
 
 type Activity {
-  id: String!
+  id: String
   type: ActivityType!
   date: DateTime!
   lastUpdatedAt: DateTime!
@@ -91,7 +91,7 @@ type Activity {
   reverted: Boolean!
   blockchainInfo: BlockchainInfo!
   MINT: ActivityMint!
-  BURN: ActivityBurn!
+  BURN: ActivityBurn
   TRANSFER: ActivityTransfer!
   BID: ActivityBid!
 }
@@ -538,11 +538,11 @@ input DataInput {
 type Query {
   GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
-  GetAllTokens(searchToken: FilterTokenDto!): GetAllTokens!
+  GetAllTokens(searchToken: FilterTokenDto): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
-  GetAllActivities(GetAllActivitiesInput: FilterActivityDto!): GetAllActivities!
+  GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
@@ -574,8 +574,8 @@ input FilterOrderDto {
 }
 
 input FilterActivityDto {
-  page: Float
-  limit: Int
+  page: Float = 1
+  limit: Int = 10
   id: String
   type: ActivityType
 }
@@ -627,7 +627,7 @@ input CreateCollectionsInput {
   type: CollectionType!
   parent: String
   symbol: String
-  owner: String
+  owner: String!
   twitterUserName: String
   discordUrl: String
   description: String
@@ -650,7 +650,7 @@ input UpdateCollectionsInput {
   type: CollectionType
   parent: String
   symbol: String
-  owner: String
+  owner: String!
   discordUrl: String
   description: String
   Meta: CollectionMetaInput
@@ -812,7 +812,7 @@ enum UserTypeEnum {
 }
 
 input DeleteUsersInput {
-  id: [String!]!
+  id: [String!]
 }
 
 input UpdateUsersInput {

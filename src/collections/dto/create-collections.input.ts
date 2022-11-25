@@ -40,10 +40,8 @@ export class CreateCollectionsInput {
   symbol?: string;
 
   @IsEthereumAddress()
-  @Field({
-    nullable: true,
-  })
-  owner?: string;
+  @Field()
+  owner: string;
 
   @IsOptional()
   @IsString({ message: 'Twitter User Name must be String' })

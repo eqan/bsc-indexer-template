@@ -2,7 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from 'src/auth/auth.service';
@@ -79,13 +79,13 @@ export class UsersService {
     User available -> Updates the information of the available user such user signature, user message etc.
     User not available -> Creates the user.
   */
-  async modifyUserOnLogin(availableUser: any, loginUserInput: LoginUserInput){
-      if (availableUser) {
-        await this.updateUserOnLogin(loginUserInput);
-      } else {
-        availableUser = await this.createUserOnLogin(loginUserInput);
-      }
-      return availableUser;
+  async modifyUserOnLogin(availableUser: any, loginUserInput: LoginUserInput) {
+    if (availableUser) {
+      await this.updateUserOnLogin(loginUserInput);
+    } else {
+      availableUser = await this.createUserOnLogin(loginUserInput);
+    }
+    return availableUser;
   }
 
   /**
@@ -107,13 +107,13 @@ export class UsersService {
     if (user) {
       try {
         availableUser = await this.usersRepo.findOneBy({ id: user });
-        availableUser = this.modifyUserOnLogin(availableUser, loginUserInput)
+        availableUser = this.modifyUserOnLogin(availableUser, loginUserInput);
       } catch (error) {
-        throw new BadRequestException(SystemErrors.LOGIN_USER_CREATION_OR_UPDATION);
+        throw new BadRequestException(
+          SystemErrors.LOGIN_USER_CREATION_OR_UPDATION,
+        );
       }
-    }
-    else
-      throw new UnauthorizedException(SystemErrors.LOGIN_AUTHORIZATION);
+    } else throw new UnauthorizedException(SystemErrors.LOGIN_AUTHORIZATION);
 
     return this.authService.generateUserAccessToken(
       loginUserInput.userMessage,
@@ -165,7 +165,6 @@ export class UsersService {
     try {
       const ids = deleteWithIds.id;
       await this.usersRepo.delete({ id: In(ids) });
-      return null;
     } catch (error) {
       console.log(error);
       throw new BadRequestException(SystemErrors.DELETE_USER);

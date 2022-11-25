@@ -45,9 +45,8 @@ export class Collections {
   @Field({ nullable: true })
   @Column({
     type: 'text',
-    nullable: true,
   })
-  owner?: string;
+  owner: string;
 
   @Field({ nullable: true })
   @Column({
@@ -69,6 +68,13 @@ export class Collections {
     nullable: true,
   })
   description?: string;
+
+  @Field()
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  bannerImageUrl?: string;
 
   @IsOptional()
   @Field(() => CollectionsMeta, { nullable: true })

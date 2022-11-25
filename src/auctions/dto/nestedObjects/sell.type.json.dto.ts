@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsEnum, IsEthereumAddress } from 'class-validator';
-import { AuctionType } from 'src/auctions/entities/enums';
+import { AuctionType } from 'src/auctions/entities/enums/enums';
 
 @ObjectType('SellType')
 @InputType('SellTypeInput')

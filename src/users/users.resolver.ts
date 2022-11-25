@@ -1,6 +1,6 @@
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateUserInput } from './dto/create-user.input';
 import { DeleteUsersInput } from './dto/delete-users.input';
@@ -21,7 +21,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * Login User
    * @param LoggedUserInput: message, signature, address
    * @returns access token
-   */ LoggdUerOutput;
+   */
   @Mutation(() => LoggedUserOutput, { name: 'LoginUser' })
   loginUser(
     @Args('LoginUserInput') loginUserInput: LoginUserInput,
@@ -59,8 +59,10 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('DeleteUserInput') deleteUserInput: DeleteUsersInput,
   ): Promise<void> {
     try {
-      return await this.userService.deleteUsers(deleteUserInput);
-    } catch (error) {}
+      await this.userService.deleteUsers(deleteUserInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**

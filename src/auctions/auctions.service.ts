@@ -10,6 +10,7 @@ import { GetAllAuctions } from './dto/get-all-auctions.dto';
 import { UpdateAuctionInput } from './dto/update-auction.input';
 import { Auction } from './entities/auction.entity';
 import { FilterAuctionDto } from './dto/filter-auctions.dto';
+import { SystemErrors } from 'src/constants/errors.enum';
 @Injectable()
 export class AuctionsService {
   constructor(
@@ -26,7 +27,7 @@ export class AuctionsService {
       const auction = this.auctionRepo.create(createAuctionInput);
       return await this.auctionRepo.save(auction);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.CREATE_AUCTION);
     }
   }
 
@@ -75,7 +76,9 @@ export class AuctionsService {
         throw new NotFoundException(`Auction against ${auctionId}} not found`);
       }
       return found;
-    } catch (error) {}
+    } catch (error) {
+      throw new NotFoundException(SystemErrors.FIND_AUCTION);
+    }
   }
 
   /**
@@ -89,7 +92,7 @@ export class AuctionsService {
       await this.auctionRepo.update({ auctionId }, rest);
       return this.show(auctionId);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.UPDATE_AUCTION);
     }
   }
 
@@ -104,7 +107,7 @@ export class AuctionsService {
       await this.auctionRepo.delete({ auctionId: In(ids) });
       return null;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.DELETE_AUCTION);
     }
   }
 }

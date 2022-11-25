@@ -4,7 +4,7 @@ import { DataInput } from '../dto/nestedObjects/data.json.dto';
 import { LsatBid } from '../dto/nestedObjects/lastBid.json.dto';
 import { Sell } from '../dto/nestedObjects/sell.json.dto';
 import { SellTypeDto } from '../dto/nestedObjects/sell.type.json.dto';
-import { AuctionDataType, AuctionStatus, AuctionType } from './enums';
+import { AuctionDataType, AuctionStatus, AuctionType } from './enums/enums';
 
 @ObjectType()
 @Entity('Auction')
@@ -12,19 +12,21 @@ export class Auction {
   @Field()
   @PrimaryColumn({
     type: 'decimal',
-    unique: true
+    unique: true,
   })
   auctionId: number;
 
   @Field()
   @Column({
-    type: 'varchar'
+    type: 'varchar',
+    nullable: true,
   })
   contract: string;
 
   @Field()
   @Column({
-    type: 'varchar'
+    type: 'varchar',
+    nullable: true,
   })
   seller: string;
 
@@ -33,13 +35,15 @@ export class Auction {
     type: 'enum',
     enum: AuctionType,
     enumName: 'AuctionType',
-    default: AuctionType.BEP721
+    default: AuctionType.BEP721,
+    nullable: true,
   })
   type: AuctionType;
 
   @Field(() => Sell)
   @Column({
-    type: 'jsonb'
+    type: 'jsonb',
+    nullable: true,
   })
   sell: {
     type: {
@@ -52,7 +56,8 @@ export class Auction {
 
   @Field(() => SellTypeDto)
   @Column({
-    type: 'jsonb'
+    type: 'jsonb',
+    nullable: true,
   })
   buy: {
     type: string;
@@ -62,43 +67,50 @@ export class Auction {
 
   @Field()
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
+    nullable: true,
   })
   endTime: Date;
 
   @Field()
   @Column({
-    type: 'decimal'
+    type: 'decimal',
+    nullable: true,
   })
   minimalStep: number;
 
   @Field()
   @Column({
-    type: 'decimal'
+    type: 'decimal',
+    nullable: true,
   })
   minimalPrice: number;
 
   @Field()
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
+    nullable: true,
   })
   createdAt: Date;
 
   @Field()
   @Column({
-    type: 'timestamptz'
+    type: 'timestamptz',
+    nullable: true,
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
-    type: 'decimal'
+    type: 'decimal',
+    nullable: true,
   })
   buyPrice: number;
 
   @Field()
   @Column({
-    type: 'decimal'
+    type: 'decimal',
+    nullable: true,
   })
   buyPriceUsd: number;
 
@@ -109,27 +121,31 @@ export class Auction {
   @Field(() => AuctionStatus)
   @Column({
     type: 'enum',
+    nullable: true,
     enum: AuctionStatus,
     enumName: 'AuctionStatus',
-    default: AuctionStatus.ACTIVE
+    default: AuctionStatus.ACTIVE,
   })
   status: AuctionStatus;
 
   @Field()
   @Column({
-    type: 'boolean'
+    type: 'boolean',
+    nullable: true,
   })
   ongoing: boolean;
 
   @Field()
   @Column({
-    type: 'varchar'
+    type: 'varchar',
+    nullable: true,
   })
   hash: string;
 
   @Field(() => LsatBid)
   @Column({
-    type: 'jsonb'
+    type: 'jsonb',
+    nullable: true,
   })
   lastBid: {
     buyer: string;
@@ -152,7 +168,8 @@ export class Auction {
 
   @Field(() => DataInput)
   @Column({
-    type: 'jsonb'
+    type: 'jsonb',
+    nullable: true,
   })
   data: {
     dataType: AuctionDataType;

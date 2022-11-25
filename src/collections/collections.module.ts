@@ -8,9 +8,9 @@ import { Collections } from './entities/collections.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Collections]),
-    forwardRef(() => TokensModule)
+    forwardRef(() => TokensModule),
   ],
   providers: [CollectionsResolver, CollectionsService],
-  exports: [CollectionsService]
+  exports: [CollectionsService],
 })
 export class CollectionsModule {}

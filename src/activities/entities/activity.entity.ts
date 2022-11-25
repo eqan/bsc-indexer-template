@@ -11,7 +11,7 @@ import { ActivityType } from './enums/activity.type.enum';
 @ObjectType('Activity')
 @Entity('ActivityInput')
 export abstract class Activity extends BaseEntity {
-  @Field()
+  @Field({ nullable: true })
   @IsEthereumAddress()
   @PrimaryColumn({
     type: 'varchar',
@@ -23,27 +23,34 @@ export abstract class Activity extends BaseEntity {
   @Column({
     enum: ActivityType,
     default: ActivityType.TRANSFER,
+    nullable: true,
   })
   type: ActivityType;
 
   @Field()
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
   date: Date;
+
   @Field()
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
   lastUpdatedAt: Date;
+
   @Field()
   @Column({
     type: 'varchar',
+    nullable: true,
   })
   cursor: string;
   @Field()
   @Column({
     type: 'boolean',
+    nullable: true,
   })
   reverted: boolean;
 
@@ -65,7 +72,7 @@ export abstract class Activity extends BaseEntity {
   MINT?: ActivityMint;
 
   @IsOptional()
-  @Field(() => ActivityBurn)
+  @Field(() => ActivityBurn, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
   BURN: ActivityBurn;
 

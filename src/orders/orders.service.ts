@@ -1,9 +1,10 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -15,7 +16,7 @@ import { Orders } from './entities/orders.entity';
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
-    private ordersRepo: Repository<Orders>
+    private ordersRepo: Repository<Orders>,
   ) {}
 
   /**
@@ -28,7 +29,7 @@ export class OrdersService {
       const order = this.ordersRepo.create(createOrdersInput);
       return await this.ordersRepo.save(order);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.CREATE_ORDER);
     }
   }
 
@@ -45,16 +46,16 @@ export class OrdersService {
           where: {
             orderId: rest?.orderId,
             maker: rest?.maker,
-            taker: rest?.taker
+            taker: rest?.taker,
           },
           skip: (page - 1) * limit || 0,
-          take: limit || 10
+          take: limit || 10,
         }),
         this.ordersRepo.count({
           where: {
-            orderId: rest.orderId
-          }
-        })
+            orderId: rest.orderId,
+          },
+        }),
       ]);
       return { items, total };
     } catch (error) {}
@@ -73,7 +74,7 @@ export class OrdersService {
       }
       return order;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.FIND_ORDER);
     }
   }
 
@@ -88,7 +89,7 @@ export class OrdersService {
       await this.ordersRepo.delete({ orderId: In(ids) });
       return null;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.DELETE_ORDER);
     }
   }
 
@@ -98,14 +99,14 @@ export class OrdersService {
    * @returns Updated Order status
    */
   async updateOrderStatus(
-    updateOrderStatus: UpdateOrderStatus
+    updateOrderStatus: UpdateOrderStatus,
   ): Promise<Orders> {
     try {
       const { orderId, ...rest } = updateOrderStatus;
       await this.ordersRepo.update({ orderId }, rest);
       return this.getOrderById(orderId);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(SystemErrors.UPDATE_ORDER);
     }
   }
 }
