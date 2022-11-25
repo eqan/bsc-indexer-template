@@ -9,7 +9,6 @@ import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
-import { UpdateActivityInput } from './dto/update-activity.input';
 import { Activity } from './entities/activity.entity';
 
 @Injectable()
@@ -104,7 +103,6 @@ export class ActivitiesService {
    */
   async getActivityById(id: string): Promise<Activity> {
     try {
-      console.log('Hello world');
       const found = await this.activityRepo.findOneBy({
         id,
       });

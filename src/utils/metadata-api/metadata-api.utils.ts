@@ -1,14 +1,8 @@
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
-import { CollectionsService } from 'src/collections/collections.service';
 import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -32,8 +26,6 @@ import {
 @Injectable()
 export class MetadataApi {
   constructor(
-    @Inject(forwardRef(() => CollectionsService))
-    private readonly collectionsService: CollectionsService,
     private readonly rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
   ) {}
@@ -51,7 +43,7 @@ export class MetadataApi {
     }
   }
 
-  returnMeta(meta: any, tokenURI: string, type: TokenType) {
+  returnMeta(meta: any, tokenURI: string) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -63,7 +55,6 @@ export class MetadataApi {
         {
           key: '',
           value: '',
-          type,
           format: '',
         },
       ],
@@ -115,10 +106,11 @@ export class MetadataApi {
   }) {
     const data: CreateTokenInput = {
       tokenId,
+      type,
       collectionId,
       contract: collectionId,
       deleted,
-      mintedAt: new Date(timestamp),
+      mintedAt: new Date(timestamp * 1000),
       lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
@@ -138,14 +130,14 @@ export class MetadataApi {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '', type) };
+      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '') };
 
       console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
+        return { ...data, meta: this.returnMeta(meta, tokenURI) };
       }
 
       //else if tokenURI is buffered base64 encoded
@@ -155,10 +147,8 @@ export class MetadataApi {
           const url = await uploadImage(meta?.image);
           meta.image = url ?? meta.image;
         }
-        return { ...data, meta: this.returnMeta(meta, tokenURI, type) };
-      } else {
-        return { ...data, meta: this.returnMeta({}, tokenURI, type) };
-      }
+        return { ...data, meta: this.returnMeta(meta, tokenURI) };
+      } else return { ...data, meta: this.returnMeta({}, tokenURI) };
     } catch (error) {
       console.log(
         'finding issue url, remain this console',
@@ -174,7 +164,7 @@ export class MetadataApi {
   public async getCollectionMetadata(
     collectionId: string,
     type: CollectionType,
-  ) {
+  ): Promise<CreateCollectionsInput> {
     const collectionData: CreateCollectionsInput = {
       name: '',
       symbol: '',
@@ -198,7 +188,17 @@ export class MetadataApi {
     } catch (error) {
       console.log('error occured owner address not found');
     } finally {
-      return collectionData;
+      return {
+        name: '',
+        symbol: '',
+        owner: AddressZero,
+        id: collectionId,
+        type,
+        Meta: {},
+        discordUrl: '',
+        twitterUserName: '',
+        description: '',
+      };
     }
   }
 }

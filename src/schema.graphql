@@ -241,7 +241,6 @@ type Creator {
 type MetadataAttribute {
   key: String!
   value: String!
-  type: String!
   format: String!
 }
 
@@ -260,7 +259,7 @@ type MetadataContent {
 type MetaData {
   name: String!
   description: String!
-  tags: String!
+  tags: [String!]!
   genres: String!
   originalMetaUri: String!
   externalUri: String!
@@ -273,6 +272,7 @@ type Tokens {
   tokenId: String!
   collectionId: String
   contract: String!
+  type: String!
   owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
@@ -362,6 +362,11 @@ type GetAllUsers {
 type LoggedUserOutput {
   """Generated access_token of the user"""
   access_token: String!
+}
+
+type ReturnRefreshMeta {
+  collection: Collections!
+  token: Tokens!
 }
 
 input BlockchainInfoInput {
@@ -488,7 +493,6 @@ input CreatorInput {
 input AttributeInput {
   key: String!
   value: String!
-  type: String!
   format: String!
 }
 
@@ -507,7 +511,7 @@ input MetadataContentInput {
 input MetaDataInput {
   name: String!
   description: String!
-  tags: String!
+  tags: [String!]!
   genres: String!
   originalMetaUri: String!
   externalUri: String!
@@ -600,7 +604,7 @@ type Mutation {
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
-  DeleteOrder(Delete: DeleteOrderInput!): Orders!
+  DeleteOrder(Delete: DeleteOrderInput): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
@@ -611,6 +615,7 @@ type Mutation {
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
+  RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType
@@ -660,6 +665,7 @@ input CreateTokenInput {
   tokenId: String!
   collectionId: String!
   contract: String!
+  type: TokenType!
   owner: String!
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
@@ -668,6 +674,12 @@ input CreateTokenInput {
   creator: CreatorInput!
   royalties: CreatorInput
   meta: MetaDataInput
+}
+
+"""Types of tokens"""
+enum TokenType {
+  BEP721
+  BEP1155
 }
 
 input UpdateTokensInput {
@@ -858,4 +870,9 @@ input UpdateAuctionStatusInput {
 
 input DeleteAuctionsInput {
   id: [Int!]!
+}
+
+input RefreshMetadataInput {
+  collectionId: String!
+  tokenId: String!
 }

@@ -1,11 +1,12 @@
 import Redis from 'ioredis';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { Queue } from 'bull';
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
 import { QueueType } from '../enums/jobs.enums';
+import { getNetworkSettings } from 'src/config/network.config';
 
 /**
  * BackfillSync Job
@@ -17,9 +18,7 @@ export class BackfillSyncService {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     @InjectQueue(QueueType.BACKFILL_QUEUE) private backfillSyncEvents: Queue,
-  ) {
-    this.addBackFillCron();
-  }
+  ) {}
   private readonly redis = new Redis();
 
   private readonly logger = new Logger(QueueType.BACKFILL_QUEUE);
@@ -40,6 +39,8 @@ export class BackfillSyncService {
     }
   }
 
+  //starting back-fill cron after 24sec so that real-time cron executes first
+  @Timeout(getNetworkSettings().backfillSyncTimeout)
   addBackFillCron() {
     const job = new CronJob(`${this.seconds} * * * * *`, async () => {
       try {
@@ -57,7 +58,7 @@ export class BackfillSyncService {
         );
       }
       // this.logger.warn(
-      //   `time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
+      //   `Backfill time (${this.seconds}) for job ${this.CRON_NAME} to run!`,
       // );
     });
 

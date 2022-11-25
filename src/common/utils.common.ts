@@ -36,12 +36,56 @@ export const getTypes = (kind: EventDataKind) => {
     collectionType: CollectionType.BEP721,
     type: TokenType.BEP721,
   };
+
   if (!kind?.startsWith('erc721')) {
     types.collectionType = CollectionType.BEP1155;
     types.type = TokenType.BEP1155;
   }
   return types;
 };
+
+// export const getTypesUsingInterface = async (collectionId: string) => {
+//   const types = {
+//     collectionType: CollectionType.BEP721,
+//     type: TokenType.BEP721,
+//   };
+
+//   const ERC1155InterfaceId = '0xd9b67a26';
+//   const ERC721InterfaceId = '0x80ac58cd';
+//   const ERC165Abi: any = [
+//     {
+//       inputs: [
+//         {
+//           internalType: 'bytes4',
+//           name: 'interfaceId',
+//           type: 'bytes4',
+//         },
+//       ],
+//       name: 'supportsInterface',
+//       outputs: [
+//         {
+//           internalType: 'bool',
+//           name: '',
+//           type: 'bool',
+//         },
+//       ],
+//       stateMutability: 'view',
+//       type: 'function',
+//     },
+//   ];
+//   try {
+//     const baseNetworkHttpUrl = process.env.BASE_NETWORK_HTTP_URL;
+//     const chainId = 56 || process.env.CHAIN_ID;
+
+//     const baseProvider = new StaticJsonRpcProvider(baseNetworkHttpUrl, chainId);
+
+//     const contract = new Contract(collectionId, ERC165Abi, baseProvider);
+//     const result = await contract.methods.supportsInterface(ERC721InterfaceId);
+//     console.log(result, 'call result');
+//   } catch (e) {
+//     console.log(e, 'failed method');
+//   }
+// };
 
 export const ipfsDomain = 'https://ipfs.io/ipfs/';
 

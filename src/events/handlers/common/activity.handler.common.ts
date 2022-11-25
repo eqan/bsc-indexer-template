@@ -12,6 +12,7 @@ export function extractActivityData(
   to: string,
   from: string,
   owner: string,
+  timestamp: number,
 ) {
   let activityType = ActivityType.TRANSFER;
   let mint = null;
@@ -50,7 +51,7 @@ export function extractActivityData(
     type: activityType,
     cursor: blockHash,
     reverted: reverted,
-    date: new Date(),
+    date: new Date(timestamp * 1000),
     lastUpdatedAt: new Date(),
     blockchainInfo: {
       transactionHash: txHash,
@@ -63,6 +64,6 @@ export function extractActivityData(
     TRANSFER: transfer,
     BID: bid,
   };
-  console.log(`Activity ${activityType} Saved!`);
+
   return activityData;
 }

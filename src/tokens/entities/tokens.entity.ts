@@ -38,6 +38,15 @@ export class Tokens extends BaseEntity {
 
   @Field()
   @Column({
+    type: 'enum',
+    enum: TokenType,
+    enumName: 'TokenType',
+    default: TokenType.BEP721,
+  })
+  type: TokenType;
+
+  @Field()
+  @Column({
     type: 'text',
     nullable: true,
   })
@@ -108,7 +117,6 @@ export class Tokens extends BaseEntity {
     attributes: {
       key: string;
       value: number;
-      type?: TokenType;
       format?: string;
     }[];
     content?: {

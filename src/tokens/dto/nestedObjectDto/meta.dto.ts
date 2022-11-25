@@ -16,7 +16,7 @@ export class MetaData {
   description: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => [String], { nullable: null })
   tags?: string[];
 
   @IsString()

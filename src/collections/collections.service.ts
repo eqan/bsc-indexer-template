@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getEventData } from 'src/events/data';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
