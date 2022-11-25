@@ -10,7 +10,7 @@ import { UserTypes } from './enum/user.types.enums';
 @Entity('Users')
 @Unique(['id', 'userSignature', 'userName'])
 export class Users extends BaseEntity {
-  @Field()
+  @Field({ nullable: true })
   @IsEthereumAddress({ message: 'User address should be valid' })
   @PrimaryColumn({
     type: 'text',

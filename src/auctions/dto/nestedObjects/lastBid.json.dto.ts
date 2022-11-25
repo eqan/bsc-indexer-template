@@ -6,27 +6,26 @@ import { LastBidDataInput } from './lastBid.data.dto';
 
 @ObjectType('LastBid')
 @InputType('LastBidInput')
-export class LsatBid {
-  @Field()
+export class LastBid {
+  @Field({ nullable: true })
   buyer: string;
 
-  @IsNotEmpty()
-  @Field()
+  @Field({ nullable: true })
   amount: number;
 
-  @Field()
+  @Field({ nullable: true })
   date: Date;
 
   @IsEnum(AuctionStatus)
-  @Field(() => AuctionStatus)
+  @Field(() => AuctionStatus, { nullable: true })
   status: AuctionStatus;
 
   @IsEnum(AuctionType)
-  @Field(() => AuctionType)
+  @Field(() => AuctionType, { nullable: true })
   type: AuctionType;
 
   @ValidateNested()
   @Type(() => LastBidDataInput)
-  @Field(() => LastBidDataInput)
+  @Field(() => LastBidDataInput, { nullable: true })
   data: LastBidDataInput;
 }

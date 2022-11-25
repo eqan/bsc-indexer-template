@@ -144,12 +144,12 @@ type LastBidData {
 }
 
 type LastBid {
-  buyer: String!
-  amount: Float!
-  date: DateTime!
-  status: AuctionStatus!
-  type: AuctionType!
-  data: LastBidData!
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidData
 }
 
 """Status of Auctions i.e. Active,InActive,Pending"""
@@ -178,7 +178,7 @@ type Sell {
 }
 
 type Auction {
-  auctionId: Float!
+  auctionId: Float
   contract: String!
   seller: String!
   type: AuctionType!
@@ -335,7 +335,7 @@ type Orders {
 }
 
 type Users {
-  id: String!
+  id: String
   userSignature: String!
   name: String!
   userName: String!
@@ -446,12 +446,12 @@ input LastBidDataInput {
 }
 
 input LastBidInput {
-  buyer: String!
-  amount: Float!
-  date: DateTime!
-  status: AuctionStatus!
-  type: AuctionType!
-  data: LastBidDataInput!
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidDataInput
 }
 
 input SellTypeInput {
@@ -542,8 +542,8 @@ type Query {
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
-  GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
-  GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
+  GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
+  GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
 }
 
@@ -606,11 +606,11 @@ type Mutation {
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   CreateUser(CreateUserInput: CreateUserInput!): Users!
-  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users
   UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
-  DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
+  DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType
@@ -818,9 +818,9 @@ input CreateAuctionInput {
   auctionId: Float!
   contract: String!
   seller: String!
-  type: AuctionType!
-  sell: SellInput!
-  buy: SellTypeInput!
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
   endTime: DateTime!
   minimalStep: Float!
   minimalPrice: Float!
@@ -828,15 +828,15 @@ input CreateAuctionInput {
   lastUpdatedAt: DateTime!
   buyPrice: Float!
   buyPriceUsd: Float!
-  status: AuctionStatus!
+  status: AuctionStatus
   ongoing: Boolean!
-  hash: String!
-  lastBid: LastBidInput!
-  data: AuctionDataInput!
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
 }
 
 input UpdateAuctionStatusInput {
-  auctionId: Int!
+  auctionId: Float!
   contract: String
   seller: String
   type: AuctionType

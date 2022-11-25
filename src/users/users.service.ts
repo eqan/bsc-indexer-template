@@ -65,7 +65,7 @@ export class UsersService {
    */
   async getDataByuserId(id: string): Promise<Users> {
     try {
-      const userData = await this.usersRepo.findOneByOrFail({ id: id });
+      const userData = await this.usersRepo.findOneByOrFail({ id });
       if (!userData) {
         throw new NotFoundException('No Users Found');
       }
@@ -149,7 +149,7 @@ export class UsersService {
   ): Promise<Users> {
     try {
       const { id, ...rest } = updateUsersInput;
-      await this.usersRepo.update({ id: id }, rest);
+      await this.usersRepo.update({ id }, rest);
       return this.getDataByuserId(id);
     } catch (error) {
       throw new BadRequestException(SystemErrors.UPDATE_USER);
@@ -178,7 +178,7 @@ export class UsersService {
    */
   async findAllUsers(filterDto: FilterUserDto): Promise<GetAllUsers> {
     try {
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterDto;
       const [items, total] = await Promise.all([
         this.usersRepo.find({
           where: {

@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { DataInput } from '../dto/nestedObjects/data.json.dto';
-import { LsatBid } from '../dto/nestedObjects/lastBid.json.dto';
+import { LastBid } from '../dto/nestedObjects/lastBid.json.dto';
 import { Sell } from '../dto/nestedObjects/sell.json.dto';
 import { SellTypeDto } from '../dto/nestedObjects/sell.type.json.dto';
 import { AuctionDataType, AuctionStatus, AuctionType } from './enums/enums';
@@ -9,7 +9,7 @@ import { AuctionDataType, AuctionStatus, AuctionType } from './enums/enums';
 @ObjectType()
 @Entity('Auction')
 export class Auction {
-  @Field()
+  @Field({ nullable: true })
   @PrimaryColumn({
     type: 'decimal',
     unique: true,
@@ -142,7 +142,7 @@ export class Auction {
   })
   hash: string;
 
-  @Field(() => LsatBid)
+  @Field(() => LastBid)
   @Column({
     type: 'jsonb',
     nullable: true,

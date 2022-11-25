@@ -6,7 +6,7 @@ import { AuctionStatus } from '../entities/enums/enums';
 @InputType('UpdateAuctionStatusInput')
 export class UpdateAuctionInput extends PartialType(CreateAuctionInput) {
   @IsNotEmpty()
-  @Field(() => Int)
+  @Field()
   auctionId: number;
 
   @IsEnum(AuctionStatus)
