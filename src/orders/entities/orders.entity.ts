@@ -19,7 +19,10 @@ export class Orders {
   @Field()
   @Column({
     type: 'decimal',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   fill: number;
 
@@ -36,42 +39,65 @@ export class Orders {
   @Field()
   @Column({
     type: 'int',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   makeStock: number;
 
   @Field()
   @Column({
     type: 'boolean',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   cancelled: boolean;
 
   @Field()
   @Column({
     type: 'timestamptz',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   createdAt: Date;
 
   @Field()
   @Column({
     type: 'timestamptz',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
     type: 'text',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   maker: string;
 
   @Field(() => Make)
   @Column({
     type: 'jsonb',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   Make: {
     type: {
@@ -85,7 +111,10 @@ export class Orders {
   @Field(() => Make)
   @Column({
     type: 'jsonb',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   take: {
     type: {
@@ -99,14 +128,21 @@ export class Orders {
   @Field()
   @Column({
     type: 'text',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   salt: string;
 
   @Field(() => Data)
   @Column({
     type: 'json',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+    nullable: false,
+>>>>>>> Stashed changes
   })
   data: {
     type: string;
@@ -121,49 +157,70 @@ export class Orders {
   @Field()
   @Column({
     type: 'timestamptz',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   startedAt?: Date;
 
   @Field()
   @Column({
     type: 'timestamptz',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   endedAt?: Date;
 
   @Field()
   @Column({
     type: 'boolean',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   optionalRoyalties?: boolean;
 
   @Field()
   @Column({
     type: 'timestamptz',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   dbUpdatedAt?: Date;
 
   @Field()
   @Column({
     type: 'decimal',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   makePrice?: number;
 
   @Field()
   @Column({
     type: 'decimal',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   takePrice?: number;
 
   @Field()
   @Column({
     type: 'decimal',
+<<<<<<< Updated upstream
     nullable: true,
+=======
+>>>>>>> Stashed changes
   })
   makePriceUsed?: number;
 

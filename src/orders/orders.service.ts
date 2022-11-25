@@ -11,6 +11,7 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
+import { verifyOrder } from './helper.orders';
 
 @Injectable()
 export class OrdersService {
@@ -26,6 +27,9 @@ export class OrdersService {
    */
   async createOrder(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
+      const { orderId, signature, salt } = createOrdersInput;
+      const verified = verifyOrder(orderId, signature, salt);
+      console.log(verified, 'in create Order');
       const order = this.ordersRepo.create(createOrdersInput);
       return await this.ordersRepo.save(order);
     } catch (error) {
