@@ -140,7 +140,7 @@ export class ActivitiesService {
    * @param activityId
    * @returns Updated Activity
    */
-  edit(id: number, updateActivityInput: UpdateActivityInput) {
+  edit(id: number) {
     return `This action updates a #${id} activity`;
   }
 
