@@ -37,7 +37,9 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
    * @returns
    */
   @Query(() => GetAllTokens, { name: 'GetAllTokens' })
-  async index(@Args('searchToken') filterTokenDto: FilterTokenDto) {
+  async index(
+    @Args('searchToken', { nullable: true }) filterTokenDto: FilterTokenDto,
+  ) {
     try {
       return this.tokenService.findAllTokens(filterTokenDto);
     } catch (error) {

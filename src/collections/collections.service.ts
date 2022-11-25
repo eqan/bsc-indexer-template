@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -16,7 +17,6 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { CollectionType } from './entities/enum/collection.type.enum';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -111,7 +111,8 @@ export class CollectionsService {
   ): Promise<Collections> {
     try {
       const collection = this.collectionsRepo.create(createCollectionsInput);
-      return await this.collectionsRepo.save(collection);
+      const savedCollection = await this.collectionsRepo.save(collection);
+      return savedCollection;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -185,6 +186,9 @@ export class CollectionsService {
   ): Promise<Collections> {
     try {
       const { id, ...rest } = updateCollectionsInput;
+      const { owner } = await this.getCollectionById(id);
+      if (owner != rest.owner)
+        throw new UnauthorizedException('The user is not the owner');
       await this.collectionsRepo.update({ id }, rest);
       return this.getCollectionById(id);
     } catch (error) {

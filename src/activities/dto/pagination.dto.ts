@@ -2,9 +2,9 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class PaginationParam {
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: 1 })
   page?: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, defaultValue: 10 })
   limit?: number;
 }
