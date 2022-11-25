@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { DataInput } from '../dto/nestedObjects/data.json.dto';
 import { LastBid } from '../dto/nestedObjects/lastBid.json.dto';

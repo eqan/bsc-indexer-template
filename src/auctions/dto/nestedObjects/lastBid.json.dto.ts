@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsEnum, ValidateNested } from 'class-validator';
 import { AuctionStatus, AuctionType } from 'src/auctions/entities/enums/enums';
 import { LastBidDataInput } from './lastBid.data.dto';
 

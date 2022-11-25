@@ -38,11 +38,13 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    */
   @Mutation(() => Orders, { name: 'DeleteOrder' })
   async delete(
-    @Args('Delete') deleteOrderInput: DeleteOrderInput,
+    @Args('Delete', { nullable: true }) deleteOrderInput: DeleteOrderInput,
   ): Promise<void> {
     try {
       return await this.ordersService.deleteOrder(deleteOrderInput);
-    } catch (error) {}
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**

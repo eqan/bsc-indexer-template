@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuctionsService } from './auctions.service';
 import { Auction } from './entities/auction.entity';
 import { CreateAuctionInput } from './dto/create-auction.input';
