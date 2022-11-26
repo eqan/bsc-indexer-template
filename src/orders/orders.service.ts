@@ -19,9 +19,30 @@ export class OrdersService {
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
   ) {
-    const signature = generateSignature('hello');
-    const verified = verifyOrder('hello', signature);
-    console.log(verified, 'data verified');
+    const data = {
+      orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+      maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+      Make: {
+        type: {
+          type: 'BEP721',
+          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+          tokenId: 9,
+        },
+        value: 8,
+      },
+      take: {
+        type: {
+          type: 'BEP721',
+          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+          tokenId: 9,
+        },
+        value: 8,
+      },
+      salt: '849388498',
+    };
+    // const signature = generateSignature(data);
+    // const verified = verifyOrder(data, signature);
+    // console.log(verified, 'data verified');
   }
 
   /**
@@ -31,11 +52,15 @@ export class OrdersService {
    */
   async createOrder(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      // const { orderId, signature } = createOrdersInput;
-      const order = this.ordersRepo.create(createOrdersInput);
-      return await this.ordersRepo.save(order);
+      const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
+      const data = { orderId, maker, Make, take, salt };
+      const verified = verifyOrder(data, signature);
+      if (verified) {
+        const order = this.ordersRepo.create(createOrdersInput);
+        return await this.ordersRepo.save(order);
+      } else throw new BadRequestException('decryption failed');
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_ORDER);
+      throw new BadRequestException(error);
     }
   }
 
