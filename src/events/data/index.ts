@@ -3,6 +3,7 @@ import { BaseEventParams, EventData } from '../types/events.types';
 import { EventDataKind } from '../types/events.types';
 import * as erc1155 from './erc1155';
 import * as erc721 from './erc721';
+import * as order from './order';
 
 const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
   switch (kind) {
@@ -14,6 +15,10 @@ const internalGetEventData = (kind: EventDataKind): EventData | undefined => {
       return erc1155.transferBatch;
     case 'erc1155-transfer-single':
       return erc1155.transferSingle;
+    case 'order-match':
+      return order.match;
+    case 'order-cancel':
+      return order.cancel;
   }
 };
 
@@ -25,6 +30,8 @@ export const getEventData = (eventDataKinds?: EventDataKind[]) => {
       erc721.approvalForAll,
       erc1155.transferSingle,
       erc1155.transferBatch,
+      order.match,
+      order.cancel,
     ];
   } else {
     return (

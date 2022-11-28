@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getEventData, parseEvent } from '../data';
-import { ERC1155Handler } from '../handlers/erc721/erc1155/erc1155.handler';
+import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
+import { OrderMatchHandler } from '../handlers/order/order.handler';
 import { EnhancedEvent } from '../types/events.types';
 @Injectable()
 export class SyncEventsService {
@@ -10,6 +11,7 @@ export class SyncEventsService {
     private readonly rpcProvider: RpcProvider,
     private readonly erc721Handler: ERC721Handler,
     private readonly erc1155Handler: ERC1155Handler,
+    private readonly orderMatchHandler: OrderMatchHandler,
   ) {}
   private readonly logger = new Logger('Sync Events');
 
@@ -34,15 +36,16 @@ export class SyncEventsService {
         fromBlock,
         toBlock,
       };
-
       const logs = await this.rpcProvider.baseProvider.getLogs(filter);
 
       for (const log of logs) {
         const availableEventData = getEventData([
-          'erc721-transfer',
-          'erc1155-transfer-single',
+          // 'erc721-transfer',
+          // 'erc1155-transfer-single',
           // 'erc721/1155-approval-for-all',
-          'erc1155-transfer-batch',
+          // 'erc1155-transfer-batch',
+          'order-match',
+          'order-cancel',
         ]);
 
         const eventData = availableEventData.find(
@@ -83,6 +86,14 @@ export class SyncEventsService {
             }
             case 'erc721/1155-approval-for-all': {
               await this.erc721Handler.handleApprovalForAll(enhancedEvents);
+              break;
+            }
+            case 'order-match': {
+              await this.orderMatchHandler.handleMatchOrder(enhancedEvents);
+              break;
+            }
+            case 'order-cancel': {
+              await this.orderMatchHandler.handleCancelOrder(enhancedEvents);
               break;
             }
             default:

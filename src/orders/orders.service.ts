@@ -11,7 +11,7 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
-import { generateSignature, verifyOrder } from './helper.orders';
+import { verifyOrder } from './helper.orders';
 
 @Injectable()
 export class OrdersService {
@@ -19,27 +19,27 @@ export class OrdersService {
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
   ) {
-    const data = {
-      orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-      maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-      Make: {
-        type: {
-          type: 'BEP721',
-          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-          tokenId: 9,
-        },
-        value: 8,
-      },
-      take: {
-        type: {
-          type: 'BEP721',
-          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-          tokenId: 9,
-        },
-        value: 8,
-      },
-      salt: '849388498',
-    };
+    // const data = {
+    //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //   maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //   Make: {
+    //     type: {
+    //       type: 'BEP721',
+    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //       tokenId: 9,
+    //     },
+    //     value: 8,
+    //   },
+    //   take: {
+    //     type: {
+    //       type: 'BEP721',
+    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //       tokenId: 9,
+    //     },
+    //     value: 8,
+    //   },
+    //   salt: '849388498',
+    // };
     // const signature = generateSignature(data);
     // const verified = verifyOrder(data, signature);
     // console.log(verified, 'data verified');
@@ -55,6 +55,7 @@ export class OrdersService {
       const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
       const data = { orderId, maker, Make, take, salt };
       const verified = verifyOrder(data, signature);
+      console.log(createOrdersInput);
       if (verified) {
         const order = this.ordersRepo.create(createOrdersInput);
         return await this.ordersRepo.save(order);

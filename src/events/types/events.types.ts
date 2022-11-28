@@ -13,7 +13,9 @@ export type EventDataKind =
   | 'erc1155-transfer-batch'
   | 'erc721/1155-approval-for-all'
   | 'erc20-approval'
-  | 'erc20-transfer';
+  | 'erc20-transfer'
+  | 'order-match'
+  | 'order-cancel';
 
 //type defining the format for filtering event
 export type EventData = {
