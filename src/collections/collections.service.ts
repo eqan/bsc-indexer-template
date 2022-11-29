@@ -28,11 +28,6 @@ export class CollectionsService {
     // sample function to use JsonRpcProvider and getting blockNumber
     const getBlock = async () => {
       try {
-        // const res = await this.metadataApi.fetchRequest(
-        //   'https://graphigo.prd.galaxy.eco/metadata/0xb034d6ba0b6593fa5107c6a55042b67746d44605/519709.json',
-        //   '519709',
-        // );
-        // console.log(res);
         const blockNumber =
           await this.rpcProvider.baseProvider.getBlockNumber();
         console.log(blockNumber, 'logged out blockNumber');
@@ -53,51 +48,14 @@ export class CollectionsService {
             const timestamp = (
               await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
             ).timestamp;
-            // console.log(timestamp);
             const { args } = eventData.abi.parseLog(log);
-            // console.log(args);
             const collectionId = log?.address;
-            // const response = await this.metadataApi.getCollectionMetadata(
-            //   token,
-            //   CollectionType.BEP721,
-            // );
-            // console.log(response);
-
-            // const meta = await metadataApi.getTokenMetadata({
-            //   collectionId: '0x3d24C45565834377b59fCeAA6864D6C25144aD6c',
-            //   tokenId: '784735',
-            //   type: TokenType.BEP721,
-            //   timestamp: 1667500191,
-            // });
-
-            // const tokenId = args?.tokenId.toString();
-            // const meta = await metadataApi.getTokenMetadata({
-            //   collectionId,
-            //   tokenId,
-            //   type: TokenType.BEP721,
-            //   timestamp,
-            // });
-            // console.log(meta, 'metadata');
           }
         }
       } catch (e) {
         console.log(e, 'error occured');
       }
     };
-    // getBlock();
-
-    // const hello = async () => {
-    //   try {
-    //     // console.log(this.rpcProvider.baseProvider, 'provider');
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-    // hello();
-    // this.metadataApi.fetchRequest(
-    //   'ipfs://bafybeic3gaozbjh4dz2ynafota7oljv2isr2o3cnuadzrnxxwunhyrtf2i/39',
-    //   '39',
-    // );
   }
 
   /**
@@ -105,7 +63,7 @@ export class CollectionsService {
    * @param createCollectionsInput
    * @returns  Created Collection
    */
-  async createCollection(
+  async create(
     createCollectionsInput: CreateCollectionsInput,
   ): Promise<Collections> {
     try {
@@ -122,7 +80,7 @@ export class CollectionsService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllCollections(filterDto: FilterDto): Promise<GetAllCollections> {
+  async index(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
       console.log(filterDto);
       const { page, limit, ...rest } = filterDto;
@@ -153,7 +111,7 @@ export class CollectionsService {
    * @param id
    * @returns Collection against Provided Id
    */
-  async getCollectionById(id: string): Promise<Collections> {
+  async show(id: string): Promise<Collections> {
     try {
       const found = await this.collectionsRepo.findOneByOrFail({
         id,
@@ -176,20 +134,20 @@ export class CollectionsService {
   }
 
   /**
-   * Update Collections Attributes
+   * Update Collections
    * @param updateCollectionsInput
    * @returns
    */
-  async updateCollectionAttribute(
+  async update(
     updateCollectionsInput: UpdateCollectionsInput,
   ): Promise<Collections> {
     try {
       const { id, ...rest } = updateCollectionsInput;
-      const { owner } = await this.getCollectionById(id);
+      const { owner } = await this.show(id);
       if (owner != rest.owner)
         throw new UnauthorizedException('The user is not the owner');
       await this.collectionsRepo.update({ id }, rest);
-      return this.getCollectionById(id);
+      return this.show(id);
     } catch (error) {
       throw new BadRequestException(error);
     }

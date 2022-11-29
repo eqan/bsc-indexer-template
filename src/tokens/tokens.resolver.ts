@@ -26,7 +26,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
     createTokenInput: CreateTokenInput,
   ): Promise<Tokens> {
     try {
-      return await this.tokenService.createToken(createTokenInput);
+      return await this.tokenService.create(createTokenInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -38,10 +38,11 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
    */
   @Query(() => GetAllTokens, { name: 'GetAllTokens' })
   async index(
-    @Args('searchToken', { nullable: true }) filterTokenDto: FilterTokenDto,
+    @Args('GetAllTokensInput', { nullable: true })
+    filterTokenDto: FilterTokenDto,
   ) {
     try {
-      return this.tokenService.findAllTokens(filterTokenDto);
+      return this.tokenService.index(filterTokenDto);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -55,7 +56,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   @Query(() => Tokens, { name: 'ShowTokenById' })
   async show(@Args('tokenId') tokenId: string): Promise<Tokens> {
     try {
-      return await this.tokenService.getTokenById(tokenId);
+      return await this.tokenService.show(tokenId);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -66,13 +67,13 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
    * @param updateTokenInput
    * @returns Updated Token
    */
-  @Mutation(() => Tokens, { name: 'UpdateTokenAttribute' })
+  @Mutation(() => Tokens, { name: 'UpdateToken' })
   async edit(
     @Args('UpdateTokensInput')
     updateTokenInput: UpdateTokensInput,
   ): Promise<Tokens> {
     try {
-      return await this.tokenService.updateTokenAttribute(updateTokenInput);
+      return await this.tokenService.update(updateTokenInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -98,7 +99,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   }
 
   @Mutation(() => Tokens, { name: 'ResetMetaDataofTokens' })
-  async reserMetaData(@Args('ResetMetaData') tokenId: string): Promise<void> {
+  async resetMetaData(@Args('ResetMetaData') tokenId: string): Promise<void> {
     try {
       return await this.tokenService.resetMetaData(tokenId);
     } catch (error) {

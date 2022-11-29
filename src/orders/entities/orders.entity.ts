@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Data } from '../dto/nestedObjectsDto/data.object';
 import { Make } from '../dto/nestedObjectsDto/make.dto';
 import { OrderType } from './enums/order.type.enum';
@@ -7,6 +7,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 
 @ObjectType()
 @Entity('Orders')
+@Index(['orderId', 'maker', 'taker'])
 export class Orders {
   @Field()
   @PrimaryColumn({
@@ -111,7 +112,6 @@ export class Orders {
   data: {
     type: string;
     nullable: true;
-    // payouts?: number[];
     originFees?: {
       account: string;
       value: number;

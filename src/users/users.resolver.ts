@@ -42,7 +42,7 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('CreateUserInput') createUsersInput: CreateUserInput,
   ): Promise<Users> {
     try {
-      return await this.userService.createUser(createUsersInput);
+      return await this.userService.create(createUsersInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -59,7 +59,7 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('DeleteUserInput') deleteUserInput: DeleteUsersInput,
   ): Promise<void> {
     try {
-      await this.userService.deleteUsers(deleteUserInput);
+      await this.userService.delete(deleteUserInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -77,7 +77,7 @@ export class UsersResolver extends BaseProvider<Users> {
     updateUserStatus: UpdateUsersInput,
   ): Promise<Users> {
     try {
-      return await this.userService.updateUsersAttribute(updateUserStatus);
+      return await this.userService.update(updateUserStatus);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -92,7 +92,7 @@ export class UsersResolver extends BaseProvider<Users> {
   @Query(() => Users, { name: 'GetUserDataByuserId' })
   async show(@Args('userId') id: string): Promise<Users> {
     try {
-      return await this.userService.getDataByuserId(id);
+      return await this.userService.show(id);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -110,7 +110,7 @@ export class UsersResolver extends BaseProvider<Users> {
     filterUserDto: FilterUserDto,
   ): Promise<GetAllUsers> {
     try {
-      return await this.userService.findAllUsers(filterUserDto);
+      return await this.userService.index(filterUserDto);
     } catch (error) {
       throw new BadRequestException(error);
     }

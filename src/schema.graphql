@@ -537,12 +537,12 @@ input DataInput {
 }
 
 type Query {
-  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
-  ShowCollectionById(collectionId: String!): Collections!
-  GetAllTokens(searchToken: FilterTokenDto): GetAllTokens!
+  GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
+  GetCollectionById(collectionId: String!): Collections!
+  GetAllTokens(GetAllTokensInput: FilterTokenDto): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
-  GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+  GetAllOrders(FilterOrderInput: FilterOrderDto!): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
@@ -596,16 +596,16 @@ input FilterAuctionDto {
 }
 
 type Mutation {
-  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
-  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
+  UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
-  UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
+  UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput): Orders!
-  UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!

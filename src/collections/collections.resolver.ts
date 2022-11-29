@@ -33,13 +33,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    */
   @Mutation(() => Collections, { name: 'CreateCollection' })
   async create(
-    @Args('createCollection')
+    @Args('CreateCollectionInput')
     createCollectionsInput: CreateCollectionsInput,
   ): Promise<Collections> {
     try {
-      return await this.collectionsService.createCollection(
-        createCollectionsInput,
-      );
+      return await this.collectionsService.create(createCollectionsInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -51,9 +49,10 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    */
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
   async index(
-    @Args('filterCollectionDto') filterDto: FilterDto,
+    @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
+    filteCollectionInput: FilterDto,
   ): Promise<GetAllCollections> {
-    return await this.collectionsService.findAllCollections(filterDto);
+    return await this.collectionsService.index(filteCollectionInput);
   }
 
   /**
@@ -61,10 +60,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param collectionId
    * @returns Collection Against provided ID
    */
-  @Query(() => Collections, { name: 'ShowCollectionById' })
-  async show(@Args('collectionId') collectionId: string): Promise<Collections> {
+  @Query(() => Collections, { name: 'GetCollectionById' })
+  async show(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<Collections> {
     try {
-      return await this.collectionsService.getCollectionById(collectionId);
+      return await this.collectionsService.show(collectionId);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -75,15 +77,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param updateCollectionsInput
    * @returns Updated Collection
    */
-  @Mutation(() => Collections, { name: 'UpdateCollectionAttribute' })
+  @Mutation(() => Collections, { name: 'UpdateCollection' })
   async edit(
-    @Args('updateCollectionsInput')
+    @Args('UpdateCollectionsInput')
     updateCollectionsInput: UpdateCollectionsInput,
   ): Promise<Collections> {
     try {
-      return await this.collectionsService.updateCollectionAttribute(
-        updateCollectionsInput,
-      );
+      return await this.collectionsService.update(updateCollectionsInput);
     } catch (error) {
       throw new BadRequestException(error);
     }

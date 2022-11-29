@@ -37,43 +37,9 @@ export class ActivitiesService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllActivities(
-    filterDto: FilterActivityDto,
-  ): Promise<GetAllActivities> {
-    try {
-      const { page = 1, limit = 20, ...rest } = filterDto;
-
-      const [items, total] = await Promise.all([
-        this.activityRepo.find({
-          where: {
-            id: rest?.id,
-            type: rest?.type,
-          },
-          skip: (page - 1) * limit || 0,
-          take: limit || 10,
-        }),
-        this.activityRepo.count({
-          where: {
-            id: rest.id,
-            type: rest?.type,
-          },
-        }),
-      ]);
-      return { items, total };
-    } catch (err) {
-      console.log(err);
-      throw new BadRequestException(err);
-    }
-  }
-
-  /**
-   * Get All Activities
-   * @param filterActivity
-   * @returns All Activities
-   */
   async index(filterActivity: FilterActivityDto): Promise<GetAllActivities> {
     try {
-      const { page, limit, ...rest } = filterActivity;
+      const { page = 1, limit = 20, ...rest } = filterActivity;
       const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
@@ -101,7 +67,7 @@ export class ActivitiesService {
    * @param id
    * @returns Activity against Provided Id
    */
-  async getActivityById(id: string): Promise<Activity> {
+  async show(id: string): Promise<Activity> {
     try {
       const found = await this.activityRepo.findOneBy({
         id,
@@ -112,25 +78,6 @@ export class ActivitiesService {
       return found;
     } catch (error) {
       throw new BadRequestException(SystemErrors.FIND_ACTIVITY);
-    }
-  }
-
-  /**
-   * Show Activity
-   * @param id
-   * @returns Updated Activity
-   */
-  async show(id: string): Promise<Activity[]> {
-    try {
-      const found = await this.activityRepo.findBy({
-        id: id,
-      });
-      if (!found) {
-        throw new NotFoundException(`Activity against ${id} not found`);
-      }
-      return found;
-    } catch (error) {
-      throw new BadRequestException(error);
     }
   }
 

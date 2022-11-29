@@ -25,13 +25,11 @@ export class TokensService {
    * @param createTokensInput
    * @returns  Created Token
    */
-  async createToken(createTokensInput: CreateTokenInput): Promise<Tokens> {
+  async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
       const token = this.tokensRepo.create(restParams);
-      const collection = await this.collectionsService.getCollectionById(
-        collectionId,
-      );
+      const collection = await this.collectionsService.show(collectionId);
 
       token.collection = collection;
       token.tokenId = collectionId + ':' + token.tokenId;
@@ -68,7 +66,7 @@ export class TokensService {
    * @@params No Params
    * @returns Array of Tokens and Total Number of Tokens
    */
-  async findAllTokens(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
+  async index(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
     try {
       const { page, limit, ...rest } = filterTokenDto;
       const [items, total] = await Promise.all([
@@ -110,7 +108,7 @@ export class TokensService {
    * @param id
    * @returns Token against Provided Id
    */
-  async getTokenById(tokenId: string): Promise<Tokens> {
+  async show(tokenId: string): Promise<Tokens> {
     try {
       const found = await this.tokensRepo.findOneBy({
         tokenId,
@@ -129,13 +127,11 @@ export class TokensService {
    * @param updateTokensInput
    * @returns
    */
-  async updateTokenAttribute(
-    updateTokensInput: UpdateTokensInput,
-  ): Promise<Tokens> {
+  async update(updateTokensInput: UpdateTokensInput): Promise<Tokens> {
     try {
       const { tokenId, ...rest } = updateTokensInput;
       await this.tokensRepo.update({ tokenId }, rest);
-      return await this.getTokenById(tokenId);
+      return await this.show(tokenId);
     } catch (error) {
       throw new BadRequestException(error);
     }
