@@ -1,22 +1,16 @@
 import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'crypto';
-import * as fs from 'fs';
 import * as assert from 'node:assert';
-import * as path from 'path';
-import {
-  PATH_TO_PRIVATE_KEY,
-  PATH_TO_PUBLIC_KEY,
-} from 'src/common/utils.common';
+import { getPrivateKey, getPublicKey } from 'src/common/utils.common';
 
 /**
  * Generate Signature
  * @param data
  * @returns signature
  */
-export const generateSignature = (data: any): string => {
+export const generateSignature = (data: string): string => {
   try {
-    const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
-    const publicKey = fs.readFileSync(absolutePath, 'utf8');
+    const publicKey = getPublicKey();
     const signature = crypto.publicEncrypt(
       publicKey,
       Buffer.from(JSON.stringify(data)),
@@ -36,8 +30,7 @@ export const generateSignature = (data: any): string => {
  */
 export const decryptSignature = (signature: string): string => {
   try {
-    const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
-    const privateKey = fs.readFileSync(absolutePath, 'utf8');
+    const privateKey = getPrivateKey();
     const decrypted = crypto.privateDecrypt(
       privateKey,
       Buffer.from(signature, 'base64'),

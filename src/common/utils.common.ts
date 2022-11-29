@@ -5,6 +5,8 @@ import { CollectionType } from 'src/collections/entities/enum/collection.type.en
 import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -173,7 +175,17 @@ export const isDeleted = (to: string): boolean => {
 };
 
 //absolute path to pem files
-export const PATH_TO_PRIVATE_KEY =
-  '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
-export const PATH_TO_PUBLIC_KEY =
-  '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
+const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
+const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
+
+export const getPublicKey = () => {
+  const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
+  const publicKey = fs.readFileSync(absolutePath, 'utf8');
+  return publicKey;
+};
+
+export const getPrivateKey = () => {
+  const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
+  const privateKey = fs.readFileSync(absolutePath, 'utf8');
+  return privateKey;
+};
