@@ -12,6 +12,6 @@ export class MetadataAttribute {
   value: string;
 
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   format?: string;
 }

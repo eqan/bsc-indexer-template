@@ -1,7 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEnum, IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsEthereumAddress,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 import { UserTypes } from '../entities/enum/user.types.enums';
-
 
 @InputType()
 export class CreateUserInput {
@@ -11,12 +15,12 @@ export class CreateUserInput {
   userSignature: string;
 
   @IsNotEmpty()
-  @IsEthereumAddress({message: "User address should be valid"})
+  @IsEthereumAddress({ message: 'User address should be valid' })
   @Field()
   id: string;
 
   @IsNotEmpty()
   @IsEnum(UserTypes)
-  @Field(()=> UserTypes)
+  @Field(() => UserTypes)
   type: UserTypes;
 }

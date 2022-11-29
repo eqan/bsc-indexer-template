@@ -19,7 +19,7 @@ export class Users extends BaseEntity {
   id: string;
 
   @Field()
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   userSignature: string;
 
   @Field()
@@ -48,7 +48,6 @@ export class Users extends BaseEntity {
     enumName: 'UserTypeEnum',
     enum: UserTypes,
     default: UserTypes.REGULARUSER,
-    nullable: true,
   })
   type: UserTypes;
 }

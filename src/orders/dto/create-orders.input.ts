@@ -8,7 +8,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Data } from './nestedObjectsDto/data.object';
@@ -74,41 +74,47 @@ export class CreateOrdersInput {
   @Field()
   data: Data;
 
+  @IsOptional()
   @IsDate()
-  @Field()
+  @Field({ nullable: true })
   startedAt?: Date;
 
   @IsDate()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   endedAt?: Date;
 
   @IsBoolean()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
   @IsDate()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   dbUpdatedAt?: Date;
 
   @IsOptional()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   makePrice?: number;
 
   @IsOptional()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   takePrice?: number;
 
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   makePriceUsed?: number;
 
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   takePriceUsed?: number;
 
-  @IsOptional()
   @IsString()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   signature?: string;
 
   @IsOptional()

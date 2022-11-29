@@ -19,14 +19,13 @@ export class Orders {
   @Field()
   @Column({
     type: 'decimal',
-    nullable: true,
   })
   fill: number;
 
   @Field()
   @Column({
     type: 'enum',
-    nullable: true,
+    // nullable: true,
     enumName: 'OrderStatus',
     enum: OrderStatus,
     default: OrderStatus.Active,
@@ -36,42 +35,41 @@ export class Orders {
   @Field()
   @Column({
     type: 'int',
-    nullable: true,
+    nullable: false,
   })
   makeStock: number;
 
   @Field()
   @Column({
     type: 'boolean',
-    nullable: true,
+    nullable: false,
   })
   cancelled: boolean;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    nullable: true,
+    nullable: false,
   })
   createdAt: Date;
 
   @Field()
   @Column({
     type: 'timestamptz',
-    nullable: true,
+    nullable: false,
   })
   lastUpdatedAt: Date;
 
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
+    nullable: false,
   })
   maker: string;
 
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true,
   })
   Make: {
     type: {
@@ -85,7 +83,6 @@ export class Orders {
   @Field(() => Make)
   @Column({
     type: 'jsonb',
-    nullable: true,
   })
   take: {
     type: {
@@ -99,18 +96,17 @@ export class Orders {
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
   })
   salt: string;
 
   @Field(() => Data)
   @Column({
     type: 'json',
-    nullable: true,
+    nullable: false,
   })
   data: {
     type: string;
-    nullable: true;
+    // nullable: true;
     // payouts?: number[];
     originFees?: {
       account: string;
@@ -118,49 +114,49 @@ export class Orders {
     };
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   startedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   endedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
   })
   optionalRoyalties?: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   dbUpdatedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   makePrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   takePrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
@@ -177,11 +173,10 @@ export class Orders {
   @Field()
   @Column({
     type: 'text',
-    nullable: true,
   })
-  signature?: string;
+  signature: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,

@@ -29,7 +29,7 @@ export class Tokens extends BaseEntity {
   @Column('text', { default: null })
   collectionId?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
@@ -45,7 +45,7 @@ export class Tokens extends BaseEntity {
   })
   type: TokenType;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
@@ -90,7 +90,7 @@ export class Tokens extends BaseEntity {
     value: number;
   };
 
-  @Field(() => [Creator])
+  @Field(() => [Creator], { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -100,7 +100,7 @@ export class Tokens extends BaseEntity {
     value?: number;
   };
 
-  @Field(() => MetaData)
+  @Field(() => MetaData, { nullable: true })
   @Column({
     type: 'json',
     default: null,

@@ -12,6 +12,6 @@ export class Data {
 
   @ValidateNested()
   @Type(() => DataOriginFee)
-  @Field(() => DataOriginFee)
-  originFees: DataOriginFee;
+  @Field(() => DataOriginFee, { nullable: true })
+  originFees?: DataOriginFee;
 }

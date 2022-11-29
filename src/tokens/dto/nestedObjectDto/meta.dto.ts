@@ -12,15 +12,15 @@ export class MetaData {
   name: string;
 
   @IsString()
-  @Field(() => String)
-  description: string;
+  @Field(() => String, { nullable: true })
+  description?: string;
 
   @IsString()
   @Field(() => [String], { nullable: null })
   tags?: string[];
 
   @IsString()
-  @Field(() => String)
+  @Field(() => [String], { nullable: true })
   genres?: string[];
 
   @IsString()
@@ -28,20 +28,20 @@ export class MetaData {
   originalMetaUri: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   externalUri?: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   rightsUri?: string;
 
   @ValidateNested()
   @Type(() => MetadataAttribute)
-  @Field(() => MetadataAttribute)
+  @Field(() => [MetadataAttribute], { nullable: true })
   attribute?: MetadataAttribute[];
 
   @ValidateNested()
   @Type(() => MetadataContent)
-  @Field(() => MetadataContent)
+  @Field(() => MetadataContent, { nullable: true })
   content?: MetadataContent;
 }

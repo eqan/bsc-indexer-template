@@ -204,32 +204,32 @@ type GetAllAuctions {
 }
 
 type MetaContent {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 type CollectionsMeta {
   name: String!
-  description: String!
-  Content: MetaContent!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContent
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 type Collections {
   id: String!
   name: String!
   type: String!
-  parent: String!
-  symbol: String!
-  owner: String!
-  twitterUserName: CollectionsMeta!
-  discordUrl: String!
-  description: String!
+  parent: String
+  symbol: String
+  owner: String
+  twitterUserName: String
+  discordUrl: String
+  description: String
   bannerImageUrl: String!
-  Meta: CollectionsMeta!
+  Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
@@ -241,46 +241,46 @@ type Creator {
 type MetadataAttribute {
   key: String!
   value: String!
-  format: String!
+  format: String
 }
 
 type MetadataContent {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 type MetaData {
   name: String!
-  description: String!
+  description: String
   tags: [String!]!
-  genres: String!
+  genres: [String!]
   originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: MetadataAttribute!
-  content: MetadataContent!
+  externalUri: String
+  rightsUri: String
+  attribute: [MetadataAttribute!]
+  content: MetadataContent
 }
 
 type Tokens {
   tokenId: String!
   collectionId: String
-  contract: String!
+  contract: String
   type: String!
-  owner: String!
+  owner: String
   mintedAt: DateTime!
   lastUpdatedAt: DateTime!
   deleted: Boolean!
   sellers: Float!
   creator: Creator!
-  royalties: [Creator!]!
-  meta: MetaData!
+  royalties: [Creator!]
+  meta: MetaData
 }
 
 type GetAllTokens {
@@ -306,7 +306,7 @@ type DataOriginFee {
 
 type Data {
   type: String!
-  originFees: DataOriginFee!
+  originFees: DataOriginFee
 }
 
 type Orders {
@@ -322,16 +322,16 @@ type Orders {
   take: Make!
   salt: String!
   data: Data!
-  startedAt: DateTime!
-  endedAt: DateTime!
-  optionalRoyalties: Boolean!
-  dbUpdatedAt: DateTime!
-  makePrice: Float!
-  takePrice: Float!
-  makePriceUsed: Float!
+  startedAt: DateTime
+  endedAt: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsed: Float
   takePriceUsed: Float!
   signature: String!
-  taker: String!
+  taker: String
 }
 
 type Users {
@@ -343,6 +343,10 @@ type Users {
   websiteUrl: String!
   twitterUrl: String!
   type: String!
+}
+
+type SignatureType {
+  signature: String!
 }
 
 type GetAllOrders {
@@ -471,18 +475,18 @@ input SellInput {
 }
 
 input MetaContentInput {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 input CollectionsMetaInput {
   name: String!
-  description: String!
-  Content: MetaContentInput!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContentInput
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 input CreatorInput {
@@ -493,31 +497,31 @@ input CreatorInput {
 input AttributeInput {
   key: String!
   value: String!
-  format: String!
+  format: String
 }
 
 input MetadataContentInput {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 input MetaDataInput {
   name: String!
-  description: String!
+  description: String
   tags: [String!]!
-  genres: String!
+  genres: [String!]
   originalMetaUri: String!
-  externalUri: String!
-  rightsUri: String!
-  attribute: AttributeInput!
-  content: MetadataContentInput!
+  externalUri: String
+  rightsUri: String
+  attribute: [AttributeInput!]
+  content: MetadataContentInput
 }
 
 input CollectionMetaContentInput {
@@ -533,7 +537,7 @@ input DataOrginFeeInput {
 
 input DataInput {
   type: String!
-  originFees: DataOrginFeeInput!
+  originFees: DataOrginFeeInput
 }
 
 type Query {
@@ -606,6 +610,7 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(Delete: DeleteOrderInput!): Orders!
   UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
@@ -708,15 +713,15 @@ input CreateOrdersInput {
   take: MakeInput!
   salt: String!
   data: DataInput!
-  startedAt: DateTime!
-  endedAt: DateTime!
-  optionalRoyalties: Boolean!
-  dbUpdatedAt: DateTime!
-  makePrice: Float!
-  takePrice: Float!
-  makePriceUsed: Float!
-  takePriceUsed: Float!
-  signature: String!
+  startedAt: DateTime
+  endedAt: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsed: Float
+  takePriceUsed: Float
+  signature: String
   taker: String
 }
 
@@ -735,6 +740,14 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: String!
+}
+
+input CreateSignatureInput {
+  orderId: String!
+  maker: String!
+  Make: MakeInput!
+  take: MakeInput!
+  salt: String!
 }
 
 input CreateActivityInput {

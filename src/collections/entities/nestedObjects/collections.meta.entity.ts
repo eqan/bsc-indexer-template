@@ -10,30 +10,30 @@ export class CollectionsMeta {
   @Column('text')
   name: string;
 
-  @Field()
-  @Column('text')
-  description: string;
+  @Field({ nullable: true })
+  @Column('text', { nullable: true })
+  description?: string;
 
   @IsOptional()
-  @Field(() => Content)
+  @Field(() => Content, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
-  Content: Content;
+  Content?: Content;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   externalLink?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   sellerFeeBasisPoints?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
