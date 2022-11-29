@@ -6,6 +6,6 @@ import { PaginationParam } from './pagination.dto';
 export class FilterUserDto extends PaginationParam {
   @IsOptional()
   @IsEthereumAddress()
-  @Field({ nullable: true, defaultValue: undefined })
+  @Field({ nullable: true })
   id?: string;
 }

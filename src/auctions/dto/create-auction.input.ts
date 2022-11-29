@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { AuctionStatus, AuctionType } from '../entities/enums/enums';
 import { DataInput } from './nestedObjects/data.json.dto';
-import { LastBid as LastBid } from './nestedObjects/lastBid.json.dto';
+import { LastBid } from './nestedObjects/lastBid.json.dto';
 import { Sell } from './nestedObjects/sell.json.dto';
 import { SellTypeDto } from './nestedObjects/sell.type.json.dto';
 

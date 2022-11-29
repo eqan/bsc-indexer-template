@@ -11,10 +11,10 @@ export class LastBid {
   buyer: string;
 
   @Field({ nullable: true })
-  amount: number;
+  amount?: number;
 
   @Field({ nullable: true })
-  date: Date;
+  date?: Date;
 
   @IsEnum(AuctionStatus)
   @Field(() => AuctionStatus, { nullable: true })

@@ -23,6 +23,7 @@ export enum SystemErrors {
   DELETE_ORDER = 'E20: Unable To Delete Order',
   FIND_ORDER = 'E21: Unable To Find All Order',
   ACTIVITY_ALREADY_MADE = 'E22: Activity Already Made',
+  USER_NOT_FOUND = 'E23: User not found!',
 }
 
 registerEnumType(SystemErrors, {
