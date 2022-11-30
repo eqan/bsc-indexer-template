@@ -37,10 +37,11 @@ export class CreateTokenInput {
   owner?: string;
 
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   mintedAt: Date;
 
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   lastUpdatedAt: Date;
 
   @IsNotEmpty()
@@ -51,16 +52,19 @@ export class CreateTokenInput {
   @Field()
   sellers: number;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => Creator)
-  @Field(() => Creator)
+  @Field(() => Creator, { nullable: true })
   creator: Creator;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => Creator)
   @Field(() => Creator, { nullable: true })
   royalties?: Creator;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => MetaData)
   @Field(() => MetaData, { nullable: true })

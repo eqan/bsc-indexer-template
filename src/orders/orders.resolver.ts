@@ -36,12 +36,14 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param deleteOrderInput
    * @returns void
    */
-  @Mutation(() => Orders, { name: 'DeleteOrder' })
+  @Mutation(() => Orders, { name: 'DeleteOrder', nullable: true })
   async delete(
-    @Args('Delete', { nullable: true }) deleteOrderInput: DeleteOrderInput,
+    @Args('DeleteOrderInput')
+    deleteOrderInput: DeleteOrderInput,
   ): Promise<void> {
     try {
-      return await this.ordersService.delete(deleteOrderInput);
+      await this.ordersService.delete(deleteOrderInput);
+      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -85,7 +87,8 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    */
   @Query(() => GetAllOrders, { name: 'GetAllOrders' })
   async index(
-    @Args('FilterOrderInput') filterOrderDto: FilterOrderDto,
+    @Args('FilterOrderInput', { nullable: true, defaultValue: {} })
+    filterOrderDto: FilterOrderDto,
   ): Promise<GetAllOrders> {
     try {
       return await this.ordersService.index(filterOrderDto);

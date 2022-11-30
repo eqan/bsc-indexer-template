@@ -103,6 +103,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   ): Promise<void> {
     try {
       await this.collectionsService.delete(deleteCollectionInput);
+      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }

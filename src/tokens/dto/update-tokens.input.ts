@@ -14,25 +14,25 @@ export class UpdateTokensInput {
   @Field()
   tokenId: string;
 
-  @IsNotEmpty()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   lastUpdatedAt: Date;
 
-  @IsNotEmpty()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   deleted: boolean;
 
-  @IsNotEmpty()
-  @Field()
+  @IsOptional()
+  @Field({ nullable: true })
   sellers: number;
 
   @Type(() => Creator)
-  @Field(() => Creator)
+  @Field(() => Creator, { nullable: true })
   creator: Creator;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => MetaData)
-  @Field(() => MetaData)
+  @Field(() => MetaData, { nullable: true })
   meta?: MetaData;
 }

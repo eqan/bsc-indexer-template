@@ -3,9 +3,9 @@ import { PaginationParam } from './pagination.dto';
 
 @InputType()
 export class FilterDto extends PaginationParam {
-  @Field({ nullable: true, defaultValue: undefined })
+  @Field({ nullable: true })
   id?: string;
 
-  @Field({ nullable: true, defaultValue: undefined })
+  @Field({ nullable: true })
   name?: string;
 }

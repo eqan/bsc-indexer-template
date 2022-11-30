@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUrl,
   ValidateNested,
@@ -18,6 +19,7 @@ export class UpdateCollectionsInput {
   @Field()
   id: string;
 
+  @IsOptional()
   @IsString()
   @IsUrl({ message: 'Banner Image URL must be a valid URL' })
   @Field({
@@ -25,41 +27,49 @@ export class UpdateCollectionsInput {
   })
   bannerImageUrl?: string;
 
+  @IsOptional()
   @IsString({ message: 'Name must be a String' })
   @Field({ nullable: true })
   name?: string;
 
+  @IsOptional()
   @IsEnum(CollectionType)
   @Field(() => CollectionType, { nullable: true })
   type?: CollectionType;
 
+  @IsOptional()
   @IsString()
   @Field({
     nullable: true,
   })
   parent?: string;
 
+  @IsOptional()
   @IsString()
   @Field({
     nullable: true,
   })
   symbol?: string;
 
+  @IsOptional()
   @IsEthereumAddress()
   @Field()
   owner: string;
 
+  @IsOptional()
   @IsUrl({ message: 'Discord URL must be a valid URL' })
   @Field({
     nullable: true,
   })
   discordUrl?: string;
 
+  @IsOptional()
   @Field({
     nullable: true,
   })
   description?: string;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => CollectionMeta)
   @Field(() => CollectionMeta, { nullable: true })

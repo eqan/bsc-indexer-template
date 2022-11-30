@@ -162,7 +162,6 @@ export class CollectionsService {
     try {
       const ids = deleteWithIds.id;
       await this.collectionsRepo.delete({ id: In(ids) });
-      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }

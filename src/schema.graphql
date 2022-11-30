@@ -539,10 +539,10 @@ input DataInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
-  GetAllTokens(GetAllTokensInput: FilterTokenDto): GetAllTokens!
-  ShowTokenById(tokenId: String!): Tokens!
+  GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
+  GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
-  GetAllOrders(FilterOrderInput: FilterOrderDto!): GetAllOrders!
+  GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
@@ -604,7 +604,7 @@ type Mutation {
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
-  DeleteOrder(Delete: DeleteOrderInput): Orders!
+  DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
@@ -667,11 +667,11 @@ input CreateTokenInput {
   contract: String!
   type: TokenType!
   owner: String!
-  mintedAt: DateTime!
-  lastUpdatedAt: DateTime!
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
-  creator: CreatorInput!
+  creator: CreatorInput
   royalties: CreatorInput
   meta: MetaDataInput
 }
@@ -684,11 +684,11 @@ enum TokenType {
 
 input UpdateTokensInput {
   tokenId: String!
-  lastUpdatedAt: DateTime!
-  deleted: Boolean!
-  sellers: Float!
-  creator: CreatorInput!
-  meta: MetaDataInput!
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorInput
+  meta: MetaDataInput
 }
 
 input DeleteTokensInput {
@@ -734,7 +734,7 @@ input DeleteOrderInput {
 
 input UpdateOrderStatus {
   orderId: String!
-  status: String!
+  status: OrderStatus!
 }
 
 input CreateActivityInput {

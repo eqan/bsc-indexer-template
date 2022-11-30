@@ -38,7 +38,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
    */
   @Query(() => GetAllTokens, { name: 'GetAllTokens' })
   async index(
-    @Args('GetAllTokensInput', { nullable: true })
+    @Args('GetAllTokensInput', { nullable: true, defaultValue: {} })
     filterTokenDto: FilterTokenDto,
   ) {
     try {
@@ -53,7 +53,7 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
    * @param tokenId
    * @returns Token Against provided ID
    */
-  @Query(() => Tokens, { name: 'ShowTokenById' })
+  @Query(() => Tokens, { name: 'GetTokenById' })
   async show(@Args('tokenId') tokenId: string): Promise<Tokens> {
     try {
       return await this.tokenService.show(tokenId);
