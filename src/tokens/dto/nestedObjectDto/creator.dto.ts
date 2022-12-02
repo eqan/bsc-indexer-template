@@ -6,7 +6,7 @@ import { IsEthereumAddress, IsOptional } from 'class-validator';
 export class Creator {
   @IsOptional()
   @IsEthereumAddress()
-  @Field(() => String)
+  @Field(() => [String])
   account?: string[];
 
   @IsOptional()

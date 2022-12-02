@@ -15,7 +15,7 @@ export class Collections {
   })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('text')
   name: string;
 
@@ -77,7 +77,7 @@ export class Collections {
   bannerImageUrl?: string;
 
   @IsOptional()
-  @Field(() => CollectionsMeta, { nullable: true })
+  @Field(() => CollectionsMeta, { nullable: true, defaultValue: {} })
   @Column({ nullable: true, type: 'jsonb' })
   Meta: CollectionsMeta;
 

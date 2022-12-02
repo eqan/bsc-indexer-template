@@ -210,7 +210,7 @@ type MetaContent {
 }
 
 type CollectionsMeta {
-  name: String!
+  name: String
   description: String
   Content: MetaContent
   externalLink: String
@@ -220,7 +220,7 @@ type CollectionsMeta {
 
 type Collections {
   id: String!
-  name: String!
+  name: String
   type: String!
   parent: String
   symbol: String
@@ -234,38 +234,38 @@ type Collections {
 }
 
 type Creator {
-  account: String!
+  account: [String!]!
   value: Int!
 }
 
 type MetadataAttribute {
-  key: String!
-  value: String!
-  format: String!
+  key: String
+  value: String
+  format: String
 }
 
 type MetadataContent {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 type MetaData {
   name: String!
   description: String!
   tags: [String!]!
-  genres: String!
+  genres: [String!]!
   originalMetaUri: String!
   externalUri: String!
-  rightsUri: String!
-  attribute: MetadataAttribute!
-  content: MetadataContent!
+  rightsUri: String
+  attribute: MetadataAttribute
+  content: MetadataContent
 }
 
 type Tokens {
@@ -477,7 +477,7 @@ input MetaContentInput {
 }
 
 input CollectionsMetaInput {
-  name: String!
+  name: String
   description: String
   Content: MetaContentInput
   externalLink: String
@@ -486,38 +486,38 @@ input CollectionsMetaInput {
 }
 
 input CreatorInput {
-  account: String!
+  account: [String!]!
   value: Int!
 }
 
 input AttributeInput {
-  key: String!
-  value: String!
-  format: String!
+  key: String
+  value: String
+  format: String
 }
 
 input MetadataContentInput {
-  fileName: String!
-  url: String!
-  representation: String!
-  mimeType: String!
-  size: Float!
-  avaiable: Boolean!
-  type: String!
-  width: Float!
-  height: Float!
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 input MetaDataInput {
   name: String!
   description: String!
   tags: [String!]!
-  genres: String!
+  genres: [String!]!
   originalMetaUri: String!
   externalUri: String!
-  rightsUri: String!
-  attribute: AttributeInput!
-  content: MetadataContentInput!
+  rightsUri: String
+  attribute: AttributeInput
+  content: MetadataContentInput
 }
 
 input CollectionMetaContentInput {

@@ -20,7 +20,7 @@ export class MetaData {
   tags?: string[];
 
   @IsString()
-  @Field(() => String)
+  @Field(() => [String])
   genres?: string[];
 
   @IsString()
@@ -32,16 +32,16 @@ export class MetaData {
   externalUri?: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   rightsUri?: string;
 
   @ValidateNested()
   @Type(() => MetadataAttribute)
-  @Field(() => MetadataAttribute)
+  @Field(() => MetadataAttribute, { nullable: true })
   attribute?: MetadataAttribute[];
 
   @ValidateNested()
   @Type(() => MetadataContent)
-  @Field(() => MetadataContent)
+  @Field(() => MetadataContent, { nullable: true })
   content?: MetadataContent;
 }
