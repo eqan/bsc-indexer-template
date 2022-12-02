@@ -11,28 +11,28 @@ export class ActivityTransfer {
   })
   tokenId: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   value: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   from: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   owner: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,

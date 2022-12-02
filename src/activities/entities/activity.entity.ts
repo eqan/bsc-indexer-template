@@ -31,6 +31,7 @@ export abstract class Activity extends BaseEntity {
   @Column({
     type: 'timestamptz',
     nullable: true,
+    default: () => 'NOW()',
   })
   date: Date;
 

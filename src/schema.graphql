@@ -30,10 +30,10 @@ type ActivityBid {
   type: ActivityType!
   hash: String
   maker: String
-  price: Float!
-  priceUsd: Float!
-  take: Make!
-  make: Make!
+  price: Float
+  priceUsd: Float
+  take: Make
+  make: Make
 }
 
 """Types of activities"""
@@ -56,27 +56,27 @@ enum ActivityType {
 
 type ActivityBurn {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
 }
 
 type ActivityMint {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  itemId: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
 }
 
 type ActivityTransfer {
   tokenId: String!
-  value: String!
-  from: String!
-  owner: String!
-  contract: String!
+  value: String
+  from: String
+  owner: String
+  contract: String
   transactionHash: String!
   purchase: Boolean!
   itemId: String!
@@ -391,35 +391,35 @@ input ActivityBidInput {
   type: ActivityType!
   hash: String
   maker: String
-  price: Float!
-  priceUsd: Float!
-  take: MakeInput!
-  make: MakeInput!
+  price: Float
+  priceUsd: Float
+  take: MakeInput
+  make: MakeInput
 }
 
 input ActivityBurnInput {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
 }
 
 input ActivityMintInput {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  itemId: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
 }
 
 input ActivityTransferInput {
   tokenId: String!
-  value: String!
-  from: String!
-  owner: String!
-  contract: String!
+  value: String
+  from: String
+  owner: String
+  contract: String
   transactionHash: String!
   purchase: Boolean!
   itemId: String!
