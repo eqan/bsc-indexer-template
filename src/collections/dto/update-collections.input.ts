@@ -64,6 +64,13 @@ export class UpdateCollectionsInput {
   discordUrl?: string;
 
   @IsOptional()
+  @IsUrl({ message: 'Twitter URL must be a valid URL' })
+  @Field({
+    nullable: true,
+  })
+  twitterUrl?: string;
+
+  @IsOptional()
   @Field({
     nullable: true,
   })

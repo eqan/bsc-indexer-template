@@ -173,7 +173,7 @@ export class MetadataApi {
       type,
       Meta: {},
       discordUrl: '',
-      twitterUserName: '',
+      twitterUrl: '',
       description: '',
     };
     try {
@@ -196,7 +196,7 @@ export class MetadataApi {
         type,
         Meta: {},
         discordUrl: '',
-        twitterUserName: '',
+        twitterUrl: '',
         description: '',
       };
     }

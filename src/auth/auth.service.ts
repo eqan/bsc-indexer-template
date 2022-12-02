@@ -11,13 +11,13 @@ export class AuthService {
    * @params message, signature and address
    * @return signer address
    */
-  async verifyWalletAndReturnSignerAddress(
+  verifyWalletAndReturnSignerAddress(
     message: string,
     signature: string,
     address: string,
   ) {
     try {
-      const signerAddr = await verifyMessage(message, signature);
+      const signerAddr = verifyMessage(message, signature);
       if (signerAddr != address) {
         return false;
       }
@@ -37,11 +37,12 @@ export class AuthService {
     signature: string,
     address: string,
   ): Promise<any> {
-    const signerAddress = await this.verifyWalletAndReturnSignerAddress(
+    const signerAddress = this.verifyWalletAndReturnSignerAddress(
       message,
       signature,
       address,
     );
+    console.log(signerAddress);
     if (signerAddress) {
       return signerAddress;
     }

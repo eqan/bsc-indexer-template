@@ -45,6 +45,7 @@ export class Orders {
   @Column({
     type: 'boolean',
     nullable: true,
+    default: false,
   })
   cancelled: boolean;
 

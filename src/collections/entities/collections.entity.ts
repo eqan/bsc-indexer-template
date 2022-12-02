@@ -48,12 +48,12 @@ export class Collections {
   })
   owner: string;
 
-  @Field(() => CollectionsMeta, { nullable: true })
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
-  twitterUserName?: string;
+  twitterUrl?: string;
 
   @Field({ nullable: true })
   @Column({

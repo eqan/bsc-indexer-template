@@ -8,27 +8,25 @@ import { MetadataContent } from './meta.content.dto';
 @InputType('MetaDataInput')
 export class MetaData {
   @IsString()
-  @Field(() => String)
-  name: string;
+  @Field(() => String, { nullable: true })
+  name?: string;
 
   @IsString()
-  @Field(() => String)
-  description: string;
+  @Field(() => String, { nullable: true })
+  description?: string;
 
-  @IsString()
   @Field(() => [String], { nullable: null })
   tags?: string[];
 
-  @IsString()
-  @Field(() => [String])
+  @Field(() => [String], { nullable: null })
   genres?: string[];
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: null })
   originalMetaUri: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: null })
   externalUri?: string;
 
   @IsString()

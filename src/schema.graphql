@@ -63,7 +63,7 @@ type ActivityBurn {
 }
 
 type ActivityMint {
-  tokenId: String!
+  tokenId: String
   value: String
   owner: String
   contract: String
@@ -72,14 +72,14 @@ type ActivityMint {
 }
 
 type ActivityTransfer {
-  tokenId: String!
+  tokenId: String
   value: String
   from: String
   owner: String
   contract: String
-  transactionHash: String!
-  purchase: Boolean!
-  itemId: String!
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
 }
 
 type Activity {
@@ -225,7 +225,7 @@ type Collections {
   parent: String
   symbol: String
   owner: String!
-  twitterUserName: CollectionsMeta
+  twitterUrl: String
   discordUrl: String
   description: String
   bannerImageUrl: String
@@ -233,9 +233,9 @@ type Collections {
   tokens: [Tokens!]
 }
 
-type Creator {
-  account: [String!]!
-  value: Int!
+type CreatorRoyalty {
+  account: [String!]
+  value: Int
 }
 
 type MetadataAttribute {
@@ -257,8 +257,8 @@ type MetadataContent {
 }
 
 type MetaData {
-  name: String!
-  description: String!
+  name: String
+  description: String
   tags: [String!]!
   genres: [String!]!
   originalMetaUri: String!
@@ -278,8 +278,8 @@ type Tokens {
   lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
-  creator: Creator
-  royalties: [Creator!]
+  creator: CreatorRoyalty
+  royalties: [CreatorRoyalty!]
   meta: MetaData
 }
 
@@ -406,7 +406,7 @@ input ActivityBurnInput {
 }
 
 input ActivityMintInput {
-  tokenId: String!
+  tokenId: String
   value: String
   owner: String
   contract: String
@@ -415,14 +415,14 @@ input ActivityMintInput {
 }
 
 input ActivityTransferInput {
-  tokenId: String!
+  tokenId: String
   value: String
   from: String
   owner: String
   contract: String
-  transactionHash: String!
-  purchase: Boolean!
-  itemId: String!
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
 }
 
 input ActivityMakeTypeInput {
@@ -485,9 +485,9 @@ input CollectionsMetaInput {
   feeRecipient: String
 }
 
-input CreatorInput {
-  account: [String!]!
-  value: Int!
+input CreatorRoyaltyInput {
+  account: [String!] = []
+  value: Int
 }
 
 input AttributeInput {
@@ -509,8 +509,8 @@ input MetadataContentInput {
 }
 
 input MetaDataInput {
-  name: String!
-  description: String!
+  name: String
+  description: String
   tags: [String!]!
   genres: [String!]!
   originalMetaUri: String!
@@ -602,7 +602,7 @@ type Mutation {
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
-  ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
+  ResetMetaDataofTokens(ResetMetaData: String!): Tokens
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
@@ -629,7 +629,7 @@ input CreateCollectionsInput {
   parent: String
   symbol: String
   owner: String!
-  twitterUserName: String
+  twitterUrl: String
   discordUrl: String
   description: String
   Meta: CollectionMetaInput
@@ -653,6 +653,7 @@ input UpdateCollectionsInput {
   symbol: String
   owner: String!
   discordUrl: String
+  twitterUrl: String
   description: String
   Meta: CollectionMetaInput
 }
@@ -666,13 +667,13 @@ input CreateTokenInput {
   collectionId: String!
   contract: String!
   type: TokenType!
-  owner: String!
+  owner: String
   mintedAt: DateTime
   lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
-  creator: CreatorInput
-  royalties: CreatorInput
+  creator: CreatorRoyaltyInput
+  royalties: CreatorRoyaltyInput
   meta: MetaDataInput
 }
 
@@ -687,7 +688,7 @@ input UpdateTokensInput {
   lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
-  creator: CreatorInput
+  creator: CreatorRoyaltyInput
   meta: MetaDataInput
 }
 
