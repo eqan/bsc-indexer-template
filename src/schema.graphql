@@ -23,7 +23,7 @@ enum OrderTypeEnum {
 
 type Make {
   value: Int!
-  type: MakeType!
+  assetType: MakeType!
 }
 
 type ActivityBid {
@@ -322,8 +322,8 @@ type Orders {
   take: Make!
   salt: String!
   data: Data!
-  startedAt: DateTime
-  endedAt: DateTime
+  startedAt: DateTime!
+  endedAt: DateTime!
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
@@ -332,6 +332,7 @@ type Orders {
   takePriceUsed: Float!
   signature: String!
   taker: String
+  dataType: String!
 }
 
 type Users {
@@ -388,7 +389,7 @@ input MakeTypeInput {
 
 input MakeInput {
   value: Int!
-  type: MakeTypeInput!
+  assetType: MakeTypeInput!
 }
 
 input ActivityBidInput {
@@ -713,16 +714,17 @@ input CreateOrdersInput {
   take: MakeInput!
   salt: String!
   data: DataInput!
-  startedAt: DateTime
-  endedAt: DateTime
+  startedAt: DateTime!
+  endedAt: DateTime!
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
   takePrice: Float
   makePriceUsed: Float
   takePriceUsed: Float
-  signature: String
+  signature: String!
   taker: String
+  dataType: String!
 }
 
 enum OrderStatus {

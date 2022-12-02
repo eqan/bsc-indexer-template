@@ -1,5 +1,6 @@
 import { keccak256 } from '@ethersproject/keccak256';
 import { keccak256 as solidityKeccak256 } from '@ethersproject/solidity';
+import { toUtf8Bytes } from '@ethersproject/strings';
 import { verifyMessage } from '@ethersproject/wallet';
 import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'crypto';
@@ -31,16 +32,19 @@ export const generateSignature = (data: string): string => {
 };
 
 const ORDER_TYPEHASH = keccak256(
-  'Order(address maker,Asset makeAsset,address taker,Asset takeAsset,uint256 salt,uint256 start,uint256 end,bytes4 dataType,bytes data)Asset(AssetType assetType,uint256 value)AssetType(bytes4 assetClass,bytes data)',
+  toUtf8Bytes(
+    'Order(address maker,Asset makeAsset,address taker,Asset takeAsset,uint256 salt,uint256 start,uint256 end,bytes4 dataType,bytes data)Asset(AssetType assetType,uint256 value)AssetType(bytes4 assetClass,bytes data)',
+  ),
 );
 
 const ASSET_TYPEHASH = keccak256(
-  'Asset(AssetType assetType,uint256 value)AssetType(bytes4 assetClass,bytes data)',
+  toUtf8Bytes(
+    'Asset(AssetType assetType,uint256 value)AssetType(bytes4 assetClass,bytes data)',
+  ),
 );
 
-const ASSET_TYPE_TYPEHASH = solidityKeccak256(
-  ['bytes32'],
-  ['AssetType(bytes4 assetClass,bytes data)'],
+const ASSET_TYPE_TYPEHASH = keccak256(
+  toUtf8Bytes('AssetType(bytes4 assetClass,bytes data)'),
 );
 
 const assetHash = (asset: Make) =>

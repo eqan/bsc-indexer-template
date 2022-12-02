@@ -182,8 +182,6 @@ export class Orders {
   taker?: string;
 
   @Field()
-  @Column({
-    type: 'string',
-  })
+  @Column({ type: 'text' })
   dataType: string;
 }

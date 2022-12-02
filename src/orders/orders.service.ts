@@ -19,8 +19,7 @@ import { verifyOrder } from './handlers.orders';
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
-    private ordersRepo: Repository<Orders>,
-    private readonly ethereum: Maybe<Ethereum>,
+    private ordersRepo: Repository<Orders>, // private readonly ethereum: Maybe<Ethereum>,
   ) {
     // const data = {
     //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
