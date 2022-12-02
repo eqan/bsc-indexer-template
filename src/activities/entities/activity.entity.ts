@@ -19,7 +19,7 @@ export abstract class Activity extends BaseEntity {
   })
   id: string;
 
-  @Field(() => ActivityType)
+  @Field(() => ActivityType, { nullable: true })
   @Column({
     enum: ActivityType,
     default: ActivityType.TRANSFER,
@@ -27,34 +27,35 @@ export abstract class Activity extends BaseEntity {
   })
   type: ActivityType;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   date: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   lastUpdatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   cursor: string;
-  @Field()
+
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
   })
   reverted: boolean;
 
-  @Field(() => BlockChainInfoDto)
+  @Field(() => BlockChainInfoDto, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -67,7 +68,7 @@ export abstract class Activity extends BaseEntity {
   };
 
   @IsOptional()
-  @Field(() => ActivityMint)
+  @Field(() => ActivityMint, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
   MINT?: ActivityMint;
 
@@ -77,12 +78,12 @@ export abstract class Activity extends BaseEntity {
   BURN: ActivityBurn;
 
   @IsOptional()
-  @Field(() => ActivityTransfer)
+  @Field(() => ActivityTransfer, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
   TRANSFER: ActivityTransfer;
 
   @IsOptional()
-  @Field(() => ActivityBid)
+  @Field(() => ActivityBid, { nullable: true })
   @Column({ nullable: true, type: 'jsonb' })
   BID: ActivityBid;
 }

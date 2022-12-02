@@ -68,7 +68,7 @@ export class TokensService {
    */
   async index(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
     try {
-      const { page, limit, ...rest } = filterTokenDto;
+      const { page = 1, limit = 20, ...rest } = filterTokenDto;
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {

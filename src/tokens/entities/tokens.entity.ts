@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import { Collections } from 'src/collections/entities/collections.entity';
 import {
   BaseEntity,
@@ -29,14 +30,14 @@ export class Tokens extends BaseEntity {
   @Column('text', { default: null })
   collectionId?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   contract?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'enum',
     enum: TokenType,
@@ -45,42 +46,42 @@ export class Tokens extends BaseEntity {
   })
   type: TokenType;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   owner?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     default: null,
   })
   mintedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     default: null,
   })
   lastUpdatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     default: null,
   })
   deleted: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'int',
     default: null,
   })
   sellers: number;
 
-  @Field(() => Creator)
+  @Field(() => Creator, { nullable: true })
   @Column({
     type: 'json',
     default: null,
@@ -90,7 +91,7 @@ export class Tokens extends BaseEntity {
     value: number;
   };
 
-  @Field(() => [Creator])
+  @Field(() => [Creator], { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -100,7 +101,7 @@ export class Tokens extends BaseEntity {
     value?: number;
   };
 
-  @Field(() => MetaData)
+  @Field(() => MetaData, { nullable: true })
   @Column({
     type: 'json',
     default: null,

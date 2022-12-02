@@ -16,21 +16,21 @@ export class Auction {
   })
   auctionId: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   contract: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   seller: string;
 
-  @Field(() => AuctionType)
+  @Field(() => AuctionType, { nullable: true })
   @Column({
     type: 'enum',
     enum: AuctionType,
@@ -38,87 +38,83 @@ export class Auction {
     default: AuctionType.BEP721,
     nullable: true,
   })
-  type: AuctionType;
+  type?: AuctionType;
 
-  @Field(() => Sell)
+  @Field(() => Sell, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  sell: {
-    type: {
-      type: string;
-      contract: string;
-      tokenId: string;
+  sell?: {
+    type?: {
+      type?: string;
+      contract?: string;
+      tokenId?: string;
     };
-    value: number;
+    value?: number;
   };
 
-  @Field(() => SellTypeDto)
+  @Field(() => SellTypeDto, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  buy: {
-    type: string;
-    contract: string;
-    tokenId: string;
+  buy?: {
+    type?: string;
+    contract?: string;
+    tokenId?: string;
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  endTime: Date;
+  endTime?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
-  minimalStep: number;
+  minimalStep?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
-  minimalPrice: number;
+  minimalPrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  createdAt: Date;
+  createdAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  lastUpdatedAt: Date;
+  lastUpdatedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
-  buyPrice: number;
+  buyPrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
-  buyPriceUsd: number;
+  buyPriceUsd?: number;
 
-  // @Field()
-  // @Column()
-  // pending:{}
-
-  @Field(() => AuctionStatus)
+  @Field(() => AuctionStatus, { nullable: true })
   @Column({
     type: 'enum',
     nullable: true,
@@ -126,63 +122,62 @@ export class Auction {
     enumName: 'AuctionStatus',
     default: AuctionStatus.ACTIVE,
   })
-  status: AuctionStatus;
+  status?: AuctionStatus;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
   })
-  ongoing: boolean;
+  ongoing?: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  hash: string;
+  hash?: string;
 
-  @Field(() => LastBid)
+  @Field(() => LastBid, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  lastBid: {
-    buyer: string;
-    amount: number;
-    date: Date;
-    status: string;
-    type: string;
-    data: {
-      dataType: AuctionDataType;
-      originFees: {
-        account: string;
-        value: number;
+  lastBid?: {
+    buyer?: string;
+    amount?: number;
+    date?: Date;
+    status?: string;
+    type?: string;
+    data?: {
+      dataType?: AuctionDataType;
+      originFees?: {
+        value?: number;
       };
-      pauouts: {
-        account: string;
-        valueL: number;
+      pauouts?: {
+        account?: string;
+        valueL?: number;
       };
     };
   };
 
-  @Field(() => DataInput)
+  @Field(() => DataInput, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
   })
-  data: {
-    dataType: AuctionDataType;
-    startTime: Date;
-    duration: number;
-    buyOutPrice: number;
-    originFees: {
-      account: string;
-      value: number;
+  data?: {
+    dataType?: AuctionDataType;
+    startTime?: Date;
+    duration?: number;
+    buyOutPrice?: number;
+    originFees?: {
+      account?: string;
+      value?: number;
     };
-    payouts: {
-      account: string;
-      value: number;
+    payouts?: {
+      account?: string;
+      value?: number;
     };
   };
 }

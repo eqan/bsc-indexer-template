@@ -17,14 +17,14 @@ export class Orders {
   })
   orderId: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   fill: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'enum',
     nullable: true,
@@ -34,42 +34,42 @@ export class Orders {
   })
   status: OrderStatus;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'int',
     nullable: true,
   })
   makeStock: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
   })
   cancelled: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   createdAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   lastUpdatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   maker: string;
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -83,7 +83,7 @@ export class Orders {
     value: number;
   };
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -97,14 +97,14 @@ export class Orders {
     value: number;
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   salt: string;
 
-  @Field(() => Data)
+  @Field(() => Data, { nullable: true })
   @Column({
     type: 'json',
     nullable: true,
@@ -118,70 +118,70 @@ export class Orders {
     };
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   startedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   endedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
   })
   optionalRoyalties?: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   dbUpdatedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   makePrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   takePrice?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   makePriceUsed?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'float',
     nullable: true,
   })
   takePriceUsed?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   signature?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,

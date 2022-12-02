@@ -84,16 +84,16 @@ type ActivityTransfer {
 
 type Activity {
   id: String
-  type: ActivityType!
-  date: DateTime!
-  lastUpdatedAt: DateTime!
-  cursor: String!
-  reverted: Boolean!
-  blockchainInfo: BlockchainInfo!
-  MINT: ActivityMint!
+  type: ActivityType
+  date: DateTime
+  lastUpdatedAt: DateTime
+  cursor: String
+  reverted: Boolean
+  blockchainInfo: BlockchainInfo
+  MINT: ActivityMint
   BURN: ActivityBurn
-  TRANSFER: ActivityTransfer!
-  BID: ActivityBid!
+  TRANSFER: ActivityTransfer
+  BID: ActivityBid
 }
 
 """
@@ -179,23 +179,23 @@ type Sell {
 
 type Auction {
   auctionId: Float
-  contract: String!
-  seller: String!
-  type: AuctionType!
-  sell: Sell!
-  buy: SellType!
-  endTime: DateTime!
-  minimalStep: Float!
-  minimalPrice: Float!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  buyPrice: Float!
-  buyPriceUsd: Float!
-  status: AuctionStatus!
-  ongoing: Boolean!
-  hash: String!
-  lastBid: LastBid!
-  data: AuctionData!
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: Sell
+  buy: SellType
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBid
+  data: AuctionData
 }
 
 type GetAllAuctions {
@@ -204,32 +204,32 @@ type GetAllAuctions {
 }
 
 type MetaContent {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 type CollectionsMeta {
   name: String!
-  description: String!
-  Content: MetaContent!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContent
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 type Collections {
   id: String!
   name: String!
   type: String!
-  parent: String!
-  symbol: String!
+  parent: String
+  symbol: String
   owner: String!
-  twitterUserName: CollectionsMeta!
-  discordUrl: String!
-  description: String!
-  bannerImageUrl: String!
-  Meta: CollectionsMeta!
+  twitterUserName: CollectionsMeta
+  discordUrl: String
+  description: String
+  bannerImageUrl: String
+  Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
@@ -271,16 +271,16 @@ type MetaData {
 type Tokens {
   tokenId: String!
   collectionId: String
-  contract: String!
-  type: String!
-  owner: String!
-  mintedAt: DateTime!
-  lastUpdatedAt: DateTime!
-  deleted: Boolean!
-  sellers: Float!
-  creator: Creator!
-  royalties: [Creator!]!
-  meta: MetaData!
+  contract: String
+  type: String
+  owner: String
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: Creator
+  royalties: [Creator!]
+  meta: MetaData
 }
 
 type GetAllTokens {
@@ -311,38 +311,38 @@ type Data {
 
 type Orders {
   orderId: String!
-  fill: Float!
-  status: String!
-  makeStock: Float!
-  cancelled: Boolean!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  maker: String!
-  Make: Make!
-  take: Make!
-  salt: String!
-  data: Data!
-  startedAt: DateTime!
-  endedAt: DateTime!
-  optionalRoyalties: Boolean!
-  dbUpdatedAt: DateTime!
-  makePrice: Float!
-  takePrice: Float!
-  makePriceUsed: Float!
-  takePriceUsed: Float!
-  signature: String!
-  taker: String!
+  fill: Float
+  status: String
+  makeStock: Float
+  cancelled: Boolean
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  maker: String
+  Make: Make
+  take: Make
+  salt: String
+  data: Data
+  startedAt: DateTime
+  endedAt: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsed: Float
+  takePriceUsed: Float
+  signature: String
+  taker: String
 }
 
 type Users {
-  id: String
-  userSignature: String!
-  name: String!
-  userName: String!
-  shortBio: String!
-  websiteUrl: String!
-  twitterUrl: String!
-  type: String!
+  id: String!
+  userSignature: String
+  name: String
+  userName: String
+  shortBio: String
+  websiteUrl: String
+  twitterUrl: String
+  type: String
 }
 
 type GetAllOrders {
@@ -471,18 +471,18 @@ input SellInput {
 }
 
 input MetaContentInput {
-  type: String!
-  url: String!
-  representation: String!
+  type: String
+  url: String
+  representation: String
 }
 
 input CollectionsMetaInput {
   name: String!
-  description: String!
-  Content: MetaContentInput!
-  externalLink: String!
-  sellerFeeBasisPoints: Float!
-  feeRecipient: String!
+  description: String
+  Content: MetaContentInput
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
 }
 
 input CreatorInput {

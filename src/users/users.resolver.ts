@@ -103,7 +103,7 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param filterUserDto
    * @returns Searched or all users
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Query(() => GetAllUsers, { name: 'GetAllUsers' })
   async index(
     @Args('filterUserDto', { nullable: true, defaultValue: {} })

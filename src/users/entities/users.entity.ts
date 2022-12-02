@@ -18,7 +18,7 @@ import { UserTypes } from './enum/user.types.enums';
 @Unique(['id', 'userSignature', 'userName'])
 @Index(['id', 'type', 'userSignature'])
 export class Users extends BaseEntity {
-  @Field({ nullable: true })
+  @Field()
   @IsEthereumAddress({ message: 'User address should be valid' })
   @PrimaryColumn({
     type: 'text',
@@ -26,31 +26,31 @@ export class Users extends BaseEntity {
   })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   userSignature: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   userName: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   shortBio: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   websiteUrl: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   twitterUrl: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'enum',
     enumName: 'UserTypeEnum',
