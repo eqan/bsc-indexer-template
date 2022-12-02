@@ -143,7 +143,7 @@ export class MetadataApi {
       //else if tokenURI is buffered base64 encoded
       else if (isBase64Encoded(tokenURI)) {
         const meta = base64toJson(tokenURI);
-        if (meta?.image.match(regex.base64)) {
+        if (meta?.image?.match(regex.base64)) {
           const url = await uploadImage(meta?.image);
           meta.image = url ?? meta.image;
         }

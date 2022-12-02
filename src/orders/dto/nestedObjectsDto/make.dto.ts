@@ -12,5 +12,5 @@ export class Make {
   @ValidateNested()
   @Type(() => MakeType)
   @Field(() => MakeType)
-  type: MakeType;
+  assetType: MakeType;
 }

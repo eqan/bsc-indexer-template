@@ -167,6 +167,11 @@ export class CollectionsService {
     }
   }
 
+  /**
+   * Check if collection exist or not
+   * @param id
+   * @returns Collection against Provided Id
+   */
   async collectionExistOrNot(id: string): Promise<Collections> {
     try {
       return await this.collectionsRepo.findOne({ where: { id } });

@@ -72,7 +72,7 @@ export class Orders {
     type: 'jsonb',
   })
   Make: {
-    type: {
+    assetType: {
       type: OrderType;
       contract: string;
       tokenId: number;
@@ -114,19 +114,17 @@ export class Orders {
     };
   };
 
-  @Field({ nullable: true })
+  @Field()
   @Column({
     type: 'timestamptz',
-    nullable: true,
   })
   startedAt?: Date;
 
-  @Field({ nullable: true })
+  @Field()
   @Column({
     type: 'timestamptz',
-    nullable: true,
   })
-  endedAt?: Date;
+  endedAt: Date;
 
   @Field({ nullable: true })
   @Column({
@@ -182,4 +180,10 @@ export class Orders {
     nullable: true,
   })
   taker?: string;
+
+  @Field()
+  @Column({
+    type: 'string',
+  })
+  dataType: string;
 }

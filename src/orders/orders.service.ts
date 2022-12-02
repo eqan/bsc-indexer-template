@@ -4,6 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Ethereum } from '@rarible/ethereum-provider/build/index';
+import { Maybe } from '@rarible/types/build/maybe';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateOrdersInput } from './dto/create-orders.input';
@@ -11,38 +13,52 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
-import { generateSignature, verifyOrder } from './helper.orders';
+import { verifyOrder } from './handlers.orders';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
+    private readonly ethereum: Maybe<Ethereum>,
   ) {
-    const data = {
-      orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-      maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-      Make: {
-        type: {
-          type: 'BEP721',
-          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-          tokenId: 9,
-        },
-        value: 8,
-      },
-      take: {
-        type: {
-          type: 'BEP721',
-          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-          tokenId: 9,
-        },
-        value: 8,
-      },
-      salt: '849388498',
-    };
+    // const data = {
+    //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //   maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //   Make: {
+    //     type: {
+    //       type: 'BEP721',
+    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //       tokenId: 9,
+    //     },
+    //     value: 8,
+    //   },
+    //   take: {
+    //     type: {
+    //       type: 'BEP721',
+    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+    //       tokenId: 9,
+    //     },
+    //     value: 8,
+    //   },
+    //   salt: '849388498',
+    // };
     // const signature = generateSignature(data);
     // const verified = verifyOrder(data, signature);
     // console.log(verified, 'data verified');
+  }
+
+  /**
+   * Check if order exist or not
+   * @param orderId
+   * @returns order against Provided Id
+   */
+  async orderExistOrNot(orderId: string): Promise<Orders> {
+    try {
+      return await this.ordersRepo.findOne({ where: { orderId } });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -52,13 +68,24 @@ export class OrdersService {
    */
   async createOrder(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
-      const data = { orderId, maker, Make, take, salt };
-      const verified = verifyOrder(data, signature);
-      if (verified) {
-        const order = this.ordersRepo.create(createOrdersInput);
-        return await this.ordersRepo.save(order);
-      } else throw new BadRequestException('decryption failed');
+      // const order = {
+      //   orderId,
+      //   maker: toAddress(maker),
+      //   make: Make,
+      //   take,
+      //   salt,
+      //   signature,
+      //   data,
+      //   type: '"RARIBLE_V2"',
+      // };
+      const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
+      if (!orderExists) {
+        const verified = verifyOrder(createOrdersInput);
+        if (verified) {
+          const order = this.ordersRepo.create(createOrdersInput);
+          return await this.ordersRepo.save(order);
+        } else throw new BadRequestException('decryption failed');
+      } else throw new BadRequestException('order already exists');
     } catch (error) {
       throw new BadRequestException(error);
     }

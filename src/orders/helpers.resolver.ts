@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Args, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
 import { CreateSignatureInput } from './dto/helpers.order.dto';
-import { generateSignature } from './helper.orders';
+import { generateSignature } from './handlers.orders';
 
 @ObjectType()
 class SignatureType {

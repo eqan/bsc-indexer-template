@@ -74,15 +74,13 @@ export class CreateOrdersInput {
   @Field()
   data: Data;
 
-  @IsOptional()
   @IsDate()
-  @Field({ nullable: true })
-  startedAt?: Date;
+  @Field()
+  startedAt: Date;
 
   @IsDate()
-  @IsOptional()
-  @Field({ nullable: true })
-  endedAt?: Date;
+  @Field()
+  endedAt: Date;
 
   @IsBoolean()
   @IsOptional()
@@ -95,11 +93,9 @@ export class CreateOrdersInput {
   dbUpdatedAt?: Date;
 
   @IsOptional()
-  @IsOptional()
   @Field({ nullable: true })
   makePrice?: number;
 
-  @IsOptional()
   @IsOptional()
   @Field({ nullable: true })
   takePrice?: number;
@@ -113,12 +109,17 @@ export class CreateOrdersInput {
   takePriceUsed?: number;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  signature?: string;
+  @IsNotEmpty()
+  @Field()
+  signature: string;
 
   @IsOptional()
   @IsEthereumAddress()
   @Field({ nullable: true })
   taker?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  dataType: string;
 }
