@@ -118,7 +118,7 @@ export class Tokens extends BaseEntity {
     rightsUri?: string;
     attributes?: {
       key?: string;
-      value?: number;
+      value?: string;
       format?: string;
     }[];
     content?: {
