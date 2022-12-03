@@ -6,46 +6,46 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 export class MetadataContent {
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   fileName?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   url?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   representation?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   mimeType?: string;
 
   @IsNumber()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   size?: number;
 
   @IsBoolean()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   avaiable?: boolean;
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   type?: string;
 
   @IsNumber()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   width?: number;
 
   @IsNumber()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   height?: number;
 }

@@ -27,7 +27,7 @@ export class AuctionsService {
       const auction = this.auctionRepo.create(createAuctionInput);
       return await this.auctionRepo.save(auction);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 

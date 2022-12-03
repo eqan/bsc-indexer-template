@@ -1,10 +1,12 @@
 import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
+import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-import { AddressZero } from '@ethersproject/constants';
-import { getNetworkSettings } from 'src/config/network.config';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -170,4 +172,20 @@ export const createChunks = (blocksToProcess: number) => {
 //returns true if token got burnt
 export const isDeleted = (to: string): boolean => {
   return to === AddressZero ? true : false;
+};
+
+//absolute path to pem files
+const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
+const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
+
+export const getPublicKey = () => {
+  const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
+  const publicKey = fs.readFileSync(absolutePath, 'utf8');
+  return publicKey;
+};
+
+export const getPrivateKey = () => {
+  const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
+  const privateKey = fs.readFileSync(absolutePath, 'utf8');
+  return privateKey;
 };

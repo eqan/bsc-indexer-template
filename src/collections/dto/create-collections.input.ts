@@ -44,11 +44,11 @@ export class CreateCollectionsInput {
   owner: string;
 
   @IsOptional()
-  @IsString({ message: 'Twitter User Name must be String' })
+  @IsString({ message: 'Twitter Url Name must be String' })
   @Field({
     nullable: true,
   })
-  twitterUserName: string;
+  twitterUrl: string;
 
   @IsOptional()
   @IsUrl({ message: 'Discord URL must be a valid URL' })

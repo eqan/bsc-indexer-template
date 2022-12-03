@@ -8,31 +8,29 @@ import { MetadataContent } from './meta.content.dto';
 @InputType('MetaDataInput')
 export class MetaData {
   @IsString()
-  @Field(() => String)
-  name: string;
+  @Field(() => String, { nullable: true })
+  name?: string;
 
   @IsString()
-  @Field(() => String)
-  description: string;
+  @Field(() => String, { nullable: true })
+  description?: string;
 
-  @IsString()
-  @Field(() => [String], { nullable: null })
+  @Field(() => [String], { nullable: true })
   tags?: string[];
 
-  @IsString()
-  @Field(() => String)
+  @Field(() => [String], { nullable: true })
   genres?: string[];
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   originalMetaUri: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   externalUri?: string;
 
   @IsString()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   rightsUri?: string;
 
   @ValidateNested()
@@ -42,6 +40,6 @@ export class MetaData {
 
   @ValidateNested()
   @Type(() => MetadataContent)
-  @Field(() => MetadataContent)
+  @Field(() => MetadataContent, { nullable: true })
   content?: MetadataContent;
 }

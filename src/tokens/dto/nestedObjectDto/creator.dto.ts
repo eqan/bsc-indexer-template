@@ -5,10 +5,10 @@ import { IsOptional } from 'class-validator';
 @ObjectType('CreatorRoyalty')
 export class CreatorRoyalty {
   @IsOptional()
-  @Field(() => String)
+  @Field(() => [String], { nullable: true, defaultValue: null })
   account?: string[];
 
   @IsOptional()
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   value?: number;
 }

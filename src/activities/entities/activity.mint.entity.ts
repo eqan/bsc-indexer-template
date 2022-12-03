@@ -4,7 +4,7 @@ import { Column } from 'typeorm';
 @ObjectType('ActivityMint')
 @InputType('ActivityMintInput')
 export class ActivityMint {
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,

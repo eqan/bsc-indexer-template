@@ -163,6 +163,7 @@ export class TokensService {
   async resetMetaData(tokenId: string): Promise<void> {
     try {
       await this.tokensRepo.update(tokenId, { meta: null });
+      return null;
     } catch (error) {
       throw new NotFoundException(error);
     }

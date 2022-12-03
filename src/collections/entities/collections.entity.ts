@@ -16,7 +16,7 @@ export class Collections {
   })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('text')
   name: string;
 
@@ -43,18 +43,18 @@ export class Collections {
   })
   symbol?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
   })
   owner: string;
 
-  @Field(() => CollectionsMeta, { nullable: true })
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
-  twitterUserName?: string;
+  twitterUrl?: string;
 
   @Field({ nullable: true })
   @Column({
@@ -78,7 +78,7 @@ export class Collections {
   bannerImageUrl?: string;
 
   @IsOptional()
-  @Field(() => CollectionsMeta, { nullable: true })
+  @Field(() => CollectionsMeta, { nullable: true, defaultValue: {} })
   @Column({ nullable: true, type: 'jsonb' })
   Meta: CollectionsMeta;
 

@@ -87,9 +87,9 @@ export class Tokens extends BaseEntity {
     type: 'json',
     default: null,
   })
-  creator: {
-    account: string[];
-    value: number;
+  creator?: {
+    account?: string[];
+    value?: number;
   };
 
   @Field(() => CreatorRoyalty, { nullable: true })
@@ -113,12 +113,12 @@ export class Tokens extends BaseEntity {
     description?: string;
     tags?: string[];
     genres?: string[];
-    originalMetaUri: string;
+    originalMetaUri?: string;
     externalUri?: string;
     rightsUri?: string;
-    attributes: {
-      key: string;
-      value: number;
+    attributes?: {
+      key?: string;
+      value?: number;
       format?: string;
     }[];
     content?: {

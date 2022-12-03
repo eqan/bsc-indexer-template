@@ -5,9 +5,9 @@ export enum OrderStatus {
   Filled = 'FILLED',
   Historical = 'HISTORICAL',
   InActive = 'INACTIVE',
-  Cancelled = 'CANCELLED'
+  Cancelled = 'CANCELLED',
 }
 
 registerEnumType(OrderStatus, {
-  name: 'OrderStatus'
+  name: 'OrderStatus',
 });

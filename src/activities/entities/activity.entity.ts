@@ -10,7 +10,6 @@ import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType('Activity')
 @Entity('ActivityInput')
-// @Index(['id', 'type'])
 export abstract class Activity extends BaseEntity {
   @Field({ nullable: true })
   @IsEthereumAddress()
@@ -26,7 +25,7 @@ export abstract class Activity extends BaseEntity {
     default: ActivityType.TRANSFER,
     nullable: true,
   })
-  type: ActivityType;
+  type?: ActivityType;
 
   @Field({ nullable: true })
   @Column({

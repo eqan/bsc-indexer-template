@@ -154,9 +154,9 @@ export class Auction {
       originFees?: {
         value?: number;
       };
-      pauouts?: {
+      payouts?: {
         account?: string;
-        valueL?: number;
+        value?: number;
       };
     };
   };
