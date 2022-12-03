@@ -28,7 +28,7 @@ export class ActivitiesService {
       const activity = this.activityRepo.create(createActivityInput);
       return await this.activityRepo.save(activity);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 

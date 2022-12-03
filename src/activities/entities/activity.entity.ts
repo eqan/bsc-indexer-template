@@ -25,7 +25,7 @@ export abstract class Activity extends BaseEntity {
     default: ActivityType.TRANSFER,
     nullable: true,
   })
-  type: ActivityType;
+  type?: ActivityType;
 
   @Field({ nullable: true })
   @Column({

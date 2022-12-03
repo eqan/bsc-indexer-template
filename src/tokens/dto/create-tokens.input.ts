@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { TokenType } from '../entities/enum/token.type.enum';
 
-import { Creator } from './nestedObjectDto/creator.dto';
+import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
 
 /**Create tokens table in database
@@ -57,15 +57,15 @@ export class CreateTokenInput {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => Creator)
-  @Field(() => Creator, { nullable: true })
-  creator?: Creator;
+  @Type(() => CreatorRoyalty)
+  @Field(() => CreatorRoyalty, { nullable: true })
+  creator?: CreatorRoyalty;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => Creator)
-  @Field(() => Creator, { nullable: true })
-  royalties?: Creator;
+  @Type(() => CreatorRoyalty)
+  @Field(() => CreatorRoyalty, { nullable: true })
+  royalties?: CreatorRoyalty;
 
   @IsOptional()
   @ValidateNested()

@@ -18,7 +18,6 @@ export class MetaData {
   @Field(() => [String], { nullable: true })
   tags?: string[];
 
-  @IsString()
   @Field(() => [String], { nullable: true })
   genres?: string[];
 

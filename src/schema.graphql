@@ -490,7 +490,7 @@ input CollectionsMetaInput {
 }
 
 input CreatorRoyaltyInput {
-  account: [String!] = []
+  account: [String!] = null
   value: Int
 }
 

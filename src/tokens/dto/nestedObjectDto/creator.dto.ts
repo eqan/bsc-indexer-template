@@ -1,11 +1,11 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { IsEthereumAddress, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 @InputType('CreatorRoyaltyInput')
 @ObjectType('CreatorRoyalty')
-export class Creator {
+export class CreatorRoyalty {
   @IsOptional()
-  @Field(() => [String], { nullable: true, defaultValue: [] })
+  @Field(() => [String], { nullable: true, defaultValue: null })
   account?: string[];
 
   @IsOptional()
