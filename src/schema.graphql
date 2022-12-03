@@ -233,7 +233,7 @@ type Collections {
   tokens: [Tokens!]
 }
 
-type Creator {
+type CreatorRoyalty {
   account: String!
   value: Int!
 }
@@ -264,7 +264,7 @@ type MetaData {
   originalMetaUri: String!
   externalUri: String!
   rightsUri: String!
-  attribute: MetadataAttribute!
+  attribute: [MetadataAttribute!]
   content: MetadataContent!
 }
 
@@ -278,8 +278,8 @@ type Tokens {
   lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
-  creator: Creator
-  royalties: [Creator!]
+  creator: CreatorRoyalty
+  royalties: CreatorRoyalty
   meta: MetaData
 }
 
@@ -485,7 +485,7 @@ input CollectionsMetaInput {
   feeRecipient: String
 }
 
-input CreatorInput {
+input CreatorRoyaltyInput {
   account: String!
   value: Int!
 }
@@ -516,7 +516,7 @@ input MetaDataInput {
   originalMetaUri: String!
   externalUri: String!
   rightsUri: String!
-  attribute: AttributeInput!
+  attribute: [AttributeInput!]
   content: MetadataContentInput!
 }
 
@@ -671,8 +671,8 @@ input CreateTokenInput {
   lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
-  creator: CreatorInput
-  royalties: CreatorInput
+  creator: CreatorRoyaltyInput
+  royalties: CreatorRoyaltyInput
   meta: MetaDataInput
 }
 
@@ -687,7 +687,7 @@ input UpdateTokensInput {
   lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
-  creator: CreatorInput
+  creator: CreatorRoyaltyInput
   meta: MetaDataInput
 }
 

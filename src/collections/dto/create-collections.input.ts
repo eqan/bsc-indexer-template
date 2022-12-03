@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CollectionType } from '../entities/enum/collection.type.enum';
-import { CollectionMeta } from './netsedObjects/collections.meta.dto';
+import { CollectionMeta } from './nestedObjects/collections.meta.dto';
 
 @InputType('CreateCollectionsInput')
 export class CreateCollectionsInput {

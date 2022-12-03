@@ -37,7 +37,7 @@ export class MetaData {
 
   @ValidateNested()
   @Type(() => MetadataAttribute)
-  @Field(() => MetadataAttribute)
+  @Field(() => [MetadataAttribute], { nullable: true })
   attribute?: MetadataAttribute[];
 
   @ValidateNested()

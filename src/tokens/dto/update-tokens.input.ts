@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
-import { Creator } from './nestedObjectDto/creator.dto';
+import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
 
 /**Create tokens table in database
@@ -26,9 +26,9 @@ export class UpdateTokensInput {
   @Field({ nullable: true })
   sellers: number;
 
-  @Type(() => Creator)
-  @Field(() => Creator, { nullable: true })
-  creator: Creator;
+  @Type(() => CreatorRoyalty)
+  @Field(() => CreatorRoyalty, { nullable: true })
+  creator: CreatorRoyalty;
 
   @IsOptional()
   @ValidateNested()

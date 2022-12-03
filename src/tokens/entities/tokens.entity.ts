@@ -5,11 +5,12 @@ import {
   BaseEntity,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { Creator } from '../dto/nestedObjectDto/creator.dto';
+import { CreatorRoyalty } from '../dto/nestedObjectDto/creator.dto';
 import { MetaData } from '../dto/nestedObjectDto/meta.dto';
 import { TokenType } from './enum/token.type.enum';
 
@@ -81,7 +82,7 @@ export class Tokens extends BaseEntity {
   })
   sellers: number;
 
-  @Field(() => Creator, { nullable: true })
+  @Field(() => CreatorRoyalty, { nullable: true })
   @Column({
     type: 'json',
     default: null,
@@ -91,7 +92,7 @@ export class Tokens extends BaseEntity {
     value: number;
   };
 
-  @Field(() => [Creator], { nullable: true })
+  @Field(() => CreatorRoyalty, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
