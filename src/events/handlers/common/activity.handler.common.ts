@@ -18,6 +18,7 @@ export function extractActivityData(
   let mint = null;
   let burn = null;
   let transfer = null;
+  const itemId = txHash + ':' + tokenId;
   const bid = null;
 
   if (from === AddressZero) {
@@ -48,6 +49,8 @@ export function extractActivityData(
   }
   const activityData = {
     id: txHash,
+    userId: to,
+    itemId: itemId,
     type: activityType,
     cursor: blockHash,
     reverted: reverted,
