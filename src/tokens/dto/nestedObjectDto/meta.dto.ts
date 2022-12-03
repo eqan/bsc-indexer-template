@@ -15,18 +15,19 @@ export class MetaData {
   @Field(() => String, { nullable: true })
   description?: string;
 
-  @Field(() => [String], { nullable: null })
+  @Field(() => [String], { nullable: true })
   tags?: string[];
 
-  @Field(() => [String], { nullable: null })
+  @IsString()
+  @Field(() => [String], { nullable: true })
   genres?: string[];
 
   @IsString()
-  @Field(() => String, { nullable: null })
+  @Field(() => String, { nullable: true })
   originalMetaUri: string;
 
   @IsString()
-  @Field(() => String, { nullable: null })
+  @Field(() => String, { nullable: true })
   externalUri?: string;
 
   @IsString()
@@ -35,7 +36,7 @@ export class MetaData {
 
   @ValidateNested()
   @Type(() => MetadataAttribute)
-  @Field(() => MetadataAttribute, { nullable: true })
+  @Field(() => [MetadataAttribute], { nullable: true })
   attribute?: MetadataAttribute[];
 
   @ValidateNested()

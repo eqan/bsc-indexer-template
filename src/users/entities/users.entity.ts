@@ -56,7 +56,6 @@ export class Users extends BaseEntity {
     enumName: 'UserTypeEnum',
     enum: UserTypes,
     default: UserTypes.REGULARUSER,
-    nullable: true,
   })
   type: UserTypes;
 }

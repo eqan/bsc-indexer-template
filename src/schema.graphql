@@ -224,7 +224,7 @@ type Collections {
   type: String!
   parent: String
   symbol: String
-  owner: String!
+  owner: String
   twitterUrl: String
   discordUrl: String
   description: String
@@ -259,12 +259,12 @@ type MetadataContent {
 type MetaData {
   name: String
   description: String
-  tags: [String!]!
-  genres: [String!]!
-  originalMetaUri: String!
-  externalUri: String!
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
   rightsUri: String
-  attribute: MetadataAttribute
+  attribute: [MetadataAttribute!]
   content: MetadataContent
 }
 
@@ -306,7 +306,7 @@ type DataOriginFee {
 
 type Data {
   type: String!
-  originFees: DataOriginFee!
+  originFees: DataOriginFee
 }
 
 type Orders {
@@ -343,6 +343,10 @@ type Users {
   websiteUrl: String
   twitterUrl: String
   type: String
+}
+
+type SignatureType {
+  signature: String!
 }
 
 type GetAllOrders {
@@ -511,12 +515,12 @@ input MetadataContentInput {
 input MetaDataInput {
   name: String
   description: String
-  tags: [String!]!
-  genres: [String!]!
-  originalMetaUri: String!
-  externalUri: String!
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
   rightsUri: String
-  attribute: AttributeInput
+  attribute: [AttributeInput!]
   content: MetadataContentInput
 }
 
@@ -533,7 +537,7 @@ input DataOrginFeeInput {
 
 input DataInput {
   type: String!
-  originFees: DataOrginFeeInput!
+  originFees: DataOrginFeeInput
 }
 
 type Query {
@@ -606,6 +610,7 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
+  CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
@@ -709,15 +714,15 @@ input CreateOrdersInput {
   take: MakeInput!
   salt: String!
   data: DataInput!
-  startedAt: DateTime!
-  endedAt: DateTime!
-  optionalRoyalties: Boolean!
-  dbUpdatedAt: DateTime!
-  makePrice: Float!
-  takePrice: Float!
-  makePriceUsed: Float!
-  takePriceUsed: Float!
-  signature: String!
+  startedAt: DateTime
+  endedAt: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsed: Float
+  takePriceUsed: Float
+  signature: String
   taker: String
 }
 
@@ -736,6 +741,14 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
+}
+
+input CreateSignatureInput {
+  orderId: String!
+  maker: String!
+  Make: MakeInput!
+  take: MakeInput!
+  salt: String!
 }
 
 input CreateActivityInput {

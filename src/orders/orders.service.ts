@@ -11,13 +11,39 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
+import { generateSignature, verifyOrder } from './helper.orders';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
-  ) {}
+  ) {
+    const data = {
+      orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+      maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+      Make: {
+        type: {
+          type: 'BEP721',
+          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+          tokenId: 9,
+        },
+        value: 8,
+      },
+      take: {
+        type: {
+          type: 'BEP721',
+          contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
+          tokenId: 9,
+        },
+        value: 8,
+      },
+      salt: '849388498',
+    };
+    // const signature = generateSignature(data);
+    // const verified = verifyOrder(data, signature);
+    // console.log(verified, 'data verified');
+  }
 
   /**
    * Create Order
@@ -26,10 +52,15 @@ export class OrdersService {
    */
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      const order = this.ordersRepo.create(createOrdersInput);
-      return await this.ordersRepo.save(order);
+      const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
+      const data = { orderId, maker, Make, take, salt };
+      const verified = verifyOrder(data, signature);
+      if (verified) {
+        const order = this.ordersRepo.create(createOrdersInput);
+        return await this.ordersRepo.save(order);
+      } else throw new BadRequestException('decryption failed');
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_ORDER);
+      throw new BadRequestException(error);
     }
   }
 

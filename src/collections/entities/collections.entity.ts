@@ -42,7 +42,7 @@ export class Collections {
   })
   symbol?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
   })
