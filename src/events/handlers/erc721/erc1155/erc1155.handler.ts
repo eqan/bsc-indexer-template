@@ -78,6 +78,7 @@ export class ERC1155Handler {
         try {
           const activityData = extractActivityData(
             tokenIds[i],
+            collectionId,
             logIndex,
             blockHash,
             blockNumber,

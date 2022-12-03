@@ -27,6 +27,10 @@ export abstract class Activity extends BaseEntity {
   @Column('text')
   itemId: string;
 
+  @Field({ nullable: true })
+  @Column('text')
+  collectionId: string;
+
   @Field(() => ActivityType, { nullable: true })
   @Column({
     enum: ActivityType,

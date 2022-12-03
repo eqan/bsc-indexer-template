@@ -30,6 +30,11 @@ export class CreateActivityInput {
   @Field(() => String, { nullable: true })
   itemId: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String, { nullable: true })
+  collectionId: string;
+
   @IsOptional()
   @Field(() => ActivityType)
   type?: ActivityType;

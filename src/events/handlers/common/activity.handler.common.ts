@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants';
 
 export function extractActivityData(
   tokenId: string,
+  collectionId: string,
   logIndex: number,
   blockHash: string,
   blockNumber: number,
@@ -49,6 +50,7 @@ export function extractActivityData(
   }
   const activityData = {
     id: txHash,
+    collectionId: collectionId,
     userId: to,
     itemId: itemId,
     type: activityType,
