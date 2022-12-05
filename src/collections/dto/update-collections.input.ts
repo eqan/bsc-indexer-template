@@ -20,7 +20,6 @@ export class UpdateCollectionsInput {
   id: string;
 
   @IsOptional()
-  @IsString()
   @IsUrl({ message: 'Banner Image URL must be a valid URL' })
   @Field({
     nullable: true,
@@ -71,6 +70,7 @@ export class UpdateCollectionsInput {
   twitterUrl?: string;
 
   @IsOptional()
+  @IsString()
   @Field({
     nullable: true,
   })

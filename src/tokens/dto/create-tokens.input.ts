@@ -1,10 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
+  IsDate,
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 import { TokenType } from '../entities/enum/token.type.enum';
@@ -18,6 +22,7 @@ import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 @InputType()
 export class CreateTokenInput {
   @IsNotEmpty()
+  @IsString()
   @Field()
   tokenId: string;
 
@@ -32,6 +37,7 @@ export class CreateTokenInput {
   contract: string;
 
   @IsEnum(TokenType)
+  @IsNotEmpty()
   @Field(() => TokenType)
   type: TokenType;
 
@@ -44,14 +50,17 @@ export class CreateTokenInput {
   mintedAt?: Date;
 
   @IsOptional()
+  @IsDate()
   @Field({ nullable: true })
   lastUpdatedAt?: Date;
 
   @IsNotEmpty()
+  @IsBoolean()
   @Field()
   deleted: boolean;
 
   @IsNotEmpty()
+  @IsNumber()
   @Field()
   sellers: number;
 

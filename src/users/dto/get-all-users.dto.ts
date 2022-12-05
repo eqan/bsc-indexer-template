@@ -9,4 +9,3 @@ export class GetAllUsers {
   @Field(() => Int)
   total: number;
 }
-

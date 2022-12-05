@@ -280,7 +280,7 @@ type Orders {
   lastUpdatedAt: DateTime
   maker: String
   Make: Make
-  take: Make
+  Take: Make
   salt: String
   data: Data
   startedAt: DateTime
@@ -502,7 +502,7 @@ input FilterOrderDto {
 }
 
 input FilterActivityDto {
-  page: Float = 1
+  page: Int = 1
   limit: Int = 10
   id: String
   userId: String
@@ -637,7 +637,7 @@ input CreateOrdersInput {
   lastUpdatedAt: DateTime!
   maker: String!
   Make: MakeInput!
-  take: MakeInput!
+  Take: MakeInput!
   salt: String!
   data: DataInput!
   startedAt: DateTime
@@ -673,7 +673,7 @@ input CreateSignatureInput {
   orderId: String!
   maker: String!
   Make: MakeInput!
-  take: MakeInput!
+  Take: MakeInput!
   salt: String!
 }
 

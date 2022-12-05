@@ -28,7 +28,7 @@ export class CreateSignatureInput {
   @ValidateNested()
   @Type(() => Make)
   @Field()
-  take: Make;
+  Take: Make;
 
   @IsString()
   @IsNotEmpty()

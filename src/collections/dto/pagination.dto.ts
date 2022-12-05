@@ -4,10 +4,10 @@ import { IsOptional } from 'class-validator';
 @InputType()
 export class PaginationParam {
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   page?: number;
 
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   limit?: number;
 }

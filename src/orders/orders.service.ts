@@ -52,7 +52,7 @@ export class OrdersService {
    */
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
+      const { orderId, maker, Make, Take: take, salt, signature } = createOrdersInput;
       const data = { orderId, maker, Make, take, salt };
       const verified = true;
       // const verified = verifyOrder(data, signature);
