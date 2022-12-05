@@ -19,7 +19,8 @@ import { verifyOrder } from './handlers.orders';
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
-    private ordersRepo: Repository<Orders>, // private readonly ethereum: Maybe<Ethereum>,
+    private ordersRepo: Repository<Orders>,
+    private readonly ethereum: Maybe<Ethereum>,
   ) {
     // const data = {
     //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
@@ -79,7 +80,7 @@ export class OrdersService {
       // };
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
-        const verified = verifyOrder(createOrdersInput);
+        const verified = verifyOrder(createOrdersInput, this.ethereum);
         if (verified) {
           const order = this.ordersRepo.create(createOrdersInput);
           return await this.ordersRepo.save(order);

@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Data } from '../dto/nestedObjectsDto/data.object';
 import { Make } from '../dto/nestedObjectsDto/make.dto';
+import { AssetType } from './assetType';
 import { OrderType } from './enums/order.type.enum';
 import { OrderStatus } from './enums/orders.status.enum';
 
@@ -67,17 +68,19 @@ export class Orders {
   })
   maker: string;
 
-  @Field(() => Make)
+  @Field(() => )
   @Column({
     type: 'jsonb',
   })
   Make: {
-    assetType: {
-      type: OrderType;
-      contract: string;
-      tokenId: number;
-    };
-    value: number;
+    // assetType: {
+    //   type: OrderType;
+    //   contract: string;
+    //   tokenId: number;
+    // };
+    assetType: AssetType;
+    value: Address;
+    valueDecimal?: number;
   };
 
   @Field(() => Make)
