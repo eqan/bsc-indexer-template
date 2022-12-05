@@ -45,7 +45,6 @@ export class ActivityMint {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
     nullable: true,
   })
   itemId?: string;

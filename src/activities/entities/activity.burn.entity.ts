@@ -39,7 +39,7 @@ export class ActivityBurn {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
+    // unique: true,
     nullable: true,
   })
   transactionHash: string;

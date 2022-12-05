@@ -58,7 +58,7 @@ export class ActivityTransfer {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
+    // unique: true,
     nullable: true,
   })
   itemId: string;
