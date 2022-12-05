@@ -1,5 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Activity } from './activity.entity';
 
 @Entity('ActivityMint')
 export class ActivityMint {
@@ -48,4 +49,7 @@ export class ActivityMint {
     nullable: true,
   })
   itemId?: string;
+
+  @OneToOne(() => Activity, (activity) => activity.MINT)
+  activity: Activity['MINT'];
 }

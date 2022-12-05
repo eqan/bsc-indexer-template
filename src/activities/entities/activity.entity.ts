@@ -87,13 +87,13 @@ export abstract class Activity extends BaseEntity {
     logIndex?: number;
   };
 
-  @IsOptional()
-  @OneToOne(() => ActivityMint, {
-    eager: true,
-    cascade: true,
-  })
-  @JoinColumn()
-  MINT?: ActivityMint;
+  // @IsOptional()
+  // @OneToOne(() => ActivityMint, {
+  //   eager: true,
+  //   cascade: true,
+  // })
+  // @JoinColumn()
+  // MINT?: ActivityMint;
 
   @IsOptional()
   @OneToOne(() => ActivityBurn, {
@@ -118,4 +118,12 @@ export abstract class Activity extends BaseEntity {
   })
   @JoinColumn()
   BID?: ActivityBid;
+
+  @IsOptional()
+  @OneToOne(() => ActivityMint, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  MINT?: ActivityMint;
 }

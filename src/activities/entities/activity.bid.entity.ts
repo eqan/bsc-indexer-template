@@ -1,10 +1,20 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { type } from 'os';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { Make } from 'src/orders/dto/nestedObjectsDto/make.dto';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Activity } from './activity.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
 @Entity('ActivityBid')
+@InputType('ActivityBidInput')
 export class ActivityBid {
   @PrimaryGeneratedColumn()
   id: string;
@@ -72,4 +82,7 @@ export class ActivityBid {
     };
     value?: number;
   };
+
+  @OneToOne(() => Activity, (activity) => activity.BID)
+  activity: Activity;
 }

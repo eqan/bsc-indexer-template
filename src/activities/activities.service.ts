@@ -49,6 +49,10 @@ export class ActivitiesService {
             collectionId: rest?.collectionId,
             itemId: rest?.itemId,
           },
+          relations: {
+            BID: true,
+            MINT: true,
+          },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
@@ -59,6 +63,7 @@ export class ActivitiesService {
           },
         }),
       ]);
+      console.log(items);
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);

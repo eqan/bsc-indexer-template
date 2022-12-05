@@ -60,7 +60,7 @@ export class ActivitiesResolver {
     deleteActivityInput: DeleteActivityInput,
   ): Promise<void> {
     try {
-      console.log(deleteActivityInput, 'deleteActivityInput');
+      // console.log(deleteActivityInput, 'deleteActivityInput');
       await this.activitiesService.delete(deleteActivityInput);
     } catch (error) {
       throw new BadRequestException(error);

@@ -81,7 +81,7 @@ export class ERC721Handler {
       } catch (error) {
         owner = null;
       }
-      console.log(log);
+      // console.log(log);
       const activityData = extractActivityData(
         tokenId,
         collectionId,
