@@ -45,6 +45,9 @@ export class ActivitiesService {
           where: {
             id: rest?.id,
             type: rest?.type,
+            userId: rest?.userId,
+            collectionId: rest?.collectionId,
+            itemId: rest?.itemId,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,

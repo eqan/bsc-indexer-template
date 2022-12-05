@@ -19,7 +19,7 @@ export function extractActivityData(
   let mint = null;
   let burn = null;
   let transfer = null;
-  const itemId = txHash + ':' + tokenId;
+  const itemId = collectionId + ':' + tokenId;
   const bid = null;
 
   if (from === AddressZero) {
