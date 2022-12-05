@@ -1,10 +1,9 @@
+import { defaultAbiCoder } from '@ethersproject/abi';
 import { keccak256 } from '@ethersproject/keccak256';
-import { keccak256 as solidityKeccak256 } from '@ethersproject/solidity';
 import { toUtf8Bytes } from '@ethersproject/strings';
 import { verifyMessage } from '@ethersproject/wallet';
 import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'crypto';
-
 import { getPrivateKey, getPublicKey } from 'src/common/utils.common';
 import { Data } from 'src/graphqlFile';
 import { CreateOrdersInput } from './dto/create-orders.input';
@@ -48,28 +47,39 @@ const ASSET_TYPE_TYPEHASH = keccak256(
 );
 
 const assetHash = (asset: Make) =>
-  solidityKeccak256(
-    ['bytes32', 'bytes32', 'uint'],
-    [ASSET_TYPEHASH, assetTypeHash(asset.assetType), asset.value],
+  keccak256(
+    defaultAbiCoder.encode(
+      ['bytes32', 'bytes32', 'uint'],
+      [ASSET_TYPEHASH, assetTypeHash(asset.assetType), asset.value],
+    ),
   );
 
 const assetTypeHash = (assetType: MakeType) => {
-  const data = { tokenId: assetType.tokenId, contract: assetType.contract };
-  return solidityKeccak256(
-    ['bytes32'],
-    [
-      ASSET_TYPE_TYPEHASH,
-      assetType.type,
-      solidityKeccak256(['tuple(uint tokenId,string contract) data'], [data]),
-    ],
+  return keccak256(
+    defaultAbiCoder.encode(
+      ['bytes32', 'bytes4', 'bytes32'],
+      [
+        ASSET_TYPE_TYPEHASH,
+        assetType.type,
+        keccak256(
+          defaultAbiCoder.encode(
+            ['tuple(string type,string contract,uint tokenId) assetType'],
+            [assetType],
+          ),
+        ),
+      ],
+    ),
   );
 };
 
-const hashData = (data: Data) =>
-  solidityKeccak256(
-    ['tuple(string type, tuple(string account,value uint) originFees) data'],
-    [data],
+const hashData = (data: Data) => {
+  return keccak256(
+    defaultAbiCoder.encode(
+      ['tuple(bytes type, tuple(string account,uint value) originFees) data'],
+      [data],
+    ),
   );
+};
 
 /**
  *  Decrypt Signature
@@ -99,31 +109,33 @@ export const verifyOrder = (order: CreateOrdersInput): string | boolean => {
   try {
     // const message = orderToStruct(ethereum, order);
     // const decryptedData = decryptSignature(signature);
-    const hash = solidityKeccak256(
-      [
-        'bytes32',
-        'address',
-        'bytes32',
-        'address',
-        'bytes32',
-        'uint',
-        'uint',
-        'uint',
-        'bytes4',
-        'bytes',
-      ],
-      [
-        ORDER_TYPEHASH,
-        order.maker,
-        assetHash(order.Make),
-        order.taker,
-        assetHash(order.take),
-        order.salt,
-        order.startedAt,
-        order.endedAt,
-        order.dataType,
-        hashData(order.data),
-      ],
+    const hash = keccak256(
+      defaultAbiCoder.encode(
+        [
+          'bytes32',
+          'address',
+          'bytes32',
+          'address',
+          'bytes32',
+          'uint',
+          'uint',
+          'uint',
+          'bytes4',
+          'bytes',
+        ],
+        [
+          ORDER_TYPEHASH,
+          order.maker,
+          assetHash(order.Make),
+          order.taker,
+          assetHash(order.take),
+          order.salt,
+          order.startedAt,
+          order.endedAt,
+          order.dataType,
+          hashData(order.data),
+        ],
+      ),
     );
 
     const signer = verifyMessage(hash, order.signature);

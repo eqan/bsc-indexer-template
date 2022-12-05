@@ -114,17 +114,19 @@ export class Orders {
     };
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
   startedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
+    nullable: true,
   })
-  endedAt: Date;
+  endedAt?: Date;
 
   @Field({ nullable: true })
   @Column({

@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { isOptionalChain } from '@ts-morph/common/lib/typescript';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -75,12 +76,14 @@ export class CreateOrdersInput {
   data: Data;
 
   @IsDate()
-  @Field()
-  startedAt: Date;
+  @IsOptional()
+  @Field({ nullable: true })
+  startedAt?: Date;
 
   @IsDate()
-  @Field()
-  endedAt: Date;
+  @IsOptional()
+  @Field({ nullable: true })
+  endedAt?: Date;
 
   @IsBoolean()
   @IsOptional()

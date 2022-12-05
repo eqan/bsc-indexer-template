@@ -322,8 +322,8 @@ type Orders {
   take: Make!
   salt: String!
   data: Data!
-  startedAt: DateTime!
-  endedAt: DateTime!
+  startedAt: DateTime
+  endedAt: DateTime
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
@@ -714,8 +714,8 @@ input CreateOrdersInput {
   take: MakeInput!
   salt: String!
   data: DataInput!
-  startedAt: DateTime!
-  endedAt: DateTime!
+  startedAt: DateTime
+  endedAt: DateTime
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
