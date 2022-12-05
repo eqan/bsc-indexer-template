@@ -1,12 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, OneToMany, PrimaryColumn } from 'typeorm';
 import { CollectionType } from './enum/collection.type.enum';
 import { CollectionsMeta } from './nestedObjects/collections.meta.entity';
 
 @ObjectType()
 @Entity('Collections')
+@Index(['name', 'type', 'owner'])
 export class Collections {
   @Field()
   @PrimaryColumn({
@@ -15,7 +16,7 @@ export class Collections {
   })
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('text')
   name: string;
 
@@ -53,7 +54,7 @@ export class Collections {
     type: 'text',
     nullable: true,
   })
-  twitterUserName?: string;
+  twitterUrl?: string;
 
   @Field({ nullable: true })
   @Column({
@@ -69,7 +70,7 @@ export class Collections {
   })
   description?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
@@ -77,7 +78,7 @@ export class Collections {
   bannerImageUrl?: string;
 
   @IsOptional()
-  @Field(() => CollectionsMeta, { nullable: true })
+  @Field(() => CollectionsMeta, { nullable: true, defaultValue: {} })
   @Column({ nullable: true, type: 'jsonb' })
   Meta: CollectionsMeta;
 

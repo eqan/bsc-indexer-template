@@ -4,11 +4,12 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { AuctionStatus, AuctionType } from '../entities/enums/enums';
 import { DataInput } from './nestedObjects/data.json.dto';
-import { LsatBid } from './nestedObjects/lastBid.json.dto';
+import { LastBid } from './nestedObjects/lastBid.json.dto';
 import { Sell } from './nestedObjects/sell.json.dto';
 import { SellTypeDto } from './nestedObjects/sell.type.json.dto';
 
@@ -28,19 +29,22 @@ export class CreateAuctionInput {
   @Field()
   seller: string;
 
+  @IsOptional()
   @IsEnum(AuctionType)
-  @Field(() => AuctionType)
-  type: AuctionType;
+  @Field(() => AuctionType, { nullable: true })
+  type?: AuctionType;
 
   @ValidateNested()
+  @IsOptional()
   @Type(() => Sell)
-  @Field(() => Sell)
-  sell: Sell;
+  @Field(() => Sell, { nullable: true })
+  sell?: Sell;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => SellTypeDto)
-  @Field(() => SellTypeDto)
-  buy: SellTypeDto;
+  @Field(() => SellTypeDto, { nullable: true })
+  buy?: SellTypeDto;
 
   @IsNotEmpty()
   @Field(() => Date)
@@ -70,24 +74,28 @@ export class CreateAuctionInput {
   @Field()
   buyPriceUsd: number;
 
+  @IsOptional()
   @IsEnum(AuctionStatus)
-  @Field(() => AuctionStatus)
-  status: AuctionStatus;
+  @Field(() => AuctionStatus, { nullable: true })
+  status?: AuctionStatus;
 
   @IsNotEmpty()
   @Field()
   ongoing: boolean;
 
-  @Field()
-  hash: string;
+  @IsOptional()
+  @Field({ nullable: true })
+  hash?: string;
 
+  @IsOptional()
   @ValidateNested()
-  @Type(() => LsatBid)
-  @Field(() => LsatBid)
-  lastBid: LsatBid;
+  @Type(() => LastBid)
+  @Field(() => LastBid, { nullable: true })
+  lastBid?: LastBid;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => DataInput)
-  @Field(() => DataInput)
-  data: DataInput;
+  @Field(() => DataInput, { nullable: true })
+  data?: DataInput;
 }

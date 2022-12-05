@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CollectionType } from '../entities/enum/collection.type.enum';
-import { CollectionMeta } from './netsedObjects/collections.meta.dto';
+import { CollectionMeta } from './nestedObjects/collections.meta.dto';
 
 @InputType('CreateCollectionsInput')
 export class CreateCollectionsInput {
@@ -44,11 +44,11 @@ export class CreateCollectionsInput {
   owner: string;
 
   @IsOptional()
-  @IsString({ message: 'Twitter User Name must be String' })
+  @IsString({ message: 'Twitter Url Name must be String' })
   @Field({
     nullable: true,
   })
-  twitterUserName: string;
+  twitterUrl: string;
 
   @IsOptional()
   @IsUrl({ message: 'Discord URL must be a valid URL' })

@@ -30,21 +30,21 @@ export class ActivityBid {
   })
   maker: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   price?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
     nullable: true,
   })
   priceUsd?: number;
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -58,7 +58,7 @@ export class ActivityBid {
     value: number;
   };
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,

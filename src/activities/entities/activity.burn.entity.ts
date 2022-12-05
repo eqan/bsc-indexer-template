@@ -12,7 +12,7 @@ export class ActivityBurn {
   })
   tokenId: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsOptional()
   @Column({
     type: 'varchar',
@@ -21,23 +21,21 @@ export class ActivityBurn {
   // @Column()
   value: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  // @Column()
   owner: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
-  // @Column()
   contract: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     unique: true,

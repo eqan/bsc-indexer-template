@@ -31,7 +31,7 @@ export class UsersService {
    * @params createUser
    * @return Users
    */
-  async createUser(
+  async create(
     createUserInput: CreateUserInput | CreateUserOnLoginInput,
   ): Promise<Users> {
     try {
@@ -63,9 +63,9 @@ export class UsersService {
    * @param id
    * @returns userData
    */
-  async getDataByuserId(id: string): Promise<Users> {
+  async show(id: string): Promise<Users> {
     try {
-      const userData = await this.usersRepo.findOneByOrFail({ id: id });
+      const userData = await this.usersRepo.findOneByOrFail({ id });
       if (!userData) {
         throw new NotFoundException('No Users Found');
       }
@@ -133,7 +133,7 @@ export class UsersService {
     try {
       const { id, userSignature } = updateUsersInput;
       await this.usersRepo.update({ id }, { userSignature });
-      return this.getDataByuserId(id);
+      return this.show(id);
     } catch (error) {
       throw new BadRequestException(SystemErrors.UPDATE_USER);
     }
@@ -144,13 +144,11 @@ export class UsersService {
    * @param updateUsersInput
    * @returns updated user
    */
-  async updateUsersAttribute(
-    updateUsersInput: UpdateUsersInput,
-  ): Promise<Users> {
+  async update(updateUsersInput: UpdateUsersInput): Promise<Users> {
     try {
       const { id, ...rest } = updateUsersInput;
-      await this.usersRepo.update({ id: id }, rest);
-      return this.getDataByuserId(id);
+      await this.usersRepo.update({ id }, rest);
+      return this.show(id);
     } catch (error) {
       throw new BadRequestException(SystemErrors.UPDATE_USER);
     }
@@ -161,7 +159,7 @@ export class UsersService {
    * @param deleteUsers
    * @returns Message that user successfully deleted
    */
-  async deleteUsers(deleteWithIds: { id: string[] }): Promise<void> {
+  async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
       await this.usersRepo.delete({ id: In(ids) });
@@ -176,9 +174,9 @@ export class UsersService {
    * @@params No Params
    * @returns Array of Users and Total Number of Users
    */
-  async findAllUsers(filterDto: FilterUserDto): Promise<GetAllUsers> {
+  async index(filterDto: FilterUserDto): Promise<GetAllUsers> {
     try {
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterDto;
       const [items, total] = await Promise.all([
         this.usersRepo.find({
           where: {

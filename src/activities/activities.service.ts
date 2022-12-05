@@ -9,7 +9,6 @@ import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
-import { UpdateActivityInput } from './dto/update-activity.input';
 import { Activity } from './entities/activity.entity';
 
 @Injectable()
@@ -29,7 +28,7 @@ export class ActivitiesService {
       const activity = this.activityRepo.create(createActivityInput);
       return await this.activityRepo.save(activity);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 
@@ -38,43 +37,9 @@ export class ActivitiesService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async findAllActivities(
-    filterDto: FilterActivityDto,
-  ): Promise<GetAllActivities> {
-    try {
-      const { page = 1, limit = 20, ...rest } = filterDto;
-
-      const [items, total] = await Promise.all([
-        this.activityRepo.find({
-          where: {
-            id: rest?.id,
-            type: rest?.type,
-          },
-          skip: (page - 1) * limit || 0,
-          take: limit || 10,
-        }),
-        this.activityRepo.count({
-          where: {
-            id: rest.id,
-            type: rest?.type,
-          },
-        }),
-      ]);
-      return { items, total };
-    } catch (err) {
-      console.log(err);
-      throw new BadRequestException(err);
-    }
-  }
-
-  /**
-   * Get All Activities
-   * @param filterActivity
-   * @returns All Activities
-   */
   async index(filterActivity: FilterActivityDto): Promise<GetAllActivities> {
     try {
-      const { page, limit, ...rest } = filterActivity;
+      const { page = 1, limit = 20, ...rest } = filterActivity;
       const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
@@ -102,7 +67,7 @@ export class ActivitiesService {
    * @param id
    * @returns Activity against Provided Id
    */
-  async getActivityById(id: string): Promise<Activity> {
+  async show(id: string): Promise<Activity> {
     try {
       const found = await this.activityRepo.findOneBy({
         id,
@@ -117,30 +82,11 @@ export class ActivitiesService {
   }
 
   /**
-   * Show Activity
-   * @param id
-   * @returns Updated Activity
-   */
-  async show(id: string): Promise<Activity[]> {
-    try {
-      const found = await this.activityRepo.findBy({
-        id: id,
-      });
-      if (!found) {
-        throw new NotFoundException(`Activity against ${id} not found`);
-      }
-      return found;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  /**
    * Edit Activity
    * @param activityId
    * @returns Updated Activity
    */
-  edit(id: number, updateActivityInput: UpdateActivityInput) {
+  edit(id: number) {
     return `This action updates a #${id} activity`;
   }
 

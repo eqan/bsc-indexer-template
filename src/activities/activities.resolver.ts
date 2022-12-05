@@ -2,18 +2,14 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { Activity } from './entities/activity.entity';
-// import { CreateActivityTransferInput } from './dto/create-activity.transfer.input';
 import { BadRequestException } from '@nestjs/common';
-// import { CreateActivityMintInput } from './dto/create-activity.mint.input';
 import { DeleteActivityInput } from './dto/delete-activity.input.dto';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
 
 @Resolver(() => Activity)
 export class ActivitiesResolver {
-  constructor(private readonly activitiesService: ActivitiesService) {
-    // super();
-  }
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Mutation(() => Activity, { name: 'CreateActivity' })
   async create(
@@ -37,7 +33,7 @@ export class ActivitiesResolver {
     filterDto: FilterActivityDto,
   ): Promise<GetAllActivities> {
     try {
-      return await this.activitiesService.findAllActivities(filterDto);
+      return await this.activitiesService.index(filterDto);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -46,7 +42,7 @@ export class ActivitiesResolver {
   @Query(() => Activity, { name: 'GetActivityById' })
   async show(@Args('GetActivityByIdInput') id: string): Promise<Activity> {
     try {
-      const data = await this.activitiesService.getActivityById(id);
+      const data = await this.activitiesService.show(id);
       return data;
     } catch (error) {
       throw new BadRequestException(error);

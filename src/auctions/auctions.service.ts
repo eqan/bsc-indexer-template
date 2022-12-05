@@ -27,7 +27,7 @@ export class AuctionsService {
       const auction = this.auctionRepo.create(createAuctionInput);
       return await this.auctionRepo.save(auction);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 
@@ -38,7 +38,7 @@ export class AuctionsService {
    */
   async index(filterDto: FilterAuctionDto): Promise<GetAllAuctions> {
     try {
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterDto;
       const [items, total] = await Promise.all([
         this.auctionRepo.find({
           where: {

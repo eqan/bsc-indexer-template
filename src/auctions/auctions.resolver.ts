@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuctionsService } from './auctions.service';
 import { Auction } from './entities/auction.entity';
 import { CreateAuctionInput } from './dto/create-auction.input';
@@ -38,7 +38,8 @@ export class AuctionsResolver extends BaseProvider<Auction | FilterAuctionDto> {
    */
   @Query(() => GetAllAuctions, { name: 'GetAllAuctions' })
   async index(
-    @Args('GetAllAuctions') filterAuctionDto: FilterAuctionDto,
+    @Args('GetAllAuctions', { nullable: true, defaultValue: {} })
+    filterAuctionDto: FilterAuctionDto,
   ): Promise<GetAllAuctions> {
     try {
       return await this.auctionsService.index(filterAuctionDto);
@@ -82,12 +83,13 @@ export class AuctionsResolver extends BaseProvider<Auction | FilterAuctionDto> {
   @Mutation(() => Auction, { nullable: true, name: 'DeleteAuction' })
   async delete(
     @Args({
-      name: 'DeleteAuctionInout',
+      name: 'DeleteAuctionInput',
     })
     deleteAuctionsInput: DeleteAuctionsInput,
   ): Promise<void> {
     try {
       await this.auctionsService.delete(deleteAuctionsInput);
+      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }

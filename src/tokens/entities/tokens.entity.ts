@@ -1,14 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import { Collections } from 'src/collections/entities/collections.entity';
 import {
   BaseEntity,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { Creator } from '../dto/nestedObjectDto/creator.dto';
+import { CreatorRoyalty } from '../dto/nestedObjectDto/creator.dto';
 import { MetaData } from '../dto/nestedObjectDto/meta.dto';
 import { TokenType } from './enum/token.type.enum';
 
@@ -36,7 +38,7 @@ export class Tokens extends BaseEntity {
   })
   contract?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'enum',
     enum: TokenType,
@@ -52,45 +54,45 @@ export class Tokens extends BaseEntity {
   })
   owner?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     default: null,
   })
   mintedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     default: null,
   })
   lastUpdatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
     default: null,
   })
   deleted: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'int',
     default: null,
   })
   sellers: number;
 
-  @Field(() => Creator)
+  @Field(() => CreatorRoyalty, { nullable: true })
   @Column({
     type: 'json',
     default: null,
   })
-  creator: {
-    account: string[];
-    value: number;
+  creator?: {
+    account?: string[];
+    value?: number;
   };
 
-  @Field(() => [Creator], { nullable: true })
+  @Field(() => CreatorRoyalty, { nullable: true })
   @Column({
     type: 'jsonb',
     nullable: true,
@@ -111,12 +113,12 @@ export class Tokens extends BaseEntity {
     description?: string;
     tags?: string[];
     genres?: string[];
-    originalMetaUri: string;
+    originalMetaUri?: string;
     externalUri?: string;
     rightsUri?: string;
-    attributes: {
-      key: string;
-      value: number;
+    attributes?: {
+      key?: string;
+      value?: string;
       format?: string;
     }[];
     content?: {
