@@ -1,9 +1,11 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType('ActivityTransfer')
-@InputType('ActivityTransferInput')
+@Entity('ActivityTransfer')
 export class ActivityTransfer {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Field({ nullable: true })
   @Column({
     type: 'varchar',

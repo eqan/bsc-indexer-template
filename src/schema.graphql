@@ -26,14 +26,17 @@ type Make {
   type: MakeType!
 }
 
-type ActivityBid {
-  type: ActivityType!
-  hash: String
-  maker: String
-  price: Float
-  priceUsd: Float
-  take: Make
-  make: Make
+type Activity {
+  id: String
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType
+  date: DateTime
+  lastUpdatedAt: DateTime
+  cursor: String
+  reverted: Boolean
+  blockchainInfo: BlockchainInfo
 }
 
 """Types of activities"""
@@ -52,51 +55,6 @@ enum ActivityType {
   AUCTION_FINISHED
   AUCTION_STARTED
   AUCTION_ENDED
-}
-
-type ActivityBurn {
-  tokenId: String!
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-}
-
-type ActivityMint {
-  tokenId: String
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-  itemId: String
-}
-
-type ActivityTransfer {
-  tokenId: String
-  value: String
-  from: String
-  owner: String
-  contract: String
-  transactionHash: String
-  purchase: Boolean
-  itemId: String
-}
-
-type Activity {
-  id: String
-  userId: String
-  itemId: String
-  collectionId: String
-  type: ActivityType
-  date: DateTime
-  lastUpdatedAt: DateTime
-  cursor: String
-  reverted: Boolean
-  blockchainInfo: BlockchainInfo
-  MINT: ActivityMint
-  BURN: ActivityBurn
-  TRANSFER: ActivityTransfer
-  BID: ActivityBid
 }
 
 """
@@ -392,44 +350,6 @@ input MakeTypeInput {
 input MakeInput {
   value: Int!
   type: MakeTypeInput!
-}
-
-input ActivityBidInput {
-  type: ActivityType!
-  hash: String
-  maker: String
-  price: Float
-  priceUsd: Float
-  take: MakeInput
-  make: MakeInput
-}
-
-input ActivityBurnInput {
-  tokenId: String!
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-}
-
-input ActivityMintInput {
-  tokenId: String
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-  itemId: String
-}
-
-input ActivityTransferInput {
-  tokenId: String
-  value: String
-  from: String
-  owner: String
-  contract: String
-  transactionHash: String
-  purchase: Boolean
-  itemId: String
 }
 
 input ActivityMakeTypeInput {

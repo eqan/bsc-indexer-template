@@ -1,9 +1,11 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType('ActivityMint')
-@InputType('ActivityMintInput')
+@Entity('ActivityMint')
 export class ActivityMint {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -35,7 +37,6 @@ export class ActivityMint {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
     nullable: true,
   })
   transactionHash?: string;

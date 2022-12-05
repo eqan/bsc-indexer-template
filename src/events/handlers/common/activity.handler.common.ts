@@ -26,15 +26,18 @@ export function extractActivityData(
     activityType = ActivityType.MINT;
     mint = {
       tokenId,
-      txHash,
-      value,
+      transactionHash: txHash,
+      contract: collectionId,
       owner,
+      itemId,
+      value,
     };
   } else if (to === AddressZero) {
     activityType = ActivityType.BURN;
     burn = {
       tokenId,
-      txHash,
+      transactionHash: txHash,
+      contract: collectionId,
       value,
       owner,
     };
@@ -42,10 +45,12 @@ export function extractActivityData(
     activityType = ActivityType.TRANSFER;
     transfer = {
       tokenId,
-      txHash,
+      transactionHash: txHash,
+      contract: collectionId,
       from,
-      value,
       owner,
+      itemId,
+      value,
     };
   }
   const activityData = {
