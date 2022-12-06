@@ -77,7 +77,7 @@ export class ERC721Handler {
       const collectionId = log?.address;
       //userId ===  to
       // const owner = parsedLog.args['owner'].toLowerCase();
-      console.log(log);
+      // console.log(log);
       const activityData = extractActivityData(
         tokenId,
         collectionId,
