@@ -52,8 +52,8 @@ export class FetchCollectionsProcessor {
               deleted,
             });
 
-            console.log(tokenMeta);
-            await this.tokensService.create(tokenMeta);
+            const result = await this.tokensService.create(tokenMeta);
+            console.log(result);
           } catch (err) {
             console.log(err, collectionId);
             throw err;

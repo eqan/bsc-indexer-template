@@ -25,18 +25,18 @@ export class Content {
   url?: string;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  size?: string;
+  @Column('int', { nullable: true })
+  size?: number;
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
   available?: string;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  width?: string;
+  @Column('int', { nullable: true })
+  width?: number;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  height?: string;
+  @Column('int', { nullable: true })
+  height?: number;
 }

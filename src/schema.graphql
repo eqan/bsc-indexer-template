@@ -566,8 +566,8 @@ input MetaDataInput {
   originalMetaUri: String
   externalUri: String
   rightsUri: String
-  attribute: [AttributeInput!]
-  content: MetadataContentInput
+  attributes: [AttributeInput!]
+  Content: MetadataContentInput
 }
 
 input UpdateTokensInput {

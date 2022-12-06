@@ -51,14 +51,14 @@ export class MetadataApi {
       genres: [],
       originalMetaUri: tokenURI,
       externalUri: '',
-      attribute: [
+      attributes: [
         {
           key: '',
           value: '',
           format: '',
         },
       ],
-      content: {
+      Content: {
         fileName: '',
         url: '',
         representation: '',
@@ -79,7 +79,7 @@ export class MetadataApi {
               type: TokenType.BEP721,
               format: attribute?.display_type || '',
             })) || [],
-          content: meta?.image
+          Content: meta?.image
             ? {
                 url: meta?.image || '',
               }
@@ -87,7 +87,7 @@ export class MetadataApi {
         };
       else throw new BadRequestException(`unsupported format ${tokenURI}`);
     } catch (error) {
-      return { ...metadata, attribute: [], content: {} };
+      return { ...metadata, attributes: [], Content: {} };
     }
   }
 

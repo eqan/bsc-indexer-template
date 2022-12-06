@@ -24,7 +24,7 @@ export class TokensMeta {
 
   @Field(() => [String], { nullable: true })
   @Column('text', { array: true, nullable: true, default: [] })
-  types?: string[];
+  tags?: string[];
 
   @Field(() => [String], { nullable: true })
   @Column('text', { array: true, nullable: true, default: [] })
@@ -44,16 +44,17 @@ export class TokensMeta {
   })
   externalLink?: string;
 
-  @Field(() => MetadataAttribute, { nullable: true })
-  @Column({
-    type: 'jsonb',
+  @Field(() => [MetadataAttribute], { nullable: true })
+  @Column('jsonb', {
+    array: true,
     nullable: true,
+    default: [],
   })
   attributes?: {
     key?: string;
     value?: string;
     format?: string;
-  };
+  }[];
 
   @Field({ nullable: true })
   @Column({
