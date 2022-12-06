@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsOptional } from 'class-validator';
-import { BaseEntity, Column, Entity, Index, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
 import { ActivityBid } from './activity.bid.entity';
 import { ActivityBurn } from './activity.burn.entity';
@@ -18,6 +18,18 @@ export abstract class Activity extends BaseEntity {
     unique: true,
   })
   id: string;
+
+  @Field({ nullable: true })
+  @Column('text')
+  userId: string;
+
+  @Field({ nullable: true })
+  @Column('text')
+  itemId: string;
+
+  @Field({ nullable: true })
+  @Column('text')
+  collectionId: string;
 
   @Field(() => ActivityType, { nullable: true })
   @Column({

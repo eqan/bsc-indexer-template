@@ -84,6 +84,9 @@ type ActivityTransfer {
 
 type Activity {
   id: String
+  userId: String
+  itemId: String
+  collectionId: String
   type: ActivityType
   date: DateTime
   lastUpdatedAt: DateTime
@@ -582,6 +585,9 @@ input FilterActivityDto {
   page: Float = 1
   limit: Int = 10
   id: String
+  userId: String
+  itemId: String
+  collectionId: String
   type: ActivityType
 }
 
@@ -753,6 +759,9 @@ input CreateSignatureInput {
 
 input CreateActivityInput {
   id: String!
+  userId: String
+  itemId: String
+  collectionId: String
   type: ActivityType!
   date: DateTime!
   lastUpdatedAt: DateTime!

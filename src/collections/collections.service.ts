@@ -82,9 +82,9 @@ export class CollectionsService {
    */
   async index(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
-      console.log(filterDto);
+      // console.log(filterDto);
       const { page, limit, ...rest } = filterDto;
-      const [items, total] = await Promise.all([
+      const [items] = await Promise.all([
         this.collectionsRepo.find({
           where: {
             id: rest?.id,
@@ -93,13 +93,8 @@ export class CollectionsService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
-        this.collectionsRepo.count({
-          where: {
-            id: rest.id,
-            name: rest?.name ? ILike(`%${rest.name}%`) : undefined,
-          },
-        }),
       ]);
+      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);

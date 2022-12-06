@@ -4,6 +4,7 @@ import {
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 import { ActivityType } from '../entities/enums/activity.type.enum';
@@ -18,6 +19,21 @@ export class CreateActivityInput {
   @IsEthereumAddress()
   @Field(() => String)
   id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String, { nullable: true })
+  userId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String, { nullable: true })
+  itemId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String, { nullable: true })
+  collectionId: string;
 
   @IsOptional()
   @Field(() => ActivityType)

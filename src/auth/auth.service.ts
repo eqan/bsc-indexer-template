@@ -42,7 +42,7 @@ export class AuthService {
       signature,
       address,
     );
-    console.log(signerAddress);
+    // console.log(signerAddress);
     if (signerAddress) {
       return signerAddress;
     }
