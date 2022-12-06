@@ -42,7 +42,7 @@ export class TokensMeta {
     type: 'text',
     nullable: true,
   })
-  externalLink?: string;
+  externalUri?: string;
 
   @Field(() => [MetadataAttribute], { nullable: true })
   @Column('jsonb', {
