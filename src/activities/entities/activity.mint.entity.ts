@@ -50,5 +50,5 @@ export class ActivityMint {
   itemId?: string;
 
   @OneToOne(() => Activity, (activity) => activity.MINT)
-  activity: Activity['MINT'];
+  activity: Activity;
 }
