@@ -1,11 +1,4 @@
-import {
-  createUnionType,
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-} from '@nestjs/graphql';
-import { Type } from 'class-transformer';
+import { createUnionType, Field, InputType, ObjectType } from '@nestjs/graphql';
 import {
   IsEthereumAddress,
   IsNotEmpty,
@@ -20,8 +13,13 @@ export const AssetTypeUnion = createUnionType({
     [EthAssetType, Erc20AssetType, Erc721AssetType, Erc1155AssetType] as const,
 });
 
+// export const ResultUnion = createUnionType({
+//   name: 'ResultUnion',
+//   types: () => [Author, Book] as const,
+// });
+
 @ObjectType('Asset')
-@InputType('Asset')
+@InputType('AssetInput')
 export class Asset {
   @IsString()
   @Field()
@@ -36,7 +34,7 @@ export class Asset {
   // @Type(() => EthAssetType| Erc20AssetType
   // | Erc721AssetType
   // | Erc1155AssetType;)
-  @Field(() => AssetTypeUnion)
+  // @Field(() => Array<typeof AssetTypeUnion>)
   assetType: EthAssetType | Erc20AssetType | Erc721AssetType | Erc1155AssetType;
 }
 

@@ -309,6 +309,11 @@ type Data {
   originFees: DataOriginFee
 }
 
+type Asset {
+  value: String!
+  valueDecimal: String
+}
+
 type Orders {
   orderId: String!
   fill: Float!
@@ -318,7 +323,7 @@ type Orders {
   createdAt: DateTime!
   lastUpdatedAt: DateTime!
   maker: String!
-  Make: Make!
+  Make: Asset!
   take: Make!
   salt: String!
   data: Data!
@@ -539,6 +544,11 @@ input DataOrginFeeInput {
 input DataInput {
   type: String!
   originFees: DataOrginFeeInput
+}
+
+input AssetInput {
+  value: String!
+  valueDecimal: String
 }
 
 type Query {
