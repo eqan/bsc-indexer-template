@@ -39,7 +39,7 @@ export class AuctionsService {
   async index(filterDto: FilterAuctionDto): Promise<GetAllAuctions> {
     try {
       const { page = 1, limit = 20, ...rest } = filterDto;
-      const [items, total] = await Promise.all([
+      const [items] = await Promise.all([
         this.auctionRepo.find({
           where: {
             auctionId: rest?.auctionId,
@@ -49,13 +49,8 @@ export class AuctionsService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
-        this.auctionRepo.count({
-          where: {
-            auctionId: rest.auctionId,
-            contract: rest?.contract,
-          },
-        }),
       ]);
+      const total = Object.keys(items).length;
       return { items, total };
     } catch (error) {
       throw new BadRequestException(error);
