@@ -5,14 +5,14 @@ import {
   BaseEntity,
   Column,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { CreatorRoyalty } from '../dto/nestedObjectDto/creator.dto';
-import { MetaData } from '../dto/nestedObjectDto/meta.dto';
 import { TokenType } from './enum/token.type.enum';
+import { TokensMeta } from './nestedObjects/tokens.meta.entity';
 
 /**Create tokens table in database
  *
@@ -102,37 +102,14 @@ export class Tokens extends BaseEntity {
     value?: number;
   };
 
-  @Field(() => MetaData, { nullable: true })
-  @Column({
-    type: 'json',
-    default: null,
+  @IsOptional()
+  @OneToOne(() => TokensMeta, {
+    eager: true,
+    cascade: true,
     nullable: true,
   })
-  meta?: {
-    name: string;
-    description?: string;
-    tags?: string[];
-    genres?: string[];
-    originalMetaUri?: string;
-    externalUri?: string;
-    rightsUri?: string;
-    attributes?: {
-      key?: string;
-      value?: number;
-      format?: string;
-    }[];
-    content?: {
-      fileName?: string;
-      url?: string;
-      representation?: string;
-      mimeType?: string;
-      size?: number;
-      available?: boolean;
-      type?: string;
-      width?: number;
-      height?: number;
-    };
-  };
+  @JoinColumn()
+  Meta?: TokensMeta;
 
   @ManyToOne(() => Collections, (collection) => collection.id)
   @JoinColumn({ name: 'collectionId' })

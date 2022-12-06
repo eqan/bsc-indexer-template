@@ -85,11 +85,6 @@ export class Collections {
   })
   bannerImageUrl?: string;
 
-  // @IsOptional()
-  // @Field(() => CollectionsMeta, { nullable: true, defaultValue: {} })
-  // @Column({ nullable: true, type: 'jsonb' })
-  // Meta: CollectionsMeta;
-
   @IsOptional()
   @OneToOne(() => CollectionsMeta, {
     eager: true,

@@ -164,6 +164,12 @@ type GetAllAuctions {
   total: Int!
 }
 
+type MetadataAttribute {
+  key: String
+  value: String
+  format: String
+}
+
 type Collections {
   id: String!
   name: String
@@ -183,36 +189,6 @@ type CreatorRoyalty {
   value: Int
 }
 
-type MetadataAttribute {
-  key: String
-  value: String
-  format: String
-}
-
-type MetadataContent {
-  fileName: String
-  url: String
-  representation: String
-  mimeType: String
-  size: Float
-  avaiable: Boolean
-  type: String
-  width: Float
-  height: Float
-}
-
-type MetaData {
-  name: String
-  description: String
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  rightsUri: String
-  attribute: [MetadataAttribute!]
-  content: MetadataContent
-}
-
 type Tokens {
   tokenId: String!
   collectionId: String
@@ -225,7 +201,18 @@ type Tokens {
   sellers: Float
   creator: CreatorRoyalty
   royalties: CreatorRoyalty
-  meta: MetaData
+}
+
+type MetadataContent {
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  avaiable: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 type GetAllTokens {
@@ -381,15 +368,15 @@ input SellInput {
   value: Float!
 }
 
-input CreatorRoyaltyInput {
-  account: [String!] = null
-  value: Int
-}
-
 input AttributeInput {
   key: String
   value: String
   format: String
+}
+
+input CreatorRoyaltyInput {
+  account: [String!] = null
+  value: Int
 }
 
 input MetadataContentInput {
@@ -402,18 +389,6 @@ input MetadataContentInput {
   type: String
   width: Float
   height: Float
-}
-
-input MetaDataInput {
-  name: String
-  description: String
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  rightsUri: String
-  attribute: [AttributeInput!]
-  content: MetadataContentInput
 }
 
 input CollectionMetaContentInput {
@@ -574,13 +549,25 @@ input CreateTokenInput {
   sellers: Float!
   creator: CreatorRoyaltyInput
   royalties: CreatorRoyaltyInput
-  meta: MetaDataInput
+  Meta: MetaDataInput
 }
 
 """Types of tokens"""
 enum TokenType {
   BEP721
   BEP1155
+}
+
+input MetaDataInput {
+  name: String
+  description: String
+  tags: [String!] = []
+  genres: [String!] = []
+  originalMetaUri: String
+  externalUri: String
+  rightsUri: String
+  attribute: [AttributeInput!]
+  content: MetadataContentInput
 }
 
 input UpdateTokensInput {

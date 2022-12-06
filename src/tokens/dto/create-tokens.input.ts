@@ -76,9 +76,8 @@ export class CreateTokenInput {
   @Field(() => CreatorRoyalty, { nullable: true })
   royalties?: CreatorRoyalty;
 
-  @IsOptional()
   @ValidateNested()
   @Type(() => MetaData)
   @Field(() => MetaData, { nullable: true })
-  meta?: MetaData;
+  Meta?: MetaData;
 }

@@ -34,6 +34,7 @@ export class TokensService {
       token.collection = collection;
       token.tokenId = collectionId + ':' + token.tokenId;
 
+      // console.log(token);
       await token.save();
       delete token.collection;
       return token;
@@ -157,7 +158,7 @@ export class TokensService {
    */
   async resetMetaData(tokenId: string): Promise<void> {
     try {
-      await this.tokensRepo.update(tokenId, { meta: null });
+      await this.tokensRepo.update(tokenId, { Meta: null });
       return null;
     } catch (error) {
       throw new NotFoundException(error);

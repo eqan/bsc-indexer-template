@@ -18,11 +18,11 @@ export class MetaData {
   description?: string;
 
   @IsOptional()
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String], { nullable: true, defaultValue: [] })
   tags?: string[];
 
   @IsOptional()
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String], { nullable: true, defaultValue: [] })
   genres?: string[];
 
   @IsOptional()
