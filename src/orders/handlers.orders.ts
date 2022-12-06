@@ -1,19 +1,26 @@
 import { verifyTypedData } from '@ethersproject/wallet';
 import { BadRequestException } from '@nestjs/common';
-import { Ethereum } from '@rarible/ethereum-provider/build/index';
+import { EIP712Domain } from '@rarible/ethereum-api-client/build/index';
+import { Asset } from '@rarible/ethereum-api-client/build/models/Asset';
 import {
   EIP712_DOMAIN_TEMPLATE,
   EIP712_ORDER_TYPES,
 } from '@rarible/protocol-ethereum-sdk/build/order/eip712';
 import { orderToStruct } from '@rarible/protocol-ethereum-sdk/build/order/sign-order';
 import { SimpleRaribleV2Order } from '@rarible/protocol-ethereum-sdk/build/order/types';
-import { toAddress, ZERO_ADDRESS, Address } from '@rarible/types/build/address';
+import { Address, toAddress, ZERO_ADDRESS } from '@rarible/types/build/address';
+import { toBigNumber } from '@rarible/types/build/big-number';
 import { toWord } from '@rarible/types/build/word';
 import * as crypto from 'crypto';
 import { getPrivateKey, getPublicKey } from 'src/common/utils.common';
 import { CreateOrdersInput } from './dto/create-orders.input';
-import { EIP712Domain } from '@rarible/ethereum-api-client/build/index';
-
+// import { EthAssetType } from './entities/assetType';
+import {
+  Erc20AssetType,
+  AssetType,
+} from '@rarible/ethereum-api-client/build/models/AssetType';
+import { OrderRaribleV2DataV1 } from '@rarible/ethereum-api-client/build/models/OrderData';
+import * as web3Provider from '@rarible/ethers-ethereum';
 /**
  * Generate Signature
  * @param data
@@ -53,6 +60,16 @@ export const decryptSignature = (signature: string): string => {
   }
 };
 
+const parseAssetType = (assetType: AssetType) => {
+  let data = {};
+  Object.keys(assetType).forEach((key) => {
+    if (key === 'contract')
+      data = { ...data, contract: toAddress(assetType[key]) };
+    else data = { ...data, tokenId: toBigNumber(assetType[key]) };
+  });
+  return data;
+};
+
 /**
  * VerifyOrder
  * @param order
@@ -60,20 +77,56 @@ export const decryptSignature = (signature: string): string => {
  */
 export const verifyOrder = (
   order: CreateOrdersInput,
-  ethereum: Ethereum,
+  provider,
 ): string | boolean => {
   try {
+    const assetType: Erc20AssetType = {
+      assetClass: 'ERC20',
+      contract: toAddress(order.Make.assetType?.contract),
+      // tokenId: toBigNumber(order.Make.assetType?.tokenId),
+    };
+
+    parseAssetType(assetType);
+
+    const make: Asset = {
+      assetType: {
+        assetClass: 'ERC20',
+        contract: toAddress(order.Make.assetType?.contract),
+        // tokenId: toBigNumber(order.Make.assetType?.tokenId),
+      },
+      value: toBigNumber(order.Make.value),
+      valueDecimal: toBigNumber(order.Make?.valueDecimal),
+    };
+
+    //   const data = export declare type OrderRaribleV2DataV1 = {
+    //     dataType: "RARIBLE_V2_DATA_V1";
+    //     payouts: Array<Part>;
+    //     originFees: Array<Part>;
+    // };
+
+    const part = {
+      account: toAddress('237737'),
+      value: 78,
+    };
+
+    const data: OrderRaribleV2DataV1 = {
+      dataType: 'RARIBLE_V2_DATA_V1',
+      payouts: [part],
+      originFees: [part],
+    };
+
     const makeOrder: SimpleRaribleV2Order = {
       type: 'RARIBLE_V2',
       maker: toAddress(order.maker),
-      makeAsset: order.Make,
+      make: make,
       taker: toAddress(order.taker) ?? ZERO_ADDRESS,
-      takeAsset: order.take,
+      take: make,
       salt: toWord(order.salt),
       start: Number(order.startedAt) ?? 0,
       end: Number(order.endedAt) ?? 0,
-      data: order.data,
+      data: data,
     };
+
     // orderToStruct();
 
     // const message = orderToStruct(ethereum, order);
@@ -106,8 +159,10 @@ export const verifyOrder = (
     //     ],
     //   ),
     // );
+    const etProvider = new web3Provider.EthersWeb3ProviderEthereum(provider);
+    // etProvider
 
-    const hash = 'hello';
+    // const hash = 'hello';
     // TypedDataUtils.sign({
     //   primaryType: EIP712_ORDER_TYPE,
     //   domain,
@@ -132,7 +187,7 @@ export const verifyOrder = (
     const signer = verifyTypedData(
       domain,
       EIP712_ORDER_TYPES,
-      orderToStruct(ethereum, makeOrder),
+      orderToStruct(etProvider, makeOrder),
       order.signature,
     );
 

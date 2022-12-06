@@ -47,6 +47,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^2.1.0",
     "@nestjs/typeorm": "^9.0.1",
+    "@rarible/ethers-ethereum": "^0.13.0",
     "@rarible/protocol-ethereum-sdk": "^0.13.1",
     "@types/cache-manager-redis-store": "^2.0.1",
     "@types/crypto-js": "^4.1.1",

@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ethereum } from '@rarible/ethereum-provider/build/index';
 import { Maybe } from '@rarible/types/build/maybe';
+import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateOrdersInput } from './dto/create-orders.input';
@@ -20,7 +21,8 @@ export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
-    private readonly ethereum: Maybe<Ethereum>,
+    // private readonly ethereum: Maybe<Ethereum>,
+    private readonly rpcProvider: RpcProvider,
   ) {
     // const data = {
     //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
@@ -80,7 +82,10 @@ export class OrdersService {
       // };
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
-        const verified = verifyOrder(createOrdersInput, this.ethereum);
+        const verified = verifyOrder(
+          createOrdersInput,
+          this.rpcProvider.baseProvider,
+        );
         if (verified) {
           const order = this.ordersRepo.create(createOrdersInput);
           return await this.ordersRepo.save(order);

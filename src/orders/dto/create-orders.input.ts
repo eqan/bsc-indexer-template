@@ -11,6 +11,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Asset } from '../entities/assetType';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Data } from './nestedObjectsDto/data.object';
 import { Make } from './nestedObjectsDto/make.dto';
@@ -58,7 +59,7 @@ export class CreateOrdersInput {
   @ValidateNested()
   @Type(() => Make)
   @Field(() => Make)
-  Make: Make;
+  Make: Asset;
 
   @ValidateNested()
   @Type(() => Make)
