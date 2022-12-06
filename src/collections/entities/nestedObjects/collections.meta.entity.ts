@@ -1,13 +1,17 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
-import { Column } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Collections } from '../collections.entity';
 import { Content } from './collections.meta.content.entity';
 
-@ObjectType('CollectionsMeta')
-@InputType('CollectionsMetaInput')
+@Entity('CollectionsMeta')
+// @InputType('CollectionsMetaInput')
 export class CollectionsMeta {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Field({ nullable: true })
-  @Column('text')
+  @Column('text', { nullable: true })
   name: string;
 
   @Field({ nullable: true })
@@ -39,4 +43,7 @@ export class CollectionsMeta {
     nullable: true,
   })
   feeRecipient?: string;
+
+  @OneToOne(() => Collections, (collection) => collection.Meta)
+  collection: Collections;
 }

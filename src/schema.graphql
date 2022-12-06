@@ -164,21 +164,6 @@ type GetAllAuctions {
   total: Int!
 }
 
-type MetaContent {
-  type: String
-  url: String
-  representation: String
-}
-
-type CollectionsMeta {
-  name: String
-  description: String
-  Content: MetaContent
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
-}
-
 type Collections {
   id: String!
   name: String
@@ -190,7 +175,6 @@ type Collections {
   discordUrl: String
   description: String
   bannerImageUrl: String
-  Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
@@ -395,21 +379,6 @@ input SellTypeInput {
 input SellInput {
   type: SellTypeInput!
   value: Float!
-}
-
-input MetaContentInput {
-  type: String
-  url: String
-  representation: String
-}
-
-input CollectionsMetaInput {
-  name: String
-  description: String
-  Content: MetaContentInput
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
 }
 
 input CreatorRoyaltyInput {

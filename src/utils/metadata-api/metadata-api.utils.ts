@@ -176,25 +176,28 @@ export class MetadataApi {
       twitterUrl: '',
       description: '',
     };
+    let name;
+    let symbol;
+    let owner;
     try {
       const contract = new Contract(
         collectionId,
         CollectionIface,
         this.rpcProvider.baseProvider,
       );
-      collectionData.name = await getCollectionName(contract);
-      collectionData.symbol = await getCollectionSymbol(contract);
-      collectionData.owner = await getCollectionOwner(contract);
+      name = await getCollectionName(contract);
+      symbol = await getCollectionSymbol(contract);
+      owner = await getCollectionOwner(contract);
     } catch (error) {
       console.log('error occured owner address not found');
     } finally {
       return {
-        name: '',
-        symbol: '',
-        owner: AddressZero,
+        name,
+        symbol,
+        owner,
         id: collectionId,
         type,
-        Meta: {},
+        Meta: { name },
         discordUrl: '',
         twitterUrl: '',
         description: '',

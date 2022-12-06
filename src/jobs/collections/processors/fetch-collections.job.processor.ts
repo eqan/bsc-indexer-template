@@ -38,6 +38,7 @@ export class FetchCollectionsProcessor {
             collectionId,
             collectionType,
           );
+          console.log(response);
           await this.collectionsService.create(response);
         }
 

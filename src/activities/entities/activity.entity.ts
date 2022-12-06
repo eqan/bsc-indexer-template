@@ -87,14 +87,6 @@ export abstract class Activity extends BaseEntity {
     logIndex?: number;
   };
 
-  // @IsOptional()
-  // @OneToOne(() => ActivityMint, {
-  //   eager: true,
-  //   cascade: true,
-  // })
-  // @JoinColumn()
-  // MINT?: ActivityMint;
-
   @IsOptional()
   @OneToOne(() => ActivityBurn, {
     eager: true,
