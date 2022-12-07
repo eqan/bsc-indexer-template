@@ -82,7 +82,8 @@ export const verifyOrder = (
   try {
     const assetType: Erc20AssetType = {
       assetClass: 'ERC20',
-      contract: toAddress(order.Make.assetType?.contract),
+      // contract: toAddress(order.Make.assetType?.contract),
+      contract: toAddress('02X464772'),
       // tokenId: toBigNumber(order.Make.assetType?.tokenId),
     };
 
@@ -91,7 +92,8 @@ export const verifyOrder = (
     const make: Asset = {
       assetType: {
         assetClass: 'ERC20',
-        contract: toAddress(order.Make.assetType?.contract),
+        // contract: toAddress(order.Make.assetType?.contract),
+        contract: toAddress('02X464772'),
         // tokenId: toBigNumber(order.Make.assetType?.tokenId),
       },
       value: toBigNumber(order.Make.value),

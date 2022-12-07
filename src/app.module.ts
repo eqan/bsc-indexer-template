@@ -33,6 +33,8 @@ import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.modul
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       playground: true,
+      /* Union types work fine without sorting */
+      // sortSchema: false,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       context: response,
       definitions: {

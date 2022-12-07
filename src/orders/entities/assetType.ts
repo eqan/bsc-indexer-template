@@ -10,9 +10,13 @@ import {
 } from 'class-validator';
 import { AssetTypeEnum } from './enums/orders.assetType.enum';
 
+class BaseAssetType {
+  $assetClass: string;
+}
+
 @ObjectType('EthAssetType')
 @InputType('EthAssetInput')
-export class EthAssetType {
+export class EthAssetType extends BaseAssetType {
   @IsEnum(AssetTypeEnum)
   @Field(() => AssetTypeEnum)
   assetClass: AssetTypeEnum;
@@ -28,7 +32,7 @@ export class EthAssetType {
 // };
 @ObjectType('Erc20AssetType')
 @InputType('Erc20AssetInput')
-export class Erc20AssetType {
+export class Erc20AssetType extends BaseAssetType {
   @IsEnum(AssetTypeEnum)
   @Field(() => AssetTypeEnum)
   assetClass: AssetTypeEnum;
@@ -41,7 +45,7 @@ export class Erc20AssetType {
 
 @ObjectType('Erc721AssetType')
 @InputType('Erc21AssetInput')
-export class Erc721AssetType {
+export class Erc721AssetType extends BaseAssetType {
   @IsEnum(AssetTypeEnum)
   @Field(() => AssetTypeEnum)
   assetClass: AssetTypeEnum;
@@ -58,7 +62,7 @@ export class Erc721AssetType {
 
 @ObjectType('Erc1155AssetType')
 @InputType('Erc1155AssetInput')
-export class Erc1155AssetType {
+export class Erc1155AssetType extends BaseAssetType {
   @IsEnum(AssetTypeEnum)
   @Field(() => AssetTypeEnum)
   assetClass: AssetTypeEnum;
@@ -73,24 +77,43 @@ export class Erc1155AssetType {
   tokenId: number;
 }
 
+type AssetTypes =
+  | EthAssetType
+  | Erc20AssetType
+  | Erc721AssetType
+  | Erc1155AssetType;
+
 export const AssetTypeUnion = createUnionType({
-  name: 'AssetTypeUnion',
+  name: 'AssetTypes',
   types: () =>
     [EthAssetType, Erc20AssetType, Erc721AssetType, Erc1155AssetType] as const,
   resolveType(value) {
-    if (value.assetClass === 'ETH') {
-      return EthAssetType;
+    switch (value.$assetClass) {
+      case AssetTypeEnum.ETH:
+        return EthAssetType;
+      case AssetTypeEnum.ERC20:
+        return Erc20AssetType;
+      case AssetTypeEnum.ERC721:
+        return Erc721AssetType;
+      case AssetTypeEnum.ERC1155:
+        return Erc1155AssetType;
+      default:
+        return null;
+
+      // if (value.assetClass === 'ETH') {
+      //   return EthAssetType;
+      // }
+      // if (value.assetClass === 'ERC20') {
+      //   return Erc20AssetType;
+      // }
+      // if (value.assetClass === 'ERC721') {
+      //   return Erc721AssetType;
+      // }
+      // if (value.assetClass === 'ERC71155') {
+      //   return Erc1155AssetType;
+      // }
+      // return null;
     }
-    if (value.assetClass === 'ERC20') {
-      return Erc20AssetType;
-    }
-    if (value.assetClass === 'ERC721') {
-      return Erc721AssetType;
-    }
-    if (value.assetClass === 'ERC71155') {
-      return Erc1155AssetType;
-    }
-    return null;
   },
 });
 
@@ -106,21 +129,21 @@ export class Asset {
   @Field({ nullable: true })
   valueDecimal?: string;
 
-  @ValidateNested()
+  // @ValidateNested()
   // @Type(() => AssetTypeUnion)
-  // @Type(() => EthAssetType, {
-  //   discriminator: {
-  //     property: '__type',
-  //     subTypes: [
-  //       { value: EthAssetType, name: 'EthAssetType' },
-  //       { value: Erc20AssetType, name: 'Erc20AssetType' },
-  //       { value: Erc721AssetType, name: 'Erc721AssetType' },
-  //       { value: Erc721AssetType, name: 'Erc721AssetType' },
-  //     ],
-  //   },
-  // })
+  @Type(() => BaseAssetType, {
+    discriminator: {
+      property: '__type',
+      subTypes: [
+        { value: EthAssetType, name: 'EthAssetType' },
+        { value: Erc20AssetType, name: 'Erc20AssetType' },
+        { value: Erc721AssetType, name: 'Erc721AssetType' },
+        { value: Erc721AssetType, name: 'Erc721AssetType' },
+      ],
+    },
+  })
   @Field(() => AssetTypeUnion)
-  assetType: typeof AssetTypeUnion;
+  assetType: AssetTypes;
 }
 
 // export AssetType =
