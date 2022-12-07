@@ -23,7 +23,7 @@ export default class TypeOrmConfig {
       entities: [Tokens, Collections, Orders, Activity, Users, Auction],
       autoLoadEntities: true,
       synchronize: true,
-      dropSchema: true,
+      // dropSchema: true,
     };
   }
 }

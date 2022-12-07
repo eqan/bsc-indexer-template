@@ -65,6 +65,7 @@ export class MetadataApi {
       },
     };
     try {
+      // console.log(Meta.attributes);
       if (typeof Meta === 'object')
         return {
           ...metadata,
@@ -72,7 +73,7 @@ export class MetadataApi {
           description: Meta?.description || '',
           originalMetaUri: tokenURI,
           externalUri: Meta?.external_url || '',
-          attribute:
+          attributes:
             Meta?.attributes?.map((attribute: any) => ({
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
