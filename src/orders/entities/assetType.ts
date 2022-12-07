@@ -1,64 +1,21 @@
-import {
-  createUnionType,
-  Field,
-  InputType,
-  Int,
-  ObjectType,
-} from '@nestjs/graphql';
+import { createUnionType, Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
+  IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-
-export const AssetTypeUnion = createUnionType({
-  name: 'AssetType',
-  types: () =>
-    [EthAssetType, Erc20AssetType, Erc721AssetType, Erc1155AssetType] as const,
-});
-
-@ObjectType('Asset')
-@InputType('Asset')
-export class Asset {
-  @IsString()
-  @Field()
-  value: string;
-
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  valueDecimal?: string;
-
-  @ValidateNested()
-  // @Type(() => EthAssetType| Erc20AssetType
-  // | Erc721AssetType
-  // | Erc1155AssetType;)
-  @Field(() => AssetTypeUnion)
-  assetType: EthAssetType | Erc20AssetType | Erc721AssetType | Erc1155AssetType;
-}
-
-// export AssetType =
-//   | EthAssetType
-//   | Erc20AssetType
-//   | Erc721AssetType
-//   | Erc1155AssetType;
-// | Erc721LazyAssetType
-// | Erc1155LazyAssetType
-// | CryptoPunksAssetType
-// | CollectionAssetType
-// | AmmNftAssetType
-// | GenerativeArtAssetType;
-
-type ETH = "'ETH'";
+import { AssetTypeEnum } from './enums/orders.assetType.enum';
 
 @ObjectType('EthAssetType')
 @InputType('EthAssetInput')
 export class EthAssetType {
-  @Field()
-  assetClass: ETH;
+  @IsEnum(AssetTypeEnum)
+  @Field(() => AssetTypeEnum)
+  assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -72,8 +29,9 @@ export class EthAssetType {
 @ObjectType('Erc20AssetType')
 @InputType('Erc20AssetInput')
 export class Erc20AssetType {
-  @Field()
-  assetClass: 'ERC20';
+  @IsEnum(AssetTypeEnum)
+  @Field(() => AssetTypeEnum)
+  assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -84,8 +42,9 @@ export class Erc20AssetType {
 @ObjectType('Erc721AssetType')
 @InputType('Erc21AssetInput')
 export class Erc721AssetType {
-  @Field()
-  assetClass: 'ERC721';
+  @IsEnum(AssetTypeEnum)
+  @Field(() => AssetTypeEnum)
+  assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -96,11 +55,13 @@ export class Erc721AssetType {
   @Field()
   tokenId: number;
 }
+
 @ObjectType('Erc1155AssetType')
 @InputType('Erc1155AssetInput')
 export class Erc1155AssetType {
-  @Field()
-  assetClass: 'ERC1155';
+  @IsEnum(AssetTypeEnum)
+  @Field(() => AssetTypeEnum)
+  assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -111,6 +72,68 @@ export class Erc1155AssetType {
   @Field()
   tokenId: number;
 }
+
+export const AssetTypeUnion = createUnionType({
+  name: 'AssetTypeUnion',
+  types: () =>
+    [EthAssetType, Erc20AssetType, Erc721AssetType, Erc1155AssetType] as const,
+  resolveType(value) {
+    if (value.assetClass === 'ETH') {
+      return EthAssetType;
+    }
+    if (value.assetClass === 'ERC20') {
+      return Erc20AssetType;
+    }
+    if (value.assetClass === 'ERC721') {
+      return Erc721AssetType;
+    }
+    if (value.assetClass === 'ERC71155') {
+      return Erc1155AssetType;
+    }
+    return null;
+  },
+});
+
+@ObjectType('Asset')
+@InputType('AssetInput')
+export class Asset {
+  @IsString()
+  @Field()
+  value: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  valueDecimal?: string;
+
+  @ValidateNested()
+  // @Type(() => AssetTypeUnion)
+  // @Type(() => EthAssetType, {
+  //   discriminator: {
+  //     property: '__type',
+  //     subTypes: [
+  //       { value: EthAssetType, name: 'EthAssetType' },
+  //       { value: Erc20AssetType, name: 'Erc20AssetType' },
+  //       { value: Erc721AssetType, name: 'Erc721AssetType' },
+  //       { value: Erc721AssetType, name: 'Erc721AssetType' },
+  //     ],
+  //   },
+  // })
+  @Field(() => AssetTypeUnion)
+  assetType: typeof AssetTypeUnion;
+}
+
+// export AssetType =
+//   | EthAssetType
+//   | Erc20AssetType
+//   | Erc721AssetType
+//   | Erc1155AssetType;
+// | Erc721LazyAssetType
+// | Erc1155LazyAssetType
+// | CryptoPunksAssetType
+// | CollectionAssetType
+// | AmmNftAssetType
+// | GenerativeArtAssetType;
 
 // export const Erc20AssetType = {
 //   assetClass: 'ERC20';

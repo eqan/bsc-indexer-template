@@ -77,7 +77,7 @@ import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.modul
     // }),
     CollectionsModule,
     TokensModule,
-    OrdersModule,
+    // OrdersModule,
     ActivitiesModule,
     UsersModule,
     RpcProviderModule,

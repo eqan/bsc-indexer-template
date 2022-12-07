@@ -309,30 +309,22 @@ type Data {
   originFees: DataOriginFee
 }
 
-type Orders {
-  orderId: String!
-  fill: Float!
-  status: String!
-  makeStock: Float!
-  cancelled: Boolean!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  maker: String!
-  Make: Make!
-  take: Make!
-  salt: String!
-  data: Data!
-  startedAt: DateTime
-  endedAt: DateTime
-  optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
-  makePrice: Float
-  takePrice: Float
-  makePriceUsed: Float
-  takePriceUsed: Float!
-  signature: String!
-  taker: String
-  dataType: String!
+type EthAssetType {
+  assetClass: AssetTypeEnum!
+  contract: String!
+}
+
+enum AssetTypeEnum {
+  ETH
+  ERC20
+  ERC721
+  ERC1155
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: EthAssetType!
 }
 
 type Users {
@@ -344,15 +336,6 @@ type Users {
   websiteUrl: String!
   twitterUrl: String!
   type: String!
-}
-
-type SignatureType {
-  signature: String!
-}
-
-type GetAllOrders {
-  items: [Orders!]!
-  total: Int!
 }
 
 type CronType {
@@ -541,13 +524,22 @@ input DataInput {
   originFees: DataOrginFeeInput
 }
 
+input EthAssetInput {
+  assetClass: AssetTypeEnum!
+  contract: String!
+}
+
+input AssetInput {
+  value: String!
+  valueDecimal: String
+  assetType: EthAssetInput!
+}
+
 type Query {
   GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
   ShowCollectionById(collectionId: String!): Collections!
   GetAllTokens(searchToken: FilterTokenDto): GetAllTokens!
   ShowTokenById(tokenId: String!): Tokens!
-  GetOrderById(orderId: String!): Orders!
-  GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
@@ -569,14 +561,6 @@ input FilterTokenDto {
   tokenId: String
   contract: String
   owner: String
-}
-
-input FilterOrderDto {
-  page: Float
-  limit: Float
-  orderId: String
-  maker: String
-  taker: String
 }
 
 input FilterActivityDto {
@@ -608,10 +592,6 @@ type Mutation {
   UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
-  CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
-  DeleteOrder(Delete: DeleteOrderInput!): Orders!
-  UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
-  CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
@@ -699,57 +679,6 @@ input UpdateTokensInput {
 
 input DeleteTokensInput {
   id: [String!]!
-}
-
-input CreateOrdersInput {
-  orderId: String!
-  fill: Float!
-  status: OrderStatus!
-  makeStock: Float!
-  cancelled: Boolean!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  maker: String!
-  Make: MakeInput!
-  take: MakeInput!
-  salt: String!
-  data: DataInput!
-  startedAt: DateTime
-  endedAt: DateTime
-  optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
-  makePrice: Float
-  takePrice: Float
-  makePriceUsed: Float
-  takePriceUsed: Float
-  signature: String!
-  taker: String
-  dataType: String!
-}
-
-enum OrderStatus {
-  Active
-  Filled
-  Historical
-  InActive
-  Cancelled
-}
-
-input DeleteOrderInput {
-  id: [String!]!
-}
-
-input UpdateOrderStatus {
-  orderId: String!
-  status: String!
-}
-
-input CreateSignatureInput {
-  orderId: String!
-  maker: String!
-  Make: MakeInput!
-  take: MakeInput!
-  salt: String!
 }
 
 input CreateActivityInput {
