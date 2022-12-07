@@ -52,8 +52,13 @@ export class FetchCollectionsProcessor {
               deleted,
             });
 
+            console.log(tokenMeta.Meta);
+            if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
+              tokenMeta.Meta = null;
+            }
+
             const result = await this.tokensService.create(tokenMeta);
-            console.log(result);
+            // console.log(result);
           } catch (err) {
             console.log(err, collectionId);
             throw err;

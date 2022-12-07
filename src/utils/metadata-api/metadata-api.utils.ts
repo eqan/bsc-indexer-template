@@ -43,7 +43,7 @@ export class MetadataApi {
     }
   }
 
-  returnMeta(meta: any, tokenURI: string) {
+  returnMeta(Meta: any, tokenURI: string) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -65,23 +65,23 @@ export class MetadataApi {
       },
     };
     try {
-      if (typeof meta === 'object')
+      if (typeof Meta === 'object')
         return {
           ...metadata,
-          name: meta?.name || '',
-          description: meta?.description || '',
+          name: Meta?.name || '',
+          description: Meta?.description || '',
           originalMetaUri: tokenURI,
-          externalUri: meta?.external_url || '',
+          externalUri: Meta?.external_url || '',
           attribute:
-            meta?.attributes?.map((attribute: any) => ({
+            Meta?.attributes?.map((attribute: any) => ({
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
               type: TokenType.BEP721,
               format: attribute?.display_type || '',
             })) || [],
-          Content: meta?.image
+          Content: Meta?.image
             ? {
-                url: meta?.image || '',
+                url: Meta?.image || '',
               }
             : {},
         };
@@ -130,25 +130,25 @@ export class MetadataApi {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      if (!tokenURI) return { ...data, meta: this.returnMeta({}, '') };
+      if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '') };
 
       // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
-        const meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, meta: this.returnMeta(meta, tokenURI) };
+        const Meta = await this.fetchRequest(tokenURI, tokenId);
+        return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
       }
 
       //else if tokenURI is buffered base64 encoded
       else if (isBase64Encoded(tokenURI)) {
-        const meta = base64toJson(tokenURI);
-        if (meta?.image.match(regex.base64)) {
-          const url = await uploadImage(meta?.image);
-          meta.image = url ?? meta.image;
+        const Meta = base64toJson(tokenURI);
+        if (Meta?.image.match(regex.base64)) {
+          const url = await uploadImage(Meta?.image);
+          Meta.image = url ?? Meta.image;
         }
-        return { ...data, meta: this.returnMeta(meta, tokenURI) };
-      } else return { ...data, meta: this.returnMeta({}, tokenURI) };
+        return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
+      } else return { ...data, Meta: this.returnMeta({}, tokenURI) };
     } catch (error) {
       console.log(
         'finding issue url, remain this console',

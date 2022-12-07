@@ -46,9 +46,8 @@ export class TokensMeta {
 
   @Field(() => [MetadataAttribute], { nullable: true })
   @Column('jsonb', {
-    array: true,
     nullable: true,
-    default: [],
+    default: null,
   })
   attributes?: {
     key?: string;
