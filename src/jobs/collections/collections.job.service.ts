@@ -4,6 +4,7 @@ import { Queue } from 'bull';
 import { getNetworkSettings } from 'src/config/network.config';
 import { QueueType } from '../enums/jobs.enums';
 import { EventDataKind } from 'src/events/types/events.types';
+import { randomUUID } from 'crypto';
 
 /**
  * Fetch Collections
@@ -30,6 +31,7 @@ export class FetchCollectionsService {
       await this.fetchCollections.add(
         { collectionId, tokenId, timestamp, kind, deleted },
         {
+          jobId: randomUUID(),
           delay: 1000,
           removeOnComplete: true,
           removeOnFail: true,

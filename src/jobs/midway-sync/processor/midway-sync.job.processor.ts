@@ -29,7 +29,7 @@ export class MidwaySyncProcessor {
   @OnQueueError()
   onError(error: Error, job: Job) {
     this.logger.error(
-      `Queue ${job.id} Failed Processing Midway syncing : ${error}`,
+      `Queue ${job.data.jobId} Failed Processing Midway syncing : ${error}`,
     );
   }
 }
