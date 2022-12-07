@@ -52,7 +52,7 @@ export class FetchCollectionsProcessor {
               deleted,
             });
 
-            console.log(tokenMeta.Meta);
+            // console.log(tokenMeta.Meta);
             if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
               tokenMeta.Meta = null;
             }

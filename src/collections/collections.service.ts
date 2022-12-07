@@ -82,7 +82,7 @@ export class CollectionsService {
    */
   async index(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
-      console.log(filterDto);
+      // console.log(filterDto);
       const { page, limit, ...rest } = filterDto;
       const [items] = await Promise.all([
         this.collectionsRepo.find({

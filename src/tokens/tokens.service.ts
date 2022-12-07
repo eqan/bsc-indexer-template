@@ -28,7 +28,7 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
-      console.log(restParams);
+      // console.log(restParams);
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
 
