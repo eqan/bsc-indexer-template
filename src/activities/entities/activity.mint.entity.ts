@@ -4,35 +4,35 @@ import { Column } from 'typeorm';
 @ObjectType('ActivityMint')
 @InputType('ActivityMintInput')
 export class ActivityMint {
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   tokenId?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   value?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   owner?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     nullable: true,
   })
   contract?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     unique: true,
@@ -40,7 +40,7 @@ export class ActivityMint {
   })
   transactionHash?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'varchar',
     unique: true,

@@ -132,7 +132,7 @@ export class MetadataApi {
 
       if (!tokenURI) return { ...data, meta: this.returnMeta({}, '') };
 
-      console.log(tokenURI);
+      // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
@@ -173,7 +173,7 @@ export class MetadataApi {
       type,
       Meta: {},
       discordUrl: '',
-      twitterUserName: '',
+      twitterUrl: '',
       description: '',
     };
     try {
@@ -196,7 +196,7 @@ export class MetadataApi {
         type,
         Meta: {},
         discordUrl: '',
-        twitterUserName: '',
+        twitterUrl: '',
         description: '',
       };
     }

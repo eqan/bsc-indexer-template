@@ -68,7 +68,7 @@ export class OrdersService {
    * @params createOrdersinput
    * @return order
    */
-  async createOrder(createOrdersInput: CreateOrdersInput): Promise<Orders> {
+  async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
       // const order = {
       //   orderId,
@@ -97,11 +97,11 @@ export class OrdersService {
   }
 
   /**
-   * Get /Searched Order
+   * Get Searched Order
    * @param filterOrderDto
    * @returns Orders Array or order against specific parameter
    */
-  async findAllOrders(filterOrderDto: FilterOrderDto): Promise<GetAllOrders> {
+  async index(filterOrderDto: FilterOrderDto): Promise<GetAllOrders> {
     try {
       const { page, limit, ...rest } = filterOrderDto;
       const [items, total] = await Promise.all([
@@ -129,7 +129,7 @@ export class OrdersService {
    * @param orderId
    * @returns Order against specific id
    */
-  async getOrderById(orderId: string): Promise<Orders> {
+  async show(orderId: string): Promise<Orders> {
     try {
       const order = this.ordersRepo.findOneByOrFail({ orderId });
       if (!order) {
@@ -146,7 +146,7 @@ export class OrdersService {
    * @param deletewithIds
    * @returns vpoid
    */
-  async deleteOrder(deletewithIds: { id: string[] }): Promise<void> {
+  async delete(deletewithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deletewithIds.id;
       await this.ordersRepo.delete({ orderId: In(ids) });
@@ -161,13 +161,11 @@ export class OrdersService {
    * @param updateOrderStatus
    * @returns Updated Order status
    */
-  async updateOrderStatus(
-    updateOrderStatus: UpdateOrderStatus,
-  ): Promise<Orders> {
+  async update(updateOrderStatus: UpdateOrderStatus): Promise<Orders> {
     try {
       const { orderId, ...rest } = updateOrderStatus;
       await this.ordersRepo.update({ orderId }, rest);
-      return this.getOrderById(orderId);
+      return this.show(orderId);
     } catch (error) {
       throw new BadRequestException(SystemErrors.UPDATE_ORDER);
     }

@@ -1,14 +1,8 @@
 import { CookieSerializeOptions } from 'cookie';
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthService } from '../auth.service';
-import { resolveObjMapThunk } from 'graphql';
-import { repl } from '@nestjs/core';
 
 const domain = process.env.WEB_APP_HOST;
 const jwtExpiresSecond = process.env.JWT_EXPIRES_SECONDS;

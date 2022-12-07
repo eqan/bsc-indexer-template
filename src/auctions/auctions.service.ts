@@ -27,7 +27,7 @@ export class AuctionsService {
       const auction = this.auctionRepo.create(createAuctionInput);
       return await this.auctionRepo.save(auction);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 
@@ -38,8 +38,8 @@ export class AuctionsService {
    */
   async index(filterDto: FilterAuctionDto): Promise<GetAllAuctions> {
     try {
-      const { page, limit, ...rest } = filterDto;
-      const [items, total] = await Promise.all([
+      const { page = 1, limit = 20, ...rest } = filterDto;
+      const [items] = await Promise.all([
         this.auctionRepo.find({
           where: {
             auctionId: rest?.auctionId,
@@ -49,13 +49,8 @@ export class AuctionsService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
-        this.auctionRepo.count({
-          where: {
-            auctionId: rest.auctionId,
-            contract: rest?.contract,
-          },
-        }),
       ]);
+      const total = Object.keys(items).length;
       return { items, total };
     } catch (error) {
       throw new BadRequestException(error);

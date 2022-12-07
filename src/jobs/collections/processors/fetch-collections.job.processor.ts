@@ -38,7 +38,7 @@ export class FetchCollectionsProcessor {
             collectionId,
             collectionType,
           );
-          await this.collectionsService.createCollection(response);
+          await this.collectionsService.create(response);
         }
 
         if (!token) {
@@ -51,7 +51,7 @@ export class FetchCollectionsProcessor {
               deleted,
             });
 
-            await this.tokensService.createToken(tokenMeta);
+            await this.tokensService.create(tokenMeta);
           } catch (err) {
             console.log(err, collectionId);
             throw err;

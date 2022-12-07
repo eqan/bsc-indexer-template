@@ -2,14 +2,15 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
+  IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { TokenType } from '../entities/enum/token.type.enum';
 
-import { Creator } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
+import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 
 /**Create tokens table in database
  *
@@ -20,28 +21,31 @@ export class CreateTokenInput {
   @Field()
   tokenId: string;
 
+  @IsEthereumAddress()
   @IsNotEmpty()
   @Field()
-  collectionId?: string;
+  collectionId: string;
 
+  @IsEthereumAddress()
   @IsNotEmpty()
   @Field()
-  contract?: string;
+  contract: string;
 
   @IsEnum(TokenType)
   @Field(() => TokenType)
   type: TokenType;
 
-  @IsNotEmpty()
-  @Field()
+  @IsEthereumAddress()
+  @Field({ nullable: true })
   owner?: string;
 
   @IsOptional()
-  @Field()
-  mintedAt: Date;
+  @Field({ nullable: true })
+  mintedAt?: Date;
 
-  @Field()
-  lastUpdatedAt: Date;
+  @IsOptional()
+  @Field({ nullable: true })
+  lastUpdatedAt?: Date;
 
   @IsNotEmpty()
   @Field()
@@ -51,16 +55,19 @@ export class CreateTokenInput {
   @Field()
   sellers: number;
 
+  @IsOptional()
   @ValidateNested()
-  @Type(() => Creator)
-  @Field(() => Creator)
-  creator: Creator;
+  @Type(() => CreatorRoyalty)
+  @Field(() => CreatorRoyalty, { nullable: true })
+  creator?: CreatorRoyalty;
 
+  @IsOptional()
   @ValidateNested()
-  @Type(() => Creator)
-  @Field(() => Creator, { nullable: true })
-  royalties?: Creator;
+  @Type(() => CreatorRoyalty)
+  @Field(() => CreatorRoyalty, { nullable: true })
+  royalties?: CreatorRoyalty;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => MetaData)
   @Field(() => MetaData, { nullable: true })

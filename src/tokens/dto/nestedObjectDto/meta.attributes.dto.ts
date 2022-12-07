@@ -5,11 +5,13 @@ import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 @ObjectType('MetadataAttribute')
 @InputType('AttributeInput')
 export class MetadataAttribute {
-  @Field()
-  key: string;
+  @IsOptional()
+  @Field({ nullable: true })
+  key?: string;
 
-  @Field()
-  value: string;
+  @IsOptional()
+  @Field({ nullable: true })
+  value?: string;
 
   @IsOptional()
   @Field({ nullable: true })
