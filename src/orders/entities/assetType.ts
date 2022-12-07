@@ -10,16 +10,21 @@ import {
 } from 'class-validator';
 import { AssetTypeEnum } from './enums/orders.assetType.enum';
 
+@ObjectType('BaseAssetType')
+@InputType('BaseAssetTypeInput')
 class BaseAssetType {
-  $assetClass: string;
+  // $assetClass: string;
+  @IsEnum(AssetTypeEnum)
+  @Field(() => AssetTypeEnum)
+  assetClass: AssetTypeEnum;
 }
 
 @ObjectType('EthAssetType')
 @InputType('EthAssetInput')
 export class EthAssetType extends BaseAssetType {
-  @IsEnum(AssetTypeEnum)
-  @Field(() => AssetTypeEnum)
-  assetClass: AssetTypeEnum;
+  // @IsEnum(AssetTypeEnum)
+  // @Field(() => AssetTypeEnum)
+  // assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -33,9 +38,9 @@ export class EthAssetType extends BaseAssetType {
 @ObjectType('Erc20AssetType')
 @InputType('Erc20AssetInput')
 export class Erc20AssetType extends BaseAssetType {
-  @IsEnum(AssetTypeEnum)
-  @Field(() => AssetTypeEnum)
-  assetClass: AssetTypeEnum;
+  // @IsEnum(AssetTypeEnum)
+  // @Field(() => AssetTypeEnum)
+  // assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -46,9 +51,9 @@ export class Erc20AssetType extends BaseAssetType {
 @ObjectType('Erc721AssetType')
 @InputType('Erc21AssetInput')
 export class Erc721AssetType extends BaseAssetType {
-  @IsEnum(AssetTypeEnum)
-  @Field(() => AssetTypeEnum)
-  assetClass: AssetTypeEnum;
+  // @IsEnum(AssetTypeEnum)
+  // @Field(() => AssetTypeEnum)
+  // assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -63,9 +68,9 @@ export class Erc721AssetType extends BaseAssetType {
 @ObjectType('Erc1155AssetType')
 @InputType('Erc1155AssetInput')
 export class Erc1155AssetType extends BaseAssetType {
-  @IsEnum(AssetTypeEnum)
-  @Field(() => AssetTypeEnum)
-  assetClass: AssetTypeEnum;
+  // @IsEnum(AssetTypeEnum)
+  // @Field(() => AssetTypeEnum)
+  // assetClass: AssetTypeEnum;
 
   @IsEthereumAddress()
   @IsNotEmpty()
@@ -88,7 +93,7 @@ export const AssetTypeUnion = createUnionType({
   types: () =>
     [EthAssetType, Erc20AssetType, Erc721AssetType, Erc1155AssetType] as const,
   resolveType(value) {
-    switch (value.$assetClass) {
+    switch (value.assetClass) {
       case AssetTypeEnum.ETH:
         return EthAssetType;
       case AssetTypeEnum.ERC20:
@@ -129,7 +134,7 @@ export class Asset {
   @Field({ nullable: true })
   valueDecimal?: string;
 
-  // @ValidateNested()
+  @ValidateNested()
   // @Type(() => AssetTypeUnion)
   @Type(() => BaseAssetType, {
     discriminator: {
