@@ -147,7 +147,7 @@ export class Asset {
       ],
     },
   })
-  @Field(() => AssetTypeUnion)
+  // @Field(() => AssetTypeUnion)
   assetType: AssetTypes;
 }
 
