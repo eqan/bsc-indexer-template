@@ -30,10 +30,10 @@ type ActivityBid {
   type: ActivityType!
   hash: String
   maker: String
-  price: Float!
-  priceUsd: Float!
-  take: Make!
-  make: Make!
+  price: Float
+  priceUsd: Float
+  take: Make
+  make: Make
 }
 
 """Types of activities"""
@@ -56,44 +56,47 @@ enum ActivityType {
 
 type ActivityBurn {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
 }
 
 type ActivityMint {
-  tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  itemId: String!
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
 }
 
 type ActivityTransfer {
-  tokenId: String!
-  value: String!
-  from: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  purchase: Boolean!
-  itemId: String!
+  tokenId: String
+  value: String
+  from: String
+  owner: String
+  contract: String
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
 }
 
 type Activity {
   id: String
-  type: ActivityType!
-  date: DateTime!
-  lastUpdatedAt: DateTime!
-  cursor: String!
-  reverted: Boolean!
-  blockchainInfo: BlockchainInfo!
-  MINT: ActivityMint!
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType
+  date: DateTime
+  lastUpdatedAt: DateTime
+  cursor: String
+  reverted: Boolean
+  blockchainInfo: BlockchainInfo
+  MINT: ActivityMint
   BURN: ActivityBurn
-  TRANSFER: ActivityTransfer!
-  BID: ActivityBid!
+  TRANSFER: ActivityTransfer
+  BID: ActivityBid
 }
 
 """
@@ -144,12 +147,12 @@ type LastBidData {
 }
 
 type LastBid {
-  buyer: String!
-  amount: Float!
-  date: DateTime!
-  status: AuctionStatus!
-  type: AuctionType!
-  data: LastBidData!
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidData
 }
 
 """Status of Auctions i.e. Active,InActive,Pending"""
@@ -178,24 +181,24 @@ type Sell {
 }
 
 type Auction {
-  auctionId: Float!
-  contract: String!
-  seller: String!
-  type: AuctionType!
-  sell: Sell!
-  buy: SellType!
-  endTime: DateTime!
-  minimalStep: Float!
-  minimalPrice: Float!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  buyPrice: Float!
-  buyPriceUsd: Float!
-  status: AuctionStatus!
-  ongoing: Boolean!
-  hash: String!
-  lastBid: LastBid!
-  data: AuctionData!
+  auctionId: Float
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: Sell
+  buy: SellType
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBid
+  data: AuctionData
 }
 
 type GetAllAuctions {
@@ -210,7 +213,7 @@ type MetaContent {
 }
 
 type CollectionsMeta {
-  name: String!
+  name: String
   description: String
   Content: MetaContent
   externalLink: String
@@ -220,27 +223,27 @@ type CollectionsMeta {
 
 type Collections {
   id: String!
-  name: String!
+  name: String
   type: String!
   parent: String
   symbol: String
   owner: String
-  twitterUserName: String
+  twitterUrl: String
   discordUrl: String
   description: String
-  bannerImageUrl: String!
+  bannerImageUrl: String
   Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
-type Creator {
-  account: String!
-  value: Int!
+type CreatorRoyalty {
+  account: [String!]
+  value: Int
 }
 
 type MetadataAttribute {
-  key: String!
-  value: String!
+  key: String
+  value: String
   format: String
 }
 
@@ -257,11 +260,11 @@ type MetadataContent {
 }
 
 type MetaData {
-  name: String!
+  name: String
   description: String
-  tags: [String!]!
+  tags: [String!]
   genres: [String!]
-  originalMetaUri: String!
+  originalMetaUri: String
   externalUri: String
   rightsUri: String
   attribute: [MetadataAttribute!]
@@ -272,14 +275,14 @@ type Tokens {
   tokenId: String!
   collectionId: String
   contract: String
-  type: String!
+  type: String
   owner: String
-  mintedAt: DateTime!
-  lastUpdatedAt: DateTime!
-  deleted: Boolean!
-  sellers: Float!
-  creator: Creator!
-  royalties: [Creator!]
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorRoyalty
+  royalties: CreatorRoyalty
   meta: MetaData
 }
 
@@ -311,17 +314,17 @@ type Data {
 
 type Orders {
   orderId: String!
-  fill: Float!
-  status: String!
-  makeStock: Float!
-  cancelled: Boolean!
-  createdAt: DateTime!
-  lastUpdatedAt: DateTime!
-  maker: String!
-  Make: Make!
-  take: Make!
-  salt: String!
-  data: Data!
+  fill: Float
+  status: String
+  makeStock: Float
+  cancelled: Boolean
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  maker: String
+  Make: Make
+  take: Make
+  salt: String
+  data: Data
   startedAt: DateTime
   endedAt: DateTime
   optionalRoyalties: Boolean
@@ -329,20 +332,20 @@ type Orders {
   makePrice: Float
   takePrice: Float
   makePriceUsed: Float
-  takePriceUsed: Float!
-  signature: String!
+  takePriceUsed: Float
+  signature: String
   taker: String
 }
 
 type Users {
   id: String!
-  userSignature: String!
-  name: String!
-  userName: String!
-  shortBio: String!
-  websiteUrl: String!
-  twitterUrl: String!
-  type: String!
+  userSignature: String
+  name: String
+  userName: String
+  shortBio: String
+  websiteUrl: String
+  twitterUrl: String
+  type: String
 }
 
 type SignatureType {
@@ -395,38 +398,38 @@ input ActivityBidInput {
   type: ActivityType!
   hash: String
   maker: String
-  price: Float!
-  priceUsd: Float!
-  take: MakeInput!
-  make: MakeInput!
+  price: Float
+  priceUsd: Float
+  take: MakeInput
+  make: MakeInput
 }
 
 input ActivityBurnInput {
   tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
 }
 
 input ActivityMintInput {
-  tokenId: String!
-  value: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  itemId: String!
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
 }
 
 input ActivityTransferInput {
-  tokenId: String!
-  value: String!
-  from: String!
-  owner: String!
-  contract: String!
-  transactionHash: String!
-  purchase: Boolean!
-  itemId: String!
+  tokenId: String
+  value: String
+  from: String
+  owner: String
+  contract: String
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
 }
 
 input ActivityMakeTypeInput {
@@ -455,12 +458,12 @@ input LastBidDataInput {
 }
 
 input LastBidInput {
-  buyer: String!
-  amount: Float!
-  date: DateTime!
-  status: AuctionStatus!
-  type: AuctionType!
-  data: LastBidDataInput!
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidDataInput
 }
 
 input SellTypeInput {
@@ -481,7 +484,7 @@ input MetaContentInput {
 }
 
 input CollectionsMetaInput {
-  name: String!
+  name: String
   description: String
   Content: MetaContentInput
   externalLink: String
@@ -489,14 +492,14 @@ input CollectionsMetaInput {
   feeRecipient: String
 }
 
-input CreatorInput {
-  account: String!
-  value: Int!
+input CreatorRoyaltyInput {
+  account: [String!] = null
+  value: Int
 }
 
 input AttributeInput {
-  key: String!
-  value: String!
+  key: String
+  value: String
   format: String
 }
 
@@ -513,11 +516,11 @@ input MetadataContentInput {
 }
 
 input MetaDataInput {
-  name: String!
+  name: String
   description: String
-  tags: [String!]!
+  tags: [String!]
   genres: [String!]
-  originalMetaUri: String!
+  originalMetaUri: String
   externalUri: String
   rightsUri: String
   attribute: [AttributeInput!]
@@ -541,17 +544,17 @@ input DataInput {
 }
 
 type Query {
-  GetAllCollections(filterCollectionDto: FilterDto!): GetAllCollections!
-  ShowCollectionById(collectionId: String!): Collections!
-  GetAllTokens(searchToken: FilterTokenDto): GetAllTokens!
-  ShowTokenById(tokenId: String!): Tokens!
+  GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
+  GetCollectionById(collectionId: String!): Collections!
+  GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
+  GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
-  GetAllOrders(filterOrderDto: FilterOrderDto!): GetAllOrders!
+  GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   GetUserDataByuserId(userId: String!): Users!
-  GetAllUsers(filterUserDto: FilterUserDto!): GetAllUsers!
-  GetAllAuctions(GetAllAuctions: FilterAuctionDto!): GetAllAuctions!
+  GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
+  GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
 }
 
@@ -582,6 +585,9 @@ input FilterActivityDto {
   page: Float = 1
   limit: Int = 10
   id: String
+  userId: String
+  itemId: String
+  collectionId: String
   type: ActivityType
 }
 
@@ -600,26 +606,26 @@ input FilterAuctionDto {
 }
 
 type Mutation {
-  CreateCollection(createCollection: CreateCollectionsInput!): Collections!
-  UpdateCollectionAttribute(updateCollectionsInput: UpdateCollectionsInput!): Collections!
+  CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
+  UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
-  UpdateTokenAttribute(UpdateTokensInput: UpdateTokensInput!): Tokens!
+  UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
-  ResetMetaDataofTokens(ResetMetaData: String!): Tokens!
+  ResetMetaDataofTokens(ResetMetaData: String!): Tokens
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
-  DeleteOrder(Delete: DeleteOrderInput!): Orders!
-  UpdateOrderStatus(UpdateOrderStatus: UpdateOrderStatus!): Orders!
+  DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
+  UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
   CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   CreateUser(CreateUserInput: CreateUserInput!): Users!
-  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users
   UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
   CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
-  DeleteAuction(DeleteAuctionInout: DeleteAuctionsInput!): Auction
+  DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
@@ -634,7 +640,7 @@ input CreateCollectionsInput {
   parent: String
   symbol: String
   owner: String!
-  twitterUserName: String
+  twitterUrl: String
   discordUrl: String
   description: String
   Meta: CollectionMetaInput
@@ -658,6 +664,7 @@ input UpdateCollectionsInput {
   symbol: String
   owner: String!
   discordUrl: String
+  twitterUrl: String
   description: String
   Meta: CollectionMetaInput
 }
@@ -671,13 +678,13 @@ input CreateTokenInput {
   collectionId: String!
   contract: String!
   type: TokenType!
-  owner: String!
-  mintedAt: DateTime!
-  lastUpdatedAt: DateTime!
+  owner: String
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
-  creator: CreatorInput!
-  royalties: CreatorInput
+  creator: CreatorRoyaltyInput
+  royalties: CreatorRoyaltyInput
   meta: MetaDataInput
 }
 
@@ -689,11 +696,11 @@ enum TokenType {
 
 input UpdateTokensInput {
   tokenId: String!
-  lastUpdatedAt: DateTime!
-  deleted: Boolean!
-  sellers: Float!
-  creator: CreatorInput!
-  meta: MetaDataInput!
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorRoyaltyInput
+  meta: MetaDataInput
 }
 
 input DeleteTokensInput {
@@ -739,7 +746,7 @@ input DeleteOrderInput {
 
 input UpdateOrderStatus {
   orderId: String!
-  status: String!
+  status: OrderStatus!
 }
 
 input CreateSignatureInput {
@@ -752,6 +759,9 @@ input CreateSignatureInput {
 
 input CreateActivityInput {
   id: String!
+  userId: String
+  itemId: String
+  collectionId: String
   type: ActivityType!
   date: DateTime!
   lastUpdatedAt: DateTime!
@@ -843,9 +853,9 @@ input CreateAuctionInput {
   auctionId: Float!
   contract: String!
   seller: String!
-  type: AuctionType!
-  sell: SellInput!
-  buy: SellTypeInput!
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
   endTime: DateTime!
   minimalStep: Float!
   minimalPrice: Float!
@@ -853,15 +863,15 @@ input CreateAuctionInput {
   lastUpdatedAt: DateTime!
   buyPrice: Float!
   buyPriceUsd: Float!
-  status: AuctionStatus!
+  status: AuctionStatus
   ongoing: Boolean!
-  hash: String!
-  lastBid: LastBidInput!
-  data: AuctionDataInput!
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
 }
 
 input UpdateAuctionStatusInput {
-  auctionId: Int!
+  auctionId: Float!
   contract: String
   seller: String
   type: AuctionType

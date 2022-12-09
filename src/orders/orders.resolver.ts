@@ -25,7 +25,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     @Args('CreateOrderInput') createOrdersInput: CreateOrdersInput,
   ): Promise<Orders> {
     try {
-      return await this.ordersService.createOrder(createOrdersInput);
+      return await this.ordersService.create(createOrdersInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -36,13 +36,17 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param deleteOrderInput
    * @returns void
    */
-  @Mutation(() => Orders, { name: 'DeleteOrder' })
+  @Mutation(() => Orders, { name: 'DeleteOrder', nullable: true })
   async delete(
-    @Args('Delete') deleteOrderInput: DeleteOrderInput,
+    @Args('DeleteOrderInput')
+    deleteOrderInput: DeleteOrderInput,
   ): Promise<void> {
     try {
-      return await this.ordersService.deleteOrder(deleteOrderInput);
-    } catch (error) {}
+      await this.ordersService.delete(deleteOrderInput);
+      return null;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
@@ -50,13 +54,13 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param updateOrderStatus
    * @returns Updated Order
    */
-  @Mutation(() => Orders, { name: 'UpdateOrderStatus' })
+  @Mutation(() => Orders, { name: 'UpdateOrder' })
   async edit(
-    @Args('UpdateOrderStatus')
+    @Args('UpdateOrderInput')
     updateOrderStatus: UpdateOrderStatus,
   ): Promise<Orders> {
     try {
-      return await this.ordersService.updateOrderStatus(updateOrderStatus);
+      return await this.ordersService.update(updateOrderStatus);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -70,7 +74,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   @Query(() => Orders, { name: 'GetOrderById' })
   async show(@Args('orderId') orderId: string): Promise<Orders> {
     try {
-      return await this.ordersService.getOrderById(orderId);
+      return await this.ordersService.show(orderId);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -83,10 +87,13 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    */
   @Query(() => GetAllOrders, { name: 'GetAllOrders' })
   async index(
-    @Args('filterOrderDto') filterOrderDto: FilterOrderDto,
+    @Args('FilterOrderInput', { nullable: true, defaultValue: {} })
+    filterOrderDto: FilterOrderDto,
   ): Promise<GetAllOrders> {
     try {
-      return await this.ordersService.findAllOrders(filterOrderDto);
-    } catch (error) {}
+      return await this.ordersService.index(filterOrderDto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

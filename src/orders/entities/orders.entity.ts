@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Data } from '../dto/nestedObjectsDto/data.object';
 import { Make } from '../dto/nestedObjectsDto/make.dto';
 import { OrderType } from './enums/order.type.enum';
@@ -7,6 +7,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 
 @ObjectType()
 @Entity('Orders')
+@Index(['orderId', 'maker', 'taker'])
 export class Orders {
   @Field()
   @PrimaryColumn({
@@ -16,13 +17,13 @@ export class Orders {
   })
   orderId: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'decimal',
   })
   fill: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'enum',
     // nullable: true,
@@ -32,42 +33,43 @@ export class Orders {
   })
   status: OrderStatus;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'int',
     nullable: false,
   })
   makeStock: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'boolean',
-    nullable: false,
+    nullable: true,
+    default: false,
   })
   cancelled: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: false,
   })
   createdAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: false,
   })
   lastUpdatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: false,
   })
   maker: string;
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
   })
@@ -80,7 +82,7 @@ export class Orders {
     value: number;
   };
 
-  @Field(() => Make)
+  @Field(() => Make, { nullable: true })
   @Column({
     type: 'jsonb',
   })
@@ -93,19 +95,20 @@ export class Orders {
     value: number;
   };
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
   })
   salt: string;
 
-  @Field(() => Data)
+  @Field(() => Data, { nullable: true })
   @Column({
     type: 'json',
     nullable: false,
   })
   data: {
     type: string;
+    nullable: true;
     // nullable: true;
     // payouts?: number[];
     originFees?: {
@@ -163,14 +166,14 @@ export class Orders {
   })
   makePriceUsed?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'float',
     nullable: true,
   })
   takePriceUsed?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
   })

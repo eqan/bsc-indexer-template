@@ -6,7 +6,7 @@ import { Content } from './collections.meta.content.entity';
 @ObjectType('CollectionsMeta')
 @InputType('CollectionsMetaInput')
 export class CollectionsMeta {
-  @Field()
+  @Field({ nullable: true })
   @Column('text')
   name: string;
 

@@ -74,9 +74,13 @@ export class ERC721Handler {
       const to = parsedLog.args['to'].toLowerCase();
       const reverted = log?.removed || false;
       const tokenId = parsedLog.args['tokenId'].toString();
+      const collectionId = log?.address;
+      //userId ===  to
       // const owner = parsedLog.args['owner'].toLowerCase();
+      // console.log(log);
       const activityData = extractActivityData(
         tokenId,
+        collectionId,
         logIndex,
         blockHash,
         blockNumber,

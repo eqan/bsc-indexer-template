@@ -19,7 +19,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     signature: string,
     address: string,
   ): Promise<LoginUserInput> {
-    console.log(message);
+    // console.log(message);
     const user = this.authService.validateUser(message, signature, address);
     if (!user) {
       throw new UnauthorizedException();

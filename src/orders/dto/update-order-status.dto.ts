@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, IsEthereumAddress, IsNotEmpty } from 'class-validator';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
+import { Orders } from '../entities/orders.entity';
 
 @InputType()
 export class UpdateOrderStatus {
@@ -10,6 +11,6 @@ export class UpdateOrderStatus {
   orderId: string;
 
   @IsEnum(OrderStatus)
-  @Field()
+  @Field(() => OrderStatus)
   status: OrderStatus;
 }

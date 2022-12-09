@@ -1,13 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import { PaginationParam } from './pagination.dto';
 @InputType()
 export class FilterAuctionDto extends PaginationParam {
-  @Field({ nullable: true, defaultValue: undefined })
+  @IsOptional()
+  @Field({ nullable: true })
   auctionId?: number;
 
-  @Field({ nullable: true, defaultValue: undefined })
+  @IsOptional()
+  @Field({ nullable: true })
   contract?: string;
 
-  @Field({ nullable: true, defaultValue: undefined })
+  @IsOptional()
+  @Field({ nullable: true })
   seller?: string;
 }

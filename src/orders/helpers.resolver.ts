@@ -26,7 +26,8 @@ export class HelpersResolver {
     @Args('CreatSignatureInput') createSignatureInput: CreateSignatureInput,
   ): SignatureType {
     try {
-      const encyptedSignature = generateSignature(createSignatureInput);
+      const data = JSON.stringify(createSignatureInput);
+      const encyptedSignature = generateSignature(data);
       return { signature: encyptedSignature };
     } catch (error) {
       throw new BadRequestException(error);

@@ -38,10 +38,11 @@ export class RefreshMetadataService {
           collection.type,
         );
 
-        const refreshedCollection =
-          await this.collectionsService.createCollection(response);
+        const refreshedCollection = await this.collectionsService.create(
+          response,
+        );
 
-        const token = await this.tokensService.getTokenById(
+        const token = await this.tokensService.show(
           `${collectionId}:${tokenId}`,
         );
 
@@ -53,7 +54,7 @@ export class RefreshMetadataService {
           deleted: token.deleted,
         });
 
-        const refreshedToken = await this.tokensService.createToken(tokenMeta);
+        const refreshedToken = await this.tokensService.create(tokenMeta);
         return { collection: refreshedCollection, token: refreshedToken };
       } else throw new BadRequestException('Token or Collection Id not found');
     } catch (error) {

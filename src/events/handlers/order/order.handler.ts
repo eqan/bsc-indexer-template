@@ -14,9 +14,9 @@ export class OrderMatchHandler {
     // private readonly ordersService: OrdersService,
     private rpcProvider: RpcProvider,
   ) {
-    const res =
-      Routers[1]?.['0x9757F2d2b135150BBeb65308D4a91804107cd8D6'.toLowerCase()];
-    console.log(res, 'logged res');
+    // const res =
+    //   Routers[1]?.['0x9757F2d2b135150BBeb65308D4a91804107cd8D6'.toLowerCase()];
+    // console.log(res, 'logged res');
   }
 
   private readonly logger = new Logger('OrderMatchHandler');
@@ -262,9 +262,9 @@ export class OrderMatchHandler {
         txHash,
         this.rpcProvider.baseProvider,
       );
-      console.log(attributionData, 'hello attribution logged oout ');
+      // console.log(attributionData, 'hello attribution logged oout ');
       if (attributionData.taker) {
-        console.log(attributionData.taker, 'taker logged');
+        // console.log(attributionData.taker, 'taker logged');
         taker = attributionData.taker;
       }
 
