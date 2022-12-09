@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronType } from '../types/cron.types';
 import { Mutation, Resolver } from '@nestjs/graphql';
@@ -7,10 +8,13 @@ import Redis from 'ioredis';
 
 @Resolver()
 export class BackFillJobResolver {
-  constructor(private schedulerRegistry: SchedulerRegistry) {}
+  constructor(
+    private schedulerRegistry: SchedulerRegistry,
+    private config: ConfigService,
+  ) {}
   CRON_NAME = QueueType.BACKFILL_CRON;
 
-  private readonly redis = new Redis();
+  private readonly redis = new Redis(this.config.get('REDIS_URL'));
 
   @Mutation(() => CronType, { name: 'StopBackFillCron', nullable: true })
   async StopBackFillCron(): Promise<CronType> {

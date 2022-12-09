@@ -1,5 +1,6 @@
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { Job } from 'bull';
 import Redis from 'ioredis';
@@ -11,13 +12,14 @@ import { QueueType } from 'src/jobs/enums/jobs.enums';
 @Injectable()
 export class BackfillSyncProcessor {
   constructor(
+    private config: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
     private readonly syncEventsService: SyncEventsService,
   ) {}
 
   QUEUE_NAME = QueueType.BACKFILL_QUEUE;
   private readonly logger = new Logger(this.QUEUE_NAME);
-  redis = new Redis();
+  redis = new Redis(this.config.get('REDIS_URL'));
 
   @Process()
   async handleBackFillSync() {
