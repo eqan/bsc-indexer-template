@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { lc } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
@@ -42,7 +43,7 @@ export class CollectionsService {
             ({ addresses, topic, numTopics }) =>
               log.topics[0] === topic &&
               log.topics.length === numTopics &&
-              (addresses ? addresses[log.address.toLowerCase()] : true),
+              (addresses ? addresses[lc(log.address)] : true),
           );
           if (eventData) {
             const timestamp = (

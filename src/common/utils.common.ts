@@ -7,6 +7,7 @@ import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import * as fs from 'fs';
 import * as path from 'path';
+import { BigNumberish, BigNumber } from '@ethersproject/bignumber';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -189,3 +190,9 @@ export const getPrivateKey = () => {
   const privateKey = fs.readFileSync(absolutePath, 'utf8');
   return privateKey;
 };
+
+// --- Misc ---
+
+export const bn = (value: BigNumberish) => BigNumber.from(value);
+
+export const lc = (value: string) => value.toLowerCase();
