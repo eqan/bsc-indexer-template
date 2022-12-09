@@ -19,6 +19,7 @@ import {
 } from '@rarible/ethereum-api-client/build/models/AssetType';
 import { OrderRaribleV2DataV1 } from '@rarible/ethereum-api-client/build/models/OrderData';
 import * as web3Provider from '@rarible/ethers-ethereum';
+import { Provider } from '@ethersproject/providers';
 // /**
 //  * Generate Signature
 //  * @param data
@@ -184,6 +185,7 @@ export const verifyOrder = (
       Number(process.env.CHAIN_ID),
       toAddress('0xe77713848bc4ffa4819f9c5cd2cbd90841510bbd'),
     );
+
     const signer = verifyTypedData(
       domain,
       EIP712_ORDER_TYPES,

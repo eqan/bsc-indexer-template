@@ -14,7 +14,7 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
-import { verifyOrder } from './handlers.orders';
+import { verifyOrder } from './helpers.orders';
 
 @Injectable()
 export class OrdersService {

@@ -1,13 +1,11 @@
 import { Interface } from '@ethersproject/abi';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-import * as fs from 'fs';
-import * as path from 'path';
-import { BigNumberish, BigNumber } from '@ethersproject/bignumber';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
