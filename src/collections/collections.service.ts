@@ -89,6 +89,7 @@ export class CollectionsService {
           where: {
             id: rest?.id,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+            owner: rest?.owner ? ILike(`%${rest?.owner}%`) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
