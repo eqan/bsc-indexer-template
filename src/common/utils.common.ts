@@ -176,20 +176,20 @@ export const isDeleted = (to: string): boolean => {
 };
 
 //absolute path to pem files
-const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
-const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
+// const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
+// const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
 
-export const getPublicKey = () => {
-  const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
-  const publicKey = fs.readFileSync(absolutePath, 'utf8');
-  return publicKey;
-};
+// export const getPublicKey = () => {
+//   const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
+//   const publicKey = fs.readFileSync(absolutePath, 'utf8');
+//   return publicKey;
+// };
 
-export const getPrivateKey = () => {
-  const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
-  const privateKey = fs.readFileSync(absolutePath, 'utf8');
-  return privateKey;
-};
+// export const getPrivateKey = () => {
+//   const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
+//   const privateKey = fs.readFileSync(absolutePath, 'utf8');
+//   return privateKey;
+// };
 
 // --- Misc ---
 

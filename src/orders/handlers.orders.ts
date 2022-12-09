@@ -11,54 +11,52 @@ import { SimpleRaribleV2Order } from '@rarible/protocol-ethereum-sdk/build/order
 import { Address, toAddress, ZERO_ADDRESS } from '@rarible/types/build/address';
 import { toBigNumber } from '@rarible/types/build/big-number';
 import { toWord } from '@rarible/types/build/word';
-import * as crypto from 'crypto';
-import { getPrivateKey, getPublicKey } from 'src/common/utils.common';
 import { CreateOrdersInput } from './dto/create-orders.input';
 // import { EthAssetType } from './entities/assetType';
 import {
-  Erc20AssetType,
   AssetType,
+  Erc20AssetType,
 } from '@rarible/ethereum-api-client/build/models/AssetType';
 import { OrderRaribleV2DataV1 } from '@rarible/ethereum-api-client/build/models/OrderData';
 import * as web3Provider from '@rarible/ethers-ethereum';
-/**
- * Generate Signature
- * @param data
- * @returns signature
- */
-export const generateSignature = (data: string): string => {
-  try {
-    const publicKey = getPublicKey();
-    const signature = crypto.publicEncrypt(
-      publicKey,
-      Buffer.from(JSON.stringify(data)),
-    );
-    return signature.toString('base64');
-  } catch (error) {
-    throw new BadRequestException(
-      `error occured while generating signature : ${error}`,
-    );
-  }
-};
+// /**
+//  * Generate Signature
+//  * @param data
+//  * @returns signature
+//  */
+// export const generateSignature = (data: string): string => {
+//   try {
+//     const publicKey = getPublicKey();
+//     const signature = crypto.publicEncrypt(
+//       publicKey,
+//       Buffer.from(JSON.stringify(data)),
+//     );
+//     return signature.toString('base64');
+//   } catch (error) {
+//     throw new BadRequestException(
+//       `error occured while generating signature : ${error}`,
+//     );
+//   }
+// };
 
-/**
- *  Decrypt Signature
- * @param signature
- * @returns decryptedData
- */
-export const decryptSignature = (signature: string): string => {
-  try {
-    const privateKey = getPrivateKey();
-    const decrypted = crypto.privateDecrypt(
-      privateKey,
-      Buffer.from(signature, 'base64'),
-    );
-    // await isSigner(this.ethereum, order.maker, hash, order.signature!)
-    return JSON.parse(decrypted.toString('utf8'));
-  } catch (error) {
-    throw new BadRequestException(`error occured while decrypting : ${error}`);
-  }
-};
+// /**
+//  *  Decrypt Signature
+//  * @param signature
+//  * @returns decryptedData
+//  */
+// export const decryptSignature = (signature: string): string => {
+//   try {
+//     const privateKey = getPrivateKey();
+//     const decrypted = crypto.privateDecrypt(
+//       privateKey,
+//       Buffer.from(signature, 'base64'),
+//     );
+//     // await isSigner(this.ethereum, order.maker, hash, order.signature!)
+//     return JSON.parse(decrypted.toString('utf8'));
+//   } catch (error) {
+//     throw new BadRequestException(`error occured while decrypting : ${error}`);
+//   }
+// };
 
 const parseAssetType = (assetType: AssetType) => {
   let data = {};
@@ -183,7 +181,7 @@ export const verifyOrder = (
       };
     }
     const domain = createEIP712Domain(
-      1,
+      Number(process.env.CHAIN_ID),
       toAddress('0xe77713848bc4ffa4819f9c5cd2cbd90841510bbd'),
     );
     const signer = verifyTypedData(
