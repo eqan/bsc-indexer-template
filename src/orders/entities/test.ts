@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import Ajv from 'ajv';
 import { ValidateNested } from 'class-validator';
 import { GraphQLScalarType } from 'graphql';
-import { AssetTypeEnum } from './enums/orders.assetType.enum';
+import { AssetTypeEnum } from './enums/orders.asset-type.enum';
 
 function validate(value: unknown): object | never {
   if (typeof value !== 'object') {

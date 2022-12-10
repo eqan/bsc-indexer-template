@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { Data } from '../dto/nestedObjectsDto/data.object';
-import { Asset } from './assetType';
+import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
+import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
 import { AssetTypeTypes } from './assetType.constants';
 import { OrderType } from './enums/order.type.enum';
 import { OrderStatus } from './enums/orders.status.enum';
@@ -99,7 +99,11 @@ export class Orders {
   })
   salt: string;
 
-  @Field(() => Data, { nullable: true })
+  // @Field(() => CustomAssetScalar)
+  // assetType: JSON;
+  // @ValidateNested()
+  @Field(() => CustomDataScalar)
+  Data: JSON;
   @Column({
     type: 'json',
     nullable: false,
@@ -183,8 +187,4 @@ export class Orders {
     nullable: true,
   })
   taker?: string;
-
-  @Field()
-  @Column({ type: 'text' })
-  dataType: string;
 }

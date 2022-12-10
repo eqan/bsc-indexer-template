@@ -10,9 +10,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Asset } from '../entities/assetType';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
-import { Data } from './nestedObjectsDto/data.object';
+import { Asset } from './nestedObjectsDto/asset-type.dto';
+import { CustomDataScalar } from './nestedObjectsDto/data.dto';
 
 @InputType()
 export class CreateOrdersInput {
@@ -70,9 +70,8 @@ export class CreateOrdersInput {
   salt: string;
 
   @ValidateNested()
-  @Type(() => Data)
-  @Field()
-  data: Data;
+  @Field(() => CustomDataScalar)
+  Data: JSON;
 
   @IsDate()
   @IsOptional()
@@ -119,9 +118,4 @@ export class CreateOrdersInput {
   @IsEthereumAddress()
   @Field({ nullable: true })
   taker?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  dataType: string;
 }
