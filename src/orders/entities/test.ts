@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import Ajv from 'ajv';
 import { ValidateNested } from 'class-validator';
 import { GraphQLScalarType } from 'graphql';
-import { AssetTypeEnum } from './enums/orders.asset-type.enum';
+import { AssetClassEnum } from './enums/orders.asset-class.enum';
 
 function validate(value: unknown): object | never {
   if (typeof value !== 'object') {
@@ -12,23 +12,23 @@ function validate(value: unknown): object | never {
   const schema = {
     discriminator: 'assetClass',
     mapping: {
-      [AssetTypeEnum.ETH]: {
+      [AssetClassEnum.ETH]: {
         properties: {
           //   assetClass: { type: 'string' },
         },
       },
-      [AssetTypeEnum.ERC20]: {
+      [AssetClassEnum.ERC20]: {
         properties: {
           contract: { type: 'string' },
         },
       },
-      [AssetTypeEnum.ERC721]: {
+      [AssetClassEnum.ERC721]: {
         properties: {
           contract: { type: 'string' },
           tokenId: { type: 'number' },
         },
       },
-      [AssetTypeEnum.ERC1155]: {
+      [AssetClassEnum.ERC1155]: {
         properties: {
           contract: { type: 'string' },
           tokenId: { type: 'number' },

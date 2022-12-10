@@ -12,7 +12,6 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
-import { verifyOrder } from './helpers.orders';
 
 @Injectable()
 export class OrdersService {
@@ -100,11 +99,11 @@ export class OrdersService {
       // };
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
-        const verified = verifyOrder(
-          createOrdersInput,
-          this.rpcProvider.baseProvider,
-        );
-        if (verified) {
+        // const verified = verifyOrder(
+        //   createOrdersInput,
+        //   this.rpcProvider.baseProvider,
+        // );
+        if (0) {
           // const order = this.ordersRepo.create(createOrdersInput);
           // return await this.ordersRepo.save(order);
           return { name: 'nimra' };
