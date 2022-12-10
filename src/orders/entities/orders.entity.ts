@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Data } from '../dto/nestedObjectsDto/data.object';
-import { Make } from '../dto/nestedObjectsDto/make.dto';
 import { Asset } from './assetType';
 import { AssetTypeTypes } from './assetType.constants';
 import { OrderType } from './enums/order.type.enum';
@@ -81,7 +80,7 @@ export class Orders {
     assetType: AssetTypeTypes;
   };
 
-  @Field(() => Make, { nullable: true })
+  @Field(() => Asset, { nullable: true })
   @Column({
     type: 'jsonb',
   })

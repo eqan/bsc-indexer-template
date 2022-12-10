@@ -24,9 +24,7 @@ export class ERC721Handler {
 
     const eventData = getEventData([kind])[0];
     try {
-      console.log(log, 'log');
       const parsedLog = eventData.abi.parseLog(log);
-      console.log(parsedLog, 'PARSEDLOG');
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address || '';
       const kind = eventData.kind;

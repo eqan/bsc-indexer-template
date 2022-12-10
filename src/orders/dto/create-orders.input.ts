@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { isOptionalChain } from '@ts-morph/common/lib/typescript';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -14,7 +13,6 @@ import {
 import { Asset } from '../entities/assetType';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Data } from './nestedObjectsDto/data.object';
-import { Make } from './nestedObjectsDto/make.dto';
 
 @InputType()
 export class CreateOrdersInput {
@@ -57,14 +55,14 @@ export class CreateOrdersInput {
   maker: string;
 
   @ValidateNested()
-  @Type(() => Make)
-  @Field(() => Make)
+  @Type(() => Asset)
+  @Field(() => Asset)
   Make: Asset;
 
   @ValidateNested()
-  @Type(() => Make)
-  @Field()
-  take: Make;
+  @Type(() => Asset)
+  @Field(() => Asset)
+  take: Asset;
 
   @IsString()
   @IsNotEmpty()

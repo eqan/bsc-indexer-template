@@ -10,9 +10,10 @@ import { Orders } from './entities/orders.entity';
 import { OrdersService } from './orders.service';
 
 @Resolver(() => Orders)
-export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
+// export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
+export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {
-    super();
+    // super();
   }
 
   /**
@@ -23,7 +24,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   @Mutation(() => Orders, { name: 'CreateOrder' })
   async create(
     @Args('CreateOrderInput') createOrdersInput: CreateOrdersInput,
-  ): Promise<Orders> {
+  ): Promise<{ name: string } | Orders> {
     try {
       return await this.ordersService.create(createOrdersInput);
     } catch (error) {

@@ -4,8 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Ethereum } from '@rarible/ethereum-provider/build/index';
-import { Maybe } from '@rarible/types/build/maybe';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
@@ -24,6 +22,23 @@ export class OrdersService {
     // private readonly ethereum: Maybe<Ethereum>,
     private readonly rpcProvider: RpcProvider,
   ) {
+    // const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+    // const schema = {
+    //   properties: {
+    //     foo: { type: 'int32' },
+    //   },
+    //   optionalProperties: {
+    //     bar: { type: 'string' },
+    //   },
+    // };
+    // const validate = ajv.compile(schema);
+    // console.log('values');
+    // const data = {
+    //   foo: 1,
+    //   bar: 'abc',
+    // };
+    // const valid = validate(data);
+    // if (!valid) console.log(validate.errors);
     // const data = {
     //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
     //   maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
@@ -68,8 +83,11 @@ export class OrdersService {
    * @params createOrdersinput
    * @return order
    */
-  async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
+  async create(
+    createOrdersInput: CreateOrdersInput,
+  ): Promise<{ name: string } | Orders> {
     try {
+      console.log('hello', createOrdersInput);
       // const order = {
       //   orderId,
       //   maker: toAddress(maker),
@@ -87,8 +105,9 @@ export class OrdersService {
           this.rpcProvider.baseProvider,
         );
         if (verified) {
-          const order = this.ordersRepo.create(createOrdersInput);
-          return await this.ordersRepo.save(order);
+          // const order = this.ordersRepo.create(createOrdersInput);
+          // return await this.ordersRepo.save(order);
+          return { name: 'nimra' };
         } else throw new BadRequestException('decryption failed');
       } else throw new BadRequestException('order already exists');
     } catch (error) {

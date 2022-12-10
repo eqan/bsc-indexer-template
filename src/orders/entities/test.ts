@@ -1,8 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import Ajv from 'ajv';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
 import { GraphQLScalarType } from 'graphql';
-import { AssetTypeEnum } from 'src/graphqlFile';
+import { AssetTypeEnum } from './enums/orders.assetType.enum';
 
 function validate(value: unknown): object | never {
   if (typeof value !== 'object') {
@@ -44,7 +44,7 @@ function validate(value: unknown): object | never {
   return value;
 }
 
-export const CustomTestScalar = new GraphQLScalarType({
+export const CustomAssetScalar = new GraphQLScalarType({
   name: 'TEST_SCALAR',
   description: 'A simple Test Parser',
   serialize: (value) => validate(value),
@@ -53,19 +53,10 @@ export const CustomTestScalar = new GraphQLScalarType({
   //     parseLiteral('JSON', ast, variables, value),
 });
 
-@ObjectType('Test')
-@InputType('TestInput')
-export class Test {
-  @IsString()
-  @Field()
-  value: string;
-
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  valueDecimal?: string;
-
+@ObjectType('AssetType')
+@InputType('AssetTypeInput')
+export class AssetType {
   @ValidateNested()
-  @Field(() => CustomTestScalar)
+  @Field(() => CustomAssetScalar)
   assetType: JSON;
 }

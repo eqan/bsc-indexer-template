@@ -19,7 +19,6 @@ import {
 } from '@rarible/ethereum-api-client/build/models/AssetType';
 import { OrderRaribleV2DataV1 } from '@rarible/ethereum-api-client/build/models/OrderData';
 import * as web3Provider from '@rarible/ethers-ethereum';
-import { Provider } from '@ethersproject/providers';
 // /**
 //  * Generate Signature
 //  * @param data
