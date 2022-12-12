@@ -79,7 +79,7 @@ export class ActivitiesService {
       }
       return found;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.FIND_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 
@@ -106,7 +106,7 @@ export class ActivitiesService {
       }
       return null;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.DELETE_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 }

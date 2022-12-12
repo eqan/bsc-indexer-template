@@ -72,7 +72,7 @@ export class AuctionsService {
       }
       return found;
     } catch (error) {
-      throw new NotFoundException(SystemErrors.FIND_AUCTION);
+      throw new NotFoundException(error);
     }
   }
 
@@ -87,7 +87,7 @@ export class AuctionsService {
       await this.auctionRepo.update({ auctionId }, rest);
       return this.show(auctionId);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.UPDATE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 
@@ -102,7 +102,7 @@ export class AuctionsService {
       await this.auctionRepo.delete({ auctionId: In(ids) });
       return null;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.DELETE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 }

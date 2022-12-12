@@ -576,7 +576,7 @@ input UpdateTokensInput {
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
-  meta: MetaDataInput
+  Meta: MetaDataInput
 }
 
 input DeleteTokensInput {
