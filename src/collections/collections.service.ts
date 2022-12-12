@@ -12,7 +12,7 @@ import { getEventData } from 'src/events/data';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { FilterDto } from './dto/filter.collections.dto';
+import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -80,16 +80,18 @@ export class CollectionsService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async index(filterDto: FilterDto): Promise<GetAllCollections> {
+  async index(
+    filterCollectionsDto: FilterCollectionsDto,
+  ): Promise<GetAllCollections> {
     try {
-      // console.log(filterDto);
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterCollectionsDto;
       const [items] = await Promise.all([
         this.collectionsRepo.find({
           where: {
             id: rest?.id,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
           },
+          relations: { Meta: true },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
