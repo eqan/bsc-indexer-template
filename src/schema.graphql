@@ -427,6 +427,7 @@ input FilterDto {
   limit: Float
   id: String
   name: String
+  owner: String
 }
 
 input FilterTokenDto {

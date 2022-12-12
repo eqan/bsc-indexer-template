@@ -82,8 +82,7 @@ export class CollectionsService {
    */
   async index(filterDto: FilterDto): Promise<GetAllCollections> {
     try {
-      // console.log(filterDto);
-      const { page, limit, ...rest } = filterDto;
+      const { page = 1, limit = 20, ...rest } = filterDto;
       const [items] = await Promise.all([
         this.collectionsRepo.find({
           where: {
