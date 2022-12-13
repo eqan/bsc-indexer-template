@@ -85,7 +85,7 @@ export class CollectionsService {
   ): Promise<GetAllCollections> {
     try {
       const { page = 1, limit = 20, ...rest } = filterCollectionsDto;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.collectionsRepo.find({
           where: {
             id: rest?.id,
@@ -95,8 +95,13 @@ export class CollectionsService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.collectionsRepo.count({
+          where: {
+            id: rest?.id,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);

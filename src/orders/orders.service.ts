@@ -79,7 +79,7 @@ export class OrdersService {
   async index(filterOrderDto: FilterOrderDto): Promise<GetAllOrders> {
     try {
       const { page, limit, ...rest } = filterOrderDto;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.ordersRepo.find({
           where: {
             orderId: rest?.orderId,
@@ -89,8 +89,14 @@ export class OrdersService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.ordersRepo.count({
+          where: {
+            orderId: rest?.orderId,
+            maker: rest?.maker,
+            taker: rest?.taker,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (error) {}
   }

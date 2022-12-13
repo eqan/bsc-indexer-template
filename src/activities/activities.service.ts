@@ -40,7 +40,7 @@ export class ActivitiesService {
   async index(filterActivity: FilterActivityDto): Promise<GetAllActivities> {
     try {
       const { page = 1, limit = 20, ...rest } = filterActivity;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
             id: rest?.id,
@@ -58,8 +58,16 @@ export class ActivitiesService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.activityRepo.count({
+          where: {
+            id: rest?.id,
+            type: rest?.type,
+            userId: rest?.userId,
+            collectionId: rest?.collectionId,
+            itemId: rest?.itemId,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);
