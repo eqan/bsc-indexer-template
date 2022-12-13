@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
