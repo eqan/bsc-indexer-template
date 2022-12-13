@@ -2,6 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@ObjectType()
 @Entity('ActivityBurn')
 export class ActivityBurn {
   @PrimaryGeneratedColumn()

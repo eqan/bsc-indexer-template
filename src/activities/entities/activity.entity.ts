@@ -88,6 +88,7 @@ export abstract class Activity extends BaseEntity {
   };
 
   @IsOptional()
+  @Field(() => ActivityBurn, { nullable: true })
   @OneToOne(() => ActivityBurn, {
     eager: true,
     cascade: true,
@@ -96,6 +97,7 @@ export abstract class Activity extends BaseEntity {
   BURN?: ActivityBurn;
 
   @IsOptional()
+  @Field(() => ActivityTransfer, { nullable: true })
   @OneToOne(() => ActivityTransfer, {
     eager: true,
     cascade: true,
@@ -104,6 +106,7 @@ export abstract class Activity extends BaseEntity {
   TRANSFER?: ActivityTransfer;
 
   @IsOptional()
+  @Field(() => ActivityBid, { nullable: true })
   @OneToOne(() => ActivityBid, {
     eager: true,
     cascade: true,
@@ -112,6 +115,7 @@ export abstract class Activity extends BaseEntity {
   BID?: ActivityBid;
 
   @IsOptional()
+  @Field(() => ActivityMint, { nullable: true })
   @OneToOne(() => ActivityMint, {
     eager: true,
     cascade: true,

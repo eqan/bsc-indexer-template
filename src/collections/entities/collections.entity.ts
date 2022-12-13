@@ -86,6 +86,7 @@ export class Collections {
   bannerImageUrl?: string;
 
   @IsOptional()
+  @Field(() => CollectionsMeta, { nullable: true })
   @OneToOne(() => CollectionsMeta, {
     eager: true,
     cascade: true,

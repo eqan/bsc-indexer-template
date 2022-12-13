@@ -1,8 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column } from 'typeorm';
 
-@ObjectType('MetaContent')
-@InputType('MetaContentInput')
+@ObjectType()
+// @InputType('MetaContentInput')
 export class Content {
   @Field({ nullable: true })
   @Column('text', { nullable: true })
