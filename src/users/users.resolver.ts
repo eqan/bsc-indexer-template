@@ -1,11 +1,18 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
-  NestMiddleware,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Response } from 'express';
+import {
+  Args,
+  GqlExecutionContext,
+  Mutation,
+  Query,
+  Resolver,
+} from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateUserInput } from './dto/create-user.input';
@@ -18,9 +25,14 @@ import { UpdateUsersInput } from './dto/update-user.input';
 import { Users } from './entities/users.entity';
 import { UsersService } from './users.service';
 
+@Injectable()
 @Resolver()
 export class UsersResolver extends BaseProvider<Users> {
-  constructor(private readonly userService: UsersService) {
+  constructor(
+    @Inject(GqlExecutionContext)
+    private readonly gqlExecutionContext: GqlExecutionContext,
+    private readonly userService: UsersService,
+  ) {
     super();
   }
   /**
@@ -28,22 +40,50 @@ export class UsersResolver extends BaseProvider<Users> {
    * @param LoggedUserInput: message, signature, address
    * @returns access token
    */
-  @Mutation(() => LoggedUserOutput, { name: 'LoginUser' })
-  loginUser(
+  @Query(() => LoggedUserOutput, { name: 'LoginUser' })
+  async loginUser(
     @Args('LoginUserInput') loginUserInput: LoginUserInput,
   ): Promise<{ access_token: string }> {
     const token = this.userService.loginUser(loginUserInput);
-    // res.cookie('access_token', token);
-    // const ctx = this.gqlExecutionContext.getContext();
-    // const res = ctx.res;
-
-    // Set the access token in a cookie
+    // res.set(
+    //   'set-cookie',
+    //   'access_token=my-cookie-value; Max-Age=604800; HttpOnly; Secure',
+    // );
     // res.cookie('access_token', token, {
+    //   maxAge: 60 * 60 * 24 * 7, // 7 days
     //   httpOnly: true,
-    //   maxAge: 3600, // 1 hour
+    //   secure: true,
     // });
-    // res.cookie('access_token', token, { httpOnly: true });
+    // res.cookie('access_token', token);
+    // Set the access token in a cookie
+    // ctx.res.cookie('access_token', token);
+
+    // Check if the response has a 'set-cookie' property
+    // try {
+    // Get the 'set-cookie' property from the GraphQL execution context
+    const setCookie = this.gqlExecutionContext['set-cookie'];
+
+    // Check if the 'set-cookie' property exists
+    if (typeof setCookie !== 'undefined') {
+      // Print the first cookie in the array
+      console.log(setCookie[0]);
+    }
+    console.log(setCookie);
+    // const ctx = this.gqlExecutionContext.getContext();
+    // const res = ctx.response;
+    // if (res.hasOwnProperty('set-cookie')) {
+    //   // Get the 'set-cookie' property
+    //   const setCookie = res['set-cookie'];
+
+    //   // Print the first cookie in the array
+    //   console.log(setCookie[0]);
+    // }
+    // } catch (error) {
+    //   console.log(error);
+    // }
     return token;
+    // res.cookie('access_token', token, { httpOnly: true });
+    // return token;
   }
 
   /**
