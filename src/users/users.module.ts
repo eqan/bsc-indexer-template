@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
@@ -8,7 +9,7 @@ import { UsersService } from './users.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users]), forwardRef(() => AuthModule)],
-  providers: [UsersResolver, UsersService, AuthService],
+  providers: [UsersResolver, UsersService, AuthService, GqlExecutionContext],
   exports: [UsersService],
 })
 export class UsersModule {}
