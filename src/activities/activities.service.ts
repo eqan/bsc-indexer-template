@@ -52,6 +52,8 @@ export class ActivitiesService {
           relations: {
             BID: true,
             MINT: true,
+            TRANSFER: true,
+            BURN: true,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,

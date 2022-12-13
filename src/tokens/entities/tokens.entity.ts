@@ -103,6 +103,7 @@ export class Tokens extends BaseEntity {
   };
 
   @IsOptional()
+  // @Field(() => TokensMeta)
   @OneToOne(() => TokensMeta, {
     eager: true,
     cascade: true,

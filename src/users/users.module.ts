@@ -7,10 +7,7 @@ import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Users]),
-    forwardRef(() => AuthModule)
-  ],
+  imports: [TypeOrmModule.forFeature([Users]), forwardRef(() => AuthModule)],
   providers: [UsersResolver, UsersService, AuthService],
   exports: [UsersService],
 })

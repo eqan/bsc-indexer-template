@@ -1,4 +1,10 @@
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NestMiddleware,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
@@ -27,8 +33,16 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('LoginUserInput') loginUserInput: LoginUserInput,
   ): Promise<{ access_token: string }> {
     const token = this.userService.loginUser(loginUserInput);
-    //  response.headers.set('Authorization', 'Bearer ' + token);
-    //  return response;
+    // res.cookie('access_token', token);
+    // const ctx = this.gqlExecutionContext.getContext();
+    // const res = ctx.res;
+
+    // Set the access token in a cookie
+    // res.cookie('access_token', token, {
+    //   httpOnly: true,
+    //   maxAge: 3600, // 1 hour
+    // });
+    // res.cookie('access_token', token, { httpOnly: true });
     return token;
   }
 
