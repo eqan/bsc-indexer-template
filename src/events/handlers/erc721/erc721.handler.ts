@@ -75,8 +75,12 @@ export class ERC721Handler {
       const reverted = log?.removed || false;
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address;
-      //userId ===  to
-      // const owner = parsedLog.args['owner'].toLowerCase();
+      let owner = null;
+      try {
+        owner = parsedLog.args['owner'].toLowerCase();
+      } catch (error) {
+        owner = null;
+      }
       // console.log(log);
       const activityData = extractActivityData(
         tokenId,
@@ -89,7 +93,7 @@ export class ERC721Handler {
         reverted,
         to,
         from,
-        null,
+        owner,
         timestamp,
       );
       await this.activitiesService.create(activityData);

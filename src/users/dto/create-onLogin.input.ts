@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 
-
 @InputType()
 export class CreateUserOnLoginInput {
   @IsNotEmpty()
@@ -10,7 +9,7 @@ export class CreateUserOnLoginInput {
   userSignature: string;
 
   @IsNotEmpty()
-  @IsEthereumAddress({message: "User address should be valid"})
+  @IsEthereumAddress({ message: 'User address should be valid' })
   @Field()
   id: string;
 }

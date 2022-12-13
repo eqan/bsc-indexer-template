@@ -1,10 +1,13 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
-import { Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType('ActivityBurn')
-@InputType('ActivityBurnInput')
+@ObjectType()
+@Entity('ActivityBurn')
 export class ActivityBurn {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Field()
   @Column({
     type: 'varchar',
@@ -18,7 +21,6 @@ export class ActivityBurn {
     type: 'varchar',
     nullable: true,
   })
-  // @Column()
   value: string;
 
   @Field({ nullable: true })
@@ -38,7 +40,7 @@ export class ActivityBurn {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
+    // unique: true,
     nullable: true,
   })
   transactionHash: string;

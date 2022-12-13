@@ -1,9 +1,13 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Column } from 'typeorm';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Activity } from './activity.entity';
 
-@ObjectType('ActivityMint')
-@InputType('ActivityMintInput')
+@ObjectType()
+@Entity('ActivityMint')
 export class ActivityMint {
+  @PrimaryGeneratedColumn()
+  id: string;
+
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -35,7 +39,6 @@ export class ActivityMint {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
     nullable: true,
   })
   transactionHash?: string;
@@ -43,8 +46,10 @@ export class ActivityMint {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    unique: true,
     nullable: true,
   })
   itemId?: string;
+
+  @OneToOne(() => Activity, (activity) => activity.MINT)
+  activity: Activity;
 }

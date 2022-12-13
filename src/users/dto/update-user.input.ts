@@ -3,13 +3,14 @@ import {
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
-  IsString
+  IsString,
+  IsUrl,
 } from 'class-validator';
 
 @InputType()
 export class UpdateUsersInput {
   @IsNotEmpty()
-  @IsEthereumAddress({message: "User address should be valid"})
+  @IsEthereumAddress({ message: 'User address should be valid' })
   @Field()
   id: string;
 
@@ -34,12 +35,12 @@ export class UpdateUsersInput {
   shortBio: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   @Field()
   websiteUrl: string;
 
   @IsOptional()
-  @IsString()
+  @IsUrl()
   @Field()
   twitterUrl: string;
 }

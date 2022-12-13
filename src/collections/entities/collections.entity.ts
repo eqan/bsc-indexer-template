@@ -1,7 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
-import { Column, Entity, Index, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { CollectionType } from './enum/collection.type.enum';
 import { CollectionsMeta } from './nestedObjects/collections.meta.entity';
 
@@ -78,9 +86,14 @@ export class Collections {
   bannerImageUrl?: string;
 
   @IsOptional()
-  @Field(() => CollectionsMeta, { nullable: true, defaultValue: {} })
-  @Column({ nullable: true, type: 'jsonb' })
-  Meta: CollectionsMeta;
+  @Field(() => CollectionsMeta, { nullable: true })
+  @OneToOne(() => CollectionsMeta, {
+    eager: true,
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  Meta?: CollectionsMeta;
 
   @OneToMany(() => Tokens, (token) => token.tokenId)
   tokens: Tokens[];

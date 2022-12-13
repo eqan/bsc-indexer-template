@@ -11,7 +11,6 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
-import { generateSignature, verifyOrder } from './helper.orders';
 
 @Injectable()
 export class OrdersService {
@@ -52,7 +51,14 @@ export class OrdersService {
    */
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      const { orderId, maker, Make, take, salt, signature } = createOrdersInput;
+      const {
+        orderId,
+        maker,
+        Make,
+        Take: take,
+        salt,
+        signature,
+      } = createOrdersInput;
       const data = { orderId, maker, Make, take, salt };
       const verified = true;
       // const verified = verifyOrder(data, signature);
@@ -85,7 +91,9 @@ export class OrdersService {
         }),
         this.ordersRepo.count({
           where: {
-            orderId: rest.orderId,
+            orderId: rest?.orderId,
+            maker: rest?.maker,
+            taker: rest?.taker,
           },
         }),
       ]);

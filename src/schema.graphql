@@ -93,10 +93,10 @@ type Activity {
   cursor: String
   reverted: Boolean
   blockchainInfo: BlockchainInfo
-  MINT: ActivityMint
   BURN: ActivityBurn
   TRANSFER: ActivityTransfer
   BID: ActivityBid
+  MINT: ActivityMint
 }
 
 """
@@ -206,6 +206,12 @@ type GetAllAuctions {
   total: Int!
 }
 
+type MetadataAttribute {
+  key: String
+  value: String
+  format: String
+}
+
 type MetaContent {
   type: String
   url: String
@@ -241,36 +247,6 @@ type CreatorRoyalty {
   value: Int
 }
 
-type MetadataAttribute {
-  key: String
-  value: String
-  format: String
-}
-
-type MetadataContent {
-  fileName: String
-  url: String
-  representation: String
-  mimeType: String
-  size: Float
-  avaiable: Boolean
-  type: String
-  width: Float
-  height: Float
-}
-
-type MetaData {
-  name: String
-  description: String
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  rightsUri: String
-  attribute: [MetadataAttribute!]
-  content: MetadataContent
-}
-
 type Tokens {
   tokenId: String!
   collectionId: String
@@ -283,7 +259,43 @@ type Tokens {
   sellers: Float
   creator: CreatorRoyalty
   royalties: CreatorRoyalty
-  meta: MetaData
+  Meta: TokensMeta
+}
+
+type Content {
+  fileName: String
+  representation: String
+  mimeType: String
+  type: String
+  url: String
+  size: Float
+  available: Boolean
+  width: Float
+  height: Float
+}
+
+type TokensMeta {
+  name: String
+  description: String
+  Content: Content
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
+  attributes: [MetadataAttribute!]
+  rightsUri: String
+}
+
+type MetadataContent {
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  available: Boolean
+  type: String
+  width: Float
+  height: Float
 }
 
 type GetAllTokens {
@@ -322,7 +334,7 @@ type Orders {
   lastUpdatedAt: DateTime
   maker: String
   Make: Make
-  take: Make
+  Take: Make
   salt: String
   data: Data
   startedAt: DateTime
@@ -394,44 +406,6 @@ input MakeInput {
   type: MakeTypeInput!
 }
 
-input ActivityBidInput {
-  type: ActivityType!
-  hash: String
-  maker: String
-  price: Float
-  priceUsd: Float
-  take: MakeInput
-  make: MakeInput
-}
-
-input ActivityBurnInput {
-  tokenId: String!
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-}
-
-input ActivityMintInput {
-  tokenId: String
-  value: String
-  owner: String
-  contract: String
-  transactionHash: String
-  itemId: String
-}
-
-input ActivityTransferInput {
-  tokenId: String
-  value: String
-  from: String
-  owner: String
-  contract: String
-  transactionHash: String
-  purchase: Boolean
-  itemId: String
-}
-
 input ActivityMakeTypeInput {
   type: CollectionType!
   contract: String!
@@ -477,30 +451,21 @@ input SellInput {
   value: Float!
 }
 
+input AttributeInput {
+  key: String
+  value: String
+  format: String
+}
+
 input MetaContentInput {
   type: String
   url: String
   representation: String
 }
 
-input CollectionsMetaInput {
-  name: String
-  description: String
-  Content: MetaContentInput
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
-}
-
 input CreatorRoyaltyInput {
   account: [String!] = null
   value: Int
-}
-
-input AttributeInput {
-  key: String
-  value: String
-  format: String
 }
 
 input MetadataContentInput {
@@ -509,22 +474,10 @@ input MetadataContentInput {
   representation: String
   mimeType: String
   size: Float
-  avaiable: Boolean
+  available: Boolean
   type: String
   width: Float
   height: Float
-}
-
-input MetaDataInput {
-  name: String
-  description: String
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  rightsUri: String
-  attribute: [AttributeInput!]
-  content: MetadataContentInput
 }
 
 input CollectionMetaContentInput {
@@ -552,6 +505,7 @@ type Query {
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   GetUserDataByuserId(userId: String!): Users!
   GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
@@ -566,7 +520,7 @@ input FilterDto {
 }
 
 input FilterTokenDto {
-  page: Float
+  page: Int
   limit: Int
   tokenId: String
   contract: String
@@ -582,13 +536,19 @@ input FilterOrderDto {
 }
 
 input FilterActivityDto {
-  page: Float = 1
+  page: Int = 1
   limit: Int = 10
   id: String
   userId: String
   itemId: String
   collectionId: String
   type: ActivityType
+}
+
+input LoginUserInput {
+  id: String!
+  userSignature: String!
+  userMessage: String!
 }
 
 input FilterUserDto {
@@ -619,7 +579,6 @@ type Mutation {
   CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
-  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
   CreateUser(CreateUserInput: CreateUserInput!): Users!
   DeleteUser(DeleteUserInput: DeleteUsersInput!): Users
   UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
@@ -685,7 +644,7 @@ input CreateTokenInput {
   sellers: Float!
   creator: CreatorRoyaltyInput
   royalties: CreatorRoyaltyInput
-  meta: MetaDataInput
+  Meta: MetaDataInput
 }
 
 """Types of tokens"""
@@ -694,13 +653,25 @@ enum TokenType {
   BEP1155
 }
 
+input MetaDataInput {
+  name: String
+  description: String
+  tags: [String!] = []
+  genres: [String!] = []
+  originalMetaUri: String
+  externalUri: String
+  rightsUri: String
+  attributes: [AttributeInput!]
+  Content: MetadataContentInput
+}
+
 input UpdateTokensInput {
   tokenId: String!
   lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
-  meta: MetaDataInput
+  Meta: MetaDataInput
 }
 
 input DeleteTokensInput {
@@ -717,7 +688,7 @@ input CreateOrdersInput {
   lastUpdatedAt: DateTime!
   maker: String!
   Make: MakeInput!
-  take: MakeInput!
+  Take: MakeInput!
   salt: String!
   data: DataInput!
   startedAt: DateTime
@@ -753,7 +724,7 @@ input CreateSignatureInput {
   orderId: String!
   maker: String!
   Make: MakeInput!
-  take: MakeInput!
+  Take: MakeInput!
   salt: String!
 }
 
@@ -816,12 +787,6 @@ input CreateActivityBurnInput {
 
 input DeleteActivityInput {
   id: [String!]!
-}
-
-input LoginUserInput {
-  id: String!
-  userSignature: String!
-  userMessage: String!
 }
 
 input CreateUserInput {

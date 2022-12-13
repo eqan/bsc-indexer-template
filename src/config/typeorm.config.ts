@@ -3,6 +3,7 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { ActivityBid } from 'src/activities/entities/activity.bid.entity';
 import { Activity } from 'src/activities/entities/activity.entity';
 import { Auction } from 'src/auctions/entities/auction.entity';
 import { Collections } from 'src/collections/entities/collections.entity';
@@ -20,6 +21,7 @@ export default class TypeOrmConfig {
       password: config.get('POSTGRES_PASSWORD'),
       database: config.get('POSTGRES_DB'),
       entities: [Tokens, Collections, Orders, Activity, Users, Auction],
+      autoLoadEntities: true,
       synchronize: true,
       // dropSchema: true,
     };

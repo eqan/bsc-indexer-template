@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -22,6 +23,7 @@ export class CreateOrdersInput {
   orderId: string;
 
   @IsNotEmpty()
+  @IsNumber()
   @Field()
   fill: number;
 
@@ -31,6 +33,7 @@ export class CreateOrdersInput {
   status: OrderStatus;
 
   @IsNotEmpty()
+  @IsNumber()
   @Field()
   makeStock: number;
 
@@ -39,18 +42,18 @@ export class CreateOrdersInput {
   @Field()
   cancelled: boolean;
 
-  @IsDate()
   @IsNotEmpty()
+  @IsDate()
   @Field()
   createdAt: Date;
 
-  @IsDate()
   @IsNotEmpty()
+  @IsDate()
   @Field()
   lastUpdatedAt: Date;
 
-  @IsEthereumAddress()
   @IsNotEmpty()
+  @IsEthereumAddress()
   @Field()
   maker: string;
 
@@ -62,7 +65,7 @@ export class CreateOrdersInput {
   @ValidateNested()
   @Type(() => Make)
   @Field()
-  take: Make;
+  Take: Make;
 
   @IsString()
   @IsNotEmpty()
@@ -79,36 +82,38 @@ export class CreateOrdersInput {
   @Field({ nullable: true })
   startedAt?: Date;
 
-  @IsDate()
   @IsOptional()
+  @IsDate()
   @Field({ nullable: true })
   endedAt?: Date;
 
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
-  @IsDate()
   @IsOptional()
+  @IsDate()
   @Field({ nullable: true })
   dbUpdatedAt?: Date;
 
   @IsOptional()
-  @IsOptional()
+  @IsNumber()
   @Field({ nullable: true })
   makePrice?: number;
 
   @IsOptional()
-  @IsOptional()
+  @IsNumber()
   @Field({ nullable: true })
   takePrice?: number;
 
   @IsOptional()
+  @IsNumber()
   @Field({ nullable: true })
   makePriceUsed?: number;
 
   @IsOptional()
+  @IsNumber()
   @Field({ nullable: true })
   takePriceUsed?: number;
 

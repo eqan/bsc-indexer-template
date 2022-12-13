@@ -1,6 +1,13 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
+import { type } from 'os';
 import { CollectionMetaContent } from './collection.meta.content.dto';
 
 @ObjectType('CollectionMeta')
@@ -22,7 +29,7 @@ export class CollectionMeta {
   externalLink?: string;
 
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   sellerFeeBasisPoints?: number;
 
   @IsOptional()

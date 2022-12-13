@@ -86,7 +86,7 @@ export class Orders {
   @Column({
     type: 'jsonb',
   })
-  take: {
+  Take: {
     type: {
       type: OrderType;
       contract: string;

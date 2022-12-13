@@ -40,6 +40,7 @@ export class FetchCollectionsProcessor {
             collectionId,
             collectionType,
           );
+          // console.log(response);
           await this.collectionsService.create(response);
         }
 
@@ -53,7 +54,13 @@ export class FetchCollectionsProcessor {
               deleted,
             });
 
-            await this.tokensService.create(tokenMeta);
+            // console.log(tokenMeta.Meta);
+            if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
+              tokenMeta.Meta = null;
+            }
+
+            const result = await this.tokensService.create(tokenMeta);
+            // console.log(result);
           } catch (err) {
             console.log(err, collectionId);
             throw err;
