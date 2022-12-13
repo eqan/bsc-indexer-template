@@ -26,17 +26,14 @@ type Make {
   type: MakeType!
 }
 
-type Activity {
-  id: String
-  userId: String
-  itemId: String
-  collectionId: String
-  type: ActivityType
-  date: DateTime
-  lastUpdatedAt: DateTime
-  cursor: String
-  reverted: Boolean
-  blockchainInfo: BlockchainInfo
+type ActivityBid {
+  type: ActivityType!
+  hash: String
+  maker: String
+  price: Float
+  priceUsd: Float
+  take: Make
+  make: Make
 }
 
 """Types of activities"""
@@ -55,6 +52,51 @@ enum ActivityType {
   AUCTION_FINISHED
   AUCTION_STARTED
   AUCTION_ENDED
+}
+
+type ActivityBurn {
+  tokenId: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+}
+
+type ActivityMint {
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
+}
+
+type ActivityTransfer {
+  tokenId: String
+  value: String
+  from: String
+  owner: String
+  contract: String
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
+}
+
+type Activity {
+  id: String
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType
+  date: DateTime
+  lastUpdatedAt: DateTime
+  cursor: String
+  reverted: Boolean
+  blockchainInfo: BlockchainInfo
+  BURN: ActivityBurn
+  TRANSFER: ActivityTransfer
+  BID: ActivityBid
+  MINT: ActivityMint
 }
 
 """
@@ -170,6 +212,21 @@ type MetadataAttribute {
   format: String
 }
 
+type MetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type CollectionsMeta {
+  name: String
+  description: String
+  Content: MetaContent
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+}
+
 type Collections {
   id: String!
   name: String
@@ -181,6 +238,7 @@ type Collections {
   discordUrl: String
   description: String
   bannerImageUrl: String
+  Meta: CollectionsMeta
   tokens: [Tokens!]
 }
 
@@ -201,6 +259,31 @@ type Tokens {
   sellers: Float
   creator: CreatorRoyalty
   royalties: CreatorRoyalty
+  Meta: TokensMeta
+}
+
+type Content {
+  fileName: String
+  representation: String
+  mimeType: String
+  type: String
+  url: String
+  size: Float
+  available: String
+  width: Float
+  height: Float
+}
+
+type TokensMeta {
+  name: String
+  description: String
+  Content: Content
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
+  attributes: [MetadataAttribute!]
+  rightsUri: String
 }
 
 type MetadataContent {
@@ -372,6 +455,12 @@ input AttributeInput {
   key: String
   value: String
   format: String
+}
+
+input MetaContentInput {
+  type: String
+  url: String
+  representation: String
 }
 
 input CreatorRoyaltyInput {

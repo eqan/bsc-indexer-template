@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@ObjectType()
 @Entity('ActivityTransfer')
 export class ActivityTransfer {
   @PrimaryGeneratedColumn()

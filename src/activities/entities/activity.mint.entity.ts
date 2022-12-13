@@ -1,7 +1,8 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Activity } from './activity.entity';
 
+@ObjectType()
 @Entity('ActivityMint')
 export class ActivityMint {
   @PrimaryGeneratedColumn()
