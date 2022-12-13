@@ -29,8 +29,8 @@ export class Content {
   size?: number;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  available?: string;
+  @Column('bool', { nullable: true })
+  available?: boolean;
 
   @Field({ nullable: true })
   @Column('int', { nullable: true })
