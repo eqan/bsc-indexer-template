@@ -4,7 +4,7 @@ import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { MetadataAttribute } from './meta.attributes.dto';
 import { MetadataContent } from './meta.content.dto';
 
-@ObjectType('MetaData')
+@ObjectType()
 @InputType('MetaDataInput')
 export class MetaData {
   @IsOptional()

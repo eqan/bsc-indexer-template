@@ -269,7 +269,7 @@ type Content {
   type: String
   url: String
   size: Float
-  available: String
+  available: Boolean
   width: Float
   height: Float
 }
@@ -292,7 +292,7 @@ type MetadataContent {
   representation: String
   mimeType: String
   size: Float
-  avaiable: Boolean
+  available: Boolean
   type: String
   width: Float
   height: Float
@@ -474,7 +474,7 @@ input MetadataContentInput {
   representation: String
   mimeType: String
   size: Float
-  avaiable: Boolean
+  available: Boolean
   type: String
   width: Float
   height: Float
