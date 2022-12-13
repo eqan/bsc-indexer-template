@@ -9,4 +9,7 @@ export class FilterDto extends PaginationParam {
 
   @Field({ nullable: true })
   name?: string;
+
+  @Field({ nullable: true })
+  owner?: string;
 }

@@ -90,6 +90,7 @@ export class CollectionsService {
           where: {
             id: rest?.id,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+            owner: rest?.owner ? ILike(`%${rest?.owner}%`) : undefined,
           },
           relations: { Meta: true },
           skip: (page - 1) * limit || 0,
