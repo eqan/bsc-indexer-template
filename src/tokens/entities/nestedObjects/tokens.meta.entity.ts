@@ -5,9 +5,10 @@ import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Tokens } from '../tokens.entity';
 import { Content } from './tokens.meta.content.entity';
 
-@ObjectType()
+@ObjectType('Meta')
 @Entity('TokensMeta')
 export class TokensMeta {
+  @Field()
   @PrimaryGeneratedColumn()
   id: string;
 

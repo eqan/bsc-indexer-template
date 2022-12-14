@@ -134,9 +134,7 @@ export class TokensService {
    */
   async update(updateTokensInput: UpdateTokensInput): Promise<Tokens> {
     try {
-      const { tokenId, ...rest } = updateTokensInput;
-      await this.tokensRepo.update({ tokenId }, rest);
-      return await this.show(tokenId);
+      return await this.tokensRepo.save(updateTokensInput);
     } catch (error) {
       throw new BadRequestException(error);
     }

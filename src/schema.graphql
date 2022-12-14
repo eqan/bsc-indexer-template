@@ -259,7 +259,7 @@ type Tokens {
   sellers: Float
   creator: CreatorRoyalty
   royalties: CreatorRoyalty
-  Meta: TokensMeta
+  Meta: Meta
 }
 
 type Content {
@@ -274,7 +274,8 @@ type Content {
   height: Float
 }
 
-type TokensMeta {
+type Meta {
+  id: String!
   name: String
   description: String
   Content: Content

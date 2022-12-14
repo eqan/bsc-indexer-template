@@ -149,8 +149,7 @@ export class CollectionsService {
       const { owner } = await this.show(id);
       if (owner != rest.owner)
         throw new UnauthorizedException('The user is not the owner');
-      await this.collectionsRepo.update({ id }, rest);
-      return this.show(id);
+      return await this.collectionsRepo.save(updateCollectionsInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
