@@ -139,7 +139,9 @@ export class OrdersService {
         }),
         this.ordersRepo.count({
           where: {
-            orderId: rest.orderId,
+            orderId: rest?.orderId,
+            maker: rest?.maker,
+            taker: rest?.taker,
           },
         }),
       ]);

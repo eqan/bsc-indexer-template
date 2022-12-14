@@ -19,6 +19,7 @@ describe('All Environment Variables Exist', () => {
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_SECRET',
     'CLOUDINARY_API_KEY',
+    'REDIS_URL',
   ])('%s exists in environment', (variable) => {
     expect(process.env[variable]).not.toBeFalsy();
   });

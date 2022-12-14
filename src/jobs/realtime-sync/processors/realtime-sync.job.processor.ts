@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Job } from 'bull';
@@ -14,10 +15,11 @@ export class RealtimeSyncProcessor {
   constructor(
     private readonly syncEventsService: SyncEventsService,
     private readonly midwaySyncService: MidwaySyncService,
+    private readonly config: ConfigService,
   ) {}
 
   private readonly logger = new Logger(QueueType.REALTIME_QUEUE);
-  redis = new Redis();
+  redis = new Redis(this.config.get('REDIS_URL'));
   QUEUE_NAME = QueueType.REALTIME_QUEUE;
 
   @Process()

@@ -11,6 +11,7 @@ import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
+import { MetaData } from './dto/nestedObjectDto/meta.dto';
 
 @Injectable()
 export class TokensService {
@@ -28,12 +29,14 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
+      // console.log(restParams);
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
 
       token.collection = collection;
       token.tokenId = collectionId + ':' + token.tokenId;
 
+      // console.log(token);
       await token.save();
       delete token.collection;
       return token;
@@ -79,16 +82,18 @@ export class TokensService {
           order: {
             mintedAt: 'ASC' || 'DESC',
           },
+          relations: { Meta: true },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
         this.tokensRepo.count({
           where: {
             tokenId: rest?.tokenId,
+            contract: rest?.contract,
+            owner: rest?.owner,
           },
         }),
       ]);
-
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);
@@ -162,7 +167,7 @@ export class TokensService {
    */
   async resetMetaData(tokenId: string): Promise<void> {
     try {
-      await this.tokensRepo.update(tokenId, { meta: null });
+      await this.tokensRepo.update(tokenId, { Meta: null });
       return null;
     } catch (error) {
       throw new NotFoundException(error);

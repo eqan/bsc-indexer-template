@@ -7,6 +7,7 @@ import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
 import { QueueType } from '../enums/jobs.enums';
 import { getNetworkSettings } from 'src/config/network.config';
+import { ConfigService } from '@nestjs/config';
 
 /**
  * BackfillSync Job
@@ -16,10 +17,11 @@ import { getNetworkSettings } from 'src/config/network.config';
 @Injectable()
 export class BackfillSyncService {
   constructor(
+    private config: ConfigService,
     private schedulerRegistry: SchedulerRegistry,
     @InjectQueue(QueueType.BACKFILL_QUEUE) private backfillSyncEvents: Queue,
   ) {}
-  private readonly redis = new Redis();
+  private readonly redis = new Redis(this.config.get('REDIS_URL'));
 
   private readonly logger = new Logger(QueueType.BACKFILL_QUEUE);
   private readonly seconds = '*/5';

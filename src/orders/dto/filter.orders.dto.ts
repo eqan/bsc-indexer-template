@@ -1,9 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEthereumAddress, IsOptional } from 'class-validator';
+import { IsEthereumAddress, IsOptional, IsString } from 'class-validator';
 import { PaginationParam } from './pagination.dto';
 
 @InputType()
 export class FilterOrderDto extends PaginationParam {
+  @IsOptional()
+  @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
   @Field({ nullable: true, defaultValue: undefined })
   orderId?: string;
 

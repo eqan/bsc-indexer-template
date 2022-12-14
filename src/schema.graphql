@@ -1,0 +1,866 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BlockchainInfo {
+  transactionHash: String
+  blockHash: String
+  blockNumber: Float
+  logIndex: Float
+}
+
+type MakeType {
+  type: OrderTypeEnum!
+  contract: String!
+  tokenId: Int!
+}
+
+enum OrderTypeEnum {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type Make {
+  value: Int!
+  assetType: MakeType!
+}
+
+type ActivityBid {
+  type: ActivityType!
+  hash: String
+  maker: String
+  price: Float
+  priceUsd: Float
+  take: Make
+  make: Make
+}
+
+"""Types of activities"""
+enum ActivityType {
+  TRANSFER
+  MINT
+  BURN
+  BID
+  LIST
+  SELL
+  CANCEL_LIST
+  CANCEL_BID
+  AUCTION_BID
+  AUCTION_CREATED
+  AUCTION_CANCEL
+  AUCTION_FINISHED
+  AUCTION_STARTED
+  AUCTION_ENDED
+}
+
+type ActivityBurn {
+  tokenId: String!
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+}
+
+type ActivityMint {
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+  itemId: String
+}
+
+type ActivityTransfer {
+  tokenId: String
+  value: String
+  from: String
+  owner: String
+  contract: String
+  transactionHash: String
+  purchase: Boolean
+  itemId: String
+}
+
+type Activity {
+  id: String
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType
+  date: DateTime
+  lastUpdatedAt: DateTime
+  cursor: String
+  reverted: Boolean
+  blockchainInfo: BlockchainInfo
+  BURN: ActivityBurn
+  TRANSFER: ActivityTransfer
+  BID: ActivityBid
+  MINT: ActivityMint
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ActivityMakeType {
+  type: CollectionType!
+  contract: String!
+}
+
+"""Types of tokens"""
+enum CollectionType {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type GetAllActivities {
+  items: [Activity!]!
+  total: Int!
+}
+
+type Payouts {
+  account: String!
+  value: Float!
+}
+
+type AuctionData {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+"""Data type of Auction i.e. RARIBLE_AUCTION_V1_DATA_V1"""
+enum AuctionDataType {
+  RARIBLE_AUCTION_V1_DATA_V1
+}
+
+type LastBidData {
+  dataType: AuctionDataType!
+  originFees: Payouts!
+  payouts: Payouts!
+}
+
+type LastBid {
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidData
+}
+
+"""Status of Auctions i.e. Active,InActive,Pending"""
+enum AuctionStatus {
+  ACTIVE
+  IN_ACTIVE
+  PENDING
+}
+
+"""Type of the auction i.e. BEP20,BEP721,BEP1155"""
+enum AuctionType {
+  BEP20
+  BEP721
+  BEP1155
+}
+
+type SellType {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+type Sell {
+  type: SellType!
+  value: Float!
+}
+
+type Auction {
+  auctionId: Float
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: Sell
+  buy: SellType
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBid
+  data: AuctionData
+}
+
+type GetAllAuctions {
+  items: [Auction!]!
+  total: Int!
+}
+
+type MetadataAttribute {
+  key: String
+  value: String
+  format: String
+}
+
+type MetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type CollectionsMeta {
+  name: String
+  description: String
+  Content: MetaContent
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+}
+
+type Collections {
+  id: String!
+  name: String
+  type: String!
+  parent: String
+  symbol: String
+  owner: String
+  twitterUrl: String
+  discordUrl: String
+  description: String
+  bannerImageUrl: String
+  Meta: CollectionsMeta
+  tokens: [Tokens!]
+}
+
+type CreatorRoyalty {
+  account: [String!]
+  value: Int
+}
+
+type Tokens {
+  tokenId: String!
+  collectionId: String
+  contract: String
+  type: String
+  owner: String
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorRoyalty
+  royalties: CreatorRoyalty
+  Meta: TokensMeta
+}
+
+type Content {
+  fileName: String
+  representation: String
+  mimeType: String
+  type: String
+  url: String
+  size: Float
+  available: Boolean
+  width: Float
+  height: Float
+}
+
+type TokensMeta {
+  name: String
+  description: String
+  Content: Content
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
+  attributes: [MetadataAttribute!]
+  rightsUri: String
+}
+
+type MetadataContent {
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  available: Boolean
+  type: String
+  width: Float
+  height: Float
+}
+
+type GetAllTokens {
+  items: [Tokens!]!
+  total: Float!
+}
+
+type CollectionMetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type GetAllCollections {
+  items: [Collections!]!
+  total: Int!
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
+"""A simple Asset Parser"""
+scalar ASSET_SCALAR
+
+type Orders {
+  orderId: String!
+  fill: Float!
+  kind: String
+  type: String
+  status: String
+  makeStock: Float
+  cancelled: Boolean
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  maker: String
+  make: Asset!
+  take: Asset
+  salt: String
+  data: DATA_SCALAR!
+  start: DateTime
+  end: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String
+  taker: String
+}
+
+"""A simple Data Parser"""
+scalar DATA_SCALAR
+
+type Users {
+  id: String!
+  userSignature: String
+  name: String
+  userName: String
+  shortBio: String
+  websiteUrl: String
+  twitterUrl: String
+  type: String
+}
+
+type CronType {
+  isDone: Boolean!
+}
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
+type ReturnRefreshMeta {
+  collection: Collections!
+  token: Tokens!
+}
+
+type GetAllUsers {
+  items: [Users!]!
+  total: Int!
+}
+
+type LoggedUserOutput {
+  """Generated access_token of the user"""
+  access_token: String!
+}
+
+input BlockchainInfoInput {
+  transactionHash: String
+  blockHash: String
+  blockNumber: Float
+  logIndex: Float
+}
+
+input MakeTypeInput {
+  type: OrderTypeEnum!
+  contract: String!
+  tokenId: Int!
+}
+
+input MakeInput {
+  value: Int!
+  assetType: MakeTypeInput!
+}
+
+input ActivityMakeTypeInput {
+  type: CollectionType!
+  contract: String!
+}
+
+input PayoutsInput {
+  account: String!
+  value: Float!
+}
+
+input AuctionDataInput {
+  dataType: AuctionDataType!
+  startTime: DateTime!
+  duration: Float!
+  buyOutPrice: Float!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidDataInput {
+  dataType: AuctionDataType!
+  originFees: PayoutsInput!
+  payouts: PayoutsInput!
+}
+
+input LastBidInput {
+  buyer: String
+  amount: Float
+  date: DateTime
+  status: AuctionStatus
+  type: AuctionType
+  data: LastBidDataInput
+}
+
+input SellTypeInput {
+  type: AuctionType!
+  contract: String!
+  tokenId: String!
+}
+
+input SellInput {
+  type: SellTypeInput!
+  value: Float!
+}
+
+input AttributeInput {
+  key: String
+  value: String
+  format: String
+}
+
+input MetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
+input CreatorRoyaltyInput {
+  account: [String!] = null
+  value: Int
+}
+
+input MetadataContentInput {
+  fileName: String
+  url: String
+  representation: String
+  mimeType: String
+  size: Float
+  available: Boolean
+  type: String
+  width: Float
+  height: Float
+}
+
+input CollectionMetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
+input AssetInput {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
+type Query {
+  GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
+  GetCollectionById(collectionId: String!): Collections!
+  GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
+  GetTokenById(tokenId: String!): Tokens!
+  GetOrderById(orderId: String!): Orders!
+  GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
+  GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
+  GetActivityById(GetActivityByIdInput: String!): Activity!
+  LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
+  GetUserDataByuserId(userId: String!): Users!
+  GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
+  GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
+  GetAuctionById(GetAuctionById: Float!): Auction!
+}
+
+input FilterDto {
+  page: Float
+  limit: Float
+  id: String
+  name: String
+  owner: String
+}
+
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  tokenId: String
+  contract: String
+  owner: String
+}
+
+input FilterOrderDto {
+  page: Float
+  limit: Float
+  orderId: String
+  maker: String
+  taker: String
+}
+
+input FilterActivityDto {
+  page: Int = 1
+  limit: Int = 10
+  id: String
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType
+}
+
+input LoginUserInput {
+  id: String!
+  userSignature: String!
+  userMessage: String!
+}
+
+input FilterUserDto {
+  page: Float
+  limit: Float
+  id: String
+}
+
+input FilterAuctionDto {
+  page: Float
+  limit: Float
+  auctionId: Float
+  contract: String
+  seller: String
+}
+
+type Mutation {
+  CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
+  UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
+  DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+  CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
+  UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
+  DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
+  ResetMetaDataofTokens(ResetMetaData: String!): Tokens
+  CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
+  DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
+  UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
+  CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
+  DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
+  CreateUser(CreateUserInput: CreateUserInput!): Users!
+  DeleteUser(DeleteUserInput: DeleteUsersInput!): Users
+  UpdateUser(UpdateUserInput: UpdateUsersInput!): Users!
+  CreateAuction(createAuctionInput: CreateAuctionInput!): Auction!
+  UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
+  DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
+  RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
+  StopRealTimeCron: CronType
+  StartRealTimeCron: CronType
+  StopBackFillCron: CronType
+  StartBackFillCron: CronType
+}
+
+input CreateCollectionsInput {
+  id: String!
+  name: String!
+  type: CollectionType!
+  parent: String
+  symbol: String
+  owner: String!
+  twitterUrl: String
+  discordUrl: String
+  description: String
+  Meta: CollectionMetaInput
+}
+
+input CollectionMetaInput {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  Content: CollectionMetaContentInput
+}
+
+input UpdateCollectionsInput {
+  id: String!
+  bannerImageUrl: String
+  name: String
+  type: CollectionType
+  parent: String
+  symbol: String
+  owner: String!
+  discordUrl: String
+  twitterUrl: String
+  description: String
+  Meta: CollectionMetaInput
+}
+
+input DeleteCollectionsInput {
+  id: [String!]!
+}
+
+input CreateTokenInput {
+  tokenId: String!
+  collectionId: String!
+  contract: String!
+  type: TokenType!
+  owner: String
+  mintedAt: DateTime
+  lastUpdatedAt: DateTime
+  deleted: Boolean!
+  sellers: Float!
+  creator: CreatorRoyaltyInput
+  royalties: CreatorRoyaltyInput
+  Meta: MetaDataInput
+}
+
+"""Types of tokens"""
+enum TokenType {
+  BEP721
+  BEP1155
+}
+
+input MetaDataInput {
+  name: String
+  description: String
+  tags: [String!] = []
+  genres: [String!] = []
+  originalMetaUri: String
+  externalUri: String
+  rightsUri: String
+  attributes: [AttributeInput!]
+  Content: MetadataContentInput
+}
+
+input UpdateTokensInput {
+  tokenId: String!
+  lastUpdatedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorRoyaltyInput
+  Meta: MetaDataInput
+}
+
+input DeleteTokensInput {
+  id: [String!]!
+}
+
+input CreateOrdersInput {
+  orderId: String!
+  fill: Float!
+  type: ORDER_TYPES!
+  kind: OrderKind!
+  status: OrderStatus!
+  makeStock: Float!
+  cancelled: Boolean!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  maker: String!
+  make: AssetInput!
+  take: AssetInput!
+  salt: String!
+  data: DATA_SCALAR!
+  start: DateTime
+  end: DateTime
+  optionalRoyalties: Boolean
+  dbUpdatedAt: DateTime
+  makePrice: Float
+  takePrice: Float
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String!
+  taker: String
+}
+
+enum ORDER_TYPES {
+  V1
+  V2
+}
+
+enum OrderKind {
+  SINGLE_TOKEN
+  CONTRACT_WIDE
+}
+
+enum OrderStatus {
+  Active
+  Filled
+  Historical
+  InActive
+  Cancelled
+}
+
+input DeleteOrderInput {
+  id: [String!]!
+}
+
+input UpdateOrderStatus {
+  orderId: String!
+  status: OrderStatus!
+}
+
+input CreateActivityInput {
+  id: String!
+  userId: String
+  itemId: String
+  collectionId: String
+  type: ActivityType!
+  date: DateTime!
+  lastUpdatedAt: DateTime!
+  cursor: String!
+  reverted: Boolean!
+  blockchainInfo: BlockchainInfoInput
+  MINT: CreateActivityMintInput
+  TRANSFER: CreateActivityTransferInput
+  BID: CreateBidActivityInput
+  BURN: CreateActivityBurnInput
+}
+
+input CreateActivityMintInput {
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  itemId: String
+  transactionHash: String
+}
+
+input CreateActivityTransferInput {
+  tokenId: String
+  value: String
+  from: String
+  owner: String
+  contract: String
+  itemId: String
+  purchase: Boolean
+  transactionHash: String
+}
+
+input CreateBidActivityInput {
+  make: ActivityMakeInput
+  take: ActivityMakeInput
+  price: Float
+  priceUsd: Float
+}
+
+input ActivityMakeInput {
+  value: Int!
+  type: ActivityMakeTypeInput!
+}
+
+input CreateActivityBurnInput {
+  tokenId: String
+  value: String
+  owner: String
+  contract: String
+  transactionHash: String
+}
+
+input DeleteActivityInput {
+  id: [String!]!
+}
+
+input CreateUserInput {
+  userSignature: String!
+  id: String!
+  type: UserTypeEnum!
+}
+
+enum UserTypeEnum {
+  ADMIN
+  REGULARUSER
+}
+
+input DeleteUsersInput {
+  id: [String!]
+}
+
+input UpdateUsersInput {
+  id: String!
+  userSignature: String!
+  userName: String!
+  name: String!
+  shortBio: String!
+  websiteUrl: String!
+  twitterUrl: String!
+}
+
+input CreateAuctionInput {
+  auctionId: Float!
+  contract: String!
+  seller: String!
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
+  endTime: DateTime!
+  minimalStep: Float!
+  minimalPrice: Float!
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime!
+  buyPrice: Float!
+  buyPriceUsd: Float!
+  status: AuctionStatus
+  ongoing: Boolean!
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
+}
+
+input UpdateAuctionStatusInput {
+  auctionId: Float!
+  contract: String
+  seller: String
+  type: AuctionType
+  sell: SellInput
+  buy: SellTypeInput
+  endTime: DateTime
+  minimalStep: Float
+  minimalPrice: Float
+  createdAt: DateTime
+  lastUpdatedAt: DateTime
+  buyPrice: Float
+  buyPriceUsd: Float
+  status: AuctionStatus!
+  ongoing: Boolean
+  hash: String
+  lastBid: LastBidInput
+  data: AuctionDataInput
+}
+
+input DeleteAuctionsInput {
+  id: [Int!]!
+}
+
+input RefreshMetadataInput {
+  collectionId: String!
+  tokenId: String!
+}

@@ -58,6 +58,7 @@ export class CreateCollectionsInput {
   discordUrl: string;
 
   @IsOptional()
+  @IsString()
   @Field({
     nullable: true,
   })
