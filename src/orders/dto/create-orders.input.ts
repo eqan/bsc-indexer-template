@@ -88,15 +88,15 @@ export class CreateOrdersInput {
   @Field(() => CustomDataScalar)
   data: JSON;
 
-  @IsDate()
   @IsOptional()
+  @IsNumber()
   @Field({ nullable: true })
-  start?: Date;
+  start?: number;
 
   @IsOptional()
-  @IsDate()
+  @IsNumber()
   @Field({ nullable: true })
-  end?: Date;
+  end?: number;
 
   @IsOptional()
   @IsBoolean()

@@ -338,8 +338,8 @@ type Orders {
   take: Asset
   salt: String
   data: DATA_SCALAR!
-  start: DateTime
-  end: DateTime
+  start: Float
+  end: Float
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
@@ -689,8 +689,8 @@ input CreateOrdersInput {
   take: AssetInput!
   salt: String!
   data: DATA_SCALAR!
-  start: DateTime
-  end: DateTime
+  start: Float
+  end: Float
   optionalRoyalties: Boolean
   dbUpdatedAt: DateTime
   makePrice: Float
