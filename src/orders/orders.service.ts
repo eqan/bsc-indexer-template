@@ -100,10 +100,8 @@ export class OrdersService {
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
         console.log(createOrdersInput, 'order logged');
-        const verified = this.ordersHelpers.checkSignature(
-          createOrdersInput as any,
-        );
-        console.log(verified, 'verified');
+        this.ordersHelpers.checkSignature(createOrdersInput as any);
+        // console.log(verified, 'verified');
         // const verified = verifyOrder(
         //   createOrdersInput,
         //   this.rpcProvider.baseProvider,
