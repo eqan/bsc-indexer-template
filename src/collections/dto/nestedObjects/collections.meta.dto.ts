@@ -1,13 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import {
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-  ValidateNested,
-} from 'class-validator';
-import { type } from 'os';
+import { IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { CollectionMetaContent } from './collection.meta.content.dto';
 
 @ObjectType('CollectionMeta')

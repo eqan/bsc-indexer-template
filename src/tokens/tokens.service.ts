@@ -11,7 +11,6 @@ import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
-import { MetaData } from './dto/nestedObjectDto/meta.dto';
 
 @Injectable()
 export class TokensService {
