@@ -1,5 +1,5 @@
-import { verifyTypedData } from '@ethersproject/wallet';
 import { Injectable } from '@nestjs/common';
+import { utils } from 'ethers/lib';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { lc } from 'src/common/utils.common';
 import * as Addresses from '../constants/orders.constants.addresses';
@@ -16,7 +16,7 @@ export class OrdersHelpers {
     name: 'Exchange',
     version: '2',
     chainId,
-    verifyingContract: Addresses.Exchange[this.chainId],
+    verifyingContract: Addresses.Exchange[chainId],
   });
 
   toRawOrder = (order: Types.Order): any => {
@@ -45,12 +45,14 @@ export class OrdersHelpers {
     //   value: order.take.value,
     // };
 
-    // const orderMade = { ...order };
     const message = this.toRawOrder(order);
-    const domain = this.EIP712_DOMAIN(this.chainId);
+    // console.log(message, 'message after encode');
+    // TODO: Change hardcoded testnet chain id to original chainId while deploying
+    const domain = this.EIP712_DOMAIN(5);
+    // console.log(domain, 'domain logged');
     // console.log(domain, 'domain');
     // console.log(message, 'answered logged');
-    const signer = verifyTypedData(
+    const signer = utils.verifyTypedData(
       domain,
       Types.EIP712_TYPES,
       message,

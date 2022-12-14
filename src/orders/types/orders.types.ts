@@ -4,6 +4,12 @@ import {
 } from '../constants/orders.constants.order-types';
 
 export const EIP712_TYPES = {
+  // EIP712Domain: [
+  //   { type: 'string', name: 'name' },
+  //   { type: 'string', name: 'version' },
+  //   { type: 'uint256', name: 'chainId' },
+  //   { type: 'address', name: 'verifyingContract' },
+  // ],
   AssetType: [
     { name: 'assetClass', type: 'bytes4' },
     { name: 'data', type: 'bytes' },
