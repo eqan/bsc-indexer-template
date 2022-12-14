@@ -1,26 +1,8 @@
 import { verifyTypedData } from '@ethersproject/wallet';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { EIP712Domain } from '@rarible/ethereum-api-client/build/index';
-import { Asset } from '@rarible/ethereum-api-client/build/models/Asset';
-import {
-  EIP712_DOMAIN_TEMPLATE,
-  EIP712_ORDER_TYPES,
-} from '@rarible/protocol-ethereum-sdk/build/order/eip712';
-import { orderToStruct } from '@rarible/protocol-ethereum-sdk/build/order/sign-order';
-import { SimpleRaribleV2Order } from '@rarible/protocol-ethereum-sdk/build/order/types';
-import { Address, toAddress, ZERO_ADDRESS } from '@rarible/types/build/address';
-import { toBigNumber } from '@rarible/types/build/big-number';
-import { toWord } from '@rarible/types/build/word';
-import { CreateOrdersInput } from '../dto/create-orders.input';
-import {
-  AssetType,
-  Erc20AssetType,
-} from '@rarible/ethereum-api-client/build/models/AssetType';
-import { OrderRaribleV2DataV1 } from '@rarible/ethereum-api-client/build/models/OrderData';
-import * as web3Provider from '@rarible/ethers-ethereum';
+import { Injectable } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import * as Addresses from '../constants/orders.constants.addresses';
 import { lc } from 'src/common/utils.common';
+import * as Addresses from '../constants/orders.constants.addresses';
 import * as Types from '../types/orders.types';
 import { encodeForMatchOrders } from './orders.helpers.encode-order';
 
@@ -34,7 +16,7 @@ export class OrdersHelpers {
     name: 'Exchange',
     version: '2',
     chainId,
-    verifyingContract: Addresses.Exchange[chainId],
+    verifyingContract: Addresses.Exchange[this.chainId],
   });
 
   toRawOrder = (order: Types.Order): any => {
@@ -42,163 +24,190 @@ export class OrdersHelpers {
     return encoded;
   };
 
+  /**
+   * checkSignature
+   * @param order
+   * @returns true if signer is order maker
+   */
   public checkSignature(order: Types.Order) {
+    // const make: Types.LocalAsset = {
+    //   assetType: {
+    //     ...order.make.assetType,
+    //     assetClass: order.make.assetType.assetClass || 'ERC721',
+    //   },
+    //   value: order.make.value,
+    // };
+    // const take: Types.LocalAsset = {
+    //   assetType: {
+    //     ...order.take.assetType,
+    //     assetClass: order.take.assetType.assetClass || 'ERC721',
+    //   },
+    //   value: order.take.value,
+    // };
+
+    // const orderMade = { ...order };
+    const message = this.toRawOrder(order);
+    const domain = this.EIP712_DOMAIN(this.chainId);
+    // console.log(domain, 'domain');
+    // console.log(message, 'answered logged');
     const signer = verifyTypedData(
-      this.EIP712_DOMAIN(this.chainId),
+      domain,
       Types.EIP712_TYPES,
-      this.toRawOrder(order),
-      order.signature!,
+      message,
+      order.signature,
     );
+
+    console.log(signer, 'address of signer');
 
     if (lc(order.maker) !== lc(signer)) {
       throw new Error('Invalid signature');
     }
   }
 
-  parseAssetType = (assetType: AssetType) => {
-    let data = {};
-    Object.keys(assetType).forEach((key) => {
-      if (key === 'contract')
-        data = { ...data, contract: toAddress(assetType[key]) };
-      else data = { ...data, tokenId: toBigNumber(assetType[key]) };
-    });
-    return data;
-  };
+  // parseAssetType = (assetType: AssetType) => {
+  //   let data = {};
+  //   Object.keys(assetType).forEach((key) => {
+  //     if (key === 'contract')
+  //       data = { ...data, contract: toAddress(assetType[key]) };
+  //     else data = { ...data, tokenId: toBigNumber(assetType[key]) };
+  //   });
+  //   return data;
+  // };
 
   /**
    * VerifyOrder
    * @param order
    * @returns true if order is verified
    */
-  verifyOrder = (order: CreateOrdersInput, provider): string | boolean => {
-    try {
-      const assetType: Erc20AssetType = {
-        assetClass: 'ERC20',
-        // contract: toAddress(order.Make.assetType?.contract),
-        contract: toAddress('02X464772'),
-        // tokenId: toBigNumber(order.Make.assetType?.tokenId),
-      };
+  // verifyOrder = (order: CreateOrdersInput, provider): string | boolean => {
+  //   try {
+  //     const assetType: Erc20AssetType = {
+  //       assetClass: 'ERC20',
+  //       // contract: toAddress(order.Make.assetType?.contract),
+  //       contract: toAddress('02X464772'),
+  //       // tokenId: toBigNumber(order.Make.assetType?.tokenId),
+  //     };
 
-      this.parseAssetType(assetType);
+  //     this.parseAssetType(assetType);
 
-      const make: Asset = {
-        assetType: {
-          assetClass: 'ERC20',
-          // contract: toAddress(order.Make.assetType?.contract),
-          contract: toAddress('02X464772'),
-          // tokenId: toBigNumber(order.Make.assetType?.tokenId),
-        },
-        value: toBigNumber(order.Make.value),
-        valueDecimal: toBigNumber(order.Make?.valueDecimal),
-      };
+  //     const make: Asset = {
+  //       assetType: {
+  //         assetClass: 'ERC20',
+  //         // contract: toAddress(order.Make.assetType?.contract),
+  //         contract: toAddress('02X464772'),
+  //         // tokenId: toBigNumber(order.Make.assetType?.tokenId),
+  //       },
+  //       value: toBigNumber(order.Make.value),
+  //       valueDecimal: toBigNumber(order.Make?.valueDecimal),
+  //     };
 
-      //   const data = export declare type OrderRaribleV2DataV1 = {
-      //     dataType: "RARIBLE_V2_DATA_V1";
-      //     payouts: Array<Part>;
-      //     originFees: Array<Part>;
-      // };
+  //     //   const data = export declare type OrderRaribleV2DataV1 = {
+  //     //     dataType: "RARIBLE_V2_DATA_V1";
+  //     //     payouts: Array<Part>;
+  //     //     originFees: Array<Part>;
+  //     // };
 
-      const part = {
-        account: toAddress('237737'),
-        value: 78,
-      };
+  //     const part = {
+  //       account: toAddress('237737'),
+  //       value: 78,
+  //     };
 
-      const data: OrderRaribleV2DataV1 = {
-        dataType: 'RARIBLE_V2_DATA_V1',
-        payouts: [part],
-        originFees: [part],
-      };
+  //     const data: OrderRaribleV2DataV1 = {
+  //       dataType: 'RARIBLE_V2_DATA_V1',
+  //       payouts: [part],
+  //       originFees: [part],
+  //     };
 
-      const makeOrder: SimpleRaribleV2Order = {
-        type: 'RARIBLE_V2',
-        maker: toAddress(order.maker),
-        make: make,
-        taker: toAddress(order.taker) ?? ZERO_ADDRESS,
-        take: make,
-        salt: toWord(order.salt),
-        start: Number(order.startedAt) ?? 0,
-        end: Number(order.endedAt) ?? 0,
-        data: data,
-      };
+  //     const makeOrder: SimpleRaribleV2Order = {
+  //       type: 'RARIBLE_V2',
+  //       maker: toAddress(order.maker),
+  //       make: make,
+  //       taker: toAddress(order.taker) ?? ZERO_ADDRESS,
+  //       take: make,
+  //       salt: toWord(order.salt),
+  //       start: Number(order.startedAt) ?? 0,
+  //       end: Number(order.endedAt) ?? 0,
+  //       data: data,
+  //     };
 
-      // orderToStruct();
+  //     // orderToStruct();
 
-      // const message = orderToStruct(ethereum, order);
-      // const decryptedData = decryptSignature(signature);
-      // const hash = keccak256(
-      //   defaultAbiCoder.encode(
-      //     [
-      //       'bytes32',
-      //       'address',
-      //       'bytes32',
-      //       'address',
-      //       'bytes32',
-      //       'uint',
-      //       'uint',
-      //       'uint',
-      //       'bytes4',
-      //       'bytes',
-      //     ],
-      //     [
-      //       ORDER_TYPEHASH,
-      //       order.maker,
-      //       assetHash(order.Make),
-      //       order.taker,
-      //       assetHash(order.take),
-      //       order.salt,
-      //       order.startedAt,
-      //       order.endedAt,
-      //       order.dataType,
-      //       hashData(order.data),
-      //     ],
-      //   ),
-      // );
-      const etProvider = new web3Provider.EthersWeb3ProviderEthereum(provider);
-      // etProvider
+  //     // const message = orderToStruct(ethereum, order);
+  //     // const decryptedData = decryptSignature(signature);
+  //     // const hash = keccak256(
+  //     //   defaultAbiCoder.encode(
+  //     //     [
+  //     //       'bytes32',
+  //     //       'address',
+  //     //       'bytes32',
+  //     //       'address',
+  //     //       'bytes32',
+  //     //       'uint',
+  //     //       'uint',
+  //     //       'uint',
+  //     //       'bytes4',
+  //     //       'bytes',
+  //     //     ],
+  //     //     [
+  //     //       ORDER_TYPEHASH,
+  //     //       order.maker,
+  //     //       assetHash(order.Make),
+  //     //       order.taker,
+  //     //       assetHash(order.take),
+  //     //       order.salt,
+  //     //       order.startedAt,
+  //     //       order.endedAt,
+  //     //       order.dataType,
+  //     //       hashData(order.data),
+  //     //     ],
+  //     //   ),
+  //     // );
+  //     const etProvider = new web3Provider.EthersWeb3ProviderEthereum(provider);
+  //     // etProvider
 
-      // const hash = 'hello';
-      // TypedDataUtils.sign({
-      //   primaryType: EIP712_ORDER_TYPE,
-      //   domain,
-      //   types: EIP712_ORDER_TYPES,
-      //   message: orderToStruct(ethereum, order),
-      // })
-      // verifyTypedData( domain , types , value , signature )
-      function createEIP712Domain(
-        chainId: number,
-        verifyingContract: Address,
-      ): EIP712Domain {
-        return {
-          ...EIP712_DOMAIN_TEMPLATE,
-          verifyingContract: verifyingContract,
-          chainId,
-        };
-      }
-      const domain = createEIP712Domain(
-        Number(process.env.CHAIN_ID),
-        toAddress('0xe77713848bc4ffa4819f9c5cd2cbd90841510bbd'),
-      );
+  //     // const hash = 'hello';
+  //     // TypedDataUtils.sign({
+  //     //   primaryType: EIP712_ORDER_TYPE,
+  //     //   domain,
+  //     //   types: EIP712_ORDER_TYPES,
+  //     //   message: orderToStruct(ethereum, order),
+  //     // })
+  //     // verifyTypedData( domain , types , value , signature )
+  //     function createEIP712Domain(
+  //       chainId: number,
+  //       verifyingContract: Address,
+  //     ): EIP712Domain {
+  //       return {
+  //         ...EIP712_DOMAIN_TEMPLATE,
+  //         verifyingContract: verifyingContract,
+  //         chainId,
+  //       };
+  //     }
+  //     const domain = createEIP712Domain(
+  //       Number(process.env.CHAIN_ID),
+  //       toAddress('0xe77713848bc4ffa4819f9c5cd2cbd90841510bbd'),
+  //     );
 
-      const signer = verifyTypedData(
-        domain,
-        EIP712_ORDER_TYPES,
-        orderToStruct(etProvider, makeOrder),
-        order.signature,
-      );
+  //     const signer = verifyTypedData(
+  //       domain,
+  //       EIP712_ORDER_TYPES,
+  //       orderToStruct(etProvider, makeOrder),
+  //       order.signature,
+  //     );
 
-      if (signer != order.maker) return false;
-      return signer;
+  //     if (signer != order.maker) return false;
+  //     return signer;
 
-      // assert.deepEqual(
-      //   actualData,
-      //   decryptedData,
-      //   'Decrypted data is different from actual',
-      // );
-    } catch (error) {
-      // console.log('error while validation', error);
-      throw new BadRequestException(error);
-    }
-  };
+  //     // assert.deepEqual(
+  //     //   actualData,
+  //     //   decryptedData,
+  //     //   'Decrypted data is different from actual',
+  //     // );
+  //   } catch (error) {
+  //     // console.log('error while validation', error);
+  //     throw new BadRequestException(error);
+  //   }
+  // };
 }
 
 // export function orderToStruct(

@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
-import { AssetTypeTypes } from './assetType.constants';
-import { OrderType } from './enums/order.type.enum';
+import { OrderKind } from './enums/order.kind.enum';
+import { ORDER_TYPES } from './enums/order.order-types.enum';
 import { OrderStatus } from './enums/orders.status.enum';
 
 @ObjectType()
@@ -18,11 +18,30 @@ export class Orders {
   })
   orderId: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Column({
     type: 'decimal',
   })
   fill: number;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'enum',
+    enumName: 'OrderKind',
+    enum: OrderKind,
+    default: OrderKind.SINGLE_TOKEN,
+  })
+  kind?: OrderKind;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'enum',
+    // nullable: true,
+    enumName: 'ORDER_TYPES',
+    enum: ORDER_TYPES,
+    default: ORDER_TYPES.V2,
+  })
+  type: ORDER_TYPES;
 
   @Field({ nullable: true })
   @Column({
@@ -32,7 +51,7 @@ export class Orders {
     enum: OrderStatus,
     default: OrderStatus.Active,
   })
-  status: OrderStatus;
+  status?: OrderStatus;
 
   @Field({ nullable: true })
   @Column({
@@ -74,10 +93,10 @@ export class Orders {
   @Column({
     type: 'jsonb',
   })
-  Make: {
+  make: {
     value: string;
     valueDecimal?: string;
-    assetType: AssetTypeTypes;
+    assetType: JSON;
   };
 
   @Field(() => Asset, { nullable: true })
@@ -85,12 +104,9 @@ export class Orders {
     type: 'jsonb',
   })
   take: {
-    type: {
-      type: OrderType;
-      contract: string;
-      tokenId: number;
-    };
-    value: number;
+    value: string;
+    valueDecimal?: string;
+    assetType: JSON;
   };
 
   @Field({ nullable: true })
@@ -103,35 +119,36 @@ export class Orders {
   // assetType: JSON;
   // @ValidateNested()
   @Field(() => CustomDataScalar)
-  Data: JSON;
   @Column({
     type: 'json',
     nullable: false,
   })
-  data: {
-    type: string;
-    nullable: true;
-    // nullable: true;
-    // payouts?: number[];
-    originFees?: {
-      account: string;
-      value: number;
-    };
-  };
+  data: JSON;
+  // data: OrderRaribleV2Data;
+  // data: {
+  //   type: string;
+  //   nullable: true;
+  //   // nullable: true;
+  //   // payouts?: number[];
+  //   originFees?: {
+  //     account: string;
+  //     value: number;
+  //   };
+  // };
 
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  startedAt?: Date;
+  start?: Date;
 
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  endedAt?: Date;
+  end?: Date;
 
   @Field({ nullable: true })
   @Column({
@@ -166,14 +183,14 @@ export class Orders {
     type: 'decimal',
     nullable: true,
   })
-  makePriceUsed?: number;
+  makePriceUsd?: number;
 
   @Field({ nullable: true })
   @Column({
     type: 'float',
     nullable: true,
   })
-  takePriceUsed?: number;
+  takePriceUsd?: number;
 
   @Field({ nullable: true })
   @Column({

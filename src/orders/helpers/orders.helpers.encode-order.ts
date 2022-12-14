@@ -6,6 +6,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { ORDER_DATA_TYPES } from '../constants/orders.constants.order-types';
 import { getOrderSide } from '../constants/orders.constants.order-info';
 import * as solidity from '@ethersproject/solidity';
+import { AddressZero } from '@ethersproject/constants';
 
 export const encodeAssetClass = (assetClass: string) => {
   if (!assetClass) {
@@ -192,6 +193,7 @@ export const encodeAssetData = (assetType: Types.LocalAssetType) => {
 export const encodeForMatchOrders = (
   order: Types.Order | Types.TakerOrderParams,
 ) => {
+  console.log(order, 'in encode ');
   return {
     maker: order.maker,
     makeAsset: {
@@ -201,7 +203,7 @@ export const encodeForMatchOrders = (
       },
       value: order.make.value,
     },
-    taker: order.taker,
+    taker: order.taker || AddressZero,
     takeAsset: {
       assetType: {
         assetClass: encodeAssetClass(order.take.assetType.assetClass),
@@ -210,8 +212,8 @@ export const encodeForMatchOrders = (
       value: order.take.value,
     },
     salt: order.salt,
-    start: order.start,
-    end: order.end,
+    start: order.start || 0,
+    end: order.end || 0,
     dataType: encodeAssetClass(order.data?.dataType ?? undefined),
     data: encodeOrderData(order),
   };

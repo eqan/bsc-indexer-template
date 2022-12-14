@@ -12,6 +12,7 @@ import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
+import { OrdersHelpers } from './helpers/orders.helpers';
 
 @Injectable()
 export class OrdersService {
@@ -20,6 +21,7 @@ export class OrdersService {
     private ordersRepo: Repository<Orders>,
     // private readonly ethereum: Maybe<Ethereum>,
     private readonly rpcProvider: RpcProvider,
+    private readonly ordersHelpers: OrdersHelpers,
   ) {
     // const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
     // const schema = {
@@ -82,9 +84,7 @@ export class OrdersService {
    * @params createOrdersinput
    * @return order
    */
-  async create(
-    createOrdersInput: CreateOrdersInput,
-  ): Promise<{ name: string } | Orders> {
+  async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
       console.log('hello', createOrdersInput);
       // const order = {
@@ -99,15 +99,20 @@ export class OrdersService {
       // };
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
+        console.log(createOrdersInput, 'order logged');
+        const verified = this.ordersHelpers.checkSignature(
+          createOrdersInput as any,
+        );
+        console.log(verified, 'verified');
         // const verified = verifyOrder(
         //   createOrdersInput,
         //   this.rpcProvider.baseProvider,
         // );
-        if (0) {
-          // const order = this.ordersRepo.create(createOrdersInput);
-          // return await this.ordersRepo.save(order);
-          return { name: 'nimra' };
-        } else throw new BadRequestException('decryption failed');
+        // if (0) {
+        const order = this.ordersRepo.create(createOrdersInput);
+        return await this.ordersRepo.save(order);
+        // return { name: 'nimra' };
+        // } else throw new BadRequestException('decryption failed');
       } else throw new BadRequestException('order already exists');
     } catch (error) {
       throw new BadRequestException(error);

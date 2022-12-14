@@ -17,7 +17,7 @@ export const dataValidationSchema = {
   oneOf: [
     {
       properties: {
-        dataType: { enum: ['RARIBLE_V2_DATA_V1'] },
+        dataType: { enum: ['V1'] },
         payouts: {
           type: 'array',
           items: Part,
@@ -29,7 +29,7 @@ export const dataValidationSchema = {
     },
     {
       properties: {
-        dataType: { enum: ['RARIBLE_V2_DATA_V2'] },
+        dataType: { enum: ['V2'] },
         payouts: {
           type: 'array',
           items: Part,
@@ -42,7 +42,19 @@ export const dataValidationSchema = {
     },
     {
       properties: {
-        dataType: { enum: ['RARIBLE_V2_DATA_V3_SELL'] },
+        dataType: { enum: ['ETH_RARIBLE_V2'] },
+        payouts: {
+          type: 'array',
+          items: Part,
+        },
+        originFees: { type: 'array', items: Part },
+      },
+      additionalProperties: false,
+      required: ['payouts', 'originFees'],
+    },
+    {
+      properties: {
+        dataType: { enum: ['V3_SELL'] },
         payout: Part,
         originFeeFirst: Part,
         originFeeSecond: Part,
@@ -54,7 +66,18 @@ export const dataValidationSchema = {
     },
     {
       properties: {
-        dataType: { enum: ['RARIBLE_V2_DATA_V3_BUY'] },
+        dataType: { enum: ['V3_BUY'] },
+        payout: Part,
+        originFeeFirst: Part,
+        originFeeSecond: Part,
+        maxFeesBasePoint: { type: 'number' },
+        marketplaceMarker: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
+    {
+      properties: {
+        dataType: { enum: ['V3_BUY'] },
         payout: Part,
         originFeeFirst: Part,
         originFeeSecond: Part,

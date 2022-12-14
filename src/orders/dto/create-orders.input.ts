@@ -10,13 +10,15 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { OrderKind } from '../entities/enums/order.kind.enum';
+import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Asset } from './nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from './nestedObjectsDto/data.dto';
 
 @InputType()
 export class CreateOrdersInput {
-  @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
+  // @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
   @IsNotEmpty({ message: 'Order ID cannot be null' })
   @Field()
   orderId: string;
@@ -24,6 +26,16 @@ export class CreateOrdersInput {
   @IsNotEmpty()
   @Field()
   fill: number;
+
+  @IsEnum(ORDER_TYPES)
+  @IsNotEmpty()
+  @Field(() => ORDER_TYPES)
+  type: ORDER_TYPES;
+
+  @IsEnum(OrderKind)
+  @IsNotEmpty()
+  @Field(() => OrderKind)
+  kind: OrderKind;
 
   @IsEnum(OrderStatus)
   @IsNotEmpty()
@@ -49,7 +61,7 @@ export class CreateOrdersInput {
   @Field()
   lastUpdatedAt: Date;
 
-  @IsEthereumAddress()
+  // @IsEthereumAddress()
   @IsNotEmpty()
   @Field()
   maker: string;
@@ -57,7 +69,7 @@ export class CreateOrdersInput {
   @ValidateNested()
   @Type(() => Asset)
   @Field(() => Asset)
-  Make: Asset;
+  make: Asset;
 
   @ValidateNested()
   @Type(() => Asset)
@@ -71,17 +83,17 @@ export class CreateOrdersInput {
 
   @ValidateNested()
   @Field(() => CustomDataScalar)
-  Data: JSON;
+  data: JSON;
 
   @IsDate()
   @IsOptional()
   @Field({ nullable: true })
-  startedAt?: Date;
+  start?: Date;
 
   @IsDate()
   @IsOptional()
   @Field({ nullable: true })
-  endedAt?: Date;
+  end?: Date;
 
   @IsBoolean()
   @IsOptional()
@@ -103,11 +115,11 @@ export class CreateOrdersInput {
 
   @IsOptional()
   @Field({ nullable: true })
-  makePriceUsed?: number;
+  makePriceUsd?: number;
 
   @IsOptional()
   @Field({ nullable: true })
-  takePriceUsed?: number;
+  takePriceUsd?: number;
 
   @IsString()
   @IsNotEmpty()
