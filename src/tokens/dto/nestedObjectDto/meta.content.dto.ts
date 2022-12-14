@@ -7,7 +7,7 @@ import {
   IsUrl,
 } from 'class-validator';
 
-@ObjectType('MetadataContent')
+@ObjectType()
 @InputType('MetadataContentInput')
 export class MetadataContent {
   @IsOptional()
@@ -38,7 +38,7 @@ export class MetadataContent {
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
-  avaiable?: boolean;
+  available?: boolean;
 
   @IsOptional()
   @IsString()

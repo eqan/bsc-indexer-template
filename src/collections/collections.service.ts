@@ -12,7 +12,7 @@ import { getEventData } from 'src/events/data';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { FilterDto } from './dto/filter.collections.dto';
+import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -80,21 +80,29 @@ export class CollectionsService {
    * @@params No Params
    * @returns Array of Collections and Total Number of Collections
    */
-  async index(filterDto: FilterDto): Promise<GetAllCollections> {
+  async index(
+    filterCollectionsDto: FilterCollectionsDto,
+  ): Promise<GetAllCollections> {
     try {
-      const { page = 1, limit = 20, ...rest } = filterDto;
-      const [items] = await Promise.all([
+      const { page = 1, limit = 20, ...rest } = filterCollectionsDto;
+      const [items, total] = await Promise.all([
         this.collectionsRepo.find({
           where: {
             id: rest?.id,
             name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
             owner: rest?.owner ? ILike(`%${rest?.owner}%`) : undefined,
           },
+          relations: { Meta: true },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.collectionsRepo.count({
+          where: {
+            id: rest?.id,
+            name: rest?.name ? ILike(`%${rest?.name}%`) : undefined,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);

@@ -11,6 +11,7 @@ import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
+import { MetaData } from './dto/nestedObjectDto/meta.dto';
 
 @Injectable()
 export class TokensService {
@@ -71,7 +72,7 @@ export class TokensService {
   async index(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
     try {
       const { page = 1, limit = 20, ...rest } = filterTokenDto;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
             tokenId: rest?.tokenId,
@@ -81,11 +82,18 @@ export class TokensService {
           order: {
             mintedAt: 'ASC' || 'DESC',
           },
+          relations: { Meta: true },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.tokensRepo.count({
+          where: {
+            tokenId: rest?.tokenId,
+            contract: rest?.contract,
+            owner: rest?.owner,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);

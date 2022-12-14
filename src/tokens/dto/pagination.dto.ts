@@ -4,7 +4,7 @@ import { IsNumber } from 'class-validator';
 @InputType()
 export class PaginationParam {
   @IsNumber()
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   page?: number;
 
   @IsNumber()

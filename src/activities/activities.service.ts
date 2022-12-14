@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { FilterActivityDto } from './dto/filter-activity.dto';
@@ -40,7 +39,7 @@ export class ActivitiesService {
   async index(filterActivity: FilterActivityDto): Promise<GetAllActivities> {
     try {
       const { page = 1, limit = 20, ...rest } = filterActivity;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.activityRepo.find({
           where: {
             id: rest?.id,
@@ -52,12 +51,22 @@ export class ActivitiesService {
           relations: {
             BID: true,
             MINT: true,
+            TRANSFER: true,
+            BURN: true,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.activityRepo.count({
+          where: {
+            id: rest?.id,
+            type: rest?.type,
+            userId: rest?.userId,
+            collectionId: rest?.collectionId,
+            itemId: rest?.itemId,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);
@@ -79,7 +88,7 @@ export class ActivitiesService {
       }
       return found;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.FIND_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 
@@ -106,7 +115,7 @@ export class ActivitiesService {
       }
       return null;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.DELETE_ACTIVITY);
+      throw new BadRequestException(error);
     }
   }
 }

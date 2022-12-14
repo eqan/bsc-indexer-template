@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
@@ -15,10 +16,11 @@ export class FetchCollectionsProcessor {
     private readonly collectionsService: CollectionsService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
+    private readonly config: ConfigService,
   ) {}
   QUEUE_NAME = QueueType.FETCH_COLLECTIONS_QUEUE;
   private readonly logger = new Logger(this.QUEUE_NAME);
-  redis = new Redis();
+  redis = new Redis(this.config.get('REDIS_URL'));
 
   @Process()
   async FetchCollection({

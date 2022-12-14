@@ -1,20 +1,12 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { type } from 'os';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { Make } from 'src/orders/dto/nestedObjectsDto/make.dto';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Activity } from './activity.entity';
 import { ActivityType } from './enums/activity.type.enum';
 
+@ObjectType()
 @Entity('ActivityBid')
-@InputType('ActivityBidInput')
 export class ActivityBid {
   @PrimaryGeneratedColumn()
   id: string;

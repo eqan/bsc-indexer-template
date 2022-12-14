@@ -1,8 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Column } from 'typeorm';
 
-@ObjectType('MetaContent')
-@InputType('MetaContentInput')
+@ObjectType()
+// @InputType('MetaContentInput')
 export class Content {
   @Field({ nullable: true })
   @Column('text', { nullable: true })
@@ -29,8 +29,8 @@ export class Content {
   size?: number;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
-  available?: string;
+  @Column('bool', { nullable: true })
+  available?: boolean;
 
   @Field({ nullable: true })
   @Column('int', { nullable: true })

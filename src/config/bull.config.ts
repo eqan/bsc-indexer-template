@@ -11,6 +11,7 @@ export class BullConfig implements SharedBullConfigurationFactory {
   createSharedConfiguration(): BullModuleOptions {
     return {
       redis: {
+        password: this.config.get('REDIS_PASSWORD'),
         host: this.config.get('REDIS_HOST'),
         port: +this.config.get('REDIS_PORT'),
       },

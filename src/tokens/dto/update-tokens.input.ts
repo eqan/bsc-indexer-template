@@ -48,5 +48,5 @@ export class UpdateTokensInput {
   @ValidateNested()
   @Type(() => MetaData)
   @Field(() => MetaData, { nullable: true })
-  meta?: MetaData;
+  Meta?: MetaData;
 }

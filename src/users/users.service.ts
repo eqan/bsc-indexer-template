@@ -177,7 +177,7 @@ export class UsersService {
   async index(filterDto: FilterUserDto): Promise<GetAllUsers> {
     try {
       const { page = 1, limit = 20, ...rest } = filterDto;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.usersRepo.find({
           where: {
             id: rest?.id,
@@ -185,8 +185,12 @@ export class UsersService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.usersRepo.count({
+          where: {
+            id: rest?.id,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (error) {
       throw new BadRequestException(SystemErrors.FIND_USERS);
