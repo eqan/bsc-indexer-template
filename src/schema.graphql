@@ -239,7 +239,15 @@ type Collections {
   description: String
   bannerImageUrl: String
   Meta: CollectionsMeta
-  tokens: [Tokens!]
+  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
+}
+
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  tokenId: String
+  contract: String
+  owner: String
 }
 
 type CreatorRoyalty {
@@ -518,14 +526,6 @@ input FilterDto {
   limit: Float
   id: String
   name: String
-  owner: String
-}
-
-input FilterTokenDto {
-  page: Int
-  limit: Int
-  tokenId: String
-  contract: String
   owner: String
 }
 
