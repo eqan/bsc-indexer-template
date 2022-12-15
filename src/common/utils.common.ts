@@ -7,6 +7,7 @@ import { EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import * as fs from 'fs';
 import * as path from 'path';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -45,6 +46,9 @@ export const getTypes = (kind: EventDataKind) => {
   }
   return types;
 };
+
+// BigNumbers
+export const bn = (value: BigNumberish) => BigNumber.from(value);
 
 // export const getTypesUsingInterface = async (collectionId: string) => {
 //   const types = {

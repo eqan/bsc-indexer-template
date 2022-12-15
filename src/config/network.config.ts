@@ -1,3 +1,5 @@
+import { Currency } from 'src/orders/types/order.prices.types';
+
 type NetworkSettings = {
   enableWebSocket: boolean;
   enableReorgCheck: boolean;
@@ -6,6 +8,10 @@ type NetworkSettings = {
   realtimeSyncMaxBlockLag: number;
   backfillSyncTimeout: number;
   backfillBlockBatchSize: number;
+  whitelistedCurrencies: Map<string, Currency>;
+  coingecko?: {
+    networkId: string;
+  };
 };
 
 export const getNetworkSettings = (): NetworkSettings => {
@@ -17,6 +23,22 @@ export const getNetworkSettings = (): NetworkSettings => {
     backfillBlockBatchSize: 16,
     backfillSyncTimeout: 30,
     reorgCheckFrequency: [1, 5, 10, 30, 60], // In Minutes
+    //
+    whitelistedCurrencies: new Map([
+      [
+        '0xceb726e6383468dd8ac0b513c8330cc9fb4024a8',
+        {
+          contract: '0xceb726e6383468dd8ac0b513c8330cc9fb4024a8',
+          name: 'Worms',
+          symbol: 'WORMS',
+          decimals: 18,
+        },
+      ],
+    ]),
+    //TODO : NEED TO CHNAGE THE NETWORKID TO BINANCE ONCE SHIFTED
+    coingecko: {
+      networkId: 'ethereum',
+    },
   };
   return defaultNetworkSettings;
 };
