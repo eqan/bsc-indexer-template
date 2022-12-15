@@ -5,20 +5,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { Routers } from '../utils/utils.constants.order';
 import { extractAttributionData } from '../utils/utils.order';
+import * as Addresses from '../../../orders/constants/orders.constants.addresses';
+import { bn } from 'src/common/utils.common';
+import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 
 @Injectable()
 export class OrderMatchHandler {
   constructor(
-    // private readonly ordersService: OrdersService,
+    private readonly orderPrices: OrderPrices,
     private rpcProvider: RpcProvider,
   ) {
     // const res =
     //   Routers[1]?.['0x9757F2d2b135150BBeb65308D4a91804107cd8D6'.toLowerCase()];
     // console.log(res, 'logged res');
   }
-
+  chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
   handleMatchOrder = async (events: EnhancedEvent) => {
@@ -268,6 +270,19 @@ export class OrderMatchHandler {
         taker = attributionData.taker;
       }
 
+      //TODO:HANDLE ALL RETURN STATEMENTS CAREFULLY
+
+      // Handle: prices
+      let currency: string;
+      if (currencyAssetType === ETH) {
+        currency = Addresses.Eth[this.chainId];
+      } else if (currencyAssetType === ERC20) {
+        currency = paymentCurrency;
+      } else {
+        // break;
+        return;
+      }
+
       const decodedNftAsset = defaultAbiCoder.decode(
         ['(address token, uint tokenId)'],
         nftData,
@@ -275,16 +290,30 @@ export class OrderMatchHandler {
       const contract = decodedNftAsset[0][0].toLowerCase();
       const tokenId = decodedNftAsset[0][1].toString();
 
+      currencyPrice = bn(currencyPrice).div(amount).toString();
+
+      const prices = await this.orderPrices.getUSDAndNativePrices(
+        currency.toLowerCase(),
+        currencyPrice,
+        timestamp,
+      );
+      // if (!prices.nativePrice) {
+      //   // We must always have the native price
+      //   return;
+      // }
+
       const data = {
         orderKind,
         orderId,
+        nftAssetType,
+        nftData,
         orderSide: side,
         maker,
         taker,
         // price: prices.nativePrice,
-        // currency,
+        currency,
         currencyPrice,
-        // usdPrice: prices.usdPrice,
+        usdPrice: prices.usdPrice,
         contract,
         tokenId,
         amount,

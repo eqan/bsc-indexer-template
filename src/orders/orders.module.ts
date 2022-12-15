@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { Orders } from './entities/orders.entity';
 import { HelpersResolver } from './helpers.resolver';
 import { OrderPrices } from './helpers/orders.helpers.order-prices';
@@ -19,9 +19,9 @@ import { OrdersService } from './orders.service';
       timeout: 40 * 1000, //40sec
       maxRedirects: 5,
     }),
-    RpcProvider,
+    RpcProviderModule,
   ],
   providers: [OrdersResolver, OrdersService, HelpersResolver, OrderPrices],
-  exports: [OrdersService],
+  exports: [OrdersService, OrderPrices],
 })
 export class OrdersModule {}

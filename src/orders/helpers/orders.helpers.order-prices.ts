@@ -7,12 +7,13 @@ import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { bn } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
+import * as Addresses from '../constants/orders.constants.addresses';
+import { AddressZero } from '@ethersproject/constants';
 import {
   CurrencyMetadata,
   Price,
   USDAndNativePrices,
 } from '../types/order.prices.types';
-import { AddressZero } from '@ethersproject/constants';
 
 @Injectable()
 export class OrderPrices {
@@ -30,47 +31,55 @@ export class OrderPrices {
   NATIVE_UNIT = bn('1000000000000000000');
 
   getCurrencyDetails = async (currencyAddress: string) => {
-    // `name`, `symbol` and `decimals` are fetched from on-chain
-    const iface = new Interface([
-      'function name() view returns (string)',
-      'function symbol() view returns (string)',
-      'function decimals() view returns (uint8)',
-    ]);
+    try {
+      // `name`, `symbol` and `decimals` are fetched from on-chain
+      const iface = new Interface([
+        'function name() view returns (string)',
+        'function symbol() view returns (string)',
+        'function decimals() view returns (uint8)',
+      ]);
 
-    const contract = new Contract(currencyAddress, iface, this.baseProvider);
-    const name = await contract.name();
-    const symbol = await contract.symbol();
-    const decimals = await contract.decimals();
-    const metadata: CurrencyMetadata = {};
+      const contract = new Contract(currencyAddress, iface, this.baseProvider);
+      const name = await contract.name();
+      const symbol = await contract.symbol();
+      const decimals = await contract.decimals();
+      const metadata: CurrencyMetadata = {};
 
-    const coingeckoNetworkId = getNetworkSettings().coingecko?.networkId;
-    if (coingeckoNetworkId) {
-      const response = await lastValueFrom(
-        this.httpService.get(
-          `https://api.coingecko.com/api/v3/coins/${coingeckoNetworkId}/contract/${currencyAddress}`,
-        ),
-      );
-      const result: { id?: string; image?: { large?: string } } = response.data;
-      // const result: { id?: string; image?: { large?: string } } = await axios
-      //   .get(
-      //     `https://api.coingecko.com/api/v3/coins/${coingeckoNetworkId}/contract/${currencyAddress}`,
-      //     { timeout: 10 * 1000 },
-      //   )
-      //   .then((response) => response.data);
-      if (result.id) {
-        metadata.coingeckoCurrencyId = result.id;
+      const coingeckoNetworkId = getNetworkSettings().coingecko?.networkId;
+      if (coingeckoNetworkId) {
+        const response = await lastValueFrom(
+          this.httpService.get(
+            `https://api.coingecko.com/api/v3/coins/${coingeckoNetworkId}/contract/${currencyAddress}`,
+          ),
+        );
+        const result: { id?: string; image?: { large?: string } } =
+          response.data;
+        // const result: { id?: string; image?: { large?: string } } = await axios
+        //   .get(
+        //     `https://api.coingecko.com/api/v3/coins/${coingeckoNetworkId}/contract/${currencyAddress}`,
+        //     { timeout: 10 * 1000 },
+        //   )
+        //   .then((response) => response.data);
+        if (result.id) {
+          metadata.coingeckoCurrencyId = result.id;
+        }
+        if (result.image?.large) {
+          metadata.image = result.image.large;
+        }
       }
-      if (result.image?.large) {
-        metadata.image = result.image.large;
-      }
+
+      return {
+        name,
+        symbol,
+        decimals,
+        metadata,
+      };
+    } catch (error) {
+      this,
+        this.logger.error(
+          `Failed to initially fetch ${currencyAddress} currency details: ${error}`,
+        );
     }
-
-    return {
-      name,
-      symbol,
-      decimals,
-      metadata,
-    };
   };
 
   getUpstreamUSDPrice = async (
@@ -246,14 +255,15 @@ export class OrderPrices {
     currencyAddress: string,
     price: string,
     timestamp: number,
-    options?: {
-      onlyUSD?: boolean;
-    },
+    // options?: {
+    //   onlyUSD?: boolean;
+    // },
   ): Promise<USDAndNativePrices> => {
     let usdPrice: string | undefined;
-    let nativePrice: string | undefined;
+    // let nativePrice: string | undefined;
 
     // Only try to get pricing data if the network supports it
+    //TODO:need change these addresses usdc addresses on goerili testnet
     const force =
       this.chainId === 5 &&
       [
@@ -266,43 +276,43 @@ export class OrderPrices {
         timestamp,
       );
 
-      let nativeUSDPrice: Price | undefined;
-      if (!options?.onlyUSD) {
-        nativeUSDPrice = await this.getAvailableUSDPrice(
-          AddressZero,
-          timestamp,
-        );
-      }
+      // let nativeUSDPrice: Price | undefined;
+      // if (!options?.onlyUSD) {
+      //   nativeUSDPrice = await this.getAvailableUSDPrice(
+      //     AddressZero,
+      //     timestamp,
+      //   );
+      // }
 
       const currency = await this.getCurrencyDetails(currencyAddress);
-      if (currency.decimals && currencyUSDPrice) {
-        const currencyUnit = bn(10).pow(currency.decimals);
+      if (currency?.decimals && currencyUSDPrice) {
+        const currencyUnit = bn(10).pow(currency?.decimals);
         usdPrice = bn(price)
           .mul(currencyUSDPrice.value)
           .div(currencyUnit)
           .toString();
-        if (nativeUSDPrice) {
-          nativePrice = bn(price)
-            .mul(currencyUSDPrice.value)
-            .mul(this.NATIVE_UNIT)
-            .div(nativeUSDPrice.value)
-            .div(currencyUnit)
-            .toString();
-        }
+        // if (nativeUSDPrice) {
+        //   nativePrice = bn(price)
+        //     .mul(currencyUSDPrice.value)
+        //     .mul(this.NATIVE_UNIT)
+        //     .div(nativeUSDPrice.value)
+        //     .div(currencyUnit)
+        //     .toString();
+        // }
       }
     }
 
     //TODO: ADD BNB IN Addresses also weth equivalent for bnb
-    // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
-    if (
-      [
-        Sdk.Common.Addresses.Eth[config.chainId],
-        Sdk.Common.Addresses.Weth[config.chainId],
-      ].includes(currencyAddress)
-    ) {
-      nativePrice = price;
-    }
+    // // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
+    // if (
+    //   [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
+    //     currencyAddress,
+    //   )
+    // ) {
+    //   // nativePrice = price;
+    // }
 
-    return { usdPrice, nativePrice };
+    return { usdPrice };
+    // return { usdPrice, nativePrice };
   };
 }

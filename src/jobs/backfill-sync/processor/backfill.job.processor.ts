@@ -51,7 +51,7 @@ export class BackfillSyncProcessor {
   @OnQueueError()
   onError(error: Error, job: Job) {
     this.logger.error(
-      `Queue ${job.id} Failed Processing Backfill syncing : ${error}`,
+      `Queue ${job.data.id} Failed Processing Backfill syncing : ${error}`,
     );
   }
 }
