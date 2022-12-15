@@ -276,8 +276,10 @@ export class OrderMatchHandler {
       let currency: string;
       if (currencyAssetType === ETH) {
         currency = Addresses.Eth[this.chainId];
+        console.log(currency, 'logged currency');
       } else if (currencyAssetType === ERC20) {
         currency = paymentCurrency;
+        console.log(currency, paymentCurrency, 'logged currency and payment');
       } else {
         // break;
         return;
