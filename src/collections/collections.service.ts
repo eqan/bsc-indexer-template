@@ -132,4 +132,15 @@ export class CollectionsService {
       throw new BadRequestException(error);
     }
   }
+
+  // Work Under Progress
+  calculateAverageCollectionPrice(id: string): string {
+    try {
+      const ids = id;
+      // await this.collectionsRepo.delete({ id: In(ids) });
+      return ids;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }

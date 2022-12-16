@@ -45,25 +45,6 @@ export class TokensService {
   }
 
   /**
-   * Get All Tokens Using Collection ID
-   * @@params CollectionID
-   * @returns Array of Tokens and Total Number of Tokens of that specific collection
-   */
-  async getAllTokensByCollectionId(collectionId: string): Promise<Tokens[]> {
-    try {
-      const items = await this.tokensRepo.find({
-        where: { collection: { id: collectionId } },
-      });
-      if (!items) {
-        throw new NotFoundException('No Tokens Found');
-      }
-      return items;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  /**
    * Get All Tokens
    * @@params No Params
    * @returns Array of Tokens and Total Number of Tokens

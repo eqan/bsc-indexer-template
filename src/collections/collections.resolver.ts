@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
+import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
 import { CollectionsService } from './collections.service';
@@ -115,8 +116,14 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @returns All tokens of its collection
    */
   @ResolveField('tokens', () => [Tokens], { nullable: true })
-  async getTokens(@Parent() collection: Collections) {
+  async getTokens(
+    @Parent() collection: Collections,
+    @Args('FilterTokensInput', { nullable: true, defaultValue: {} })
+    filterTokenDto: FilterTokenDto,
+  ) {
     const { id: collectionId } = collection;
-    return await this.tokenService.getAllTokensByCollectionId(collectionId);
+    filterTokenDto.contract = collectionId;
+    const { items } = await this.tokenService.index(filterTokenDto);
+    return items;
   }
 }
