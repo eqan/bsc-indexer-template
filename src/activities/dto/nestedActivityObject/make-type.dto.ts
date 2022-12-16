@@ -1,10 +1,5 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import {
-  IsEnum,
-  IsEthereumAddress,
-  IsNotEmpty,
-  IsOptional
-} from 'class-validator';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsEnum, IsEthereumAddress, IsNotEmpty } from 'class-validator';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 
 @ObjectType('ActivityMakeType')

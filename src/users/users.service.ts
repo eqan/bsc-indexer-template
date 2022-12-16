@@ -187,7 +187,7 @@ export class UsersService {
         }),
         this.usersRepo.count({
           where: {
-            id: rest.id,
+            id: rest?.id,
           },
         }),
       ]);

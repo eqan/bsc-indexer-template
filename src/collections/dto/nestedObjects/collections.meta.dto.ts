@@ -22,7 +22,7 @@ export class CollectionMeta {
   externalLink?: string;
 
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   sellerFeeBasisPoints?: number;
 
   @IsOptional()

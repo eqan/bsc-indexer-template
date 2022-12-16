@@ -20,8 +20,9 @@ export default class TypeOrmConfig {
       password: config.get('POSTGRES_PASSWORD'),
       database: config.get('POSTGRES_DB'),
       entities: [Tokens, Collections, Orders, Activity, Users, Auction],
+      autoLoadEntities: true,
       synchronize: true,
-      // dropSchema: true,
+      dropSchema: true,
     };
   }
 }

@@ -1,6 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsOptional } from 'class-validator';
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
 import { ActivityBid } from './activity.bid.entity';
 import { ActivityBurn } from './activity.burn.entity';
@@ -81,22 +88,38 @@ export abstract class Activity extends BaseEntity {
   };
 
   @IsOptional()
-  @Field(() => ActivityMint, { nullable: true })
-  @Column({ nullable: true, type: 'jsonb' })
-  MINT?: ActivityMint;
-
-  @IsOptional()
   @Field(() => ActivityBurn, { nullable: true })
-  @Column({ nullable: true, type: 'jsonb' })
-  BURN: ActivityBurn;
+  @OneToOne(() => ActivityBurn, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  BURN?: ActivityBurn;
 
   @IsOptional()
   @Field(() => ActivityTransfer, { nullable: true })
-  @Column({ nullable: true, type: 'jsonb' })
-  TRANSFER: ActivityTransfer;
+  @OneToOne(() => ActivityTransfer, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  TRANSFER?: ActivityTransfer;
 
   @IsOptional()
   @Field(() => ActivityBid, { nullable: true })
-  @Column({ nullable: true, type: 'jsonb' })
-  BID: ActivityBid;
+  @OneToOne(() => ActivityBid, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  BID?: ActivityBid;
+
+  @IsOptional()
+  @Field(() => ActivityMint, { nullable: true })
+  @OneToOne(() => ActivityMint, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  MINT?: ActivityMint;
 }

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { lc } from 'src/common/utils.common';
 import { getEventData, parseEvent } from '../data';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
@@ -52,7 +53,7 @@ export class SyncEventsService {
           ({ addresses, topic, numTopics }) =>
             log.topics[0] === topic &&
             log.topics.length === numTopics &&
-            (addresses ? addresses[log.address.toLowerCase()] : true),
+            (addresses ? addresses[lc(log.address)] : true),
         );
 
         if (eventData) {

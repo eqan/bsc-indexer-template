@@ -28,34 +28,17 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
+      // console.log(restParams);
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
 
       token.collection = collection;
       token.tokenId = collectionId + ':' + token.tokenId;
 
+      // console.log(token);
       await token.save();
       delete token.collection;
       return token;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  /**
-   * Get All Tokens Using Collection ID
-   * @@params CollectionID
-   * @returns Array of Tokens and Total Number of Tokens of that specific collection
-   */
-  async getAllTokensByCollectionId(collectionId: string): Promise<Tokens[]> {
-    try {
-      const items = await this.tokensRepo.find({
-        where: { collection: { id: collectionId } },
-      });
-      if (!items) {
-        throw new NotFoundException('No Tokens Found');
-      }
-      return items;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -79,16 +62,18 @@ export class TokensService {
           order: {
             mintedAt: 'ASC' || 'DESC',
           },
+          relations: { Meta: true },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
         this.tokensRepo.count({
           where: {
             tokenId: rest?.tokenId,
+            contract: rest?.contract,
+            owner: rest?.owner,
           },
         }),
       ]);
-
       return { items, total };
     } catch (err) {
       throw new BadRequestException(err);
@@ -129,9 +114,7 @@ export class TokensService {
    */
   async update(updateTokensInput: UpdateTokensInput): Promise<Tokens> {
     try {
-      const { tokenId, ...rest } = updateTokensInput;
-      await this.tokensRepo.update({ tokenId }, rest);
-      return await this.show(tokenId);
+      return await this.tokensRepo.save(updateTokensInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -162,7 +145,7 @@ export class TokensService {
    */
   async resetMetaData(tokenId: string): Promise<void> {
     try {
-      await this.tokensRepo.update(tokenId, { meta: null });
+      await this.tokensRepo.update(tokenId, { Meta: null });
       return null;
     } catch (error) {
       throw new NotFoundException(error);

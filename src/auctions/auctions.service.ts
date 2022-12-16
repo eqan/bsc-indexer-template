@@ -6,11 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateAuctionInput } from './dto/create-auction.input';
+import { FilterAuctionDto } from './dto/filter-auctions.dto';
 import { GetAllAuctions } from './dto/get-all-auctions.dto';
 import { UpdateAuctionInput } from './dto/update-auction.input';
 import { Auction } from './entities/auction.entity';
-import { FilterAuctionDto } from './dto/filter-auctions.dto';
-import { SystemErrors } from 'src/constants/errors.enum';
 @Injectable()
 export class AuctionsService {
   constructor(
@@ -39,7 +38,7 @@ export class AuctionsService {
   async index(filterDto: FilterAuctionDto): Promise<GetAllAuctions> {
     try {
       const { page = 1, limit = 20, ...rest } = filterDto;
-      const [items] = await Promise.all([
+      const [items, total] = await Promise.all([
         this.auctionRepo.find({
           where: {
             auctionId: rest?.auctionId,
@@ -49,8 +48,14 @@ export class AuctionsService {
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
+        this.auctionRepo.count({
+          where: {
+            auctionId: rest?.auctionId,
+            contract: rest?.contract,
+            seller: rest?.seller,
+          },
+        }),
       ]);
-      const total = Object.keys(items).length;
       return { items, total };
     } catch (error) {
       throw new BadRequestException(error);
@@ -72,7 +77,7 @@ export class AuctionsService {
       }
       return found;
     } catch (error) {
-      throw new NotFoundException(SystemErrors.FIND_AUCTION);
+      throw new NotFoundException(error);
     }
   }
 
@@ -87,7 +92,7 @@ export class AuctionsService {
       await this.auctionRepo.update({ auctionId }, rest);
       return this.show(auctionId);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.UPDATE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 
@@ -102,7 +107,7 @@ export class AuctionsService {
       await this.auctionRepo.delete({ auctionId: In(ids) });
       return null;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.DELETE_AUCTION);
+      throw new BadRequestException(error);
     }
   }
 }

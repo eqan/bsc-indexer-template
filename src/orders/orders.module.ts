@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { Orders } from './entities/orders.entity';
-import { HelpersResolver } from './helpers.resolver';
+import { OrdersHelpers } from './helpers/orders.helpers';
 import { OrderPrices } from './helpers/orders.helpers.order-prices';
 import { OrdersResolver } from './orders.resolver';
 import { OrdersService } from './orders.service';
@@ -21,7 +21,7 @@ import { OrdersService } from './orders.service';
     }),
     RpcProviderModule,
   ],
-  providers: [OrdersResolver, OrdersService, HelpersResolver, OrderPrices],
+  providers: [OrdersResolver, OrdersService, OrdersHelpers, OrderPrices],
   exports: [OrdersService, OrderPrices],
 })
 export class OrdersModule {}

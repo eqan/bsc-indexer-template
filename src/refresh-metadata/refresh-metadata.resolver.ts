@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { CronType } from '../jobs/types/cron.types';
 import { RefreshMetadatInput } from './dto/refresh-metadata.dto';
 import { ReturnRefreshMeta } from './dto/return.refresh-meta.dto';
 import { RefreshMetadataService } from './refresh-metadata.service';
