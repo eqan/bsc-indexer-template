@@ -239,7 +239,15 @@ type Collections {
   description: String
   bannerImageUrl: String
   Meta: CollectionsMeta
-  tokens: [Tokens!]
+  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
+}
+
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  tokenId: String
+  contract: String
+  owner: String
 }
 
 type CreatorRoyalty {
@@ -259,7 +267,7 @@ type Tokens {
   sellers: Float
   creator: CreatorRoyalty
   royalties: CreatorRoyalty
-  Meta: TokensMeta
+  Meta: Meta
 }
 
 type Content {
@@ -274,7 +282,8 @@ type Content {
   height: Float
 }
 
-type TokensMeta {
+type Meta {
+  id: String!
   name: String
   description: String
   Content: Content
@@ -513,14 +522,6 @@ input FilterDto {
   limit: Float
   id: String
   name: String
-  owner: String
-}
-
-input FilterTokenDto {
-  page: Int
-  limit: Int
-  tokenId: String
-  contract: String
   owner: String
 }
 

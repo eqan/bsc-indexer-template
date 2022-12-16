@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEthereumAddress, IsOptional, IsString } from 'class-validator';
+import { IsEthereumAddress, IsOptional } from 'class-validator';
 import { PaginationParam } from './pagination.dto';
 
 @InputType()

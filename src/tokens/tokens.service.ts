@@ -11,7 +11,6 @@ import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
-import { MetaData } from './dto/nestedObjectDto/meta.dto';
 
 @Injectable()
 export class TokensService {
@@ -40,25 +39,6 @@ export class TokensService {
       await token.save();
       delete token.collection;
       return token;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  /**
-   * Get All Tokens Using Collection ID
-   * @@params CollectionID
-   * @returns Array of Tokens and Total Number of Tokens of that specific collection
-   */
-  async getAllTokensByCollectionId(collectionId: string): Promise<Tokens[]> {
-    try {
-      const items = await this.tokensRepo.find({
-        where: { collection: { id: collectionId } },
-      });
-      if (!items) {
-        throw new NotFoundException('No Tokens Found');
-      }
-      return items;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -134,9 +114,7 @@ export class TokensService {
    */
   async update(updateTokensInput: UpdateTokensInput): Promise<Tokens> {
     try {
-      const { tokenId, ...rest } = updateTokensInput;
-      await this.tokensRepo.update({ tokenId }, rest);
-      return await this.show(tokenId);
+      return await this.tokensRepo.save(updateTokensInput);
     } catch (error) {
       throw new BadRequestException(error);
     }

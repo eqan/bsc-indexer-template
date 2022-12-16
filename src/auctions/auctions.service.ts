@@ -6,11 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateAuctionInput } from './dto/create-auction.input';
+import { FilterAuctionDto } from './dto/filter-auctions.dto';
 import { GetAllAuctions } from './dto/get-all-auctions.dto';
 import { UpdateAuctionInput } from './dto/update-auction.input';
 import { Auction } from './entities/auction.entity';
-import { FilterAuctionDto } from './dto/filter-auctions.dto';
-import { SystemErrors } from 'src/constants/errors.enum';
 @Injectable()
 export class AuctionsService {
   constructor(

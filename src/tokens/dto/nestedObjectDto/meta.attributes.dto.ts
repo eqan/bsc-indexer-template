@@ -1,6 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
+import { IsOptional, IsString } from 'class-validator';
 
 @ObjectType('MetadataAttribute')
 @InputType('AttributeInput')

@@ -27,36 +27,36 @@ export class CollectionsService {
     private metadataApi: MetadataApi,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
-    const getBlock = async () => {
-      try {
-        const blockNumber =
-          await this.rpcProvider.baseProvider.getBlockNumber();
-        console.log(blockNumber, 'logged out blockNumber');
-        const filter: { fromBlock: number; toBlock: number } = {
-          fromBlock: blockNumber,
-          toBlock: blockNumber,
-        };
-        const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-        for (const log of logs) {
-          const availableEventData = getEventData(['erc721-transfer']);
-          const eventData = availableEventData.find(
-            ({ addresses, topic, numTopics }) =>
-              log.topics[0] === topic &&
-              log.topics.length === numTopics &&
-              (addresses ? addresses[lc(log.address)] : true),
-          );
-          if (eventData) {
-            const timestamp = (
-              await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
-            ).timestamp;
-            const { args } = eventData.abi.parseLog(log);
-            const collectionId = log?.address;
-          }
-        }
-      } catch (e) {
-        console.log(e, 'error occured');
-      }
-    };
+    // const getBlock = async () => {
+    //   try {
+    //     const blockNumber =
+    //       await this.rpcProvider.baseProvider.getBlockNumber();
+    //     console.log(blockNumber, 'logged out blockNumber');
+    //     const filter: { fromBlock: number; toBlock: number } = {
+    //       fromBlock: blockNumber,
+    //       toBlock: blockNumber,
+    //     };
+    //     const logs = await this.rpcProvider.baseProvider.getLogs(filter);
+    //     for (const log of logs) {
+    //       const availableEventData = getEventData(['erc721-transfer']);
+    //       const eventData = availableEventData.find(
+    //         ({ addresses, topic, numTopics }) =>
+    //           log.topics[0] === topic &&
+    //           log.topics.length === numTopics &&
+    //           (addresses ? addresses[lc(log.address)] : true),
+    //       );
+    //       if (eventData) {
+    //         const timestamp = (
+    //           await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
+    //         ).timestamp;
+    //         const { args } = eventData.abi.parseLog(log);
+    //         const collectionId = log?.address;
+    //       }
+    //     }
+    //   } catch (e) {
+    //     console.log(e, 'error occured');
+    //   }
+    // };
   }
 
   /**
@@ -155,8 +155,7 @@ export class CollectionsService {
       const { owner } = await this.show(id);
       if (owner != rest.owner)
         throw new UnauthorizedException('The user is not the owner');
-      await this.collectionsRepo.update({ id }, rest);
-      return this.show(id);
+      return await this.collectionsRepo.save(updateCollectionsInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -171,6 +170,17 @@ export class CollectionsService {
     try {
       const ids = deleteWithIds.id;
       await this.collectionsRepo.delete({ id: In(ids) });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  // Work Under Progress
+  calculateAverageCollectionPrice(id: string): string {
+    try {
+      const ids = id;
+      // await this.collectionsRepo.delete({ id: In(ids) });
+      return ids;
     } catch (error) {
       throw new BadRequestException(error);
     }
