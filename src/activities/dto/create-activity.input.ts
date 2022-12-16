@@ -7,7 +7,6 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { JoinColumn, OneToOne } from 'typeorm';
 import { ActivityType } from '../entities/enums/activity.type.enum';
 import { CreateBidActivityInput } from './create-activity.bid.input';
 import { CreateActivityBurnInput } from './create-activity.burn.input';

@@ -9,7 +9,6 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { IsNull } from 'typeorm';
 
 import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';

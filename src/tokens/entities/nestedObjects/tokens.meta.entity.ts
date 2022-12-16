@@ -1,13 +1,13 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
-import { MetadataAttribute } from '../../dto/nestedObjectDto/meta.attributes.dto';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { MetadataAttribute } from '../../dto/nestedObjectDto/meta.attributes.dto';
 import { Tokens } from '../tokens.entity';
 import { Content } from './tokens.meta.content.entity';
 
-@ObjectType()
+@ObjectType('Meta')
 @Entity('TokensMeta')
 export class TokensMeta {
+  @Field()
   @PrimaryGeneratedColumn()
   id: string;
 

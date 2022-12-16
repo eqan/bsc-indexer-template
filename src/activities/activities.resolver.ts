@@ -1,11 +1,11 @@
+import { BadRequestException } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityInput } from './dto/create-activity.input';
-import { Activity } from './entities/activity.entity';
-import { BadRequestException } from '@nestjs/common';
 import { DeleteActivityInput } from './dto/delete-activity.input.dto';
 import { FilterActivityDto } from './dto/filter-activity.dto';
 import { GetAllActivities } from './dto/get-all-activities.dto';
+import { Activity } from './entities/activity.entity';
 
 @Resolver(() => Activity)
 export class ActivitiesResolver {

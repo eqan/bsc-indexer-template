@@ -7,8 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { getEventData } from 'src/events/data';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
@@ -22,41 +20,7 @@ export class CollectionsService {
     @InjectRepository(Collections)
     @Inject(forwardRef(() => MetadataApi))
     private collectionsRepo: Repository<Collections>,
-    private rpcProvider: RpcProvider,
-    private metadataApi: MetadataApi,
-  ) {
-    // sample function to use JsonRpcProvider and getting blockNumber
-    const getBlock = async () => {
-      try {
-        const blockNumber =
-          await this.rpcProvider.baseProvider.getBlockNumber();
-        console.log(blockNumber, 'logged out blockNumber');
-        const filter: { fromBlock: number; toBlock: number } = {
-          fromBlock: blockNumber,
-          toBlock: blockNumber,
-        };
-        const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-        for (const log of logs) {
-          const availableEventData = getEventData(['erc721-transfer']);
-          const eventData = availableEventData.find(
-            ({ addresses, topic, numTopics }) =>
-              log.topics[0] === topic &&
-              log.topics.length === numTopics &&
-              (addresses ? addresses[log.address.toLowerCase()] : true),
-          );
-          if (eventData) {
-            const timestamp = (
-              await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
-            ).timestamp;
-            const { args } = eventData.abi.parseLog(log);
-            const collectionId = log?.address;
-          }
-        }
-      } catch (e) {
-        console.log(e, 'error occured');
-      }
-    };
-  }
+  ) {}
 
   /**
    * Create Collection in Database
@@ -149,8 +113,7 @@ export class CollectionsService {
       const { owner } = await this.show(id);
       if (owner != rest.owner)
         throw new UnauthorizedException('The user is not the owner');
-      await this.collectionsRepo.update({ id }, rest);
-      return this.show(id);
+      return await this.collectionsRepo.save(updateCollectionsInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
