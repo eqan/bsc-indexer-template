@@ -22,6 +22,7 @@ import { CustomDataScalar } from './orders/dto/nestedObjectsDto/data.dto';
 import { OrdersModule } from './orders/orders.module';
 import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.module';
 import { TokensModule } from './tokens/tokens.module';
+import { UsdPricesModule } from './usd-prices/usd-prices.module';
 import { UsersModule } from './users/users.module';
 import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
 
@@ -88,6 +89,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
     MetadataApiModule,
     AuctionsModule,
     RefreshMetadataModule,
+    UsdPricesModule,
     //Jobs Module
     RealtimeSyncModule,
     SyncEventsModule,

@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { UsdPricesModule } from 'src/usd-prices/usd-prices.module';
 import { Orders } from './entities/orders.entity';
 import { OrdersHelpers } from './helpers/orders.helpers';
 import { OrderPrices } from './helpers/orders.helpers.order-prices';
@@ -20,6 +21,7 @@ import { OrdersService } from './orders.service';
       maxRedirects: 5,
     }),
     RpcProviderModule,
+    UsdPricesModule,
   ],
   providers: [OrdersResolver, OrdersService, OrdersHelpers, OrderPrices],
   exports: [OrdersService, OrderPrices],

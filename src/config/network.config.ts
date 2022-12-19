@@ -23,7 +23,7 @@ export const getNetworkSettings = (): NetworkSettings => {
     backfillBlockBatchSize: 16,
     backfillSyncTimeout: 30,
     reorgCheckFrequency: [1, 5, 10, 30, 60], // In Minutes
-    //
+    //TODO : DO WE NEED TO WHITELIST ANY OF THE CURRENCIES
     whitelistedCurrencies: new Map([
       [
         '0xceb726e6383468dd8ac0b513c8330cc9fb4024a8',

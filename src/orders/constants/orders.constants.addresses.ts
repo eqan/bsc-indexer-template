@@ -24,6 +24,7 @@ export const Eth: ChainIdToAddress = {
   [Network.EthereumGoerli]: AddressZero,
   [Network.Optimism]: AddressZero,
   [Network.Gnosis]: AddressZero,
+  [Network.Binance]: AddressZero,
 };
 
 export const Weth: ChainIdToAddress = {
