@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
+import { OrderAvailability } from './enums/order.availability.enum';
 import { OrderKind } from './enums/order.kind.enum';
 import { ORDER_TYPES } from './enums/order.order-types.enum';
 import { OrderStatus } from './enums/orders.status.enum';
@@ -17,6 +18,14 @@ export class Orders {
     nullable: false,
   })
   orderId: string;
+
+  @Column({
+    type: 'enum',
+    enumName: 'Order',
+    enum: OrderAvailability,
+    default: OrderAvailability.OFF_CHAIN,
+  })
+  availability?: OrderAvailability;
 
   @Field()
   @Column({
@@ -56,7 +65,7 @@ export class Orders {
   @Field({ nullable: true })
   @Column({
     type: 'int',
-    nullable: false,
+    nullable: true,
   })
   makeStock: number;
 
@@ -68,17 +77,18 @@ export class Orders {
   })
   cancelled: boolean;
 
+  //TODO : NEED TO DICUSS TIMESTAMP REQUIRED OR NOT
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
-    nullable: false,
+    nullable: true,
   })
   createdAt: Date;
 
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
-    nullable: false,
+    nullable: true,
   })
   lastUpdatedAt: Date;
 

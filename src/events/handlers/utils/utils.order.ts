@@ -11,8 +11,8 @@ export const extractAttributionData = async (
 
   // Properly set the taker when filling through router contracts
   const tx = await baseProvider.getTransaction(txHash);
-  console.log(tx.to, 'trans info to');
-  console.log(tx.from, 'trans info from');
+  // console.log(tx.to, 'trans info to');
+  // console.log(tx.from, 'trans info from');
   let router = Routers[1]?.[tx.to.toLowerCase()];
   console.log(router, 'router logged out');
   if (!router) {

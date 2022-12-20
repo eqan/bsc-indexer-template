@@ -15,6 +15,7 @@ import {
   USDAndNativePrices,
 } from '../types/order.prices.types';
 import { result } from 'lodash';
+import * as Addresses from '../constants/orders.constants.addresses';
 
 @Injectable()
 export class OrderPrices {
@@ -234,12 +235,12 @@ export class OrderPrices {
     currencyAddress: string,
     price: string,
     timestamp: number,
-    // options?: {
-    //   onlyUSD?: boolean;
-    // },
+    options?: {
+      onlyUSD?: boolean;
+    },
   ): Promise<USDAndNativePrices> => {
     let usdPrice: string | undefined;
-    // let nativePrice: string | undefined;
+    let nativePrice: string | undefined;
 
     // Only try to get pricing data if the network supports it
     //TODO:need change these addresses usdc addresses on goerili testnet
@@ -255,13 +256,13 @@ export class OrderPrices {
         timestamp,
       );
 
-      // let nativeUSDPrice: Price | undefined;
-      // if (!options?.onlyUSD) {
-      //   nativeUSDPrice = await this.getAvailableUSDPrice(
-      //     AddressZero,
-      //     timestamp,
-      //   );
-      // }
+      let nativeUSDPrice: Price | undefined;
+      if (!options?.onlyUSD) {
+        nativeUSDPrice = await this.getAvailableUSDPrice(
+          AddressZero,
+          timestamp,
+        );
+      }
 
       const currency = await this.getCurrencyDetails(currencyAddress);
       if (currency?.decimals && currencyUSDPrice) {
@@ -270,28 +271,28 @@ export class OrderPrices {
           .mul(currencyUSDPrice.value)
           .div(currencyUnit)
           .toString();
-        // if (nativeUSDPrice) {
-        //   nativePrice = bn(price)
-        //     .mul(currencyUSDPrice.value)
-        //     .mul(this.NATIVE_UNIT)
-        //     .div(nativeUSDPrice.value)
-        //     .div(currencyUnit)
-        //     .toString();
-        // }
+        if (nativeUSDPrice) {
+          nativePrice = bn(price)
+            .mul(currencyUSDPrice.value)
+            .mul(this.NATIVE_UNIT)
+            .div(nativeUSDPrice.value)
+            .div(currencyUnit)
+            .toString();
+        }
       }
     }
 
     //TODO: ADD BNB IN Addresses also weth equivalent for bnb
     // // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
-    // if (
-    //   [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
-    //     currencyAddress,
-    //   )
-    // ) {
-    //   // nativePrice = price;
-    // }
+    if (
+      [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
+        currencyAddress,
+      )
+    ) {
+      nativePrice = price;
+    }
 
-    return { usdPrice };
-    // return { usdPrice, nativePrice };
+    // return { usdPrice };
+    return { usdPrice, nativePrice };
   };
 }

@@ -3,12 +3,13 @@ import { AddressZero } from '@ethersproject/constants';
 import { getTxTrace, searchForCall } from '@georgeroman/evm-tx-simulator';
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { bn } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { extractAttributionData } from '../utils/utils.order';
-import * as Addresses from '../../../orders/constants/orders.constants.addresses';
-import { bn } from 'src/common/utils.common';
+import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
+import * as Addresses from '../../../orders/constants/orders.constants.addresses';
+import { extractAttributionData } from '../utils/utils.order';
 
 @Injectable()
 export class OrderMatchHandler {
@@ -70,6 +71,11 @@ export class OrderMatchHandler {
       let amount = '';
       let currencyPrice = '';
       let orderId = '';
+      let salt = '';
+      let start = 0;
+      let end = 0;
+      let dataType = '';
+      let data = '';
 
       // Event data doesn't include full order information so we have to parse the calldata
       const txTrace = await getTxTrace(
@@ -106,6 +112,8 @@ export class OrderMatchHandler {
             'directPurchase',
             callTrace.input,
           );
+          // console.log(result, 'result in directpur');
+
           orderId = leftHash;
           side = 'sell';
           maker = result[0][0].toLowerCase();
@@ -113,6 +121,11 @@ export class OrderMatchHandler {
           taker = callTrace.to.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
+          salt = result[0][6];
+          start = result[0]['sellOrderStart'];
+          end = result[0]['sellOrderEnd'];
+          dataType = result[0]['sellOrderDataType'];
+          data = result[0]['sellOrderData'];
 
           paymentCurrency = result[0][5].toLowerCase();
           if (paymentCurrency === AddressZero) {
@@ -127,6 +140,7 @@ export class OrderMatchHandler {
           eventsLog.directPurchase.set(`${txHash}-${address}`, eventRank + 1);
         }
       } catch {
+        console.log('tx data doesnt match directPurchase');
         // tx data doesn't match directPurchase
       }
 
@@ -153,6 +167,7 @@ export class OrderMatchHandler {
             'directAcceptBid',
             callTrace.input,
           );
+          console.log(result, 'logged result dirBid');
           orderId = rightHash;
 
           side = 'buy';
@@ -161,6 +176,11 @@ export class OrderMatchHandler {
           taker = callTrace.from.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
+          salt = result[0][6];
+          start = result[0][7];
+          end = result[0][8];
+          dataType = result[0][9];
+          data = result[0][10];
 
           paymentCurrency = result[0][5].toLowerCase();
           if (paymentCurrency === AddressZero) {
@@ -175,6 +195,7 @@ export class OrderMatchHandler {
           eventsLog.directAcceptBid.set(`${txHash}-${address}`, eventRank + 1);
         }
       } catch {
+        console.log('tx data doesnt match directAcceptBid');
         // tx data doesn't match directAcceptBid
       }
 
@@ -200,6 +221,7 @@ export class OrderMatchHandler {
             'matchOrders',
             callTrace.input,
           );
+          console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
@@ -214,6 +236,9 @@ export class OrderMatchHandler {
 
           const nftAsset = side === 'buy' ? rightMakeAsset : leftMakeAsset;
           const currencyAsset = side === 'buy' ? leftMakeAsset : rightMakeAsset;
+
+          salt = side === 'buy' ? orderRight.salt : orderLeft.salt;
+          dataType = side === 'buy' ? orderRight.dataType : orderLeft.dataType;
 
           orderId = leftHash;
           nftAssetType = nftAsset.assetType.assetClass;
@@ -241,6 +266,11 @@ export class OrderMatchHandler {
             paymentCurrency = decodedCurrencyAsset[0][0].toLowerCase();
           }
 
+          //TODO : RECHECK THE START END DATES AND DATA
+          start = side === 'buy' ? orderLeft.start : orderRight.start;
+          end = side === 'buy' ? orderRight.end : orderLeft.end;
+          data = side === 'buy' ? orderLeft.data : orderRight.data;
+
           // Match order has amount in newLeftFill when it's a buy order and amount in newRightFill when it's sell order
           amount = side === 'buy' ? newLeftFill : newRightFill;
           currencyPrice = side === 'buy' ? newRightFill : newLeftFill;
@@ -248,6 +278,7 @@ export class OrderMatchHandler {
           eventsLog.matchOrders.set(`${txHash}-${address}`, eventRank + 1);
         }
       } catch {
+        console.log('tx data doesnt match matchOrders');
         // tx data doesn't match matchOrders
       }
 
@@ -279,7 +310,7 @@ export class OrderMatchHandler {
         console.log(currency, 'logged currency');
       } else if (currencyAssetType === ERC20) {
         currency = paymentCurrency;
-        console.log(currency, paymentCurrency, 'logged currency and payment');
+        // console.log(currency, paymentCurrency, 'logged currency and payment');
       } else {
         // break;
         return;
@@ -299,31 +330,39 @@ export class OrderMatchHandler {
         currencyPrice,
         timestamp,
       );
-      // if (!prices.nativePrice) {
-      //   // We must always have the native price
-      //   return;
-      // }
+      if (!prices.nativePrice) {
+        // We must always have the native price
+        return;
+      }
 
-      const data = {
+      const response = {
         orderKind,
         orderId,
+        //TODO: RECHECK FILL
+        fill: 1,
         nftAssetType,
         nftData,
         orderSide: side,
         maker,
         taker,
-        // price: prices.nativePrice,
+        price: prices.nativePrice,
         currency,
         currencyPrice,
         usdPrice: prices.usdPrice,
         contract,
+        salt: bn(salt).toString(),
+        start: bn(start).toString(),
+        end: bn(end).toString(),
+        dataType,
+        // data,
+        data: decodeOrderData(dataType, data),
         tokenId,
         amount,
         timestamp,
         txHash,
       };
 
-      console.log(data, 'data logged out after listening event');
+      console.log(response, 'data logged out after listening event');
     } catch (error) {
       this.logger.error(`failed Matching Order ${error}`);
     }
