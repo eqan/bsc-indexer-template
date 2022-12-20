@@ -27,6 +27,7 @@ export class Orders {
   })
   availability?: OrderAvailability;
 
+  //TODO : CONFIRM FILL DATATYPE DECIMAL OR INT
   @Field()
   @Column({
     type: 'decimal',

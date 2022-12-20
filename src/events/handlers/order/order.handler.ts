@@ -5,6 +5,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { bn } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
+import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
@@ -15,6 +18,7 @@ import { extractAttributionData } from '../utils/utils.order';
 export class OrderMatchHandler {
   constructor(
     private readonly orderPrices: OrderPrices,
+    private readonly orderMatchEventService: OrderMatchEventService,
     private rpcProvider: RpcProvider,
   ) {
     // const res =
@@ -61,7 +65,7 @@ export class OrderMatchHandler {
       const assetTypes = [ERC721, ERC1155, ERC20, ETH, COLLECTION];
 
       const orderKind = 'rarible';
-      let side: 'sell' | 'buy' = 'sell';
+      let side: OrderSide = OrderSide.sell;
       let taker = AddressZero;
       let currencyAssetType = '';
       let nftAssetType = '';
@@ -115,7 +119,7 @@ export class OrderMatchHandler {
           // console.log(result, 'result in directpur');
 
           orderId = leftHash;
-          side = 'sell';
+          side = OrderSide.sell;
           maker = result[0][0].toLowerCase();
           // taker will be overwritten in extractAttributionData step if router is used
           taker = callTrace.to.toLowerCase();
@@ -170,7 +174,7 @@ export class OrderMatchHandler {
           console.log(result, 'logged result dirBid');
           orderId = rightHash;
 
-          side = 'buy';
+          side = OrderSide.buy;
           maker = result[0][0].toLowerCase();
           // taker will be overwritten in extractAttributionData step if router is used
           taker = callTrace.from.toLowerCase();
@@ -231,14 +235,17 @@ export class OrderMatchHandler {
           // taker will be overwritten in extractAttributionData step if router is used
           taker = orderRight.maker.toLowerCase();
           side = [ERC721, ERC1155].includes(leftMakeAsset.assetType.assetClass)
-            ? 'sell'
-            : 'buy';
+            ? OrderSide.sell
+            : OrderSide.buy;
 
-          const nftAsset = side === 'buy' ? rightMakeAsset : leftMakeAsset;
-          const currencyAsset = side === 'buy' ? leftMakeAsset : rightMakeAsset;
+          const nftAsset =
+            side === OrderSide.buy ? rightMakeAsset : leftMakeAsset;
+          const currencyAsset =
+            side === OrderSide.buy ? leftMakeAsset : rightMakeAsset;
 
-          salt = side === 'buy' ? orderRight.salt : orderLeft.salt;
-          dataType = side === 'buy' ? orderRight.dataType : orderLeft.dataType;
+          salt = side === OrderSide.buy ? orderRight.salt : orderLeft.salt;
+          dataType =
+            side === OrderSide.buy ? orderRight.dataType : orderLeft.dataType;
 
           orderId = leftHash;
           nftAssetType = nftAsset.assetType.assetClass;
@@ -267,13 +274,13 @@ export class OrderMatchHandler {
           }
 
           //TODO : RECHECK THE START END DATES AND DATA
-          start = side === 'buy' ? orderLeft.start : orderRight.start;
-          end = side === 'buy' ? orderRight.end : orderLeft.end;
-          data = side === 'buy' ? orderLeft.data : orderRight.data;
+          start = side === OrderSide.buy ? orderLeft.start : orderRight.start;
+          end = side === OrderSide.buy ? orderRight.end : orderLeft.end;
+          data = side === OrderSide.buy ? orderLeft.data : orderRight.data;
 
           // Match order has amount in newLeftFill when it's a buy order and amount in newRightFill when it's sell order
-          amount = side === 'buy' ? newLeftFill : newRightFill;
-          currencyPrice = side === 'buy' ? newRightFill : newLeftFill;
+          amount = side === OrderSide.buy ? newLeftFill : newRightFill;
+          currencyPrice = side === OrderSide.buy ? newRightFill : newLeftFill;
 
           eventsLog.matchOrders.set(`${txHash}-${address}`, eventRank + 1);
         }
@@ -320,8 +327,8 @@ export class OrderMatchHandler {
         ['(address token, uint tokenId)'],
         nftData,
       );
-      const contract = decodedNftAsset[0][0].toLowerCase();
-      const tokenId = decodedNftAsset[0][1].toString();
+      const contract: string = decodedNftAsset[0][0].toLowerCase();
+      const tokenId: string = decodedNftAsset[0][1].toString();
 
       currencyPrice = bn(currencyPrice).div(amount).toString();
 
@@ -334,6 +341,23 @@ export class OrderMatchHandler {
         // We must always have the native price
         return;
       }
+
+      const matchEvent: OrderMatchEventInput = {
+        orderId,
+        orderSide: side,
+        maker,
+        taker,
+        price: prices.nativePrice,
+        currency,
+        currencyPrice,
+        usdPrice: prices.usdPrice,
+        contract,
+        tokenId,
+        amount,
+        baseEventParams: events.baseEventParams,
+      };
+      const savedEvent = await this.orderMatchEventService.create(matchEvent);
+      console.log(savedEvent, 'saved event in event db');
 
       const response = {
         orderKind,
@@ -354,7 +378,6 @@ export class OrderMatchHandler {
         start: bn(start).toString(),
         end: bn(end).toString(),
         dataType,
-        // data,
         data: decodeOrderData(dataType, data),
         tokenId,
         amount,
@@ -362,7 +385,7 @@ export class OrderMatchHandler {
         txHash,
       };
 
-      console.log(response, 'data logged out after listening event');
+      // console.log(response, 'data logged out after listening event');
     } catch (error) {
       this.logger.error(`failed Matching Order ${error}`);
     }
