@@ -1,14 +1,10 @@
 import {
   BadRequestException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
@@ -19,10 +15,7 @@ import { Collections } from './entities/collections.entity';
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    @Inject(forwardRef(() => MetadataApi))
-    private collectionsRepo: Repository<Collections>,
-    private rpcProvider: RpcProvider,
-    private metadataApi: MetadataApi,
+    private collectionsRepo: Repository<Collections>, // @Inject(forwardRef(() => MetadataApi)) // private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
     // const getBlock = async () => {
@@ -168,17 +161,6 @@ export class CollectionsService {
     try {
       const ids = deleteWithIds.id;
       await this.collectionsRepo.delete({ id: In(ids) });
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  // Work Under Progress
-  calculateAverageCollectionPrice(id: string): string {
-    try {
-      const ids = id;
-      // await this.collectionsRepo.delete({ id: In(ids) });
-      return ids;
     } catch (error) {
       throw new BadRequestException(error);
     }

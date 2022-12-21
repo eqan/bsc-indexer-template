@@ -1,3 +1,4 @@
+import { ObjectType } from '@nestjs/graphql';
 import {
   BaseEntity,
   Column,
@@ -25,6 +26,7 @@ import { BaseEventParams } from './entities.entity.base-event-params';
 //   baseEventParams: BaseEventParams;
 // };
 
+@ObjectType()
 @Entity('OrderMatchEvent')
 export class OrderMatchEvent extends BaseEntity {
   @PrimaryColumn({

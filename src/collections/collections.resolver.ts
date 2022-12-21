@@ -51,9 +51,9 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
   async index(
     @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
-    filteCollectionInput: FilterDto,
+    filterCollectionInput: FilterDto,
   ): Promise<GetAllCollections> {
-    return await this.collectionsService.index(filteCollectionInput);
+    return await this.collectionsService.index(filterCollectionInput);
   }
 
   /**
@@ -125,5 +125,21 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     filterTokenDto.contract = collectionId;
     const { items } = await this.tokenService.index(filterTokenDto);
     return items;
+  }
+
+  /**
+   * Get Average Price Of A Collection
+   * @returns Average Price Of A Collection
+   */
+  @Query(() => Number, { name: 'GetCollectionAveragePrice' })
+  async getCollectionAveragePrice(
+    @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
+    filterCollectionInput: FilterDto,
+  ): Promise<number> {
+    try {
+      return await this.tokenService.getOrderTokenPrice(filterCollectionInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

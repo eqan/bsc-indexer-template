@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollectionsModule } from 'src/collections/collections.module';
+import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
 import { TokensMeta } from './entities/nestedObjects/tokens.meta.entity';
 import { Tokens } from './entities/tokens.entity';
 import { TokensResolver } from './tokens.resolver';
@@ -11,7 +12,7 @@ import { TokensService } from './tokens.service';
     TypeOrmModule.forFeature([Tokens, TokensMeta]),
     forwardRef(() => CollectionsModule),
   ],
-  providers: [TokensResolver, TokensService],
+  providers: [TokensResolver, TokensService, OrderMatchEventService],
   exports: [TokensService],
 })
 export class TokensModule {}

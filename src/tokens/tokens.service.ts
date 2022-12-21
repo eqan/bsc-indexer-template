@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
+import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
 import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
@@ -18,6 +19,7 @@ export class TokensService {
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
     private collectionsService: CollectionsService,
+    private orderMatchEventService: OrderMatchEventService,
   ) {}
 
   /**
@@ -147,6 +149,30 @@ export class TokensService {
     try {
       await this.tokensRepo.update(tokenId, { Meta: null });
       return null;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param tokenId
+   * @returns  Nothing
+   */
+  async getOrderTokenPrice(filterTokenDto: FilterTokenDto): Promise<number> {
+    try {
+      const { items, total } = await this.index(filterTokenDto);
+      const promises = [];
+      let sum = 0;
+      items.map((item) => {
+        const tokenId = item.tokenId;
+        promises.push(this.orderMatchEventService.show(tokenId));
+      });
+      const resolvedOrders = await Promise.all(promises);
+      resolvedOrders.map((order) => {
+        sum += order.price;
+      });
+      return sum / total;
     } catch (error) {
       throw new NotFoundException(error);
     }

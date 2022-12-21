@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
@@ -27,66 +31,56 @@ export class OrderMatchEventService {
     }
   }
 
-  //   /**
-  //    * Get All Collections ... With Filters
-  //    * @@params No Params
-  //    * @returns Array of Collections and Total Number of Collections
-  //    */
-  //   async index(filterActivity: FilterActivityDto): Promise<GetAllActivities> {
-  //     try {
-  //       const { page = 1, limit = 20, ...rest } = filterActivity;
-  //       const [items, total] = await Promise.all([
-  //         this.orderMatchEventsRepo.find({
-  //           where: {
-  //             id: rest?.id,
-  //             type: rest?.type,
-  //             userId: rest?.userId,
-  //             collectionId: rest?.collectionId,
-  //             itemId: rest?.itemId,
-  //           },
-  //           relations: {
-  //             BID: true,
-  //             MINT: true,
-  //             TRANSFER: true,
-  //             BURN: true,
-  //           },
-  //           skip: (page - 1) * limit || 0,
-  //           take: limit || 10,
-  //         }),
-  //         this.orderMatchEventsRepo.count({
-  //           where: {
-  //             id: rest?.id,
-  //             type: rest?.type,
-  //             userId: rest?.userId,
-  //             collectionId: rest?.collectionId,
-  //             itemId: rest?.itemId,
-  //           },
-  //         }),
-  //       ]);
-  //       return { items, total };
-  //     } catch (err) {
-  //       throw new BadRequestException(err);
-  //     }
+  /**
+   * Get All Collections ... With Filters
+   * @@params No Params
+   * @returns Array of Collections and Total Number of Collections
+   */
+  // async index(
+  //   filterOrderMatchEvent: FilterOrderMatchEvent,
+  // ): Promise<GetAllOrdersMatchEvent> {
+  //   try {
+  //     const { page = 1, limit = 20, ...rest } = filterOrderMatchEvent;
+  //     const [items, total] = await Promise.all([
+  //       this.orderMatchEventRepo.find({
+  //         where: {
+  //           orderId: rest?.orderId,
+  //           tokenId: rest?.tokenId,
+  //         },
+  //         skip: (page - 1) * limit || 0,
+  //         take: limit || 10,
+  //       }),
+  //       this.orderMatchEventRepo.count({
+  //         where: {
+  //           orderId: rest?.orderId,
+  //           tokenId: rest?.tokenId,
+  //         },
+  //       }),
+  //     ]);
+  //     return { items, total };
+  //   } catch (err) {
+  //     throw new BadRequestException(err);
   //   }
+  // }
 
   /**
    * GET Activity By Id
    * @param id
    * @returns Activity against Provided Id
    */
-  //   async show(id: string): Promise<Activity> {
-  //     try {
-  //       const found = await this.orderMatchEventsRepo.findOneBy({
-  //         id,
-  //       });
-  //       if (!found) {
-  //         throw new NotFoundException(`Activity against ${id} not found`);
-  //       }
-  //       return found;
-  //     } catch (error) {
-  //       throw new BadRequestException(error);
-  //     }
-  //   }
+  async show(tokenId: string): Promise<OrderMatchEvent> {
+    try {
+      const found = await this.orderMatchEventRepo.findOneBy({
+        tokenId,
+      });
+      if (!found) {
+        throw new NotFoundException(`Order against ${tokenId} not found`);
+      }
+      return found;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 
   //   /**
   //    * Edit Activity
