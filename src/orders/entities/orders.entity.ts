@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsEthereumAddress } from 'class-validator';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
@@ -93,6 +94,7 @@ export class Orders {
   })
   lastUpdatedAt: Date;
 
+  @IsEthereumAddress()
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -209,6 +211,7 @@ export class Orders {
   })
   signature: string;
 
+  @IsEthereumAddress()
   @Field({ nullable: true })
   @Column({
     type: 'text',

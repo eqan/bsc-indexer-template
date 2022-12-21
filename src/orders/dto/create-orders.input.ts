@@ -66,6 +66,7 @@ export class CreateOrdersInput {
 
   @IsNotEmpty()
   @IsEthereumAddress()
+  @IsEthereumAddress()
   @Field()
   maker: string;
 
@@ -133,6 +134,7 @@ export class CreateOrdersInput {
   @Field()
   signature: string;
 
+  @IsEthereumAddress()
   @IsOptional()
   @IsEthereumAddress()
   @Field({ nullable: true })

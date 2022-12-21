@@ -1,3 +1,4 @@
+import { IsEthereumAddress } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -43,12 +44,14 @@ export abstract class OrderMatchEvents extends BaseEntity {
   })
   orderSide: OrderSide;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
   })
   maker: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
@@ -61,6 +64,7 @@ export abstract class OrderMatchEvents extends BaseEntity {
   })
   price: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
@@ -79,6 +83,7 @@ export abstract class OrderMatchEvents extends BaseEntity {
   })
   amount: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
