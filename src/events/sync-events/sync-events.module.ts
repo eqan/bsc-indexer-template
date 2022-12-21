@@ -9,7 +9,7 @@ import { OrderCancelEvents } from '../entities/events.entity.order-cancel-events
 import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
-import { OrderMatchHandler } from '../handlers/order/order.handler';
+import { OrderMatchHandler } from '../handlers/order/events.order.handler';
 import { OrderCancelEventService } from '../service/events.service.order-cancel-events';
 import { OrderMatchEventService } from '../service/events.service.order-match-events';
 import { SyncEventsService } from './sync-events.service';

@@ -49,6 +49,11 @@ export type EnhancedEvent = {
   log: Log;
 };
 
+export type fillMatchFunctionType =
+  | 'directPurchase'
+  | 'directAcceptBid'
+  | 'match';
+
 // export type OrderMatchEventInput = {
 //   orderId: string;
 //   orderSide: OrderSide;

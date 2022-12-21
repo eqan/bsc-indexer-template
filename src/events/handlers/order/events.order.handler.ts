@@ -1,4 +1,4 @@
-import { defaultAbiCoder, Interface } from '@ethersproject/abi';
+import { defaultAbiCoder, Interface, Result } from '@ethersproject/abi';
 import { AddressZero } from '@ethersproject/constants';
 import { getTxTrace, searchForCall } from '@georgeroman/evm-tx-simulator';
 import { Injectable, Logger } from '@nestjs/common';
@@ -13,6 +13,7 @@ import { EnhancedEvent } from 'src/events/types/events.types';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
 import { extractAttributionData } from '../utils/utils.order';
+import * as constants from '../utils/utils.constants.order';
 
 @Injectable()
 export class OrderMatchHandler {
@@ -53,19 +54,6 @@ export class OrderMatchHandler {
       const newLeftFill = args['newLeftFill'].toString();
       const newRightFill = args['newRightFill'].toString();
 
-      const ERC20 = '0x8ae85d84';
-      const ETH = '0xaaaebeba';
-      const ERC721 = '0x73ad2146';
-      const ERC1155 = '0x973bb640';
-      const COLLECTION = '0xf63c2825';
-
-      const matchOrdersSigHash = '0xe99a3f80';
-      const directPurchaseSigHash = '0x0d5f7d35';
-      const directAcceptBidSigHash = '0x67d49a3b';
-
-      const assetTypes = [ERC721, ERC1155, ERC20, ETH, COLLECTION];
-
-      const orderKind = 'rarible';
       let side: OrderSide = OrderSide.sell;
       let taker = AddressZero;
       let currencyAssetType = '';
@@ -105,7 +93,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [directPurchaseSigHash],
+            sigHashes: [constants.directPurchaseSigHash],
           },
           eventRank,
         );
@@ -117,7 +105,7 @@ export class OrderMatchHandler {
             'directPurchase',
             callTrace.input,
           );
-          // console.log(result, 'result in directpur');
+          console.log(result, 'result in directpur');
 
           orderId = leftHash;
           side = OrderSide.sell;
@@ -134,9 +122,9 @@ export class OrderMatchHandler {
 
           paymentCurrency = result[0][5].toLowerCase();
           if (paymentCurrency === AddressZero) {
-            currencyAssetType = ETH;
+            currencyAssetType = constants.ETH;
           } else {
-            currencyAssetType = ERC20;
+            currencyAssetType = constants.ERC20;
           }
 
           currencyPrice = newLeftFill;
@@ -159,7 +147,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [directAcceptBidSigHash],
+            sigHashes: [constants.directAcceptBidSigHash],
           },
           eventRank,
         );
@@ -189,9 +177,9 @@ export class OrderMatchHandler {
 
           paymentCurrency = result[0][5].toLowerCase();
           if (paymentCurrency === AddressZero) {
-            currencyAssetType = ETH;
+            currencyAssetType = constants.ETH;
           } else {
-            currencyAssetType = ERC20;
+            currencyAssetType = constants.ERC20;
           }
 
           currencyPrice = newLeftFill;
@@ -213,7 +201,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [matchOrdersSigHash],
+            sigHashes: [constants.matchOrdersSigHash],
           },
           eventRank,
         );
@@ -235,7 +223,9 @@ export class OrderMatchHandler {
           maker = orderLeft.maker.toLowerCase();
           // taker will be overwritten in extractAttributionData step if router is used
           taker = orderRight.maker.toLowerCase();
-          side = [ERC721, ERC1155].includes(leftMakeAsset.assetType.assetClass)
+          side = [constants.ERC721, constants.ERC1155].includes(
+            leftMakeAsset.assetType.assetClass,
+          )
             ? OrderSide.sell
             : OrderSide.buy;
 
@@ -252,21 +242,21 @@ export class OrderMatchHandler {
           nftAssetType = nftAsset.assetType.assetClass;
           currencyAssetType = currencyAsset.assetType.assetClass;
           switch (nftAssetType) {
-            case COLLECTION:
+            case constants.COLLECTION:
               // Left order doesn't contain token id. We need to use the right order
               nftData = orderRight.makeAsset.assetType.data;
               break;
-            case ERC721:
-            case ERC1155:
+            case constants.ERC721:
+            case constants.ERC1155:
               nftData = nftAsset.assetType.data;
               break;
             default:
               throw Error('Unsupported asset type');
           }
 
-          if (currencyAssetType === ETH) {
+          if (currencyAssetType === constants.ETH) {
             paymentCurrency = 'ETH';
-          } else if (currencyAssetType === ERC20) {
+          } else if (currencyAssetType === constants.ERC20) {
             const decodedCurrencyAsset = defaultAbiCoder.decode(
               ['(address token)'],
               currencyAsset.assetType.data,
@@ -292,8 +282,8 @@ export class OrderMatchHandler {
 
       // Exclude orders with exotic asset types
       if (
-        !assetTypes.includes(nftAssetType) ||
-        !assetTypes.includes(currencyAssetType)
+        !constants.assetTypes.includes(nftAssetType) ||
+        !constants.assetTypes.includes(currencyAssetType)
       ) {
         return;
       }
@@ -313,10 +303,10 @@ export class OrderMatchHandler {
 
       // Handle: prices
       let currency: string;
-      if (currencyAssetType === ETH) {
+      if (currencyAssetType === constants.ETH) {
         currency = Addresses.Eth[this.chainId];
         console.log(currency, 'logged currency');
-      } else if (currencyAssetType === ERC20) {
+      } else if (currencyAssetType === constants.ERC20) {
         currency = paymentCurrency;
         // console.log(currency, paymentCurrency, 'logged currency and payment');
       } else {
