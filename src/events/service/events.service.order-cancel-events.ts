@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderCancelEventInput } from '../dto/events.dto.order-cancel-events';
@@ -72,23 +76,23 @@ export class OrderCancelEventService {
   //   }
 
   /**
-   * GET Activity By Id
+   * GET CancelEvent by orderId
    * @param id
-   * @returns Activity against Provided Id
+   * @returns CancelEvent against provided OrderId
    */
-  //   async show(id: string): Promise<Activity> {
-  //     try {
-  //       const found = await this.orderCancelEventsRepo.findOneBy({
-  //         id,
-  //       });
-  //       if (!found) {
-  //         throw new NotFoundException(`Activity against ${id} not found`);
-  //       }
-  //       return found;
-  //     } catch (error) {
-  //       throw new BadRequestException(error);
-  //     }
-  //   }
+  async show(orderId: string): Promise<OrderCancelEvents> {
+    try {
+      const found = await this.orderCancelEventRepo.findOneBy({
+        orderId,
+      });
+      if (!found) {
+        throw new NotFoundException(`CancelEvent against ${orderId} not found`);
+      }
+      return found;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 
   //   /**
   //    * Edit Activity
