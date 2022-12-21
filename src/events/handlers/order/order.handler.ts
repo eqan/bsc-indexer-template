@@ -10,7 +10,6 @@ import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { OrderCancelEventService } from 'src/events/service/events.service.order-cancel-events';
 import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
 import { extractAttributionData } from '../utils/utils.order';
@@ -401,12 +400,14 @@ export class OrderMatchHandler {
       const { args } = eventData.abi.parseLog(log);
       const orderId = args['hash'].toLowerCase();
 
-      const returnData = {
+      const cancelEvent = {
         orderKind: 'rarible',
         orderId,
         baseEventParams,
       };
-      console.log(returnData, 'cancel event return data');
+
+      const savedEvent = await this.orderCancelEventService.create(cancelEvent);
+      console.log(savedEvent, 'saved cancel event in event db');
     } catch (error) {
       this.logger.error(`failed Cancelling Order ${error}`);
     }

@@ -67,7 +67,7 @@ export class OrderPrices {
           currencyAddress === AddressZero ? '%20' : currencyAddress
         }`;
 
-        // console.log(url, 'url for the name symbol');
+        console.log(url, 'url for the name symbol');
 
         const response = await lastValueFrom(this.httpService.get(url));
         const result: {
