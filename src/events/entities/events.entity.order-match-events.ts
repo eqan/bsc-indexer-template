@@ -25,8 +25,8 @@ import { BaseEventParams } from './entities.entity.base-event-params';
 //   baseEventParams: BaseEventParams;
 // };
 
-@Entity('OrderMatchEvent')
-export class OrderMatchEvent extends BaseEntity {
+@Entity('OrderMatchEvents')
+export abstract class OrderMatchEvents extends BaseEntity {
   @PrimaryColumn({
     type: 'text',
     unique: true,

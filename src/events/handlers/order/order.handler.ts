@@ -7,6 +7,7 @@ import { bn } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { OrderCancelEventService } from 'src/events/service/events.service.order-cancel-events';
 import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
@@ -19,6 +20,7 @@ export class OrderMatchHandler {
   constructor(
     private readonly orderPrices: OrderPrices,
     private readonly orderMatchEventService: OrderMatchEventService,
+    private readonly orderCancelEventService: OrderCancelEventService,
     private rpcProvider: RpcProvider,
   ) {
     // const res =
@@ -356,34 +358,35 @@ export class OrderMatchHandler {
         amount,
         baseEventParams: events.baseEventParams,
       };
+
       const savedEvent = await this.orderMatchEventService.create(matchEvent);
       console.log(savedEvent, 'saved event in event db');
 
-      const response = {
-        orderKind,
-        orderId,
-        //TODO: RECHECK FILL
-        fill: 1,
-        nftAssetType,
-        nftData,
-        orderSide: side,
-        maker,
-        taker,
-        price: prices.nativePrice,
-        currency,
-        currencyPrice,
-        usdPrice: prices.usdPrice,
-        contract,
-        salt: bn(salt).toString(),
-        start: bn(start).toString(),
-        end: bn(end).toString(),
-        dataType,
-        data: decodeOrderData(dataType, data),
-        tokenId,
-        amount,
-        timestamp,
-        txHash,
-      };
+      // const response = {
+      //   orderKind,
+      //   orderId,
+      //   //TODO: RECHECK FILL
+      //   fill: 1,
+      //   nftAssetType,
+      //   nftData,
+      //   orderSide: side,
+      //   maker,
+      //   taker,
+      //   price: prices.nativePrice,
+      //   currency,
+      //   currencyPrice,
+      //   usdPrice: prices.usdPrice,
+      //   contract,
+      //   salt: bn(salt).toString(),
+      //   start: bn(start).toString(),
+      //   end: bn(end).toString(),
+      //   dataType,
+      //   data: decodeOrderData(dataType, data),
+      //   tokenId,
+      //   amount,
+      //   timestamp,
+      //   txHash,
+      // };
 
       // console.log(response, 'data logged out after listening event');
     } catch (error) {

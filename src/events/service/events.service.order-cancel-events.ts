@@ -1,27 +1,29 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
-import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
+import { OrderCancelEventInput } from '../dto/events.dto.order-cancel-events';
+import { OrderCancelEvents } from '../entities/events.entity.order-cancel-events';
 
 @Injectable()
-export class OrderMatchEventService {
+export class OrderCancelEventService {
   constructor(
-    @InjectRepository(OrderMatchEvents)
-    private orderMatchEventRepo: Repository<OrderMatchEvents>,
+    @InjectRepository(OrderCancelEvents)
+    private orderCancelEventRepo: Repository<OrderCancelEvents>,
   ) {}
 
   /**
-   * Create OrderMatchEvent in DB
-   * @params createOrderMatchInput
-   * @returns OrderMatchEvent
+   * Create OrderCancelEvent in DB
+   * @params createOrderCancelInput
+   * @returns OrderCancelEvent
    */
   async create(
-    createOrderMatchInput: OrderMatchEventInput,
-  ): Promise<OrderMatchEvents> {
+    createOrderCancelEventInput: OrderCancelEventInput,
+  ): Promise<OrderCancelEvents> {
     try {
-      const matchEvent = this.orderMatchEventRepo.create(createOrderMatchInput);
-      return await this.orderMatchEventRepo.save(matchEvent);
+      const CancelEvent = this.orderCancelEventRepo.create(
+        createOrderCancelEventInput,
+      );
+      return await this.orderCancelEventRepo.save(CancelEvent);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -36,7 +38,7 @@ export class OrderMatchEventService {
   //     try {
   //       const { page = 1, limit = 20, ...rest } = filterActivity;
   //       const [items, total] = await Promise.all([
-  //         this.orderMatchEventsRepo.find({
+  //         this.orderCancelEventsRepo.find({
   //           where: {
   //             id: rest?.id,
   //             type: rest?.type,
@@ -53,7 +55,7 @@ export class OrderMatchEventService {
   //           skip: (page - 1) * limit || 0,
   //           take: limit || 10,
   //         }),
-  //         this.orderMatchEventsRepo.count({
+  //         this.orderCancelEventsRepo.count({
   //           where: {
   //             id: rest?.id,
   //             type: rest?.type,
@@ -76,7 +78,7 @@ export class OrderMatchEventService {
    */
   //   async show(id: string): Promise<Activity> {
   //     try {
-  //       const found = await this.orderMatchEventsRepo.findOneBy({
+  //       const found = await this.orderCancelEventsRepo.findOneBy({
   //         id,
   //       });
   //       if (!found) {
@@ -105,7 +107,7 @@ export class OrderMatchEventService {
   //   async delete(deleteWithIds: { id: string[] }): Promise<void> {
   //     try {
   //       const ids = deleteWithIds.id;
-  //       const values = await this.orderMatchEventsRepo.delete({ id: In(ids) });
+  //       const values = await this.orderCancelEventsRepo.delete({ id: In(ids) });
   //       if (!values) {
   //         throw new NotFoundException('Activity not found');
   //       }
