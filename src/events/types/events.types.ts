@@ -48,3 +48,18 @@ export type EnhancedEvent = {
   baseEventParams: BaseEventParams;
   log: Log;
 };
+
+// export type OrderMatchEventInput = {
+//   orderId: string;
+//   orderSide: OrderSide;
+//   maker: string;
+//   taker: string;
+//   price: string;
+//   contract: string;
+//   tokenId: string;
+//   amount: string;
+//   currency: string;
+//   currencyPrice?: string;
+//   usdPrice?: string;
+//   baseEventParams: BaseEventParams;
+// };

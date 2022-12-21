@@ -373,6 +373,13 @@ type Users {
   type: String
 }
 
+type UsdPrice {
+  id: String!
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
@@ -508,6 +515,8 @@ type Query {
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
+  usdPrices: [UsdPrice!]!
+  usdPrice(filterUsdPriceInput: FilterUsdPriceInput!): UsdPrice!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
@@ -531,6 +540,11 @@ input FilterOrderDto {
   orderId: String
   maker: String
   taker: String
+}
+
+input FilterUsdPriceInput {
+  currency: String
+  timestamp: Float!
 }
 
 input FilterActivityDto {
@@ -574,6 +588,9 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
+  createUsdPrice(createUsdPriceInput: CreateUsdPriceInput!): UsdPrice!
+  updateUsdPrice(updateUsdPriceInput: UpdateUsdPriceInput!): UsdPrice!
+  removeUsdPrice(id: String!): UsdPrice!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   CreateUser(CreateUserInput: CreateUserInput!): Users!
@@ -727,6 +744,19 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
+}
+
+input CreateUsdPriceInput {
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
+input UpdateUsdPriceInput {
+  currency: String
+  value: String!
+  timestamp: Float!
+  id: String!
 }
 
 input CreateActivityInput {

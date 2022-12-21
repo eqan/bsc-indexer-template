@@ -1,6 +1,6 @@
 export type USDAndNativePrices = {
   usdPrice?: string;
-  // nativePrice?: string;
+  nativePrice?: string;
 };
 
 export type Price = {
