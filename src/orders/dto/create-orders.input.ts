@@ -35,9 +35,9 @@ export class CreateOrdersInput {
   type: ORDER_TYPES;
 
   @IsEnum(OrderKind)
-  @IsNotEmpty()
+  @IsOptional()
   @Field(() => OrderKind)
-  kind: OrderKind;
+  kind?: OrderKind;
 
   @IsEnum(OrderStatus)
   @IsNotEmpty()

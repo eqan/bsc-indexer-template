@@ -9,11 +9,17 @@ import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-even
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { OrderCancelEventService } from 'src/events/service/events.service.order-cancel-events';
 import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
-import { EnhancedEvent } from 'src/events/types/events.types';
+import {
+  EnhancedEvent,
+  fillMatchFunctionType,
+} from 'src/events/types/events.types';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
-import { extractAttributionData } from '../utils/utils.order';
-import * as constants from '../utils/utils.constants.order';
+import {
+  extractAttributionData,
+  getPaymentCurrency,
+} from '../utils/events.utils.helpers.orders';
+import * as constants from '../utils/events.utils.constants.order';
 
 @Injectable()
 export class OrderMatchHandler {
@@ -22,11 +28,7 @@ export class OrderMatchHandler {
     private readonly orderMatchEventService: OrderMatchEventService,
     private readonly orderCancelEventService: OrderCancelEventService,
     private rpcProvider: RpcProvider,
-  ) {
-    // const res =
-    //   Routers[1]?.['0x9757F2d2b135150BBeb65308D4a91804107cd8D6'.toLowerCase()];
-    // console.log(res, 'logged res');
-  }
+  ) {}
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
@@ -54,6 +56,7 @@ export class OrderMatchHandler {
       const newLeftFill = args['newLeftFill'].toString();
       const newRightFill = args['newRightFill'].toString();
 
+      let result: Result;
       let side: OrderSide = OrderSide.sell;
       let taker = AddressZero;
       let currencyAssetType = '';
@@ -64,6 +67,7 @@ export class OrderMatchHandler {
       let amount = '';
       let currencyPrice = '';
       let orderId = '';
+      let fillType: fillMatchFunctionType = 'directPurchase';
       let salt = '';
       let start = 0;
       let end = 0;
@@ -101,10 +105,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function directPurchase(tuple(address sellOrderMaker, uint256 sellOrderNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 sellOrderPaymentAmount, address paymentToken, uint256 sellOrderSalt, uint sellOrderStart, uint sellOrderEnd, bytes4 sellOrderDataType, bytes sellOrderData, bytes sellOrderSignature, uint256 buyOrderPaymentAmount, uint256 buyOrderNftAmount, bytes buyOrderData))',
           ]);
-          const result = iface.decodeFunctionData(
-            'directPurchase',
-            callTrace.input,
-          );
+          result = iface.decodeFunctionData('directPurchase', callTrace.input);
           console.log(result, 'result in directpur');
 
           orderId = leftHash;
@@ -119,13 +120,16 @@ export class OrderMatchHandler {
           end = result[0]['sellOrderEnd'];
           dataType = result[0]['sellOrderDataType'];
           data = result[0]['sellOrderData'];
+          fillType = 'directPurchase';
 
           paymentCurrency = result[0][5].toLowerCase();
-          if (paymentCurrency === AddressZero) {
-            currencyAssetType = constants.ETH;
-          } else {
-            currencyAssetType = constants.ERC20;
-          }
+          currencyAssetType = getPaymentCurrency(paymentCurrency);
+
+          // if (paymentCurrency === AddressZero) {
+          //   paymentCurrency = constants.ETH;
+          // } else {
+          //   currencyAssetType = constants.ERC20;
+          // }
 
           currencyPrice = newLeftFill;
           amount = newRightFill;
@@ -156,10 +160,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function directAcceptBid(tuple(address bidMaker, uint256 bidNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 bidPaymentAmount, address paymentToken, uint256 bidSalt, uint bidStart, uint bidEnd, bytes4 bidDataType, bytes bidData, bytes bidSignature, uint256 sellOrderPaymentAmount, uint256 sellOrderNftAmount, bytes sellOrderData) )',
           ]);
-          const result = iface.decodeFunctionData(
-            'directAcceptBid',
-            callTrace.input,
-          );
+          result = iface.decodeFunctionData('directAcceptBid', callTrace.input);
           console.log(result, 'logged result dirBid');
           orderId = rightHash;
 
@@ -174,6 +175,7 @@ export class OrderMatchHandler {
           end = result[0][8];
           dataType = result[0][9];
           data = result[0][10];
+          fillType = 'directAcceptBid';
 
           paymentCurrency = result[0][5].toLowerCase();
           if (paymentCurrency === AddressZero) {
@@ -210,10 +212,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
-          const result = iface.decodeFunctionData(
-            'matchOrders',
-            callTrace.input,
-          );
+          result = iface.decodeFunctionData('matchOrders', callTrace.input);
           console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
@@ -228,6 +227,7 @@ export class OrderMatchHandler {
           )
             ? OrderSide.sell
             : OrderSide.buy;
+          fillType = 'match';
 
           const nftAsset =
             side === OrderSide.buy ? rightMakeAsset : leftMakeAsset;
@@ -350,6 +350,11 @@ export class OrderMatchHandler {
 
       const savedEvent = await this.orderMatchEventService.create(matchEvent);
       console.log(savedEvent, 'saved event in event db');
+
+      /**
+       * checking if order exists locally or not if it exists
+       * update it otherwise create a new order locally
+       */
 
       // const response = {
       //   orderKind,

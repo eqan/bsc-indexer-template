@@ -1,6 +1,8 @@
 import { defaultAbiCoder } from '@ethersproject/abi';
-import { ORDER_DATA_TYPES } from '../constants/orders.constants.order-types';
-import { encodeAssetClass } from './orders.helpers.encode-order';
+import { AssetClassEnum } from 'src/orders/entities/enums/orders.asset-class.enum';
+import { ORDER_DATA_TYPES } from '../../../orders/constants/orders.constants.order-types';
+import { encodeAssetClass } from '../../../orders/helpers/orders.helpers.encode-order';
+import * as Types from '../../../orders/types/orders.types';
 
 export const decodeOrderData = (dataType: string, data: string) => {
   let decodeOrderData;
@@ -74,4 +76,38 @@ export const decodeOrderData = (dataType: string, data: string) => {
       throw Error('Unknown rarible order type');
   }
   return decodeOrderData;
+};
+
+export const decodeAssetData = (
+  assetType: Types.LocalAssetType,
+  data: string,
+) => {
+  switch (assetType.assetClass) {
+    case AssetClassEnum.ETH:
+      return '0x';
+    case AssetClassEnum.ERC20:
+    case AssetClassEnum.COLLECTION:
+      return defaultAbiCoder.decode(['address'], data);
+    case AssetClassEnum.ERC721:
+    case AssetClassEnum.ERC1155:
+      return defaultAbiCoder.decode(['address', 'uint256'], data);
+    case AssetClassEnum.ERC721_LAZY:
+      return defaultAbiCoder.decode(
+        [
+          'address contract',
+          'tuple(uint256 tokenId, string uri, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
+        ],
+        data,
+      );
+    case AssetClassEnum.ERC1155_LAZY:
+      return defaultAbiCoder.decode(
+        [
+          'address contract',
+          'tuple(uint256 tokenId, string uri, uint256 supply, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
+        ],
+        data,
+      );
+    default:
+      throw Error('Unknown rarible asset data');
+  }
 };

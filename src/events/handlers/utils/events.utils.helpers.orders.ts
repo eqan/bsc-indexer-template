@@ -1,6 +1,8 @@
 import { Interface } from '@ethersproject/abi';
 import { Provider } from '@ethersproject/providers';
-import { Routers } from './utils.constants.order';
+import { Routers } from './events.utils.constants.order';
+import { AddressZero } from '@ethersproject/constants';
+import * as constants from './events.utils.constants.order';
 
 export const extractAttributionData = async (
   txHash: string,
@@ -39,3 +41,6 @@ export const extractAttributionData = async (
     taker,
   };
 };
+
+export const getPaymentCurrency = (paymentCurrency: string) =>
+  paymentCurrency === AddressZero ? constants.ETH : constants.ERC20;
