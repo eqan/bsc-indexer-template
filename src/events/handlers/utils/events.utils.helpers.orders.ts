@@ -3,6 +3,8 @@ import { Provider } from '@ethersproject/providers';
 import { Routers } from './events.utils.constants.order';
 import { AddressZero } from '@ethersproject/constants';
 import * as constants from './events.utils.constants.order';
+import { OrderTypeEnum } from 'src/graphqlFile';
+import { AssetClassEnum } from 'src/orders/entities/enums/orders.asset-class.enum';
 
 export const extractAttributionData = async (
   txHash: string,
@@ -44,3 +46,6 @@ export const extractAttributionData = async (
 
 export const getPaymentCurrency = (paymentCurrency: string) =>
   paymentCurrency === AddressZero ? constants.ETH : constants.ERC20;
+
+export const getPaymentCurrencyAssetName = (paymentCurrency: string) =>
+  paymentCurrency === AddressZero ? AssetClassEnum.ETH : AssetClassEnum.ERC20;

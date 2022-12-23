@@ -21,6 +21,7 @@ export class OrdersHelpers {
 
   toRawOrder = (order: Types.Order): any => {
     const encoded = encodeForMatchOrders(order);
+    console.log(encoded, 'encoded again logged out');
     return encoded;
   };
 
@@ -48,7 +49,7 @@ export class OrdersHelpers {
     const message = this.toRawOrder(order);
     // console.log(message, 'message after encode');
     // TODO: Change hardcoded testnet chain id to original chainId while deploying
-    const domain = this.EIP712_DOMAIN(5);
+    const domain = this.EIP712_DOMAIN(1);
     // console.log(domain, 'domain logged');
     // console.log(domain, 'domain');
     // console.log(message, 'answered logged');

@@ -15,11 +15,12 @@ import {
 } from 'src/events/types/events.types';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
+import * as constants from '../utils/events.utils.constants.order';
+import { StoreOnchainBuySellOrders } from '../utils/events.utils.events.store-buy-sell-orders';
 import {
   extractAttributionData,
   getPaymentCurrency,
 } from '../utils/events.utils.helpers.orders';
-import * as constants from '../utils/events.utils.constants.order';
 
 @Injectable()
 export class OrderMatchHandler {
@@ -28,7 +29,10 @@ export class OrderMatchHandler {
     private readonly orderMatchEventService: OrderMatchEventService,
     private readonly orderCancelEventService: OrderCancelEventService,
     private rpcProvider: RpcProvider,
-  ) {}
+    private storeOnchainBuySellOrders: StoreOnchainBuySellOrders,
+  ) {
+    // console.log(decodeOrderDataType('0x1b18cdf6')[0][1], 'encoded dataType');
+  }
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
@@ -178,11 +182,7 @@ export class OrderMatchHandler {
           fillType = 'directAcceptBid';
 
           paymentCurrency = result[0][5].toLowerCase();
-          if (paymentCurrency === AddressZero) {
-            currencyAssetType = constants.ETH;
-          } else {
-            currencyAssetType = constants.ERC20;
-          }
+          currencyAssetType = getPaymentCurrency(paymentCurrency);
 
           currencyPrice = newLeftFill;
           amount = newRightFill;
@@ -213,7 +213,7 @@ export class OrderMatchHandler {
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
           result = iface.decodeFunctionData('matchOrders', callTrace.input);
-          console.log(result, 'logged result match');
+          // console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
@@ -351,6 +351,18 @@ export class OrderMatchHandler {
       const savedEvent = await this.orderMatchEventService.create(matchEvent);
       console.log(savedEvent, 'saved event in event db');
 
+      this.storeOnchainBuySellOrders.handleStoreOrders(
+        result,
+        fillType,
+        orderId,
+        leftHash,
+        rightHash,
+        events.baseEventParams.timestamp,
+        taker,
+        newLeftFill,
+        newRightFill,
+      );
+
       /**
        * checking if order exists locally or not if it exists
        * update it otherwise create a new order locally
@@ -402,7 +414,7 @@ export class OrderMatchHandler {
       };
 
       const savedEvent = await this.orderCancelEventService.create(cancelEvent);
-      console.log(savedEvent, 'saved cancel event in event db');
+      // console.log(savedEvent, 'saved cancel event in event db');
     } catch (error) {
       this.logger.error(`failed Cancelling Order ${error}`);
     }

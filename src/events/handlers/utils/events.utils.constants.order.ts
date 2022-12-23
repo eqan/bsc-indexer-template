@@ -38,6 +38,7 @@ export const Routers: ChainIdToAddressMap = {
   },
 };
 
+//TODO: NEED TO CHANGE THE TYPES TO BNB
 export const ERC20 = '0x8ae85d84';
 export const ETH = '0xaaaebeba';
 export const ERC721 = '0x73ad2146';
