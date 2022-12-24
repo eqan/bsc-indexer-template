@@ -213,7 +213,7 @@ export class OrderMatchHandler {
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
           result = iface.decodeFunctionData('matchOrders', callTrace.input);
-          // console.log(result, 'logged result match');
+          console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
@@ -234,9 +234,9 @@ export class OrderMatchHandler {
           const currencyAsset =
             side === OrderSide.buy ? leftMakeAsset : rightMakeAsset;
 
-          salt = side === OrderSide.buy ? orderRight.salt : orderLeft.salt;
-          dataType =
-            side === OrderSide.buy ? orderRight.dataType : orderLeft.dataType;
+          // salt = side === OrderSide.buy ? orderRight.salt : orderLeft.salt;
+          // dataType =
+          //   side === OrderSide.buy ? orderRight.dataType : orderLeft.dataType;
 
           orderId = leftHash;
           nftAssetType = nftAsset.assetType.assetClass;
@@ -265,9 +265,9 @@ export class OrderMatchHandler {
           }
 
           //TODO : RECHECK THE START END DATES AND DATA
-          start = side === OrderSide.buy ? orderLeft.start : orderRight.start;
-          end = side === OrderSide.buy ? orderRight.end : orderLeft.end;
-          data = side === OrderSide.buy ? orderLeft.data : orderRight.data;
+          // start = side === OrderSide.buy ? orderLeft.start : orderRight.start;
+          // end = side === OrderSide.buy ? orderRight.end : orderLeft.end;
+          // data = side === OrderSide.buy ? orderLeft.data : orderRight.data;
 
           // Match order has amount in newLeftFill when it's a buy order and amount in newRightFill when it's sell order
           amount = side === OrderSide.buy ? newLeftFill : newRightFill;

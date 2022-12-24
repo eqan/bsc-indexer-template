@@ -11,6 +11,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { OrderKind } from '../entities/enums/order.kind.enum';
 import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
@@ -33,6 +34,10 @@ export class CreateOrdersInput {
   @IsNotEmpty()
   @Field(() => ORDER_TYPES)
   type: ORDER_TYPES;
+
+  @IsEnum(OrderSide)
+  @Field(() => OrderSide)
+  side?: OrderSide;
 
   @IsEnum(OrderKind)
   @IsOptional()

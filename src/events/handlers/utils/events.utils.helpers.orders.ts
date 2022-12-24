@@ -1,10 +1,10 @@
 import { Interface } from '@ethersproject/abi';
-import { Provider } from '@ethersproject/providers';
-import { Routers } from './events.utils.constants.order';
 import { AddressZero } from '@ethersproject/constants';
-import * as constants from './events.utils.constants.order';
-import { OrderTypeEnum } from 'src/graphqlFile';
+import { Provider } from '@ethersproject/providers';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { AssetClassEnum } from 'src/orders/entities/enums/orders.asset-class.enum';
+import * as constants from './events.utils.constants.order';
+import { Routers } from './events.utils.constants.order';
 
 export const extractAttributionData = async (
   txHash: string,
@@ -49,3 +49,8 @@ export const getPaymentCurrency = (paymentCurrency: string) =>
 
 export const getPaymentCurrencyAssetName = (paymentCurrency: string) =>
   paymentCurrency === AddressZero ? AssetClassEnum.ETH : AssetClassEnum.ERC20;
+
+export const getOrderSide = (assetClassHash: string) =>
+  [constants.ERC721, constants.ERC1155].includes(assetClassHash)
+    ? OrderSide.sell
+    : OrderSide.buy;

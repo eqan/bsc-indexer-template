@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
@@ -47,6 +48,15 @@ export class Orders {
   @Field({ nullable: true })
   @Column({
     type: 'enum',
+    enumName: 'OrderSide',
+    enum: OrderSide,
+    default: OrderSide.sell,
+  })
+  side?: OrderSide;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'enum',
     // nullable: true,
     enumName: 'ORDER_TYPES',
     enum: ORDER_TYPES,
@@ -54,7 +64,7 @@ export class Orders {
   })
   type: ORDER_TYPES;
 
-  @Field({ nullable: true })
+  @Field()
   @Column({
     type: 'enum',
     // nullable: true,

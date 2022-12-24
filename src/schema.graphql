@@ -336,8 +336,9 @@ type Orders {
   orderId: String!
   fill: Float!
   kind: String
+  side: String
   type: String
-  status: String
+  status: String!
   makeStock: Float
   cancelled: Boolean
   createdAt: DateTime
@@ -696,6 +697,7 @@ input CreateOrdersInput {
   orderId: String!
   fill: Float!
   type: ORDER_TYPES!
+  side: OrderSide!
   kind: OrderKind!
   status: OrderStatus!
   makeStock: Float!
@@ -722,6 +724,11 @@ input CreateOrdersInput {
 enum ORDER_TYPES {
   V1
   V2
+}
+
+enum OrderSide {
+  buy
+  sell
 }
 
 enum OrderKind {

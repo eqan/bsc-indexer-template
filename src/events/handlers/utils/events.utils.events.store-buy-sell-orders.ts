@@ -1,8 +1,8 @@
 import { Result } from '@ethersproject/abi';
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import {
-  decodeAssetClass,
   decodeAssetData,
   decodeOrderData,
 } from 'src/events/handlers/utils/events.utils.decode-order';
@@ -14,6 +14,7 @@ import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import { OrdersService } from 'src/orders/orders.service';
 import { bn } from '../../../common/utils.common';
 import {
+  getOrderSide,
   getPaymentCurrency,
   getPaymentCurrencyAssetName,
 } from './events.utils.helpers.orders';
@@ -54,19 +55,21 @@ export class StoreOnchainBuySellOrders {
             result[0]['nftAssetClass'],
             result[0]['nftData'],
           );
-          console.log(decodeNftData, 'jo chahiyay');
+          // console.log(decodeNftData, 'jo chahiyay');
           const value = decodeOrderData(dataType, data);
-          console.log(value);
+          // console.log(value);
           const dbOrder: CreateOrdersInput = {
             orderId,
             fill: 1,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
+            side: OrderSide.sell,
             type: ORDER_TYPES.V2,
             status: OrderStatus.Filled,
             cancelled: false,
             createdAt: new Date(timestamp * 1000),
             lastUpdatedAt: new Date(),
+            dbUpdatedAt: new Date(),
             maker: result[0]['sellOrderMaker'],
             signature: result[0]['sellOrderSignature'],
             start: Number(bn(result[0]['sellOrderStart'])),
@@ -104,6 +107,7 @@ export class StoreOnchainBuySellOrders {
           };
           const saved = await this.orderService.create(dbOrder);
           console.log('saved blaw blaw in db', saved);
+          break;
         } catch (error) {
           // tx data doesn't match directPurchase
           console.log('failed saving blaw', error);
@@ -119,11 +123,13 @@ export class StoreOnchainBuySellOrders {
             fill: 1,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
+            side: OrderSide.buy,
             type: ORDER_TYPES.V2,
             status: OrderStatus.Filled,
             cancelled: false,
             createdAt: new Date(timestamp * 1000),
             lastUpdatedAt: new Date(),
+            dbUpdatedAt: new Date(),
             maker: result[0]['bidMaker'],
             signature: result[0]['bidSignature'],
             start: Number(bn(result[0]['bidStart'])),
@@ -143,6 +149,10 @@ export class StoreOnchainBuySellOrders {
                 getPaymentCurrency(result[0]['paymentToken']),
                 result[0]['paymentToken'],
               ) as any,
+              // assetType: decodeAssetData(
+              //   getPaymentCurrency(result[0]['paymentToken']),
+              //   result[0]['paymentToken'],
+              // ) as any,
             },
             // taker,
             take: {
@@ -157,6 +167,7 @@ export class StoreOnchainBuySellOrders {
           };
           const saved = await this.orderService.create(dbOrder);
           console.log('direct accept bid saved blaw blaw in db', saved);
+          break;
         } catch {
           console.log('tx data doesnt match directAcceptBid');
           // tx data doesn't match directAcceptBid
@@ -165,6 +176,66 @@ export class StoreOnchainBuySellOrders {
       case 'match': {
         // Try to parse calldata as matchOrders
         try {
+          const orderLeft = result.orderLeft;
+          const orderRight = result.orderRight;
+          const leftMakeAsset = orderLeft.makeAsset;
+          const rightMakeAsset = orderRight.makeAsset;
+          const Left: CreateOrdersInput = {
+            orderId: leftOrderId,
+            fill: 1,
+            cancelled: false,
+            status: OrderStatus.Filled,
+            type: ORDER_TYPES.V2,
+            makeStock: 777,
+            side: getOrderSide(leftMakeAsset.assetType.assetClass),
+            maker: orderLeft.maker,
+            dbUpdatedAt: new Date(),
+            taker,
+            createdAt: new Date(timestamp * 1000),
+            lastUpdatedAt: new Date(),
+            start: Number(bn(orderLeft.start)),
+            end: Number(bn(orderLeft.end)),
+            salt: bn(orderLeft.salt).toHexString(),
+            signature: result.signatureLeft,
+            data: decodeOrderData(orderLeft.dataType, orderLeft.data) as any,
+            make: {
+              value: bn(orderLeft.makeAsset.value).toString(),
+              assetType: orderLeft.makeAsset.assetType,
+            },
+            take: {
+              value: bn(orderLeft.takeAsset.value).toString(),
+              assetType: orderLeft.takeAsset.assetType,
+            },
+          };
+          console.log(Left, 'left order made');
+          const Right = {
+            orderId: rightOrderId,
+            fill: 1,
+            cancelled: false,
+            status: OrderStatus.Filled,
+            type: ORDER_TYPES.V2,
+            makeStock: 777,
+            side: getOrderSide(rightMakeAsset.assetType.assetClass),
+            maker: orderRight.maker,
+            taker: orderRight.taker,
+            createdAt: new Date(timestamp * 1000),
+            lastUpdatedAt: new Date(),
+            dbUpdatedAt: new Date(),
+            start: Number(bn(orderRight.start)),
+            end: Number(bn(orderRight.end)),
+            salt: bn(orderRight.salt).toHexString(),
+            signature: result.signatureRight,
+            data: decodeOrderData(orderRight.dataType, orderRight.data) as any,
+            make: {
+              value: bn(orderRight.makeAsset.value).toString(),
+              assetType: orderRight.makeAsset.assetType,
+            },
+            take: {
+              value: bn(orderRight.takeAsset.value).toString(),
+              assetType: orderRight.takeAsset.assetType,
+            },
+          };
+          console.log(Right, 'right order made');
         } catch {
           console.log('tx data doesnt match matchOrders');
           // tx data doesn't match matchOrders
