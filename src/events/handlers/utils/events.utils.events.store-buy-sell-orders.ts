@@ -180,6 +180,7 @@ export class StoreOnchainBuySellOrders {
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
           const rightMakeAsset = orderRight.makeAsset;
+
           const Left: CreateOrdersInput = {
             orderId: leftOrderId,
             fill: 1,
@@ -200,11 +201,17 @@ export class StoreOnchainBuySellOrders {
             data: decodeOrderData(orderLeft.dataType, orderLeft.data) as any,
             make: {
               value: bn(orderLeft.makeAsset.value).toString(),
-              assetType: orderLeft.makeAsset.assetType,
+              assetType: decodeAssetData(
+                orderLeft.makeAsset.assetType.assetClass,
+                orderLeft.makeAsset.assetType.data,
+              ) as any,
             },
             take: {
               value: bn(orderLeft.takeAsset.value).toString(),
-              assetType: orderLeft.takeAsset.assetType,
+              assetType: decodeAssetData(
+                orderLeft.takeAsset.assetType.assetClass,
+                orderLeft.takeAsset.assetType.data,
+              ) as any,
             },
           };
           console.log(Left, 'left order made');
@@ -228,11 +235,17 @@ export class StoreOnchainBuySellOrders {
             data: decodeOrderData(orderRight.dataType, orderRight.data) as any,
             make: {
               value: bn(orderRight.makeAsset.value).toString(),
-              assetType: orderRight.makeAsset.assetType,
+              assetType: decodeAssetData(
+                orderRight.makeAsset.assetType.assetClass,
+                orderRight.makeAsset.assetType.data,
+              ),
             },
             take: {
               value: bn(orderRight.takeAsset.value).toString(),
-              assetType: orderRight.takeAsset.assetType,
+              assetType: decodeAssetData(
+                orderRight.takeAsset.assetType.assetClass,
+                orderRight.takeAsset.assetType.data,
+              ),
             },
           };
           console.log(Right, 'right order made');

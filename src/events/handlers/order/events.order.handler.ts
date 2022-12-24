@@ -110,7 +110,7 @@ export class OrderMatchHandler {
             'function directPurchase(tuple(address sellOrderMaker, uint256 sellOrderNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 sellOrderPaymentAmount, address paymentToken, uint256 sellOrderSalt, uint sellOrderStart, uint sellOrderEnd, bytes4 sellOrderDataType, bytes sellOrderData, bytes sellOrderSignature, uint256 buyOrderPaymentAmount, uint256 buyOrderNftAmount, bytes buyOrderData))',
           ]);
           result = iface.decodeFunctionData('directPurchase', callTrace.input);
-          console.log(result, 'result in directpur');
+          // console.log(result, 'result in directpur');
 
           orderId = leftHash;
           side = OrderSide.sell;
