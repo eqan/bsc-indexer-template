@@ -9,7 +9,7 @@ import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
 import { OrderMatchHandler } from '../handlers/order/order.handler';
-import { OrderMatchEventService } from '../service/events.service.order-match-events';
+import { OrderMatchEventService } from '../service/events.order-match-events.service';
 import { SyncEventsService } from './sync-events.service';
 
 @Module({

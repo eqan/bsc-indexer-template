@@ -7,7 +7,7 @@ import { bn } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
-import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
+import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';

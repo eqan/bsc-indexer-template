@@ -64,9 +64,9 @@ export class OrderMatchEventService {
   // }
 
   /**
-   * GET Activity By Id
+   * GET Order By Id
    * @param id
-   * @returns Activity against Provided Id
+   * @returns Order against Provided Id
    */
   async show(tokenId: string): Promise<OrderMatchEvent> {
     try {

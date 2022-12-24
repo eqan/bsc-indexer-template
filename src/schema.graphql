@@ -511,6 +511,7 @@ input AssetInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
+  GetCollectionAveragePrice(FilterCollectionInput: FilterDto = {}): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!

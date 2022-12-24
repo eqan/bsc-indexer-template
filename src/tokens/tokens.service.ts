@@ -1,11 +1,12 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
-import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
+import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
@@ -18,8 +19,9 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
-    private collectionsService: CollectionsService,
-    private orderMatchEventService: OrderMatchEventService,
+    private collectionsService: CollectionsService, // private orderMatchEventService: OrderMatchEventService,
+    // private readonly moduleRef: ModuleRef, // @Inject(OrderMatchEventService) // private orderMatchEventService: OrderMatchEventService,
+    private readonly orderMatchEventService: OrderMatchEventService,
   ) {}
 
   /**
@@ -161,6 +163,7 @@ export class TokensService {
    */
   async getOrderTokenPrice(filterTokenDto: FilterTokenDto): Promise<number> {
     try {
+      // const orderMatchEventService = this.moduleRef.get(OrderMatchEventService);
       const { items, total } = await this.index(filterTokenDto);
       const promises = [];
       let sum = 0;
