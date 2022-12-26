@@ -85,7 +85,7 @@ export class OrdersService {
     createOnchainOrdersInput: CreateOnchainOrdersInput,
   ): Promise<Orders> {
     try {
-      console.log('hello', createOnchainOrdersInput);
+      // console.log('hello', createOnchainOrdersInput);
       // const orderExists = await this.orderExistOrNot(
       //   createOnchainOrdersInput.orderId,
       // );

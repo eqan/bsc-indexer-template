@@ -108,11 +108,11 @@ export class StoreOnchainBuySellOrders {
             data: decodeOrderData(dataType, data) as any,
           };
           const saved = await this.orderService.createOnchainOrder(dbOrder);
-          console.log('saved blaw blaw in db', saved);
+          console.log('saved directPurchase in db', saved);
           break;
         } catch (error) {
           // tx data doesn't match directPurchase
-          console.log('failed saving blaw', error);
+          console.log('failed saving directPurchase', error);
         }
       }
       // Try to parse calldata as directAcceptBid
@@ -168,7 +168,7 @@ export class StoreOnchainBuySellOrders {
             data: decodeOrderData(dataType, data) as any,
           };
           const saved = await this.orderService.createOnchainOrder(dbOrder);
-          console.log('direct accept bid saved blaw blaw in db', saved);
+          console.log('direct accept bid in db', saved);
           break;
         } catch {
           console.log('tx data doesnt match directAcceptBid');
