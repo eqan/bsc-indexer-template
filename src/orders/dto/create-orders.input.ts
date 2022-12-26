@@ -26,9 +26,9 @@ export class CreateOrdersInput {
   orderId: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   @Field()
-  fill: number;
+  fill: string;
 
   @IsEnum(ORDER_TYPES)
   @IsNotEmpty()

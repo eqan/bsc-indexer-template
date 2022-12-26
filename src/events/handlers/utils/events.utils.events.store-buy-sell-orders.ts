@@ -43,24 +43,21 @@ export class StoreOnchainBuySellOrders {
     rightOrderId: string,
     timestamp: number,
     taker: string,
-    newLeftFill,
-    newRightFill,
+    newLeftFill: string,
+    newRightFill: string,
+    usdPrice: string,
   ) => {
     switch (fillType) {
       case 'directPurchase': {
+        console.log(newRightFill, 'rightfill');
+        console.log(newLeftFill, 'leftfill');
+        console.log(timestamp);
         try {
           const dataType = result[0]['sellOrderDataType'];
           const data = result[0]['sellOrderData'];
-          const decodeNftData = decodeAssetData(
-            result[0]['nftAssetClass'],
-            result[0]['nftData'],
-          );
-          // console.log(decodeNftData, 'jo chahiyay');
-          const value = decodeOrderData(dataType, data);
-          // console.log(value);
           const dbOrder: CreateOnchainOrdersInput = {
             orderId,
-            fill: 1,
+            fill: newRightFill,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
             availability: OrderAvailability.ON_CHAIN,
@@ -77,7 +74,7 @@ export class StoreOnchainBuySellOrders {
             end: Number(bn(result[0]['sellOrderEnd'])),
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
             makePrice: Number(bn(result[0]['sellOrderPaymentAmount'])),
-            //makeStock order.make.value
+            makePriceUsd: Number(usdPrice),
             makeStock: bn(result[0]['sellOrderNftAmount']).toString(), //will be the price at which order was placed
             make: {
               value: bn(result[0]['sellOrderNftAmount']).toString(),
@@ -122,7 +119,7 @@ export class StoreOnchainBuySellOrders {
           const data = result[0]['bidDataType'];
           const dbOrder: CreateOnchainOrdersInput = {
             orderId,
-            fill: 1,
+            fill: newRightFill,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
             availability: OrderAvailability.ON_CHAIN,
@@ -135,6 +132,7 @@ export class StoreOnchainBuySellOrders {
             dbUpdatedAt: new Date(),
             maker: result[0]['bidMaker'],
             takePrice: Number(bn(result[0]['bidPaymentAmount'])),
+            takePriceUsd: Number(usdPrice),
             signature: result[0]['bidSignature'],
             start: Number(bn(result[0]['bidStart'])),
             end: Number(bn(result[0]['bidEnd'])),
@@ -182,16 +180,16 @@ export class StoreOnchainBuySellOrders {
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
           const rightMakeAsset = orderRight.makeAsset;
-
+          const sideLeft = getOrderSide(leftMakeAsset.assetType.assetClass);
           const Left: CreateOnchainOrdersInput = {
             orderId: leftOrderId,
-            fill: 1,
+            side: sideLeft,
+            fill: sideLeft === OrderSide.buy ? newLeftFill : newRightFill,
             cancelled: false,
             status: OrderStatus.Filled,
             availability: OrderAvailability.ON_CHAIN,
             type: ORDER_TYPES.V2,
             makeStock: bn(orderLeft.makeAsset.value).toString(),
-            side: getOrderSide(leftMakeAsset.assetType.assetClass),
             maker: orderLeft.maker,
             dbUpdatedAt: new Date(),
             taker,
@@ -217,10 +215,24 @@ export class StoreOnchainBuySellOrders {
               ) as any,
             },
           };
+
+          // const currencyPrice =
+          //   sideLeft === OrderSide.buy ? newRightFill : newLeftFill;
+
+          if (Left.side === OrderSide.sell) {
+            // Left.makePrice = Number(Left.take.value);
+            Left.makePrice = Number(newLeftFill);
+            Left.makePriceUsd = Number(usdPrice);
+          } else {
+            // Left.takePrice = Number(Left.make.value);
+            Left.takePrice = Number(newRightFill);
+            Left.takePriceUsd = Number(usdPrice);
+          }
+
           // console.log(Left, 'left order made');
           const Right: CreateOnchainOrdersInput = {
             orderId: rightOrderId,
-            fill: 1,
+            fill: '1',
             cancelled: false,
             status: OrderStatus.Filled,
             availability: OrderAvailability.ON_CHAIN,

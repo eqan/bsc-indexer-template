@@ -334,7 +334,7 @@ scalar ASSET_SCALAR
 
 type Orders {
   orderId: String!
-  fill: Float!
+  fill: String!
   kind: String
   side: String
   type: String
@@ -695,7 +695,7 @@ input DeleteTokensInput {
 
 input CreateOrdersInput {
   orderId: String!
-  fill: Float!
+  fill: String!
   type: ORDER_TYPES!
   side: OrderSide!
   kind: OrderKind!

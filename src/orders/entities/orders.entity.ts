@@ -32,9 +32,9 @@ export class Orders {
   //TODO : CONFIRM FILL DATATYPE DECIMAL OR INT
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'text',
   })
-  fill: number;
+  fill: string;
 
   @Field({ nullable: true })
   @Column({

@@ -30,9 +30,9 @@ export class CreateOnchainOrdersInput {
   availability: OrderAvailability;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   //   @Field()
-  fill: number;
+  fill: string;
 
   @IsEnum(ORDER_TYPES)
   @IsNotEmpty()

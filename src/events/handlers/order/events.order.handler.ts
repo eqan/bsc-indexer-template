@@ -72,11 +72,6 @@ export class OrderMatchHandler {
       let currencyPrice = '';
       let orderId = '';
       let fillType: fillMatchFunctionType = 'directPurchase';
-      // let salt = '';
-      // let start = 0;
-      // let end = 0;
-      // let dataType = '';
-      // let data = '';
 
       // Event data doesn't include full order information so we have to parse the calldata
       const txTrace = await getTxTrace(
@@ -119,11 +114,6 @@ export class OrderMatchHandler {
           taker = callTrace.to.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          // salt = result[0][6];
-          // start = result[0]['sellOrderStart'];
-          // end = result[0]['sellOrderEnd'];
-          // dataType = result[0]['sellOrderDataType'];
-          // data = result[0]['sellOrderData'];
           fillType = 'directPurchase';
 
           paymentCurrency = result[0][5].toLowerCase();
@@ -174,11 +164,6 @@ export class OrderMatchHandler {
           taker = callTrace.from.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          // salt = result[0][6];
-          // start = result[0][7];
-          // end = result[0][8];
-          // dataType = result[0][9];
-          // data = result[0][10];
           fillType = 'directAcceptBid';
 
           paymentCurrency = result[0][5].toLowerCase();
@@ -234,10 +219,6 @@ export class OrderMatchHandler {
           const currencyAsset =
             side === OrderSide.buy ? leftMakeAsset : rightMakeAsset;
 
-          // salt = side === OrderSide.buy ? orderRight.salt : orderLeft.salt;
-          // dataType =
-          //   side === OrderSide.buy ? orderRight.dataType : orderLeft.dataType;
-
           orderId = leftHash;
           nftAssetType = nftAsset.assetType.assetClass;
           currencyAssetType = currencyAsset.assetType.assetClass;
@@ -263,11 +244,6 @@ export class OrderMatchHandler {
             );
             paymentCurrency = decodedCurrencyAsset[0][0].toLowerCase();
           }
-
-          //TODO : RECHECK THE START END DATES AND DATA
-          // start = side === OrderSide.buy ? orderLeft.start : orderRight.start;
-          // end = side === OrderSide.buy ? orderRight.end : orderLeft.end;
-          // data = side === OrderSide.buy ? orderLeft.data : orderRight.data;
 
           // Match order has amount in newLeftFill when it's a buy order and amount in newRightFill when it's sell order
           amount = side === OrderSide.buy ? newLeftFill : newRightFill;
@@ -349,7 +325,7 @@ export class OrderMatchHandler {
       };
 
       const savedEvent = await this.orderMatchEventService.create(matchEvent);
-      console.log(savedEvent, 'saved event in event db');
+      // console.log(savedEvent, 'saved event in event db');
 
       this.storeOnchainBuySellOrders.handleStoreOrders(
         result,
@@ -361,6 +337,7 @@ export class OrderMatchHandler {
         taker,
         newLeftFill,
         newRightFill,
+        prices.usdPrice,
       );
 
       /**
