@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { In, Repository } from 'typeorm';
+import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
@@ -22,49 +23,7 @@ export class OrdersService {
     // private readonly ethereum: Maybe<Ethereum>,
     private readonly rpcProvider: RpcProvider,
     private readonly ordersHelpers: OrdersHelpers,
-  ) {
-    // const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
-    // const schema = {
-    //   properties: {
-    //     foo: { type: 'int32' },
-    //   },
-    //   optionalProperties: {
-    //     bar: { type: 'string' },
-    //   },
-    // };
-    // const validate = ajv.compile(schema);
-    // console.log('values');
-    // const data = {
-    //   foo: 1,
-    //   bar: 'abc',
-    // };
-    // const valid = validate(data);
-    // if (!valid) console.log(validate.errors);
-    // const data = {
-    //   orderId: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-    //   maker: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-    //   Make: {
-    //     type: {
-    //       type: 'BEP721',
-    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-    //       tokenId: 9,
-    //     },
-    //     value: 8,
-    //   },
-    //   take: {
-    //     type: {
-    //       type: 'BEP721',
-    //       contract: '0x31796Ef240740E6c25e501Cf202AC910Db0fe062',
-    //       tokenId: 9,
-    //     },
-    //     value: 8,
-    //   },
-    //   salt: '849388498',
-    // };
-    // const signature = generateSignature(data);
-    // const verified = verifyOrder(data, signature);
-    // console.log(verified, 'data verified');
-  }
+  ) {}
 
   /**
    * Check if order exist or not
@@ -112,6 +71,26 @@ export class OrdersService {
         // return { name: 'nimra' };
         // } else throw new BadRequestException('decryption failed');
       } else throw new BadRequestException('order already exists');
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Create OnchainOrder
+   * @params createOnchainOrdersinput
+   * @return order
+   */
+  async createOnchainOrder(
+    createOnchainOrdersInput: CreateOnchainOrdersInput,
+  ): Promise<Orders> {
+    try {
+      console.log('hello', createOnchainOrdersInput);
+      // const orderExists = await this.orderExistOrNot(
+      //   createOnchainOrdersInput.orderId,
+      // );
+      const order = this.ordersRepo.create(createOnchainOrdersInput);
+      return await this.ordersRepo.save(order);
     } catch (error) {
       throw new BadRequestException(error);
     }

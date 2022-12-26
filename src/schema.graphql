@@ -339,7 +339,7 @@ type Orders {
   side: String
   type: String
   status: String!
-  makeStock: Float
+  makeStock: String
   cancelled: Boolean
   createdAt: DateTime
   lastUpdatedAt: DateTime
@@ -700,7 +700,7 @@ input CreateOrdersInput {
   side: OrderSide!
   kind: OrderKind!
   status: OrderStatus!
-  makeStock: Float!
+  makeStock: String!
   cancelled: Boolean!
   createdAt: DateTime!
   lastUpdatedAt: DateTime!

@@ -8,7 +8,8 @@ import {
 } from 'src/events/handlers/utils/events.utils.decode-order';
 import { fillMatchFunctionType } from 'src/events/types/events.types';
 import { ORDER_TYPES } from 'src/orders/constants/orders.constants.order-types';
-import { CreateOrdersInput } from 'src/orders/dto/create-orders.input';
+import { CreateOnchainOrdersInput } from 'src/orders/dto/create-onchain.orders.input';
+import { OrderAvailability } from 'src/orders/entities/enums/order.availability.enum';
 import { OrderStatus } from 'src/orders/entities/enums/orders.status.enum';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import { OrdersService } from 'src/orders/orders.service';
@@ -16,7 +17,6 @@ import { bn } from '../../../common/utils.common';
 import {
   getOrderSide,
   getPaymentCurrency,
-  getPaymentCurrencyAssetName,
 } from './events.utils.helpers.orders';
 
 /**
@@ -58,11 +58,12 @@ export class StoreOnchainBuySellOrders {
           // console.log(decodeNftData, 'jo chahiyay');
           const value = decodeOrderData(dataType, data);
           // console.log(value);
-          const dbOrder: CreateOrdersInput = {
+          const dbOrder: CreateOnchainOrdersInput = {
             orderId,
             fill: 1,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
+            availability: OrderAvailability.ON_CHAIN,
             side: OrderSide.sell,
             type: ORDER_TYPES.V2,
             status: OrderStatus.Filled,
@@ -75,8 +76,9 @@ export class StoreOnchainBuySellOrders {
             start: Number(bn(result[0]['sellOrderStart'])),
             end: Number(bn(result[0]['sellOrderEnd'])),
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
-            //ERROR : DON'T KNOW THIS MAKESTOCK FIELD DUMMY WRONG DATA FILLED
-            makeStock: 77, //will be the price at which order was placed
+            makePrice: Number(bn(result[0]['sellOrderPaymentAmount'])),
+            //makeStock order.make.value
+            makeStock: bn(result[0]['sellOrderNftAmount']).toString(), //will be the price at which order was placed
             make: {
               value: bn(result[0]['sellOrderNftAmount']).toString(),
               // assetType: {
@@ -89,7 +91,7 @@ export class StoreOnchainBuySellOrders {
                 result[0]['nftData'],
               ) as any,
             },
-            // taker,
+            taker,
             take: {
               value: newLeftFill,
               // assetType: {
@@ -105,7 +107,7 @@ export class StoreOnchainBuySellOrders {
             },
             data: decodeOrderData(dataType, data) as any,
           };
-          const saved = await this.orderService.create(dbOrder);
+          const saved = await this.orderService.createOnchainOrder(dbOrder);
           console.log('saved blaw blaw in db', saved);
           break;
         } catch (error) {
@@ -118,11 +120,12 @@ export class StoreOnchainBuySellOrders {
         try {
           const dataType = result[0]['bidMaker'];
           const data = result[0]['bidDataType'];
-          const dbOrder: CreateOrdersInput = {
+          const dbOrder: CreateOnchainOrdersInput = {
             orderId,
             fill: 1,
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
+            availability: OrderAvailability.ON_CHAIN,
             side: OrderSide.buy,
             type: ORDER_TYPES.V2,
             status: OrderStatus.Filled,
@@ -131,12 +134,12 @@ export class StoreOnchainBuySellOrders {
             lastUpdatedAt: new Date(),
             dbUpdatedAt: new Date(),
             maker: result[0]['bidMaker'],
+            takePrice: Number(bn(result[0]['bidPaymentAmount'])),
             signature: result[0]['bidSignature'],
             start: Number(bn(result[0]['bidStart'])),
             end: Number(bn(result[0]['bidEnd'])),
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
-            //ERROR : DON'T KNOW THIS MAKESTOCK FIELD DUMMY WRONG DATA FILLED
-            makeStock: 77, //will be the price at which order was placed
+            makeStock: newLeftFill.toString(), //will be the price at which order was placed
             make: {
               value: newLeftFill,
               // assetType: {
@@ -154,7 +157,7 @@ export class StoreOnchainBuySellOrders {
               //   result[0]['paymentToken'],
               // ) as any,
             },
-            // taker,
+            taker,
             take: {
               value: bn(result[0]['bidNftAmount']).toString(),
               assetType: decodeAssetData(
@@ -162,10 +165,9 @@ export class StoreOnchainBuySellOrders {
                 result[0]['nftData'],
               ) as any,
             },
-            // taker,
             data: decodeOrderData(dataType, data) as any,
           };
-          const saved = await this.orderService.create(dbOrder);
+          const saved = await this.orderService.createOnchainOrder(dbOrder);
           console.log('direct accept bid saved blaw blaw in db', saved);
           break;
         } catch {
@@ -181,13 +183,14 @@ export class StoreOnchainBuySellOrders {
           const leftMakeAsset = orderLeft.makeAsset;
           const rightMakeAsset = orderRight.makeAsset;
 
-          const Left: CreateOrdersInput = {
+          const Left: CreateOnchainOrdersInput = {
             orderId: leftOrderId,
             fill: 1,
             cancelled: false,
             status: OrderStatus.Filled,
+            availability: OrderAvailability.ON_CHAIN,
             type: ORDER_TYPES.V2,
-            makeStock: 777,
+            makeStock: bn(orderLeft.makeAsset.value).toString(),
             side: getOrderSide(leftMakeAsset.assetType.assetClass),
             maker: orderLeft.maker,
             dbUpdatedAt: new Date(),
@@ -214,14 +217,15 @@ export class StoreOnchainBuySellOrders {
               ) as any,
             },
           };
-          console.log(Left, 'left order made');
-          const Right = {
+          // console.log(Left, 'left order made');
+          const Right: CreateOnchainOrdersInput = {
             orderId: rightOrderId,
             fill: 1,
             cancelled: false,
             status: OrderStatus.Filled,
+            availability: OrderAvailability.ON_CHAIN,
             type: ORDER_TYPES.V2,
-            makeStock: 777,
+            makeStock: bn(orderRight.makeAsset.value).toString(),
             side: getOrderSide(rightMakeAsset.assetType.assetClass),
             maker: orderRight.maker,
             taker: orderRight.taker,
@@ -239,16 +243,19 @@ export class StoreOnchainBuySellOrders {
                 orderRight.makeAsset.assetType.assetClass,
                 orderRight.makeAsset.assetType.data,
               ),
-            },
+            } as any,
             take: {
               value: bn(orderRight.takeAsset.value).toString(),
               assetType: decodeAssetData(
                 orderRight.takeAsset.assetType.assetClass,
                 orderRight.takeAsset.assetType.data,
               ),
-            },
+            } as any,
           };
-          console.log(Right, 'right order made');
+          // console.log(Right, 'right order made');
+          const orders = [Left, Right];
+          for (const order of orders)
+            await this.orderService.createOnchainOrder(order);
         } catch {
           console.log('tx data doesnt match matchOrders');
           // tx data doesn't match matchOrders

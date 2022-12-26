@@ -19,12 +19,12 @@ export class OrderMatchEventInput {
   @IsEnum(OrderSide)
   orderSide: OrderSide;
 
-  @IsEthereumAddress()
+  @IsEthereumAddress({ message: 'Maker should be an ethereum address' })
   @IsString()
   @IsNotEmpty()
   maker: string;
 
-  @IsEthereumAddress()
+  @IsEthereumAddress({ message: 'Taker should be an ethereum address' })
   @IsString()
   @IsNotEmpty()
   taker: string;
@@ -33,7 +33,9 @@ export class OrderMatchEventInput {
   @IsNotEmpty()
   price: string;
 
-  @IsEthereumAddress()
+  @IsEthereumAddress({
+    message: 'Contract Address should be an ethereum address',
+  })
   @IsString()
   @IsNotEmpty()
   contract: string;
@@ -46,7 +48,9 @@ export class OrderMatchEventInput {
   @IsNotEmpty()
   amount: string;
 
-  @IsEthereumAddress()
+  @IsEthereumAddress({
+    message: 'Currency Address should be an ethereum address',
+  })
   @IsString()
   @IsNotEmpty()
   currency: string;

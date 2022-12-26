@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -17,77 +17,81 @@ import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Asset } from './nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from './nestedObjectsDto/data.dto';
+import { OrderAvailability } from '../entities/enums/order.availability.enum';
 
-@InputType()
-export class CreateOrdersInput {
+// @InputType()
+export class CreateOnchainOrdersInput {
   // @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
   @IsNotEmpty({ message: 'Order ID cannot be null' })
-  @Field()
+  //   @Field()
   orderId: string;
+
+  @IsEnum(OrderAvailability)
+  availability: OrderAvailability;
 
   @IsNotEmpty()
   @IsNumber()
-  @Field()
+  //   @Field()
   fill: number;
 
   @IsEnum(ORDER_TYPES)
   @IsNotEmpty()
-  @Field(() => ORDER_TYPES)
+  //   @Field(() => ORDER_TYPES)
   type: ORDER_TYPES;
 
   @IsEnum(OrderSide)
-  @Field(() => OrderSide)
+  //   @Field(() => OrderSide)
   side?: OrderSide;
 
   @IsEnum(OrderKind)
   @IsOptional()
-  @Field(() => OrderKind)
+  //   @Field(() => OrderKind)
   kind?: OrderKind;
 
   @IsEnum(OrderStatus)
   @IsNotEmpty()
-  @Field(() => OrderStatus)
+  //   @Field(() => OrderStatus)
   status: OrderStatus;
 
   @IsNotEmpty()
   @IsString()
-  @Field()
+  //   @Field()
   makeStock: string;
 
   @IsBoolean()
   @IsNotEmpty()
-  @Field()
+  //   @Field()
   cancelled: boolean;
 
   @IsNotEmpty()
   @IsDate()
-  @Field()
+  //   @Field()
   createdAt: Date;
 
   @IsNotEmpty()
   @IsDate()
-  @Field()
+  //   @Field()
   lastUpdatedAt: Date;
 
   @IsNotEmpty()
   @IsEthereumAddress()
   @IsEthereumAddress()
-  @Field()
+  //   @Field()
   maker: string;
 
   @ValidateNested()
   @Type(() => Asset)
-  @Field(() => Asset)
+  //   @Field(() => Asset)
   make: Asset;
 
   @ValidateNested()
   @Type(() => Asset)
-  @Field(() => Asset)
+  //   @Field(() => Asset)
   take: Asset;
 
   @IsString()
   @IsNotEmpty()
-  @Field()
+  //   @Field()
   salt: string;
 
   @ValidateNested()
@@ -96,52 +100,52 @@ export class CreateOrdersInput {
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   start?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   end?: number;
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
   @IsOptional()
   @IsDate()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   dbUpdatedAt?: Date;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   makePrice?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   takePrice?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   makePriceUsd?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   takePriceUsd?: number;
 
   @IsString()
   @IsNotEmpty()
-  @Field()
+  //   @Field()
   signature: string;
 
   @IsEthereumAddress()
   @IsOptional()
   @IsEthereumAddress()
-  @Field({ nullable: true })
+  //   @Field({ nullable: true })
   taker?: string;
 }

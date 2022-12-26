@@ -76,10 +76,10 @@ export class Orders {
 
   @Field({ nullable: true })
   @Column({
-    type: 'int',
+    type: 'text',
     nullable: true,
   })
-  makeStock: number;
+  makeStock: string;
 
   @Field({ nullable: true })
   @Column({
