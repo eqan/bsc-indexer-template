@@ -751,6 +751,7 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
+  cancelled: Boolean!
 }
 
 input CreateUsdPriceInput {

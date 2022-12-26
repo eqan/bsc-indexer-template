@@ -13,7 +13,9 @@ import {
   EnhancedEvent,
   fillMatchFunctionType,
 } from 'src/events/types/events.types';
+import { OrderStatus } from 'src/orders/entities/enums/orders.status.enum';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
+import { OrdersService } from 'src/orders/orders.service';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
 import * as constants from '../utils/events.utils.constants.order';
 import { StoreOnchainBuySellOrders } from '../utils/events.utils.events.store-buy-sell-orders';
@@ -30,8 +32,10 @@ export class OrderMatchHandler {
     private readonly orderCancelEventService: OrderCancelEventService,
     private rpcProvider: RpcProvider,
     private storeOnchainBuySellOrders: StoreOnchainBuySellOrders,
+    private readonly orderService: OrdersService,
   ) {
     // console.log(decodeOrderDataType('0x1b18cdf6')[0][1], 'encoded dataType');
+    // console.log(formatEther(3000000000000000));
   }
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
@@ -324,7 +328,7 @@ export class OrderMatchHandler {
         baseEventParams: events.baseEventParams,
       };
 
-      const savedEvent = await this.orderMatchEventService.create(matchEvent);
+      await this.orderMatchEventService.create(matchEvent);
       // console.log(savedEvent, 'saved event in event db');
 
       this.storeOnchainBuySellOrders.handleStoreOrders(
@@ -390,8 +394,19 @@ export class OrderMatchHandler {
         baseEventParams,
       };
 
-      const savedEvent = await this.orderCancelEventService.create(cancelEvent);
+      await this.orderCancelEventService.create(cancelEvent);
       // console.log(savedEvent, 'saved cancel event in event db');
+
+      //updating order in db
+      const order = await this.orderService.orderExistOrNot(
+        cancelEvent.orderId,
+      );
+      if (order)
+        await this.orderService.update({
+          ...order,
+          status: OrderStatus.Cancelled,
+          cancelled: true,
+        });
     } catch (error) {
       this.logger.error(`failed Cancelling Order ${error}`);
     }

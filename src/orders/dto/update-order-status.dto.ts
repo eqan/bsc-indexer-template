@@ -1,5 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEnum, IsEthereumAddress, IsNotEmpty } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsEthereumAddress,
+  IsNotEmpty,
+} from 'class-validator';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 
 @InputType()
@@ -12,4 +17,9 @@ export class UpdateOrderStatus {
   @IsEnum(OrderStatus)
   @Field(() => OrderStatus)
   status: OrderStatus;
+
+  @IsNotEmpty({ message: 'cancelled should be true or false' })
+  @IsBoolean()
+  @Field()
+  cancelled: boolean;
 }

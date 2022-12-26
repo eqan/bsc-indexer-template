@@ -94,59 +94,6 @@ export const decodeOrderData = (dataType: string, data: string) => {
   // return decodedOrderData;
 };
 
-// export const encodeAssetData = (assetType: Types.LocalAssetType) => {
-//   switch (assetType.assetClass) {
-//     case AssetClassEnum.ETH:
-//       return '0x';
-//     case AssetClassEnum.ERC20:
-//     case AssetClassEnum.COLLECTION:
-//       return defaultAbiCoder.encode(['address'], [assetType.contract]);
-//     case AssetClassEnum.ERC721:
-//     case AssetClassEnum.ERC1155:
-//       return defaultAbiCoder.encode(
-//         ['address', 'uint256'],
-//         [assetType.contract, assetType.tokenId],
-//       );
-//     case AssetClassEnum.ERC721_LAZY:
-//       return defaultAbiCoder.encode(
-//         [
-//           'address contract',
-//           'tuple(uint256 tokenId, string uri, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
-//         ],
-//         [
-//           assetType.contract,
-//           {
-//             tokenId: assetType.tokenId,
-//             uri: assetType.uri,
-//             creators: encodeV2OrderData(assetType.creators),
-//             royalties: encodeV2OrderData(assetType.royalties),
-//             signatures: assetType.signatures || [],
-//           },
-//         ],
-//       );
-//     case AssetClassEnum.ERC1155_LAZY:
-//       return defaultAbiCoder.encode(
-//         [
-//           'address contract',
-//           'tuple(uint256 tokenId, string uri, uint256 supply, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
-//         ],
-//         [
-//           assetType.contract,
-//           {
-//             tokenId: assetType.tokenId,
-//             uri: assetType.uri,
-//             supply: assetType.supply,
-//             creators: encodeV2OrderData(assetType.creators),
-//             royalties: encodeV2OrderData(assetType.royalties),
-//             signatures: assetType.signatures || [],
-//           },
-//         ],
-//       );
-//     default:
-//       throw Error('Unknown rarible asset data');
-//   }
-// };
-
 export const decodeAssetData = (
   // assetType: Types.LocalAssetType,
   assetTypeHash: string,
@@ -161,10 +108,10 @@ export const decodeAssetData = (
       };
     case constants.ERC20:
     case constants.COLLECTION:
-      // decodedAssetData = defaultAbiCoder.decode(['(address token)'], data);
+      decodedAssetData = defaultAbiCoder.decode(['(address token)'], data);
       return {
         assetClass: decodeAssetClass(assetTypeHash),
-        contract: data,
+        contract: decodedAssetData[0][0].toString(),
       };
     case constants.ERC721:
     case constants.ERC1155:
