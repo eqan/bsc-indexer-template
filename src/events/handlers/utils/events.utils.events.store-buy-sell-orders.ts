@@ -254,8 +254,10 @@ export class StoreOnchainBuySellOrders {
           };
           // console.log(Right, 'right order made');
           const orders = [Left, Right];
-          for (const order of orders)
-            await this.orderService.createOnchainOrder(order);
+          for (const order of orders) {
+            const response = await this.orderService.createOnchainOrder(order);
+            console.log(response, 'left and right order');
+          }
         } catch {
           console.log('tx data doesnt match matchOrders');
           // tx data doesn't match matchOrders

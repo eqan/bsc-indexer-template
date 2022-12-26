@@ -1,8 +1,13 @@
 import { defaultAbiCoder } from '@ethersproject/abi';
+import { bn } from 'src/common/utils.common';
 import { AssetClassEnum } from 'src/orders/entities/enums/orders.asset-class.enum';
 import { ORDER_DATA_TYPES } from '../../../orders/constants/orders.constants.order-types';
 import { encodeAssetClass } from '../../../orders/helpers/orders.helpers.encode-order';
 import * as constants from '../utils/events.utils.constants.order';
+
+export const docodePart = (parts: []) =>
+  parts?.map((part) => ({ account: part[0], value: bn(part[1]).toString() }));
+
 export const decodeOrderData = (dataType: string, data: string) => {
   let decodedOrderData;
   // | Types.ILegacyOrderData
@@ -24,8 +29,8 @@ export const decodeOrderData = (dataType: string, data: string) => {
       );
       return {
         dataType: getDecodedOrderData(dataType)[0][1],
-        payouts: decodedOrderData[0][0],
-        originFees: decodedOrderData[0][1],
+        payouts: docodePart(decodedOrderData[0][0]),
+        originFees: docodePart(decodedOrderData[0][1]),
       };
 
     case encodeAssetClass(ORDER_DATA_TYPES.V2):
@@ -38,8 +43,8 @@ export const decodeOrderData = (dataType: string, data: string) => {
       );
       return {
         dataType: getDecodedOrderData(dataType)[0][1],
-        payouts: decodedOrderData[0][0],
-        originFees: decodedOrderData[0][1],
+        payouts: docodePart(decodedOrderData[0][0]),
+        originFees: docodePart(decodedOrderData[0][1]),
         isMakeFill: decodedOrderData[0][2],
       };
     case encodeAssetClass(ORDER_DATA_TYPES.V3_SELL):

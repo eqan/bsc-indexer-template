@@ -72,11 +72,11 @@ export class OrderMatchHandler {
       let currencyPrice = '';
       let orderId = '';
       let fillType: fillMatchFunctionType = 'directPurchase';
-      let salt = '';
-      let start = 0;
-      let end = 0;
-      let dataType = '';
-      let data = '';
+      // let salt = '';
+      // let start = 0;
+      // let end = 0;
+      // let dataType = '';
+      // let data = '';
 
       // Event data doesn't include full order information so we have to parse the calldata
       const txTrace = await getTxTrace(
@@ -119,11 +119,11 @@ export class OrderMatchHandler {
           taker = callTrace.to.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          salt = result[0][6];
-          start = result[0]['sellOrderStart'];
-          end = result[0]['sellOrderEnd'];
-          dataType = result[0]['sellOrderDataType'];
-          data = result[0]['sellOrderData'];
+          // salt = result[0][6];
+          // start = result[0]['sellOrderStart'];
+          // end = result[0]['sellOrderEnd'];
+          // dataType = result[0]['sellOrderDataType'];
+          // data = result[0]['sellOrderData'];
           fillType = 'directPurchase';
 
           paymentCurrency = result[0][5].toLowerCase();
@@ -174,11 +174,11 @@ export class OrderMatchHandler {
           taker = callTrace.from.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          salt = result[0][6];
-          start = result[0][7];
-          end = result[0][8];
-          dataType = result[0][9];
-          data = result[0][10];
+          // salt = result[0][6];
+          // start = result[0][7];
+          // end = result[0][8];
+          // dataType = result[0][9];
+          // data = result[0][10];
           fillType = 'directAcceptBid';
 
           paymentCurrency = result[0][5].toLowerCase();
@@ -213,7 +213,7 @@ export class OrderMatchHandler {
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
           result = iface.decodeFunctionData('matchOrders', callTrace.input);
-          console.log(result, 'logged result match');
+          // console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
