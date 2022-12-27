@@ -16,8 +16,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             const cookie = cookieParser(req.headers.cookies);
             return cookie['JWT_SECRET'];
           }
-          const jwtToken = req.headers?.authorization;
-          if (jwtToken) {
+	          const jwtToken = req.headers?.authorization;
+	console.log(jwtToken,"asdfasdf")        
+  if (jwtToken) {
             return jwtToken.replace('Bearer ', '');
           }
         } catch (err) {

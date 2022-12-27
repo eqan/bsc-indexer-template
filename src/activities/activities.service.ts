@@ -25,8 +25,11 @@ export class ActivitiesService {
   async create(createActivityInput: CreateActivityInput): Promise<Activity> {
     try {
       const activity = this.activityRepo.create(createActivityInput);
+      console.log(activity,"created activety")
+
       return await this.activityRepo.save(activity);
     } catch (error) {
+console.log(error,"new error on created")
       throw new BadRequestException(error);
     }
   }
