@@ -117,6 +117,33 @@ export const assetTypeValidationSchema = {
       additionalProperties: false,
       required: ['contract', 'tokenId'],
     },
+    {
+      properties: {
+        assetClass: { enum: ['ERC721_LAZY'] },
+        contract: { type: 'string' },
+        tokenId: { type: 'string' },
+        uri: { type: 'string' },
+        creators: { type: 'array', items: Part },
+        royalties: { type: 'array', items: Part },
+        signatures: { types: 'array', items: { type: 'string' } },
+      },
+      additionalProperties: false,
+      required: ['contract', 'tokenId', 'uri', 'signatures'],
+    },
+    {
+      properties: {
+        assetClass: { enum: ['ERC1155_LAZY'] },
+        contract: { type: 'string' },
+        tokenId: { type: 'string' },
+        uri: { type: 'string' },
+        supply: { type: 'number' },
+        creators: { type: 'array', items: Part },
+        royalties: { type: 'array', items: Part },
+        signatures: { types: 'array', items: { type: 'string' } },
+      },
+      additionalProperties: false,
+      required: ['contract', 'tokenId', 'uri', 'supply', 'signatures'],
+    },
   ],
 };
 
