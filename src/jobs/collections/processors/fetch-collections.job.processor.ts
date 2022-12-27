@@ -34,7 +34,7 @@ export class FetchCollectionsProcessor {
           collectionId,
         );
         const token = await this.tokensService.tokenExistOrNot(tokenId);
-
+        console.log(token, 'created Token');
         if (!collection) {
           const response = await this.metadataApi.getCollectionMetadata(
             collectionId,
