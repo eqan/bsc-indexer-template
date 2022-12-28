@@ -35,11 +35,13 @@ export class TokensService {
       token.collection = collection;
       token.tokenId = collectionId + ':' + token.tokenId;
 
-      // console.log(token);
+       console.log(token);
       await token.save();
-      delete token.collection;
+      console.log(token,"create token");      
+delete token.collection;
       return token;
     } catch (error) {
+console.log(error,"on token")
       throw new BadRequestException(error);
     }
   }
