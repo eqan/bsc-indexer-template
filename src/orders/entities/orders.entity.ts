@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress } from 'class-validator';
+import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
-import { OrderAvailability } from './enums/order.availability.enum';
 import { OrderKind } from './enums/order.kind.enum';
 import { ORDER_TYPES } from './enums/order.order-types.enum';
 import { OrderStatus } from './enums/orders.status.enum';
@@ -12,7 +12,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 @ObjectType()
 @Entity('Orders')
 @Index(['orderId', 'maker', 'taker'])
-export class Orders {
+export class Orders extends BaseEntity {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -22,12 +22,11 @@ export class Orders {
   orderId: string;
 
   @Column({
-    type: 'enum',
-    enumName: 'Order',
-    enum: OrderAvailability,
-    default: OrderAvailability.OFF_CHAIN,
+    type: 'boolean',
+    nullable: true,
+    default: false,
   })
-  availability?: OrderAvailability;
+  onchain?: boolean;
 
   //TODO : CONFIRM FILL DATATYPE DECIMAL OR INT
   @Field()
@@ -89,7 +88,7 @@ export class Orders {
   })
   cancelled: boolean;
 
-  //TODO : NEED TO DICUSS TIMESTAMP REQUIRED OR NOT
+  //TODO : NEED TO DISCUSS TIMESTAMP REQUIRED OR NOT
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
@@ -97,12 +96,18 @@ export class Orders {
   })
   createdAt: Date;
 
-  @Field({ nullable: true })
+  // @Field({ nullable: true })
+  // @Column({
+  //   type: 'timestamptz',
+  //   nullable: true,
+  // })
+  // lastUpdatedAt: Date;
+
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  lastUpdatedAt: Date;
+  lastUpdatedAt: Timestamps;
 
   @IsEthereumAddress()
   @Field({ nullable: true })
@@ -180,12 +185,18 @@ export class Orders {
   })
   optionalRoyalties?: boolean;
 
-  @Field({ nullable: true })
+  // @Field({ nullable: true })
+  // @Column({
+  //   type: 'timestamptz',
+  //   nullable: true,
+  // })
+  // dbUpdatedAt?: Date;
+
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
-  dbUpdatedAt?: Date;
+  dbUpdatedAt?: Timestamps;
 
   @Field({ nullable: true })
   @Column({

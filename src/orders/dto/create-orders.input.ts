@@ -64,10 +64,10 @@ export class CreateOrdersInput {
   @Field()
   createdAt: Date;
 
-  @IsNotEmpty()
-  @IsDate()
-  @Field()
-  lastUpdatedAt: Date;
+  // @IsNotEmpty()
+  // @IsDate()
+  // @Field()
+  // lastUpdatedAt: Date;
 
   @IsNotEmpty()
   @IsEthereumAddress()
@@ -109,10 +109,10 @@ export class CreateOrdersInput {
   @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
-  @IsOptional()
-  @IsDate()
-  @Field({ nullable: true })
-  dbUpdatedAt?: Date;
+  // @IsOptional()
+  // @IsDate()
+  // @Field({ nullable: true })
+  // dbUpdatedAt?: Date;
 
   @IsOptional()
   @IsNumber()

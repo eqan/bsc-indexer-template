@@ -17,7 +17,11 @@ export class Timestamps {
 
   @Field(() => String)
   @UpdateDateColumn()
-  public updatedAt!: Date;
+  public lastUpdatedAt!: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  public dbUpdatedAt!: Date;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })

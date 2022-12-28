@@ -26,8 +26,8 @@ export class CreateOnchainOrdersInput {
   //   @Field()
   orderId: string;
 
-  @IsEnum(OrderAvailability)
-  availability: OrderAvailability;
+  @IsBoolean()
+  onchain: boolean;
 
   @IsNotEmpty()
   @IsString()
@@ -68,10 +68,10 @@ export class CreateOnchainOrdersInput {
   //   @Field()
   createdAt: Date;
 
-  @IsNotEmpty()
-  @IsDate()
-  //   @Field()
-  lastUpdatedAt: Date;
+  // @IsNotEmpty()
+  // @IsDate()
+  // //   @Field()
+  // lastUpdatedAt: Date;
 
   @IsNotEmpty()
   @IsEthereumAddress()
@@ -113,10 +113,10 @@ export class CreateOnchainOrdersInput {
   //   @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
-  @IsOptional()
-  @IsDate()
-  //   @Field({ nullable: true })
-  dbUpdatedAt?: Date;
+  // @IsOptional()
+  // @IsDate()
+  // //   @Field({ nullable: true })
+  // dbUpdatedAt?: Date;
 
   @IsOptional()
   @IsNumber()

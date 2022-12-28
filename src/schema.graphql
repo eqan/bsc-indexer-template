@@ -342,7 +342,6 @@ type Orders {
   makeStock: String
   cancelled: Boolean
   createdAt: DateTime
-  lastUpdatedAt: DateTime
   maker: String
   make: Asset!
   take: Asset
@@ -351,7 +350,6 @@ type Orders {
   start: Float
   end: Float
   optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
   makePrice: Float
   takePrice: Float
   makePriceUsd: Float
@@ -703,7 +701,6 @@ input CreateOrdersInput {
   makeStock: String!
   cancelled: Boolean!
   createdAt: DateTime!
-  lastUpdatedAt: DateTime!
   maker: String!
   make: AssetInput!
   take: AssetInput!
@@ -712,7 +709,6 @@ input CreateOrdersInput {
   start: Float
   end: Float
   optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
   makePrice: Float
   takePrice: Float
   makePriceUsd: Float
