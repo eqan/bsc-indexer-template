@@ -183,8 +183,9 @@ export class CollectionsService {
     const { items, total } = await this.orderMatchEventService.show(
       collectionId,
     );
+    console.log(items);
     items.map((order) => {
-      sum += Number(order.price);
+      if (order.price) sum += parseFloat(order.price);
     });
     try {
       return { averagePrice: sum / total };
@@ -212,7 +213,7 @@ export class CollectionsService {
         oneDayAgo,
       );
       items.map((order) => {
-        sum += Number(order.price);
+        if (order.price) sum += parseFloat(order.price);
       });
       try {
         return { volume: sum };

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
 import { GetAllOrdersMatchEvent } from '../dto/get-all-activities.dto';
 import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
@@ -78,13 +78,13 @@ export class OrderMatchEventService {
         this.orderMatchEventRepo.find({
           where: {
             contract,
-            baseEventParams: { timestamp: LessThan(timestamp) },
+            baseEventParams: { timestamp: MoreThan(timestamp) },
           },
         }),
         this.orderMatchEventRepo.count({
           where: {
             contract,
-            baseEventParams: { timestamp: LessThan(timestamp) },
+            baseEventParams: { timestamp: MoreThan(timestamp) },
           },
         }),
       ]);

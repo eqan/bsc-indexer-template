@@ -87,7 +87,7 @@ export class RealtimeSyncProcessor {
   onError(error: Error, job: Job) {
     console.log(job, 'realtime job processor');
     this.logger.error(
-      `Queue ${job?.data.jobId} Events realtime syncing : ${error}`,
+      `Queue ${job.data.jobId} Events realtime syncing : ${error}`,
     );
   }
 }

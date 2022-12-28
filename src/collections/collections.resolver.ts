@@ -12,11 +12,14 @@ import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
 import { CollectionsService } from './collections.service';
+import { AveragePriceOutput } from './dto/averageprice-collection.dto';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { DeleteCollectionsInput } from './dto/delete-collections.input';
 import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
+import { UniqueOwnersOuput } from './dto/owners-collection.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
+import { VolumeOutput } from './dto/volume-collection.dto';
 import { Collections } from './entities/collections.entity';
 
 @Resolver(() => Collections)
@@ -133,11 +136,47 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    */
   @Query(() => Number, { name: 'GetCollectionAveragePrice' })
   async getCollectionAveragePrice(
-    @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
-    filterCollectionInput: FilterDto,
-  ): Promise<number> {
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<AveragePriceOutput | null> {
     try {
-      return await this.tokenService.getOrderTokenPrice(filterCollectionInput);
+      return await this.collectionsService.getOrderCollectionPrice(
+        collectionId,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Volume Of A Collection Trade in Last 24 Hours
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionVolume' })
+  async getCollectionVolume(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<VolumeOutput | null> {
+    try {
+      return await this.collectionsService.getCollectionVolume(collectionId);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Number Of Unique Owners in a Collection
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionUniqueOwners' })
+  async getNumberOfUniqueOwners(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<UniqueOwnersOuput | null> {
+    try {
+      return await this.collectionsService.getNumberOfUnqiueOwners(
+        collectionId,
+      );
     } catch (error) {
       throw new BadRequestException(error);
     }

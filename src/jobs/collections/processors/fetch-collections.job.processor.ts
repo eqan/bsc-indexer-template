@@ -76,7 +76,7 @@ export class FetchCollectionsProcessor {
   @OnQueueError()
   onError(error: Error, job: Job) {
     this.logger.error(
-      `Job ${job?.data.jobId} failed fetching collections: ${error}`,
+      `Job ${job.data.jobId} failed fetching collections: ${error}`,
     );
   }
 }
