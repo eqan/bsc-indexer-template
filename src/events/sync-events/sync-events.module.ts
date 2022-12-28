@@ -11,8 +11,8 @@ import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
 import { OrderMatchHandler } from '../handlers/order/events.order.handler';
 import { StoreOnchainBuySellOrders } from '../handlers/utils/events.utils.events.store-buy-sell-orders';
-import { OrderCancelEventService } from '../service/events.service.order-cancel-events';
-import { OrderMatchEventService } from '../service/events.service.order-match-events';
+import { OrderCancelEventService } from '../service/events.order-cancel-events.service';
+import { OrderMatchEventService } from '../service/events.order-match-events.service';
 import { SyncEventsService } from './sync-events.service';
 
 @Module({

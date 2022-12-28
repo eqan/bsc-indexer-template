@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
-import { parseUnits } from '@ethersproject/units';
+import { formatEther, formatUnits, parseUnits } from '@ethersproject/units';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
@@ -16,6 +16,7 @@ import {
 } from '../types/order.prices.types';
 import { result } from 'lodash';
 import * as Addresses from '../constants/orders.constants.addresses';
+import * as constants from '../constants/orders.constants.currency';
 
 @Injectable()
 export class OrderPrices {
@@ -132,21 +133,23 @@ export class OrderPrices {
         console.log(usdPrice, 'usd price');
 
         if (usdPrice) {
-          const value = parseUnits(
-            usdPrice.toFixed(this.USD_DECIMALS),
-            this.USD_DECIMALS,
-          ).toString();
+          // const value = parseUnits(
+          //   usdPrice.toFixed(this.USD_DECIMALS),
+          //   this.USD_DECIMALS,
+          // ).toString();
 
           await this.usdPricesService.create({
             currency: currencyAddress,
             timestamp,
-            value,
+            // value,
+            value: usdPrice.toString(),
           });
 
           return {
             currency: currencyAddress,
             timestamp: truncatedTimestamp,
-            value,
+            // value,
+            value: usdPrice.toString(),
           };
         }
       } else if (
@@ -266,18 +269,23 @@ export class OrderPrices {
 
       const currency = await this.getCurrencyDetails(currencyAddress);
       if (currency?.decimals && currencyUSDPrice) {
-        const currencyUnit = bn(10).pow(currency?.decimals);
-        usdPrice = bn(price)
-          .mul(currencyUSDPrice.value)
-          .div(currencyUnit)
-          .toString();
+        // const currencyUnit = bn(10).pow(currency?.decimals);
+        // usdPrice = bn(price)
+        //   .mul(currencyUSDPrice.value)
+        //   .div(currencyUnit)
+        //   .toString();
+        usdPrice = (
+          Number(formatUnits(price, currency.decimals)) *
+          Number(currencyUSDPrice.value)
+        ).toString();
         if (nativeUSDPrice) {
-          nativePrice = bn(price)
-            .mul(currencyUSDPrice.value)
-            .mul(this.NATIVE_UNIT)
-            .div(nativeUSDPrice.value)
-            .div(currencyUnit)
-            .toString();
+          // nativePrice = bn(price)
+          //   .mul(currencyUSDPrice.value)
+          //   .mul(this.NATIVE_UNIT)
+          //   .div(nativeUSDPrice.value)
+          //   .div(currencyUnit)
+          //   .toString();
+          nativePrice = formatUnits(price, currency.decimals).toString();
         }
       }
     }
@@ -289,7 +297,7 @@ export class OrderPrices {
         currencyAddress,
       )
     ) {
-      nativePrice = price;
+      nativePrice = formatEther(price).toString();
     }
 
     // return { usdPrice };

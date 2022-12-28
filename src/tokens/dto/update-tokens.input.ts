@@ -23,10 +23,10 @@ export class UpdateTokensInput {
   @Field()
   tokenId: string;
 
-  @IsOptional()
-  @IsDate()
-  @Field({ nullable: true })
-  lastUpdatedAt: Date;
+  // @IsOptional()
+  // @IsDate()
+  // @Field({ nullable: true })
+  // lastUpdatedAt: Date;
 
   @IsOptional()
   @IsBoolean()

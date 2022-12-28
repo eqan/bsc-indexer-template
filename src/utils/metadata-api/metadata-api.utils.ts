@@ -112,7 +112,7 @@ export class MetadataApi {
       contract: collectionId,
       deleted,
       mintedAt: new Date(timestamp * 1000),
-      lastUpdatedAt: new Date(),
+      // lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
         account: [],

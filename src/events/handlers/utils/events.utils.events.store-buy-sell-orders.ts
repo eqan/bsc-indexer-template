@@ -9,7 +9,6 @@ import {
 import { fillMatchFunctionType } from 'src/events/types/events.types';
 import { ORDER_TYPES } from 'src/orders/constants/orders.constants.order-types';
 import { CreateOnchainOrdersInput } from 'src/orders/dto/create-onchain.orders.input';
-import { OrderAvailability } from 'src/orders/entities/enums/order.availability.enum';
 import { OrderStatus } from 'src/orders/entities/enums/orders.status.enum';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
 import { OrdersService } from 'src/orders/orders.service';
@@ -31,7 +30,9 @@ export class StoreOnchainBuySellOrders {
     private readonly orderPrices: OrderPrices,
     private readonly orderService: OrdersService,
     private rpcProvider: RpcProvider,
-  ) {}
+  ) {
+    // console.log(bn(parseEther('0.0000000000000001')).toString(), 'etherParsed');
+  }
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('ParseOrder');
 
@@ -46,6 +47,7 @@ export class StoreOnchainBuySellOrders {
     newLeftFill: string,
     newRightFill: string,
     usdPrice: string,
+    price: string,
   ) => {
     switch (fillType) {
       case 'directPurchase': {
@@ -73,11 +75,13 @@ export class StoreOnchainBuySellOrders {
             start: Number(bn(result[0]['sellOrderStart'])),
             end: Number(bn(result[0]['sellOrderEnd'])),
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
-            makePrice: Number(bn(result[0]['sellOrderPaymentAmount'])),
+            // makePrice: Number(bn(result[0]['sellOrderPaymentAmount'])),
+            makePrice: Number(price),
             makePriceUsd: Number(usdPrice),
             makeStock: bn(result[0]['sellOrderNftAmount']).toString(), //will be the price at which order was placed
             make: {
               value: bn(result[0]['sellOrderNftAmount']).toString(),
+              // value: price,
               // assetType: {
               //   assetClass: decodeAssetClass(result[0]['nftAssetClass']),
               //   contract: decodeNftData[0][0].toString(),
@@ -90,7 +94,8 @@ export class StoreOnchainBuySellOrders {
             },
             taker,
             take: {
-              value: newLeftFill,
+              // value: newLeftFill,
+              value: price,
               // assetType: {
               //   assetClass: getPaymentCurrencyAssetName(
               //     result[0]['paymentToken'],
@@ -131,7 +136,8 @@ export class StoreOnchainBuySellOrders {
             // lastUpdatedAt: new Date(),
             // dbUpdatedAt: new Date(),
             maker: result[0]['bidMaker'],
-            takePrice: Number(bn(result[0]['bidPaymentAmount'])),
+            // takePrice: Number(bn(result[0]['bidPaymentAmount'])),
+            takePrice: Number(price),
             takePriceUsd: Number(usdPrice),
             signature: result[0]['bidSignature'],
             start: Number(bn(result[0]['bidStart'])),
@@ -139,7 +145,8 @@ export class StoreOnchainBuySellOrders {
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
             makeStock: newLeftFill.toString(), //will be the price at which order was placed
             make: {
-              value: newLeftFill,
+              // value: newLeftFill,
+              value: price,
               // assetType: {
               //   assetClass: getPaymentCurrencyAssetName(
               //     result[0]['paymentToken'],
@@ -221,11 +228,13 @@ export class StoreOnchainBuySellOrders {
 
           if (Left.side === OrderSide.sell) {
             // Left.makePrice = Number(Left.take.value);
-            Left.makePrice = Number(newLeftFill);
+            // Left.makePrice = Number(newLeftFill);
+            Left.makePrice = Number(price);
             Left.makePriceUsd = Number(usdPrice);
           } else {
             // Left.takePrice = Number(Left.make.value);
-            Left.takePrice = Number(newRightFill);
+            // Left.takePrice = Number(newRightFill);
+            Left.takePrice = Number(price);
             Left.takePriceUsd = Number(usdPrice);
           }
 

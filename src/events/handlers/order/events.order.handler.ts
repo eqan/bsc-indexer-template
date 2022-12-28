@@ -7,8 +7,8 @@ import { bn } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
-import { OrderCancelEventService } from 'src/events/service/events.service.order-cancel-events';
-import { OrderMatchEventService } from 'src/events/service/events.service.order-match-events';
+import { OrderCancelEventService } from 'src/events/service/events.order-cancel-events.service';
+import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import {
   EnhancedEvent,
   fillMatchFunctionType,
@@ -342,6 +342,7 @@ export class OrderMatchHandler {
         newLeftFill,
         newRightFill,
         prices.usdPrice,
+        prices.nativePrice,
       );
 
       /**

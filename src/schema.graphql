@@ -89,7 +89,6 @@ type Activity {
   collectionId: String
   type: ActivityType
   date: DateTime
-  lastUpdatedAt: DateTime
   cursor: String
   reverted: Boolean
   blockchainInfo: BlockchainInfo
@@ -262,7 +261,6 @@ type Tokens {
   type: String
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyalty
@@ -652,7 +650,6 @@ input CreateTokenInput {
   type: TokenType!
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
   creator: CreatorRoyaltyInput
@@ -680,7 +677,6 @@ input MetaDataInput {
 
 input UpdateTokensInput {
   tokenId: String!
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
@@ -770,7 +766,6 @@ input CreateActivityInput {
   collectionId: String
   type: ActivityType!
   date: DateTime!
-  lastUpdatedAt: DateTime!
   cursor: String!
   reverted: Boolean!
   blockchainInfo: BlockchainInfoInput
