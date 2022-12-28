@@ -4,8 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
+import { GetAllOrdersMatchEvent } from '../dto/get-all-activities.dto';
 import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
 
 @Injectable()
@@ -68,15 +69,26 @@ export class OrderMatchEventService {
    * @param id
    * @returns Order against Provided Id
    */
-  async show(tokenId: string): Promise<OrderMatchEvent> {
+  async show(
+    contract?: string,
+    timestamp?: number,
+  ): Promise<GetAllOrdersMatchEvent> {
     try {
-      const found = await this.orderMatchEventRepo.findOneBy({
-        tokenId,
-      });
-      if (!found) {
-        throw new NotFoundException(`Order against ${tokenId} not found`);
-      }
-      return found;
+      const [items, total] = await Promise.all([
+        this.orderMatchEventRepo.find({
+          where: {
+            contract,
+            baseEventParams: { timestamp: LessThan(timestamp) },
+          },
+        }),
+        this.orderMatchEventRepo.count({
+          where: {
+            contract,
+            baseEventParams: { timestamp: LessThan(timestamp) },
+          },
+        }),
+      ]);
+      return { items, total };
     } catch (error) {
       throw new BadRequestException(error);
     }

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventsOrder } from 'src/events/service/events.orders.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { CollectionsResolver } from './collections.resolver';
 import { CollectionsService } from './collections.service';
@@ -8,6 +9,7 @@ import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entit
 
 @Module({
   imports: [
+    EventsOrder,
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
   ],

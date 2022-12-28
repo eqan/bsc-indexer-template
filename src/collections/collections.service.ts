@@ -5,17 +5,22 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { ILike, In, Repository } from 'typeorm';
+import { AveragePriceOutput } from './dto/averageprice-collection.dto';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
+import { UniqueOwnersOuput } from './dto/owners-collection.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
+import { VolumeOutput } from './dto/volume-collection.dto';
 import { Collections } from './entities/collections.entity';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>, // @Inject(forwardRef(() => MetadataApi)) // private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
+    private readonly orderMatchEventService: OrderMatchEventService,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
     // const getBlock = async () => {
@@ -163,6 +168,87 @@ export class CollectionsService {
       await this.collectionsRepo.delete({ id: In(ids) });
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param ContractAddress
+   * @returns  Average Price Of Collection
+   */
+  async getOrderCollectionPrice(
+    collectionId: string,
+  ): Promise<AveragePriceOutput | null> {
+    let sum = 0;
+    const { items, total } = await this.orderMatchEventService.show(
+      collectionId,
+    );
+    items.map((order) => {
+      sum += Number(order.price);
+    });
+    try {
+      return { averagePrice: sum / total };
+    } catch (error) {
+      return { averagePrice: null };
+    }
+  }
+  catch(error) {
+    throw new NotFoundException(error);
+  }
+  /**
+   * Get The Total Eth Value For The Last 24 Hours
+   * @param ContractAddress
+   * @returns  Last 24 Hours Transactions Amount
+   */
+  async getCollectionVolume(
+    collectionId: string,
+  ): Promise<VolumeOutput | null> {
+    try {
+      const now = Date.now();
+      const oneDayAgo = now - 24 * 60 * 60 * 1000;
+      let sum = 0;
+      const { items } = await this.orderMatchEventService.show(
+        collectionId,
+        oneDayAgo,
+      );
+      items.map((order) => {
+        sum += Number(order.price);
+      });
+      try {
+        return { volume: sum };
+      } catch (error) {
+        return { volume: null };
+      }
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * Get Unique owners of a collection
+   * @param ContractAddress
+   * @returns  Number
+   */
+  async getNumberOfUnqiueOwners(
+    collectionId: string,
+  ): Promise<UniqueOwnersOuput | null> {
+    try {
+      const { items } = await this.orderMatchEventService.show(collectionId);
+      const owners = [];
+      let sum = 0;
+      items.map((order) => {
+        if (owners.includes(order.taker)) {
+          owners.push(order.taker);
+          sum++;
+        }
+      });
+      try {
+        return { owners: sum };
+      } catch (error) {
+        return { owners: null };
+      }
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }
