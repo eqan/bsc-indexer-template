@@ -1,4 +1,5 @@
 import { Result } from '@ethersproject/abi';
+import { formatEther } from '@ethersproject/units';
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
@@ -57,9 +58,11 @@ export class StoreOnchainBuySellOrders {
         try {
           const dataType = result[0]['sellOrderDataType'];
           const data = result[0]['sellOrderData'];
+          // const nftAmount = newRightFill;
           const dbOrder: CreateOnchainOrdersInput = {
             orderId,
             fill: newRightFill,
+            // fill: formatEther(newLeftFill),
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
             onchain: true,
@@ -78,8 +81,11 @@ export class StoreOnchainBuySellOrders {
             // makePrice: Number(bn(result[0]['sellOrderPaymentAmount'])),
             makePrice: Number(price),
             makePriceUsd: Number(usdPrice),
-            makeStock: bn(result[0]['sellOrderNftAmount']).toString(), //will be the price at which order was placed
+            makeStock: (
+              Number(bn(result[0]['sellOrderNftAmount'])) - Number(newRightFill)
+            ).toString(), //will be the price at which order was placed
             make: {
+              // value: bn(result[0]['sellOrderNftAmount']).toString(),
               value: bn(result[0]['sellOrderNftAmount']).toString(),
               // value: price,
               // assetType: {
@@ -94,8 +100,9 @@ export class StoreOnchainBuySellOrders {
             },
             taker,
             take: {
-              // value: newLeftFill,
-              value: price,
+              // value: formatEther(newLeftFill),
+              value: formatEther(result[0]['sellOrderPaymentAmount']),
+              // value: (Number(price) * Number(nftAmount)).toString(),
               // assetType: {
               //   assetClass: getPaymentCurrencyAssetName(
               //     result[0]['paymentToken'],
@@ -122,9 +129,11 @@ export class StoreOnchainBuySellOrders {
         try {
           const dataType = result[0]['bidMaker'];
           const data = result[0]['bidDataType'];
+          // const nftAmount = newRightFill;
           const dbOrder: CreateOnchainOrdersInput = {
             orderId,
             fill: newRightFill,
+            // fill: formatEther(newLeftFill),
             //INFO : FOR NOW order type is V2 for all orders this field will be removed once we shift to
             // binance
             onchain: true,
@@ -143,10 +152,14 @@ export class StoreOnchainBuySellOrders {
             start: Number(bn(result[0]['bidStart'])),
             end: Number(bn(result[0]['bidEnd'])),
             salt: bn(result[0]['sellOrderSalt']).toHexString(),
-            makeStock: newLeftFill.toString(), //will be the price at which order was placed
+            makeStock: (
+              Number(bn(result[0]['bidNftAmount'])) - Number(newRightFill)
+            ).toString(), //will be the price at which order was placed
+            // makeStock: newLeftFill.toString(), //will be the price at which order was placed
             make: {
-              // value: newLeftFill,
-              value: price,
+              // value: formatEther(newLeftFill),
+              value: formatEther(result[0]['bidPaymentAmount']),
+              // value: (Number(price) * Number(nftAmount)).toString(),
               // assetType: {
               //   assetClass: getPaymentCurrencyAssetName(
               //     result[0]['paymentToken'],
@@ -188,34 +201,67 @@ export class StoreOnchainBuySellOrders {
           const leftMakeAsset = orderLeft.makeAsset;
           const rightMakeAsset = orderRight.makeAsset;
           const sideLeft = getOrderSide(leftMakeAsset.assetType.assetClass);
+
+          // const nftAmount =
+          //   sideLeft === OrderSide.buy ? newLeftFill : newRightFill;
+          // const price = sideLeft === OrderSide.buy ? newRightFill : newLeftFill;
+          const fill = sideLeft === OrderSide.buy ? newLeftFill : newRightFill;
+          const makeStock =
+            sideLeft === OrderSide.sell
+              ? Number(bn(orderLeft.makeAsset.value).toString()) - Number(fill)
+              : Number(bn(orderLeft.takeAsset.value).toString()) - Number(fill);
+
           const Left: CreateOnchainOrdersInput = {
             orderId: leftOrderId,
             side: sideLeft,
-            fill: sideLeft === OrderSide.buy ? newLeftFill : newRightFill,
+            // fill:
+            //   sideLeft === OrderSide.buy
+            //     ? formatEther(newLeftFill)
+            //     : formatEther(newRightFill),
+            fill,
+
             cancelled: false,
             status: OrderStatus.Filled,
             onchain: true,
             type: ORDER_TYPES.V2,
-            makeStock: bn(orderLeft.makeAsset.value).toString(),
+            // makeStock: bn(orderLeft.makeAsset.value).toString(),
+            makeStock: makeStock.toString(),
             maker: orderLeft.maker,
-            // dbUpdatedAt: new Date(),
             taker,
             createdAt: new Date(timestamp * 1000),
-            // lastUpdatedAt: new Date(),
             start: Number(bn(orderLeft.start)),
             end: Number(bn(orderLeft.end)),
             salt: bn(orderLeft.salt).toHexString(),
             signature: result.signatureLeft,
             data: decodeOrderData(orderLeft.dataType, orderLeft.data) as any,
             make: {
-              value: bn(orderLeft.makeAsset.value).toString(),
+              // value: bn(orderLeft.makeAsset.value).toString(),
+              value:
+                sideLeft === OrderSide.buy
+                  ? formatEther(orderLeft.makeAsset.value)
+                  : orderLeft.makeAsset.value,
+              //     mount in newRightFill when it's sell order
+              // amount = side === OrderSide.buy ? newLeftFill : newRightFill;
+              // currencyPrice = side === OrderSide.buy ? newRightFill : newLeftFill;
+              // value:
+              //   sideLeft === OrderSide.buy
+              //     ? (Number(price) * Number(nftAmount)).toString()
+              //     : nftAmount,
               assetType: decodeAssetData(
                 orderLeft.makeAsset.assetType.assetClass,
                 orderLeft.makeAsset.assetType.data,
               ) as any,
             },
             take: {
-              value: bn(orderLeft.takeAsset.value).toString(),
+              // value: bn(orderLeft.takeAsset.value).toString(),
+              value:
+                sideLeft === OrderSide.buy
+                  ? orderLeft.takeAsset.value
+                  : formatEther(orderLeft.takeAsset.value),
+              // value:
+              //   sideLeft === OrderSide.buy
+              //     ? nftAmount
+              //     : (Number(price) * Number(nftAmount)).toString(),
               assetType: decodeAssetData(
                 orderLeft.takeAsset.assetType.assetClass,
                 orderLeft.takeAsset.assetType.data,
