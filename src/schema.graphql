@@ -238,15 +238,21 @@ type Collections {
   description: String
   bannerImageUrl: String
   Meta: CollectionsMeta
-  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
+  tokens(FilterTokensByPriceRange: FilterTokensByPriceRangeDto = {}): [Tokens!]
 }
 
-input FilterTokenDto {
-  page: Int
-  limit: Int
-  tokenId: String
-  contract: String
-  owner: String
+input FilterTokensByPriceRangeDto {
+  page: Float
+  limit: Float
+  collectionId: String!
+  min: Int!
+  max: Int!
+  sortOrder: SortOrder!
+}
+
+enum SortOrder {
+  ASCE_ORDER
+  DESC_ORDER
 }
 
 type CreatorRoyalty {
@@ -528,6 +534,14 @@ input FilterDto {
   limit: Float
   id: String
   name: String
+  owner: String
+}
+
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  tokenId: String
+  contract: String
   owner: String
 }
 

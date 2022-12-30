@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filterTokensByPriceRange.dto';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
 import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
 
@@ -87,6 +88,33 @@ export class OrderMatchEventService {
         throw new NotFoundException(`MatchEvent against ${orderId} not found`);
       }
       return found;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Filter all orders for a specific price range
+   * @param id
+   * @returns Order against Provided Id
+   */
+  async filterByPrice(
+    filterByPriceDto: FilterTokensByPriceRangeDto,
+  ): Promise<OrderMatchEvents[]> {
+    try {
+      const [items] = await Promise.all([
+        this.orderMatchEventRepo.find({
+          where: {
+            contract: filterByPriceDto.collectionId,
+            price:
+              MoreThan(filterByPriceDto.min) && LessThan(filterByPriceDto.max),
+          },
+          order: {
+            price: filterByPriceDto.sortOrder,
+          },
+        }),
+      ]);
+      return items;
     } catch (error) {
       throw new BadRequestException(error);
     }

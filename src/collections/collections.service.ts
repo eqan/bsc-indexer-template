@@ -7,11 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
+import { FilterTokensByPriceRangeDto } from './dto/filterTokensByPriceRange.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -21,8 +24,8 @@ export class CollectionsService {
     @InjectRepository(Collections)
     @Inject(forwardRef(() => MetadataApi))
     private collectionsRepo: Repository<Collections>,
-    private rpcProvider: RpcProvider,
-    private metadataApi: MetadataApi,
+    private readonly orderMatchEventService: OrderMatchEventService,
+    private readonly tokenService: TokensService,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
     // const getBlock = async () => {
@@ -181,6 +184,32 @@ export class CollectionsService {
       return ids;
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Filtered Tokens by Price Range
+   * @param FilterTokensByPriceRangeDto
+   * @returns Sorted list of Tokens
+   */
+  async filterTokensByPriceRange(
+    filterTokensDto: FilterTokensByPriceRangeDto,
+  ): Promise<Tokens | null> {
+    try {
+      const items = await this.orderMatchEventService.filterByPrice(
+        filterTokensDto,
+      );
+      console.log(items);
+      let tokens;
+      for (const item of items) {
+        const token = await this.tokenService.show(
+          `${item.contract}:${item.tokenId}`,
+        );
+        tokens.push(token);
+      }
+      return tokens;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }
