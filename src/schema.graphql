@@ -245,13 +245,13 @@ input FilterTokensByPriceRangeDto {
   page: Float
   limit: Float
   collectionId: String!
-  min: Int!
-  max: Int!
+  min: String!
+  max: String!
   sortOrder: SortOrder!
 }
 
 enum SortOrder {
-  ASCE_ORDER
+  ASC_ORDER
   DESC_ORDER
 }
 
