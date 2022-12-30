@@ -116,6 +116,7 @@ export class StoreOnchainBuySellOrders {
             },
             data: decodeOrderData(dataType, data) as any,
           };
+          // (dbOrder.make.assetType?.assetClass as any) === AssetClassEnum.ERC1155;
           const saved = await this.orderService.createOnchainOrder(dbOrder);
           console.log('saved directPurchase in db', saved);
           break;

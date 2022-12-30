@@ -1,22 +1,21 @@
 import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
-import { formatEther, formatUnits, parseUnits } from '@ethersproject/units';
+import { formatEther, formatUnits } from '@ethersproject/units';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+
 import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { bn } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { UsdPricesService } from 'src/usd-prices/usd-prices.service';
-import { AddressZero } from '@ethersproject/constants';
+import * as Addresses from '../constants/orders.constants.addresses';
 import {
   CurrencyMetadata,
   Price,
   USDAndNativePrices,
 } from '../types/order.prices.types';
-import { result } from 'lodash';
-import * as Addresses from '../constants/orders.constants.addresses';
-import * as constants from '../constants/orders.constants.currency';
 
 @Injectable()
 export class OrderPrices {
@@ -60,6 +59,12 @@ export class OrderPrices {
         decimals = await contract.decimals();
       }
       const metadata: CurrencyMetadata = {};
+      let result: {
+        name?: string;
+        id?: string;
+        symbol?: string;
+        image?: { large?: string };
+      };
 
       const coingeckoNetworkId = getNetworkSettings().coingecko?.networkId;
       if (coingeckoNetworkId) {
@@ -71,12 +76,7 @@ export class OrderPrices {
         console.log(url, 'url for the name symbol');
 
         const response = await lastValueFrom(this.httpService.get(url));
-        const result: {
-          name?: string;
-          id?: string;
-          symbol?: string;
-          image?: { large?: string };
-        } = response.data;
+        result = response.data;
         if (result.id) {
           metadata.coingeckoCurrencyId = result.id;
         }
