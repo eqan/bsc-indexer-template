@@ -89,11 +89,10 @@ export class TokensService {
       throw new BadRequestException(error);
     }
   }
-
   /**
    * GET Token By Id
    * @param id
-   * @returns Token against Provided Id
+   * @returns Token against Provided Id if not found throws exception
    */
   async show(tokenId: string): Promise<Tokens> {
     try {
@@ -151,6 +150,25 @@ export class TokensService {
       return null;
     } catch (error) {
       throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * GET Token By Id
+   * @param id
+   * @returns Token against Provided Id if not found simply returns
+   */
+  async find(tokenId: string): Promise<Tokens | 0> {
+    try {
+      const found = await this.tokensRepo.findOneBy({
+        tokenId,
+      });
+      if (!found) {
+        return 0;
+      }
+      return found;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

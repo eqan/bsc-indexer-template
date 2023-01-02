@@ -204,12 +204,11 @@ export class CollectionsService {
       console.log(items.length, 'items logged');
       const tokens: Tokens[] = [];
       for (const item of items) {
-        const token = await this.tokenService.show(
+        const token = await this.tokenService.find(
           `${item.contract}:${item.tokenId}`,
         );
-        tokens.push(token);
+        if (token) tokens.push(token);
       }
-      console.log(tokens, 'tokens');
       return tokens;
     } catch (error) {
       throw new NotFoundException(error);
