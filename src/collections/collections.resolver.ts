@@ -138,7 +138,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   async getCollectionAveragePrice(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<AveragePriceOutput | null> {
+  ): Promise<number> {
     try {
       return await this.collectionsService.getOrderCollectionPrice(
         collectionId,
@@ -156,7 +156,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   async getCollectionVolume(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<VolumeOutput | null> {
+  ): Promise<number> {
     try {
       return await this.collectionsService.getCollectionVolume(collectionId);
     } catch (error) {
@@ -172,7 +172,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   async getNumberOfUniqueOwners(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<UniqueOwnersOuput | null> {
+  ): Promise<number> {
     try {
       return await this.collectionsService.getNumberOfUnqiueOwners(
         collectionId,

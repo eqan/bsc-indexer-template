@@ -176,22 +176,15 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Average Price Of Collection
    */
-  async getOrderCollectionPrice(
-    collectionId: string,
-  ): Promise<AveragePriceOutput | null> {
+  async getOrderCollectionPrice(collectionId: string): Promise<number> {
     let sum = 0;
     const { items, total } = await this.orderMatchEventService.show(
       collectionId,
     );
-    console.log(items);
     items.map((order) => {
       if (order.price) sum += parseFloat(order.price);
     });
-    try {
-      return { averagePrice: sum / total };
-    } catch (error) {
-      return { averagePrice: null };
-    }
+    return sum / total;
   }
   catch(error) {
     throw new NotFoundException(error);
@@ -201,9 +194,7 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Last 24 Hours Transactions Amount
    */
-  async getCollectionVolume(
-    collectionId: string,
-  ): Promise<VolumeOutput | null> {
+  async getCollectionVolume(collectionId: string): Promise<number> {
     try {
       const now = Date.now();
       const oneDayAgo = now - 24 * 60 * 60 * 1000;
@@ -215,11 +206,7 @@ export class CollectionsService {
       items.map((order) => {
         if (order.price) sum += parseFloat(order.price);
       });
-      try {
-        return { volume: sum };
-      } catch (error) {
-        return { volume: null };
-      }
+      return sum;
     } catch (error) {
       throw new NotFoundException(error);
     }
@@ -230,24 +217,18 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Number
    */
-  async getNumberOfUnqiueOwners(
-    collectionId: string,
-  ): Promise<UniqueOwnersOuput | null> {
+  async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
     try {
       const { items } = await this.orderMatchEventService.show(collectionId);
       const owners = [];
-      let sum = 0;
+      let sum = 1;
       items.map((order) => {
         if (owners.includes(order.taker)) {
           owners.push(order.taker);
           sum++;
         }
       });
-      try {
-        return { owners: sum };
-      } catch (error) {
-        return { owners: null };
-      }
+      return sum;
     } catch (error) {
       throw new NotFoundException(error);
     }

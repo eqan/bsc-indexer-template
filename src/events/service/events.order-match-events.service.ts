@@ -74,17 +74,18 @@ export class OrderMatchEventService {
     timestamp?: number,
   ): Promise<GetAllOrdersMatchEvent> {
     try {
+      console.log('Contract: ', contract);
       const [items, total] = await Promise.all([
         this.orderMatchEventRepo.find({
           where: {
             contract,
-            baseEventParams: { timestamp: MoreThan(timestamp) },
+            // baseEventParams: { timestamp: MoreThan(timestamp) },
           },
         }),
         this.orderMatchEventRepo.count({
           where: {
             contract,
-            baseEventParams: { timestamp: MoreThan(timestamp) },
+            // baseEventParams: { timestamp: MoreThan(timestamp) },
           },
         }),
       ]);
