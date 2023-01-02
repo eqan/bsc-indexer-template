@@ -144,6 +144,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         collectionId,
       );
     } catch (error) {
+      const regex = /value \"\d+\" is out of range for type integer/;
+
+      if (regex.test(error)) {
+        return 0;
+      } else {
+        console.log('Match not found');
+      }
       throw new BadRequestException(error);
     }
   }
@@ -160,6 +167,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     try {
       return await this.collectionsService.getCollectionVolume(collectionId);
     } catch (error) {
+      const regex = /value \"\d+\" is out of range for type integer/;
+
+      if (regex.test(error)) {
+        return 0;
+      } else {
+        console.log('Match not found');
+      }
       throw new BadRequestException(error);
     }
   }
@@ -178,6 +192,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         collectionId,
       );
     } catch (error) {
+      const regex = /value \"\d+\" is out of range for type integer/;
+
+      if (regex.test(error)) {
+        return 0;
+      } else {
+        console.log('Match not found');
+      }
       throw new BadRequestException(error);
     }
   }
