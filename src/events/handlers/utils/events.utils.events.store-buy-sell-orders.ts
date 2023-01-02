@@ -240,7 +240,7 @@ export class StoreOnchainBuySellOrders {
               value:
                 sideLeft === OrderSide.buy
                   ? formatEther(orderLeft.makeAsset.value)
-                  : orderLeft.makeAsset.value,
+                  : bn(orderLeft.makeAsset.value).toString(),
               //     mount in newRightFill when it's sell order
               // amount = side === OrderSide.buy ? newLeftFill : newRightFill;
               // currencyPrice = side === OrderSide.buy ? newRightFill : newLeftFill;
@@ -257,7 +257,7 @@ export class StoreOnchainBuySellOrders {
               // value: bn(orderLeft.takeAsset.value).toString(),
               value:
                 sideLeft === OrderSide.buy
-                  ? orderLeft.takeAsset.value
+                  ? bn(orderLeft.takeAsset.value).toString()
                   : formatEther(orderLeft.takeAsset.value),
               // value:
               //   sideLeft === OrderSide.buy

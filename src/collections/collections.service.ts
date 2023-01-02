@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TokenSyntaxKind } from '@ts-morph/common/lib/typescript';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -22,9 +23,10 @@ import { Collections } from './entities/collections.entity';
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    @Inject(forwardRef(() => MetadataApi))
+    @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
-    private readonly orderMatchEventService: OrderMatchEventService,
+    // private readonly orderMatchEventService: OrderMatchEventService,
+    @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
@@ -194,13 +196,14 @@ export class CollectionsService {
    */
   async filterTokensByPriceRange(
     filterTokensDto: FilterTokensByPriceRangeDto,
-  ): Promise<Tokens | null> {
+  ): Promise<Tokens[]> {
     try {
-      const items = await this.orderMatchEventService.filterByPrice(
-        filterTokensDto,
-      );
-      console.log(items);
-      let tokens;
+      const items = [];
+      // const items = await this.orderMatchEventService.filterByPrice(
+      //   filterTokensDto,
+      // );
+      // console.log(items);
+      let tokens: Tokens[];
       for (const item of items) {
         const token = await this.tokenService.show(
           `${item.contract}:${item.tokenId}`,

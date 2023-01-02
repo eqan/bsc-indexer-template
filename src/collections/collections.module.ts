@@ -13,9 +13,10 @@ import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entit
   imports: [
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
-    SyncEventsModule,
+    // SyncEventsModule,
   ],
-  providers: [CollectionsResolver, CollectionsService, OrderMatchEventService],
+  // providers: [CollectionsResolver, CollectionsService, OrderMatchEventService],
+  providers: [CollectionsResolver, CollectionsService],
   exports: [CollectionsService],
 })
 export class CollectionsModule {}
