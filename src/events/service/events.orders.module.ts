@@ -7,4 +7,4 @@ import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
   providers: [OrderMatchEventService],
   exports: [OrderMatchEventService],
 })
-export class EventsOrder {}
+export class EventsOrderModule {}

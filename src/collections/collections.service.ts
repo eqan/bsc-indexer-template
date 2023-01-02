@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
+import { TokensService } from 'src/tokens/tokens.service';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
@@ -229,6 +230,15 @@ export class CollectionsService {
     } catch (error) {
       throw new NotFoundException(error);
     }
+  }
+
+  /**
+   * Get Unique properties of a collection
+   * @param collectionId
+   * @returns properties
+   */
+  async getUniquePropertiesOfCollection(collectionId: string): Promise<object> {
+    return { k: collectionId };
   }
 
   normalizeData(error: string) {

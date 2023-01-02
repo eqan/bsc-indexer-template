@@ -7,7 +7,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { normalize } from 'path';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
@@ -19,6 +18,7 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { DynamicData } from './dto/dynamic-type.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -127,6 +127,44 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     const { items } = await this.tokenService.index(filterTokenDto);
     return items;
   }
+
+  @Query(() => [DynamicData], { name: 'GetCollectionUniqueItems' })
+  async getUserData(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<DynamicData[]> {
+    const { items } = await this.tokenService.index({ contract: collectionId });
+    const uniqueItemsList = [];
+    items.map((item) => {
+      const attributes = item.Meta.attributes;
+      attributes.map((attribute) => {
+        console.log(attribute['key']);
+        const index = uniqueItemsList.findIndex(
+          (obj) => obj['key'] === attribute['key'],
+        );
+        if (index != -1) {
+          uniqueItemsList[index]['count'] += 1;
+        } else {
+          uniqueItemsList.push({ key: attribute['key'], count: 1 });
+        }
+      });
+    });
+    console.log(uniqueItemsList);
+    return uniqueItemsList;
+  }
+
+  // @Query(() => typeof DynamicData, { name: 'GetCollectionUniqueItems' })
+  // async getUniqueItems(
+  //   @Args('collectionId')
+  //   collectionId: string,
+  // ): Promise<DynamicData> {
+  //   const { items } = await this.tokenService.index({ contract: collectionId });
+  //   return {
+  //     id: 1,
+  //     name: 'John Smith',
+  //     email: 'john@example.com',
+  //   };
+  // }
 
   /**
    * Get Average Price Of A Collection

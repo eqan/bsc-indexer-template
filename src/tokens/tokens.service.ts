@@ -155,29 +155,4 @@ export class TokensService {
       throw new NotFoundException(error);
     }
   }
-
-  /**
-   * Get Average Collection Price Of Tokens
-   * @param tokenId
-   * @returns  Nothing
-   */
-  async getOrderTokenPrice(filterTokenDto: FilterTokenDto): Promise<number> {
-    try {
-      // const orderMatchEventService = this.moduleRef.get(OrderMatchEventService);
-      const { items, total } = await this.index(filterTokenDto);
-      const promises = [];
-      let sum = 0;
-      items.map((item) => {
-        const tokenId = item.tokenId;
-        promises.push(this.orderMatchEventService.show(tokenId));
-      });
-      const resolvedOrders = await Promise.all(promises);
-      resolvedOrders.map((order) => {
-        sum += order.price;
-      });
-      return sum / total;
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
 }
