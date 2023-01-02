@@ -25,6 +25,6 @@ import { OrdersService } from './orders.service';
     UsdPricesModule,
   ],
   providers: [OrdersResolver, OrdersService, OrdersHelpers, OrderPrices],
-  exports: [OrdersService, OrderPrices],
+  exports: [OrdersService, OrderPrices, OrdersService],
 })
 export class OrdersModule {}

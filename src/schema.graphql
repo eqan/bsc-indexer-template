@@ -205,6 +205,81 @@ type GetAllAuctions {
   total: Int!
 }
 
+type UsdPrice {
+  id: String!
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
+"""A simple Asset Parser"""
+scalar ASSET_SCALAR
+
+type Orders {
+  orderId: String!
+  fill: String!
+  kind: OrderKind
+  side: OrderSide
+  type: ORDER_TYPES
+  status: OrderStatus!
+  makeStock: String
+  cancelled: Boolean
+  createdAt: DateTime
+  maker: String
+  make: Asset!
+  take: Asset
+  salt: String
+  data: DATA_SCALAR!
+  start: Float
+  end: Float
+  optionalRoyalties: Boolean
+  makePrice: Float
+  takePrice: Float
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String
+  taker: String
+  contract: String
+  tokenId: String
+}
+
+enum OrderKind {
+  SINGLE_TOKEN
+  CONTRACT_WIDE
+}
+
+enum OrderSide {
+  buy
+  sell
+}
+
+enum ORDER_TYPES {
+  V1
+  V2
+}
+
+enum OrderStatus {
+  Active
+  Filled
+  Historical
+  InActive
+  Cancelled
+}
+
+"""A simple Data Parser"""
+scalar DATA_SCALAR
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
 type MetadataAttribute {
   key: String
   value: String
@@ -327,44 +402,6 @@ type GetAllCollections {
   total: Int!
 }
 
-type Asset {
-  value: String!
-  valueDecimal: String
-  assetType: ASSET_SCALAR!
-}
-
-"""A simple Asset Parser"""
-scalar ASSET_SCALAR
-
-type Orders {
-  orderId: String!
-  fill: String!
-  kind: String
-  side: String
-  type: String
-  status: String!
-  makeStock: String
-  cancelled: Boolean
-  createdAt: DateTime
-  maker: String
-  make: Asset!
-  take: Asset
-  salt: String
-  data: DATA_SCALAR!
-  start: Float
-  end: Float
-  optionalRoyalties: Boolean
-  makePrice: Float
-  takePrice: Float
-  makePriceUsd: Float
-  takePriceUsd: Float
-  signature: String
-  taker: String
-}
-
-"""A simple Data Parser"""
-scalar DATA_SCALAR
-
 type Users {
   id: String!
   userSignature: String
@@ -374,18 +411,6 @@ type Users {
   websiteUrl: String
   twitterUrl: String
   type: String
-}
-
-type UsdPrice {
-  id: String!
-  currency: String
-  value: String!
-  timestamp: Float!
-}
-
-type GetAllOrders {
-  items: [Orders!]!
-  total: Int!
 }
 
 type CronType {
@@ -470,6 +495,12 @@ input SellInput {
   value: Float!
 }
 
+input AssetInput {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
 input AttributeInput {
   key: String
   value: String
@@ -503,12 +534,6 @@ input CollectionMetaContentInput {
   type: String
   url: String
   representation: String
-}
-
-input AssetInput {
-  value: String!
-  valueDecimal: String
-  assetType: ASSET_SCALAR!
 }
 
 type Query {
@@ -725,29 +750,8 @@ input CreateOrdersInput {
   takePriceUsd: Float
   signature: String!
   taker: String
-}
-
-enum ORDER_TYPES {
-  V1
-  V2
-}
-
-enum OrderSide {
-  buy
-  sell
-}
-
-enum OrderKind {
-  SINGLE_TOKEN
-  CONTRACT_WIDE
-}
-
-enum OrderStatus {
-  Active
-  Filled
-  Historical
-  InActive
-  Cancelled
+  contract: String
+  tokenId: String
 }
 
 input DeleteOrderInput {

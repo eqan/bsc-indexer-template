@@ -144,4 +144,13 @@ export class CreateOrdersInput {
   @IsEthereumAddress()
   @Field({ nullable: true })
   taker?: string;
+
+  @IsEthereumAddress()
+  @Field({ nullable: true })
+  contract: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  tokenId: string;
 }

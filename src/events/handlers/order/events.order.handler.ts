@@ -343,6 +343,8 @@ export class OrderMatchHandler {
         newRightFill,
         prices.usdPrice,
         prices.nativePrice,
+        contract,
+        tokenId,
       );
 
       /**

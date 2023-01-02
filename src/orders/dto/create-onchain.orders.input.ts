@@ -145,7 +145,14 @@ export class CreateOnchainOrdersInput {
 
   @IsEthereumAddress()
   @IsOptional()
-  @IsEthereumAddress()
   //   @Field({ nullable: true })
   taker?: string;
+
+  @IsEthereumAddress()
+  @IsNotEmpty()
+  contract: string;
+
+  @IsString()
+  @IsNotEmpty()
+  tokenId: string;
 }

@@ -28,7 +28,6 @@ import {
 @Injectable()
 export class StoreOnchainBuySellOrders {
   constructor(
-    private readonly orderPrices: OrderPrices,
     private readonly orderService: OrdersService,
     private rpcProvider: RpcProvider,
   ) {
@@ -49,12 +48,14 @@ export class StoreOnchainBuySellOrders {
     newRightFill: string,
     usdPrice: string,
     price: string,
+    contract: string,
+    tokenId: string,
   ) => {
     switch (fillType) {
       case 'directPurchase': {
-        console.log(newRightFill, 'rightfill');
-        console.log(newLeftFill, 'leftfill');
-        console.log(timestamp);
+        // console.log(newRightFill, 'rightfill');
+        // console.log(newLeftFill, 'leftfill');
+        // console.log(timestamp);
         try {
           const dataType = result[0]['sellOrderDataType'];
           const data = result[0]['sellOrderData'];
@@ -115,6 +116,8 @@ export class StoreOnchainBuySellOrders {
               ) as any,
             },
             data: decodeOrderData(dataType, data) as any,
+            contract,
+            tokenId,
           };
           // (dbOrder.make.assetType?.assetClass as any) === AssetClassEnum.ERC1155;
           const saved = await this.orderService.createOnchainOrder(dbOrder);
@@ -185,6 +188,8 @@ export class StoreOnchainBuySellOrders {
               ) as any,
             },
             data: decodeOrderData(dataType, data) as any,
+            contract,
+            tokenId,
           };
           const saved = await this.orderService.createOnchainOrder(dbOrder);
           console.log('direct accept bid in db', saved);
@@ -220,7 +225,6 @@ export class StoreOnchainBuySellOrders {
             //     ? formatEther(newLeftFill)
             //     : formatEther(newRightFill),
             fill,
-
             cancelled: false,
             status: OrderStatus.Filled,
             onchain: true,
@@ -268,6 +272,8 @@ export class StoreOnchainBuySellOrders {
                 orderLeft.takeAsset.assetType.data,
               ) as any,
             },
+            contract,
+            tokenId,
           };
 
           // const currencyPrice =
@@ -319,6 +325,8 @@ export class StoreOnchainBuySellOrders {
                 orderRight.takeAsset.assetType.data,
               ),
             } as any,
+            contract,
+            tokenId,
           };
           // console.log(Right, 'right order made');
           const orders = [Left, Right];

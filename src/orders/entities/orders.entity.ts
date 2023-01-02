@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsEthereumAddress } from 'class-validator';
+import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import {
@@ -42,7 +42,7 @@ export class Orders extends BaseEntity {
   })
   fill: string;
 
-  @Field({ nullable: true })
+  @Field(() => OrderKind, { nullable: true })
   @Column({
     type: 'enum',
     enumName: 'OrderKind',
@@ -51,7 +51,7 @@ export class Orders extends BaseEntity {
   })
   kind?: OrderKind;
 
-  @Field({ nullable: true })
+  @Field(() => OrderSide, { nullable: true })
   @Column({
     type: 'enum',
     enumName: 'OrderSide',
@@ -60,7 +60,7 @@ export class Orders extends BaseEntity {
   })
   side?: OrderSide;
 
-  @Field({ nullable: true })
+  @Field(() => ORDER_TYPES, { nullable: true })
   @Column({
     type: 'enum',
     // nullable: true,
@@ -70,7 +70,7 @@ export class Orders extends BaseEntity {
   })
   type: ORDER_TYPES;
 
-  @Field()
+  @Field(() => OrderStatus)
   @Column({
     type: 'enum',
     // nullable: true,
@@ -245,4 +245,30 @@ export class Orders extends BaseEntity {
     nullable: true,
   })
   taker?: string;
+
+  @IsNotEmpty()
+  @IsEthereumAddress({
+    message: 'Contract Address should be an ethereum address',
+  })
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+  })
+  contract: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  tokenId: string;
+
+  // @IsString()
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // price?: string;
 }
