@@ -7,6 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { normalize } from 'path';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
@@ -141,14 +142,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         collectionId,
       );
     } catch (error) {
-      const regex = /value \"\d+\" is out of range for type integer/;
-
-      if (regex.test(error)) {
-        return 0;
-      } else {
-        console.log('Match not found');
-      }
-      throw new BadRequestException(error);
+      return this.collectionsService.normalizeData(error);
     }
   }
 
@@ -164,14 +158,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     try {
       return await this.collectionsService.getCollectionVolume(collectionId);
     } catch (error) {
-      const regex = /value \"\d+\" is out of range for type integer/;
-
-      if (regex.test(error)) {
-        return 0;
-      } else {
-        console.log('Match not found');
-      }
-      throw new BadRequestException(error);
+      return this.collectionsService.normalizeData(error);
     }
   }
 
@@ -189,14 +176,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         collectionId,
       );
     } catch (error) {
-      const regex = /value \"\d+\" is out of range for type integer/;
-
-      if (regex.test(error)) {
-        return 0;
-      } else {
-        console.log('Match not found');
-      }
-      throw new BadRequestException(error);
+      return this.collectionsService.normalizeData(error);
     }
   }
 }

@@ -230,4 +230,14 @@ export class CollectionsService {
       throw new NotFoundException(error);
     }
   }
+
+  normalizeData(error: string) {
+    const regex = /value \"\d+\" is out of range for type integer/;
+
+    if (regex.test(error)) {
+      return 0;
+    } else {
+      throw new BadRequestException(error);
+    }
+  }
 }
