@@ -22,9 +22,13 @@ import { Collections } from './entities/collections.entity';
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    @Inject(forwardRef(() => MetadataApi))
+    @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
-    private readonly orderMatchEventService: OrderMatchEventService,
+
+    // @Inject(forwardRef(() => OrderMatchEventService))
+    // private readonly orderMatchEventService: OrderMatchEventService,
+
+    @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
@@ -196,9 +200,7 @@ export class CollectionsService {
     filterTokensDto: FilterTokensByPriceRangeDto,
   ): Promise<Tokens[]> {
     try {
-      const items = await this.orderMatchEventService.filterByPrice(
-        filterTokensDto,
-      );
+      const items = [];
       console.log(items);
       const tokens: Tokens[] = [];
       for (const item of items) {
