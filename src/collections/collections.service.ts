@@ -7,7 +7,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TokenSyntaxKind } from '@ts-morph/common/lib/typescript';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
+import { OrdersService } from 'src/orders/orders.service';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
@@ -24,10 +26,8 @@ export class CollectionsService {
     @InjectRepository(Collections)
     @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
-
-    // @Inject(forwardRef(() => OrderMatchEventService))
     // private readonly orderMatchEventService: OrderMatchEventService,
-
+    private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
   ) {
@@ -200,7 +200,7 @@ export class CollectionsService {
     filterTokensDto: FilterTokensByPriceRangeDto,
   ): Promise<Tokens[]> {
     try {
-      const items = [];
+      const items = await this.ordersService.filterByPrice(filterTokensDto);
       console.log(items);
       const tokens: Tokens[] = [];
       for (const item of items) {

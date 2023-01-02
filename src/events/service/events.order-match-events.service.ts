@@ -4,8 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filterTokensByPriceRange.dto';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
 import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
 
@@ -92,58 +91,4 @@ export class OrderMatchEventService {
       throw new BadRequestException(error);
     }
   }
-
-  /**
-   * Filter all orders for a specific price range
-   * @param id
-   * @returns Order against Provided Id
-   */
-  async filterByPrice(
-    filterByPriceDto: FilterTokensByPriceRangeDto,
-  ): Promise<OrderMatchEvents[]> {
-    try {
-      const [items] = await Promise.all([
-        this.orderMatchEventRepo.find({
-          where: {
-            contract: filterByPriceDto.collectionId,
-            price:
-              MoreThan(filterByPriceDto.min) && LessThan(filterByPriceDto.max),
-          },
-          order: {
-            price: filterByPriceDto.sortOrder,
-          },
-        }),
-      ]);
-      return items;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  //   /**
-  //    * Edit Activity
-  //    * @param activityId
-  //    * @returns Updated Activity
-  //    */
-  //   edit(id: number) {
-  //     return `This action updates a #${id} activity`;
-  //   }
-
-  /**
-   * DEETE Activity
-   * @param activityIds
-   * @returns
-   */
-  //   async delete(deleteWithIds: { id: string[] }): Promise<void> {
-  //     try {
-  //       const ids = deleteWithIds.id;
-  //       const values = await this.orderMatchEventsRepo.delete({ id: In(ids) });
-  //       if (!values) {
-  //         throw new NotFoundException('Activity not found');
-  //       }
-  //       return null;
-  //     } catch (error) {
-  //       throw new BadRequestException(error);
-  //     }
-  //   }
 }

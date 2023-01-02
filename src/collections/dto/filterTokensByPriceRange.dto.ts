@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { SortOrder } from '../enums/collections.sort-order.enum';
 import { PaginationParam } from './pagination.dto';
 
@@ -10,17 +10,17 @@ export class FilterTokensByPriceRangeDto extends PaginationParam {
   @Field(() => String)
   collectionId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Field(() => String)
-  min: string;
+  min?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Field(() => String)
-  max: string;
+  max?: string;
 
-  @IsEnum(SortOrder)
+  @IsEnum(() => SortOrder)
   @Field(() => SortOrder)
   sortOrder: SortOrder;
 }

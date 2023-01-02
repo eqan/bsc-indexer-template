@@ -1,12 +1,18 @@
+import { MaxUint256, Zero } from '@ethersproject/constants';
+import { formatEther } from '@ethersproject/units';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filterTokensByPriceRange.dto';
+import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { SystemErrors } from 'src/constants/errors.enum';
-import { In, Repository } from 'typeorm';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
+import { In, LessThan, MoreThan, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -45,31 +51,25 @@ export class OrdersService {
    */
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      console.log('hello', createOrdersInput);
-      // const order = {
-      //   orderId,
-      //   maker: toAddress(maker),
-      //   make: Make,
-      //   take,
-      //   salt,
-      //   signature,
-      //   data,
-      //   type: '"RARIBLE_V2"',
-      // };
+      // console.log('hello', createOrdersInput);
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
         console.log(createOrdersInput, 'order logged');
+        //checking if order signature is valid or not
         this.ordersHelpers.checkSignature(createOrdersInput as any);
-        // console.log(verified, 'verified');
-        // const verified = verifyOrder(
-        //   createOrdersInput,P
-        //   this.rpcProvider.baseProvider,
-        // );
-        // if (0) {
-        const order = this.ordersRepo.create(createOrdersInput);
-        return await this.ordersRepo.save(order);
-        // return { name: 'nimra' };
-        // } else throw new BadRequestException('decryption failed');
+        const orderInput = createOrdersInput as any;
+        const side =
+          createOrdersInput?.side ||
+          getOrderSide(orderInput.make.assetType.assetClass);
+        const order = {
+          ...createOrdersInput,
+          side,
+          makePrice:
+            orderInput?.makePrice || formatEther(orderInput.take.value),
+        };
+
+        const dbOrder = this.ordersRepo.create(order);
+        return await this.ordersRepo.save(dbOrder);
       } else throw new BadRequestException('order already exists');
     } catch (error) {
       throw new BadRequestException(error);
@@ -170,6 +170,35 @@ export class OrdersService {
       return this.show(orderId);
     } catch (error) {
       throw new BadRequestException(SystemErrors.UPDATE_ORDER);
+    }
+  }
+
+  /**
+   * Filter all orders for a specific price range
+   * @param id
+   * @returns Order against Provided collectionId
+   */
+  async filterByPrice(
+    filterByPriceDto: FilterTokensByPriceRangeDto,
+  ): Promise<Orders[]> {
+    try {
+      const [items] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            contract: filterByPriceDto.collectionId,
+            side: OrderSide.sell,
+            makePrice:
+              Number(MoreThan(filterByPriceDto?.min || Zero)) &&
+              Number(LessThan(filterByPriceDto?.max || MaxUint256)),
+          },
+          order: {
+            makePrice: filterByPriceDto?.sortOrder || SortOrder.ASC_ORDER,
+          },
+        }),
+      ]);
+      return items;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }
