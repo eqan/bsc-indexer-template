@@ -313,21 +313,15 @@ type Collections {
   description: String
   bannerImageUrl: String
   Meta: CollectionsMeta
-  tokens(FilterTokensByPriceRange: FilterTokensByPriceRangeDto = {}): [Tokens!]
+  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
 }
 
-input FilterTokensByPriceRangeDto {
-  page: Float
-  limit: Float
-  collectionId: String!
-  min: String!
-  max: String!
-  sortOrder: SortOrder!
-}
-
-enum SortOrder {
-  ASC_ORDER
-  DESC_ORDER
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  tokenId: String
+  contract: String
+  owner: String
 }
 
 type CreatorRoyalty {
@@ -562,14 +556,6 @@ input FilterDto {
   owner: String
 }
 
-input FilterTokenDto {
-  page: Int
-  limit: Int
-  tokenId: String
-  contract: String
-  owner: String
-}
-
 input FilterOrderDto {
   page: Float
   limit: Float
@@ -617,6 +603,7 @@ type Mutation {
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+  filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto = {}): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
@@ -680,6 +667,20 @@ input UpdateCollectionsInput {
 
 input DeleteCollectionsInput {
   id: [String!]!
+}
+
+input FilterTokensByPriceRangeDto {
+  page: Float
+  limit: Float
+  collectionId: String!
+  min: Float
+  max: Float
+  sortOrder: SortOrder!
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input CreateTokenInput {

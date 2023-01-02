@@ -201,7 +201,7 @@ export class CollectionsService {
   ): Promise<Tokens[]> {
     try {
       const items = await this.ordersService.filterByPrice(filterTokensDto);
-      console.log(items);
+      console.log(items.length, 'items logged');
       const tokens: Tokens[] = [];
       for (const item of items) {
         const token = await this.tokenService.show(
@@ -209,6 +209,7 @@ export class CollectionsService {
         );
         tokens.push(token);
       }
+      console.log(tokens, 'tokens');
       return tokens;
     } catch (error) {
       throw new NotFoundException(error);

@@ -132,22 +132,19 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * Sort and Filter the collection tokens for provided range
    * @returns Tokens
    */
-  @ResolveField('tokens', () => [Tokens], { nullable: true })
+  // @ResolveField('tokens', () => [Tokens], { nullable: true })
+  @Mutation(() => [Tokens], { name: 'filterTokensByPriceRange' })
   async filterTokensByPriceRange(
     @Parent() collection: Collections,
-    @Args('FilterTokensByPriceRange', { nullable: true, defaultValue: {} })
+    @Args('FilterTokensByPriceRangeDto', { nullable: true, defaultValue: {} })
     filterTokensByPriceRangeDto: FilterTokensByPriceRangeDto,
   ) {
     try {
-      // return await this.collectionsService.getOrderCollectionPrice(
-      //   collectionId,
-      // );
-      const { id: collectionId } = collection;
-      filterTokensByPriceRangeDto.collectionId = collectionId;
-      const { items } = await this.tokenService.index(
+      // console.log(filterTokensByPriceRangeDto, 'dto logged');
+      const tokens = await this.collectionsService.filterTokensByPriceRange(
         filterTokensByPriceRangeDto,
       );
-      return items;
+      return tokens;
     } catch (error) {
       throw new BadRequestException(error);
     }
