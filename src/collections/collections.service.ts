@@ -194,13 +194,13 @@ export class CollectionsService {
    */
   async filterTokensByPriceRange(
     filterTokensDto: FilterTokensByPriceRangeDto,
-  ): Promise<Tokens | null> {
+  ): Promise<Tokens[]> {
     try {
       const items = await this.orderMatchEventService.filterByPrice(
         filterTokensDto,
       );
       console.log(items);
-      let tokens;
+      const tokens: Tokens[] = [];
       for (const item of items) {
         const token = await this.tokenService.show(
           `${item.contract}:${item.tokenId}`,
