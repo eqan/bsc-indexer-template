@@ -7,13 +7,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { ILike, In, Repository } from 'typeorm';
-import { AveragePriceOutput } from './dto/averageprice-collection.dto';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
-import { UniqueOwnersOuput } from './dto/owners-collection.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
-import { VolumeOutput } from './dto/volume-collection.dto';
 import { Collections } from './entities/collections.entity';
 @Injectable()
 export class CollectionsService {

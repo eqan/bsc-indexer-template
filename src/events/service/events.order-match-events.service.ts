@@ -70,23 +70,23 @@ export class OrderMatchEventService {
    * @returns Order against Provided Id
    */
   async show(
-    contract?: string,
-    timestamp?: number,
+    contract: string,
+    timestamp: number = undefined,
   ): Promise<GetAllOrdersMatchEvent> {
     try {
+      // Initialize where clause to an empty object
+      const where: any = {};
+      if (contract) {
+        // If contract is provided, add it to the where clause
+        where.contract = contract;
+      }
+      if (timestamp) {
+        // If timestamp is provided, add it to the where clause
+        where.baseEventParams = { timestamp: MoreThan(timestamp) };
+      }
       const [items, total] = await Promise.all([
-        this.orderMatchEventRepo.find({
-          where: {
-            contract,
-            baseEventParams: { timestamp: MoreThan(timestamp) },
-          },
-        }),
-        this.orderMatchEventRepo.count({
-          where: {
-            contract,
-            baseEventParams: { timestamp: MoreThan(timestamp) },
-          },
-        }),
+        this.orderMatchEventRepo.find({ where }),
+        this.orderMatchEventRepo.count({ where }),
       ]);
       return { items, total };
     } catch (error) {

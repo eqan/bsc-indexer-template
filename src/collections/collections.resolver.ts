@@ -12,14 +12,11 @@ import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
 import { CollectionsService } from './collections.service';
-import { AveragePriceOutput } from './dto/averageprice-collection.dto';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { DeleteCollectionsInput } from './dto/delete-collections.input';
 import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
-import { UniqueOwnersOuput } from './dto/owners-collection.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
-import { VolumeOutput } from './dto/volume-collection.dto';
 import { Collections } from './entities/collections.entity';
 
 @Resolver(() => Collections)
