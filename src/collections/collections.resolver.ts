@@ -138,7 +138,6 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     items.map((item) => {
       const attributes = item.Meta.attributes;
       attributes.map((attribute) => {
-        console.log(attribute['key']);
         const index = uniqueItemsList.findIndex(
           (obj) => obj['key'] === attribute['key'],
         );
@@ -149,22 +148,8 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         }
       });
     });
-    console.log(uniqueItemsList);
     return uniqueItemsList;
   }
-
-  // @Query(() => typeof DynamicData, { name: 'GetCollectionUniqueItems' })
-  // async getUniqueItems(
-  //   @Args('collectionId')
-  //   collectionId: string,
-  // ): Promise<DynamicData> {
-  //   const { items } = await this.tokenService.index({ contract: collectionId });
-  //   return {
-  //     id: 1,
-  //     name: 'John Smith',
-  //     email: 'john@example.com',
-  //   };
-  // }
 
   /**
    * Get Average Price Of A Collection
