@@ -41,10 +41,10 @@ export class SyncEventsService {
 
       for (const log of logs) {
         const availableEventData = getEventData([
-          // 'erc721-transfer',
-          // 'erc1155-transfer-single',
-          // 'erc721/1155-approval-for-all',
-          // 'erc1155-transfer-batch',
+          'erc721-transfer',
+          'erc1155-transfer-single',
+          'erc721/1155-approval-for-all',
+          'erc1155-transfer-batch',
           'order-match',
           'order-cancel',
         ]);
