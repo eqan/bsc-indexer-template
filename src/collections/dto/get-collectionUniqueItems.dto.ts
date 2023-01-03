@@ -4,9 +4,9 @@ import { DynamicParentData } from './nestedObjects/dynamic-ParentType.dto';
 
 @ObjectType()
 export class CollectionUniqueItems {
-  @Field(() => DynamicParentData)
+  @Field(() => [DynamicParentData])
   Parent: DynamicParentData[];
 
-  @Field(() => DynamicParentSubTypeData)
+  @Field(() => [DynamicParentSubTypeData])
   ParentSubTypes: DynamicParentSubTypeData[];
 }

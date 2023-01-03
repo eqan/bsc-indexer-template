@@ -129,7 +129,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     return items;
   }
 
-  @Query(() => [DynamicParentData], { name: 'GetCollectionUniqueItems' })
+  @Query(() => CollectionUniqueItems, { name: 'GetCollectionUniqueItems' })
   async getCollectionUniqueItems(
     @Args('collectionId')
     collectionId: string,
@@ -167,8 +167,6 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
         }
       });
     });
-    console.log(uniqueParentItemsList);
-    console.log(uniqueSubTypeItemsList);
     return {
       Parent: uniqueParentItemsList,
       ParentSubTypes: uniqueSubTypeItemsList,
