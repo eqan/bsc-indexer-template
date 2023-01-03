@@ -18,7 +18,8 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { DynamicData } from './dto/dynamic-type.dto';
+import { DynamicParentData } from './dto/nestedObjects/dynamic-ParentType.dto';
+import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -128,27 +129,50 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     return items;
   }
 
-  @Query(() => [DynamicData], { name: 'GetCollectionUniqueItems' })
-  async getUserData(
+  @Query(() => [DynamicParentData], { name: 'GetCollectionUniqueItems' })
+  async getCollectionUniqueItems(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<DynamicData[]> {
+  ): Promise<CollectionUniqueItems> {
     const { items } = await this.tokenService.index({ contract: collectionId });
-    const uniqueItemsList = [];
+    const uniqueParentItemsList = [];
+    const uniqueSubTypeItemsList = [];
     items.map((item) => {
       const attributes = item.Meta.attributes;
       attributes.map((attribute) => {
-        const index = uniqueItemsList.findIndex(
+        attribute['key'] = attribute['key'].trim();
+        attribute['value'] = attribute['value'].trim();
+        const parentIndex = uniqueParentItemsList.findIndex(
           (obj) => obj['key'] === attribute['key'],
         );
-        if (index != -1) {
-          uniqueItemsList[index]['count'] += 1;
+        if (parentIndex !== -1) {
+          uniqueParentItemsList[parentIndex]['count'] += 1;
         } else {
-          uniqueItemsList.push({ key: attribute['key'], count: 1 });
+          uniqueParentItemsList.push({ key: attribute['key'], count: 1 });
+        }
+
+        const subTypeIndex = uniqueSubTypeItemsList.findIndex(
+          (obj) =>
+            obj['key'] === attribute['value'] &&
+            obj['parent'] === attribute['key'],
+        );
+        if (subTypeIndex !== -1) {
+          uniqueSubTypeItemsList[subTypeIndex]['count'] += 1;
+        } else {
+          uniqueSubTypeItemsList.push({
+            key: attribute['value'],
+            count: 1,
+            parent: attribute['key'],
+          });
         }
       });
     });
-    return uniqueItemsList;
+    console.log(uniqueParentItemsList);
+    console.log(uniqueSubTypeItemsList);
+    return {
+      Parent: uniqueParentItemsList,
+      ParentSubTypes: uniqueSubTypeItemsList,
+    };
   }
 
   /**

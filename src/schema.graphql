@@ -323,7 +323,7 @@ type GetAllCollections {
   total: Int!
 }
 
-type DynamicData {
+type DynamicParentData {
   key: String!
   count: Int!
 }
@@ -516,7 +516,7 @@ input AssetInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
-  GetCollectionUniqueItems(collectionId: String!): [DynamicData!]!
+  GetCollectionUniqueItems(collectionId: String!): [DynamicParentData!]!
   GetCollectionAveragePrice(collectionId: String!): Float!
   GetCollectionVolume(collectionId: String!): Float!
   GetCollectionUniqueOwners(collectionId: String!): Float!
