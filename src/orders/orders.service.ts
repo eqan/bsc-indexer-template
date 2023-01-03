@@ -8,16 +8,16 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filterTokensByPriceRange.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
-import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, In, Repository } from 'typeorm';
+import { Between, In, Not, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
+import { OrderStatus } from './entities/enums/orders.status.enum';
 import { Orders } from './entities/orders.entity';
 import { OrdersHelpers } from './helpers/orders.helpers';
 
@@ -27,7 +27,6 @@ export class OrdersService {
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
     // private readonly ethereum: Maybe<Ethereum>,
-    private readonly rpcProvider: RpcProvider,
     private readonly ordersHelpers: OrdersHelpers,
   ) {}
 
@@ -52,22 +51,27 @@ export class OrdersService {
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
+      const { contract, tokenId } = createOrdersInput;
       if (!orderExists) {
-        //checking if order signature is valid or not
-        this.ordersHelpers.checkSignature(createOrdersInput as any);
         const orderInput = createOrdersInput as any;
         const side =
           createOrdersInput?.side ||
           getOrderSide(orderInput.make.assetType.assetClass);
-
         const order = {
           ...createOrdersInput,
           side,
         };
-        //adding makePrice if order side is buy
-        if (order.side === OrderSide.sell)
+
+        //adding makePrice if order side is sell else checking
+        //buy order is against valid sell order
+        if (order.side === OrderSide.sell) {
           order.makePrice =
             orderInput?.makePrice || formatEther(orderInput.take.value);
+        } else await this.sellOrderExistsOrNot({ contract, tokenId });
+
+        //checking if order signature is valid or not
+        this.ordersHelpers.checkSignature(createOrdersInput as any);
+
         //saving order in database
         const dbOrder = this.ordersRepo.create(order);
         return await this.ordersRepo.save(dbOrder);
@@ -205,6 +209,33 @@ export class OrdersService {
       return items;
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Checks if the Sell Order is valid for bidding
+   * @param id
+   * @returns Sell Order againt provided CollectionId and TokenId
+   */
+  async sellOrderExistsOrNot(dto: {
+    contract: string;
+    tokenId: string;
+  }): Promise<Orders> {
+    try {
+      const sellOrder = await this.ordersRepo.findOneOrFail({
+        where: {
+          contract: dto.contract,
+          tokenId: dto.tokenId,
+          side: OrderSide.sell,
+          status: Not(OrderStatus.Filled) || Not(OrderStatus.Cancelled),
+          onchain: false,
+        },
+      });
+      return sellOrder;
+    } catch (error) {
+      throw new Error(
+        `Sell Order against ${dto.contract}:${dto.tokenId} not found or is filled or cancelled`,
+      );
     }
   }
 }
