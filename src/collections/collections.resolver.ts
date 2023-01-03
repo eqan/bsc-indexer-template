@@ -188,7 +188,25 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     collectionId: string,
   ): Promise<number> {
     try {
-      return await this.collectionsService.getOrderCollectionPrice(
+      return await this.collectionsService.getOrderCollectionAveragePrice(
+        collectionId,
+      );
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
+
+  /**
+   * Get Floor Price Of A Collection
+   * @returns Average Price Of A Collection
+   */
+  @Query(() => Number, { name: 'GetCollectionFloorPrice' })
+  async getCollectionFloorPrice(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getOrderCollectionFloorPrice(
         collectionId,
       );
     } catch (error) {

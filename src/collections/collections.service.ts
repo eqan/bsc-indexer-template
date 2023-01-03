@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TransformationType } from 'class-transformer';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ILike, In, Repository } from 'typeorm';
@@ -174,19 +175,40 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Average Price Of Collection
    */
-  async getOrderCollectionPrice(collectionId: string): Promise<number> {
-    let sum = 0;
-    const { items, total } = await this.orderMatchEventService.show(
-      collectionId,
-    );
-    items.map((order) => {
-      if (order.price) sum += parseFloat(order.price);
-    });
-    return sum / total;
+  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
+    try {
+      let sum = 0;
+      const { items, total } = await this.orderMatchEventService.show(
+        collectionId,
+      );
+      items.map((order) => {
+        if (order.price) sum += parseFloat(order.price);
+      });
+      return sum / total;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
   }
-  catch(error) {
-    throw new NotFoundException(error);
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param ContractAddress
+   * @returns  Average Price Of Collection
+   */
+  async getOrderCollectionFloorPrice(collectionId: string): Promise<number> {
+    try {
+      let floorPrice = Number.MAX_SAFE_INTEGER;
+      const { items } = await this.orderMatchEventService.show(collectionId);
+      items.map((order) => {
+        const tempOrderPrice = parseFloat(order.price);
+        if (tempOrderPrice < floorPrice) floorPrice = tempOrderPrice;
+      });
+      return floorPrice;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
   }
+
   /**
    * Get The Total Eth Value For The Last 24 Hours
    * @param ContractAddress
@@ -230,15 +252,6 @@ export class CollectionsService {
     } catch (error) {
       throw new NotFoundException(error);
     }
-  }
-
-  /**
-   * Get Unique properties of a collection
-   * @param collectionId
-   * @returns properties
-   */
-  async getUniquePropertiesOfCollection(collectionId: string): Promise<object> {
-    return { k: collectionId };
   }
 
   normalizeData(error: string) {
