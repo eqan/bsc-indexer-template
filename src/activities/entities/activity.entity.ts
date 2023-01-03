@@ -48,14 +48,6 @@ export abstract class Activity extends Timestamps {
   })
   date: Date;
 
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'timestamptz',
-  //   nullable: true,
-  // })
-  // @UpdateDateColumn()
-  // lastUpdatedAt: Timestamps;
-
   @Field({ nullable: true })
   @Column({
     type: 'varchar',

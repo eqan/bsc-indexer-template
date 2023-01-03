@@ -3,22 +3,17 @@ import { IsOptional } from 'class-validator';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import {
-  BaseEntity,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { CreatorRoyalty } from '../dto/nestedObjectDto/creator.dto';
 import { TokenType } from './enum/token.type.enum';
 import { TokensMeta } from './nestedObjects/tokens.meta.entity';
 
-/**Create tokens table in database
- *
- */
 @ObjectType()
 @Entity('Tokens')
 export class Tokens extends Timestamps {
@@ -62,14 +57,6 @@ export class Tokens extends Timestamps {
     default: null,
   })
   mintedAt: Date;
-
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'timestamptz',
-  //   default: null,
-  // })
-  // @UpdateDateColumn()
-  // lastUpdatedAt: Timestamps;
 
   @Field({ nullable: true })
   @Column({

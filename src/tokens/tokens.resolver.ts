@@ -102,7 +102,6 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   async resetMetaData(@Args('ResetMetaData') tokenId: string): Promise<void> {
     try {
       return await this.tokenService.resetMetaData(tokenId);
-      return null;
     } catch (error) {
       throw new BadRequestException(error);
     }

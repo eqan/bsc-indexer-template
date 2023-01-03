@@ -12,6 +12,7 @@ type NetworkSettings = {
   coingecko?: {
     networkId: string;
   };
+  nativeCurrencyDecimals: string;
 };
 
 export const getNetworkSettings = (): NetworkSettings => {
@@ -39,6 +40,7 @@ export const getNetworkSettings = (): NetworkSettings => {
     coingecko: {
       networkId: 'ethereum',
     },
+    nativeCurrencyDecimals: '18',
   };
   return defaultNetworkSettings;
 };

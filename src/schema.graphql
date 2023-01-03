@@ -614,7 +614,7 @@ type Mutation {
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
-  filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto = {}): [Tokens!]!
+  filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto!): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens

@@ -7,8 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TokenSyntaxKind } from '@ts-morph/common/lib/typescript';
-import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { OrdersService } from 'src/orders/orders.service';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -16,7 +14,7 @@ import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
-import { FilterTokensByPriceRangeDto } from './dto/filterTokensByPriceRange.dto';
+import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -26,43 +24,10 @@ export class CollectionsService {
     @InjectRepository(Collections)
     @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
-    // private readonly orderMatchEventService: OrderMatchEventService,
     private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
-  ) {
-    // sample function to use JsonRpcProvider and getting blockNumber
-    // const getBlock = async () => {
-    //   try {
-    //     const blockNumber =
-    //       await this.rpcProvider.baseProvider.getBlockNumber();
-    //     console.log(blockNumber, 'logged out blockNumber');
-    //     const filter: { fromBlock: number; toBlock: number } = {
-    //       fromBlock: blockNumber,
-    //       toBlock: blockNumber,
-    //     };
-    //     const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-    //     for (const log of logs) {
-    //       const availableEventData = getEventData(['erc721-transfer']);
-    //       const eventData = availableEventData.find(
-    //         ({ addresses, topic, numTopics }) =>
-    //           log.topics[0] === topic &&
-    //           log.topics.length === numTopics &&
-    //           (addresses ? addresses[lc(log.address)] : true),
-    //       );
-    //       if (eventData) {
-    //         const timestamp = (
-    //           await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
-    //         ).timestamp;
-    //         const { args } = eventData.abi.parseLog(log);
-    //         const collectionId = log?.address;
-    //       }
-    //     }
-    //   } catch (e) {
-    //     console.log(e, 'error occured');
-    //   }
-    // };
-  }
+  ) {}
 
   /**
    * Create Collection in Database
@@ -201,7 +166,6 @@ export class CollectionsService {
   ): Promise<Tokens[]> {
     try {
       const items = await this.ordersService.filterByPrice(filterTokensDto);
-      console.log(items.length, 'items logged');
       const tokens: Tokens[] = [];
       for (const item of items) {
         const token = await this.tokenService.find(

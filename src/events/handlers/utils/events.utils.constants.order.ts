@@ -2,6 +2,7 @@ export type ChainIdToAddressMap = {
   [chainId: number]: { [address: string]: string };
 };
 
+//TODO:NEED TO INCLUDE OUR MARKETPLACE ROUTER CONTRACT
 export const Routers: ChainIdToAddressMap = {
   // Network.Ethereum
   1: {

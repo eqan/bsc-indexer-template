@@ -1,26 +1,22 @@
 import { defaultAbiCoder } from '@ethersproject/abi';
-import { bn } from 'src/common/utils.common';
+import { bigNumber } from 'src/common/utils.common';
 import { AssetClassEnum } from 'src/orders/entities/enums/orders.asset-class.enum';
 import { ORDER_DATA_TYPES } from '../../../orders/constants/orders.constants.order-types';
 import { encodeAssetClass } from '../../../orders/helpers/orders.helpers.encode-order';
 import * as constants from '../utils/events.utils.constants.order';
 
 export const docodePart = (parts: []) =>
-  parts?.map((part) => ({ account: part[0], value: bn(part[1]).toString() }));
+  parts?.map((part) => ({
+    account: part[0],
+    value: bigNumber(part[1]).toString(),
+  }));
 
 export const decodeOrderData = (dataType: string, data: string) => {
-  let decodedOrderData;
-  // | Types.ILegacyOrderData
-  // | Types.IV1OrderData
-  // | Types.IV2OrderData
-  // | Types.IV3OrderSellData
-  // | Types.IV3OrderBuyData;
+  let decodedOrderData: any;
 
   switch (dataType) {
     case encodeAssetClass(ORDER_DATA_TYPES.V1):
     case encodeAssetClass(ORDER_DATA_TYPES.API_V1):
-      //   const v1Data = data as Types.IV1OrderData;
-
       decodedOrderData = defaultAbiCoder.decode(
         [
           'tuple(tuple(address account,uint96 value)[] payouts, tuple(address account,uint96 value)[] originFees)',
@@ -70,8 +66,6 @@ export const decodeOrderData = (dataType: string, data: string) => {
       };
     case encodeAssetClass(ORDER_DATA_TYPES.V3_BUY):
     case encodeAssetClass(ORDER_DATA_TYPES.API_V3_BUY):
-      //   const v3BuyData = order.data as Types.IV3OrderBuyData;
-
       decodedOrderData = defaultAbiCoder.decode(
         [
           'uint payouts',
@@ -91,16 +85,10 @@ export const decodeOrderData = (dataType: string, data: string) => {
     default:
       throw Error('Unknown rarible order type');
   }
-  // return decodedOrderData;
 };
 
-export const decodeAssetData = (
-  // assetType: Types.LocalAssetType,
-  assetTypeHash: string,
-  data: string,
-) => {
-  let decodedAssetData;
-  // switch (assetType.assetClass) {
+export const decodeAssetData = (assetTypeHash: string, data: string) => {
+  let decodedAssetData: any;
   switch (assetTypeHash) {
     case constants.ETH:
       return {
@@ -124,23 +112,6 @@ export const decodeAssetData = (
         contract: decodedAssetData[0][0].toString(),
         tokenId: decodedAssetData[0][1].toString(),
       };
-    // return defaultAbiCoder.decode(['address token', 'uint256 tokenId'], data);
-    // case AssetClassEnum.ERC721_LAZY:
-    //   return defaultAbiCoder.decode(
-    //     [
-    //       'address contract',
-    //       'tuple(uint256 tokenId, string uri, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
-    //     ],
-    //     data,
-    //   );
-    // case AssetClassEnum.ERC1155_LAZY:
-    //   return defaultAbiCoder.decode(
-    //     [
-    //       'address contract',
-    //       'tuple(uint256 tokenId, string uri, uint256 supply, tuple(address account, uint96 value)[] creators, tuple(address account, uint96 value)[] royalties, bytes[] signatures)',
-    //     ],
-    //     data,
-    //   );
     default:
       throw Error('Unknown rarible asset data');
   }

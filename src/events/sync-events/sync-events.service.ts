@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { lc } from 'src/common/utils.common';
+import { lowerCase } from 'src/common/utils.common';
 import { getEventData, parseEvent } from '../data';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
@@ -16,22 +16,7 @@ export class SyncEventsService {
   ) {}
   private readonly logger = new Logger('Sync Events');
 
-  syncEvents = async (
-    fromBlock: number,
-    toBlock: number,
-    // options?: {
-    //   // When backfilling, certain processes will be disabled
-    //   backfill?: boolean;
-    //   syncDetails:
-    //     | {
-    //         method: 'events';
-    //         events: EventDataKind[];
-    //       }
-    //     | {
-    //         method: 'address';
-    //       };
-    // },
-  ) => {
+  syncEvents = async (fromBlock: number, toBlock: number) => {
     try {
       const filter: { fromBlock: number; toBlock: number } = {
         fromBlock,
@@ -41,10 +26,10 @@ export class SyncEventsService {
 
       for (const log of logs) {
         const availableEventData = getEventData([
-          // 'erc721-transfer',
-          // 'erc1155-transfer-single',
-          // 'erc721/1155-approval-for-all',
-          // 'erc1155-transfer-batch',
+          'erc721-transfer',
+          'erc1155-transfer-single',
+          'erc721/1155-approval-for-all',
+          'erc1155-transfer-batch',
           'order-match',
           'order-cancel',
         ]);
@@ -53,7 +38,7 @@ export class SyncEventsService {
           ({ addresses, topic, numTopics }) =>
             log.topics[0] === topic &&
             log.topics.length === numTopics &&
-            (addresses ? addresses[lc(log.address)] : true),
+            (addresses ? addresses[lowerCase(log.address)] : true),
         );
 
         if (eventData) {
@@ -67,7 +52,6 @@ export class SyncEventsService {
             log,
           };
           switch (eventData?.kind) {
-            // NFT Collections
             case 'erc721-transfer': {
               await this.erc721Handler.handleTransferEvent(enhancedEvents);
               await this.erc721Handler.handleActivity(enhancedEvents);

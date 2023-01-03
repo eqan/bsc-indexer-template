@@ -18,7 +18,7 @@ import {
   getCollectionSymbol,
   getNFTCreator,
   getTokenURI,
-  ipfsDomain,
+  ipfsGateway,
   isBase64Encoded,
   regex,
   TokenIface,
@@ -35,7 +35,7 @@ export class MetadataApi {
       //replace query params
       if (uri.match(regex.query)) uri = uri?.replace(regex.query, id);
       //add ipfs domain uri
-      if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsDomain);
+      if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsGateway);
       const response = await lastValueFrom(this.httpService.get(uri));
       return response.data;
     } catch (error) {
@@ -65,7 +65,6 @@ export class MetadataApi {
       },
     };
     try {
-      // console.log(Meta.attributes);
       if (typeof Meta === 'object')
         return {
           ...metadata,
@@ -190,7 +189,7 @@ export class MetadataApi {
       symbol = await getCollectionSymbol(contract);
       owner = await getCollectionOwner(contract);
     } catch (error) {
-      console.log('error occured owner address not found');
+      // console.log('error occured owner address not found');
     } finally {
       return {
         name,

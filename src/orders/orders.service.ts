@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filterTokensByPriceRange.dto';
+import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filter-tokens-by-price-range.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
@@ -26,7 +26,6 @@ export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
-    // private readonly ethereum: Maybe<Ethereum>,
     private readonly ordersHelpers: OrdersHelpers,
   ) {}
 
@@ -90,10 +89,6 @@ export class OrdersService {
     createOnchainOrdersInput: CreateOnchainOrdersInput,
   ): Promise<Orders> {
     try {
-      // console.log('hello', createOnchainOrdersInput);
-      // const orderExists = await this.orderExistOrNot(
-      //   createOnchainOrdersInput.orderId,
-      // );
       const order = this.ordersRepo.create(createOnchainOrdersInput);
       return await this.ordersRepo.save(order);
     } catch (error) {
@@ -192,10 +187,6 @@ export class OrdersService {
           where: {
             contract: filterByPriceDto.collectionId,
             side: OrderSide.sell,
-            // makePrice: Number(filterByPriceDto.min),
-            // makePrice:
-            //   Number(MoreThan(filterByPriceDto?.min || Zero)) &&
-            //   Number(LessThan(filterByPriceDto?.max || MaxUint256)),
             makePrice: Between(
               filterByPriceDto?.min || Number(formatEther(Zero)),
               filterByPriceDto?.max || Number(formatEther(MaxUint256)),

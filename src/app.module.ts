@@ -69,17 +69,6 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
     BullModule.forRootAsync({
       useClass: BullConfig,
     }),
-    /**
-     * CacheModule
-     * Cache Configuration using in-memory caching
-     */
-    // CacheModule.register({ isGlobal: true }),
-    // CacheModule.register<ClientOpts>({
-    //   isGlobal: true,
-    //   store: redisStore,
-    //   host: 'localhost',
-    //   port: 6379,
-    // }),
     CollectionsModule,
     TokensModule,
     OrdersModule,

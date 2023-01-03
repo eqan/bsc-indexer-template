@@ -7,7 +7,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { bn } from 'src/common/utils.common';
+import { bigNumber } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { UsdPricesService } from 'src/usd-prices/usd-prices.service';
 import * as Addresses from '../constants/orders.constants.addresses';
@@ -31,7 +31,7 @@ export class OrderPrices {
 
   USD_DECIMALS = 6;
   // TODO: This should be a per-network setting
-  NATIVE_UNIT = bn('1000000000000000000');
+  NATIVE_UNIT = bigNumber('1000000000000000000');
 
   getCurrencyDetails = async (currencyAddress: string) => {
     try {
@@ -42,7 +42,7 @@ export class OrderPrices {
         'function decimals() view returns (uint8)',
       ]);
 
-      //for native coins eg; eth or bnb we don't have contract address AddressZero
+      //for native coins eg; eth or bigNumberb we don't have contract address AddressZero
       // to avoid api failure for AddressZero replace it with space as per in api spec
       let name = '';
       let symbol = '';
@@ -269,28 +269,17 @@ export class OrderPrices {
 
       const currency = await this.getCurrencyDetails(currencyAddress);
       if (currency?.decimals && currencyUSDPrice) {
-        // const currencyUnit = bn(10).pow(currency?.decimals);
-        // usdPrice = bn(price)
-        //   .mul(currencyUSDPrice.value)
-        //   .div(currencyUnit)
-        //   .toString();
         usdPrice = (
           Number(formatUnits(price, currency.decimals)) *
           Number(currencyUSDPrice.value)
         ).toString();
         if (nativeUSDPrice) {
-          // nativePrice = bn(price)
-          //   .mul(currencyUSDPrice.value)
-          //   .mul(this.NATIVE_UNIT)
-          //   .div(nativeUSDPrice.value)
-          //   .div(currencyUnit)
-          //   .toString();
           nativePrice = formatUnits(price, currency.decimals).toString();
         }
       }
     }
 
-    //TODO: ADD BNB IN Addresses also weth equivalent for bnb
+    //TODO: ADD bigNumberB IN Addresses also weth equivalent for bigNumberb
     // // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
     if (
       [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
@@ -299,8 +288,6 @@ export class OrderPrices {
     ) {
       nativePrice = formatEther(price).toString();
     }
-
-    // return { usdPrice };
     return { usdPrice, nativePrice };
   };
 }

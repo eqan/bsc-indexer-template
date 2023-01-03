@@ -46,60 +46,10 @@ export const getTypes = (kind: EventDataKind) => {
 };
 
 // BigNumbers
-export const bn = (value: BigNumberish) => BigNumber.from(value);
+export const bigNumber = (value: BigNumberish) => BigNumber.from(value);
 
-// export const getTypesUsingInterface = async (collectionId: string) => {
-//   const types = {
-//     collectionType: CollectionType.BEP721,
-//     type: TokenType.BEP721,
-//   };
-
-//   const ERC1155InterfaceId = '0xd9b67a26';
-//   const ERC721InterfaceId = '0x80ac58cd';
-//   const ERC165Abi: any = [
-//     {
-//       inputs: [
-//         {
-//           internalType: 'bytes4',
-//           name: 'interfaceId',
-//           type: 'bytes4',
-//         },
-//       ],
-//       name: 'supportsInterface',
-//       outputs: [
-//         {
-//           internalType: 'bool',
-//           name: '',
-//           type: 'bool',
-//         },
-//       ],
-//       stateMutability: 'view',
-//       type: 'function',
-//     },
-//   ];
-//   try {
-//     const baseNetworkHttpUrl = process.env.BASE_NETWORK_HTTP_URL;
-//     const chainId = 56 || process.env.CHAIN_ID;
-
-//     const baseProvider = new StaticJsonRpcProvider(baseNetworkHttpUrl, chainId);
-
-//     const contract = new Contract(collectionId, ERC165Abi, baseProvider);
-//     const result = await contract.methods.supportsInterface(ERC721InterfaceId);
-//     console.log(result, 'call result');
-//   } catch (e) {
-//     console.log(e, 'failed method');
-//   }
-// };
-
-export const ipfsDomain = 'https://ipfs.io/ipfs/';
-
-//queue names
-// export const realtimeQueue = 'realtime-sync-events';
-// export const REAL_TIME_CRON = 'REAL_TIME_CRON';
-// export const BACKFILL_CRON = 'BACKFILL_CRON';
-// export const midwayQueue = 'midway-sync-events';
-// export const backfillQueue = 'backfill-sync-events';
-// export const fetchCollectionQueue = 'fetch-collections';
+//ipfs gateway for fast retrival of metadata
+export const ipfsGateway = 'https://ipfs.io/ipfs/';
 
 //Contract Interfaces
 export const CollectionIface = new Interface([
@@ -176,22 +126,5 @@ export const isDeleted = (to: string): boolean => {
   return to === AddressZero ? true : false;
 };
 
-//absolute path to pem files
-// const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
-// const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
-
-// export const getPublicKey = () => {
-//   const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
-//   const publicKey = fs.readFileSync(absolutePath, 'utf8');
-//   return publicKey;
-// };
-
-// export const getPrivateKey = () => {
-//   const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
-//   const privateKey = fs.readFileSync(absolutePath, 'utf8');
-//   return privateKey;
-// };
-
 // --- Misc ---
-
-export const lc = (value: string) => value.toLowerCase();
+export const lowerCase = (value: string) => value.toLowerCase();

@@ -56,7 +56,6 @@ export class Orders extends Timestamps {
   @Field(() => ORDER_TYPES, { nullable: true })
   @Column({
     type: 'enum',
-    // nullable: true,
     enumName: 'ORDER_TYPES',
     enum: ORDER_TYPES,
     default: ORDER_TYPES.V2,
@@ -66,7 +65,6 @@ export class Orders extends Timestamps {
   @Field(() => OrderStatus)
   @Column({
     type: 'enum',
-    // nullable: true,
     enumName: 'OrderStatus',
     enum: OrderStatus,
     default: OrderStatus.Active,
@@ -95,18 +93,6 @@ export class Orders extends Timestamps {
     nullable: true,
   })
   createdAt: Date;
-
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'timestamptz',
-  //   nullable: true,
-  // })
-  // lastUpdatedAt: Date;
-  // @UpdateDateColumn()
-  // lastUpdatedAt: Timestamps;
-  //   type: 'timestamptz',
-  //   nullable: true,
-  // })
 
   @IsEthereumAddress()
   @Field({ nullable: true })
@@ -142,26 +128,12 @@ export class Orders extends Timestamps {
   })
   salt: string;
 
-  // @Field(() => CustomAssetScalar)
-  // assetType: JSON;
-  // @ValidateNested()
   @Field(() => CustomDataScalar)
   @Column({
     type: 'json',
     nullable: false,
   })
   data: JSON;
-  // data: OrderRaribleV2Data;
-  // data: {
-  //   type: string;
-  //   nullable: true;
-  //   // nullable: true;
-  //   // payouts?: number[];
-  //   originFees?: {
-  //     account: string;
-  //     value: number;
-  //   };
-  // };
 
   @Field({ nullable: true })
   @Column({
@@ -183,19 +155,6 @@ export class Orders extends Timestamps {
     nullable: true,
   })
   optionalRoyalties?: boolean;
-
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'timestamptz',
-  //   nullable: true,
-  // })
-  // dbUpdatedAt?: Date;
-  // @Column({
-  //   type: 'timestamptz',
-  //   nullable: true,
-  // })
-  // @UpdateDateColumn()
-  // dbUpdatedAt?: Timestamps;
 
   @Field({ nullable: true })
   @Column({
@@ -257,11 +216,4 @@ export class Orders extends Timestamps {
     nullable: true,
   })
   tokenId: string;
-
-  // @IsString()
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // price?: string;
 }

@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { getTxTrace, searchForCall } from '@georgeroman/evm-tx-simulator';
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { bn } from 'src/common/utils.common';
+import { bigNumber } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
@@ -33,10 +33,7 @@ export class OrderMatchHandler {
     private rpcProvider: RpcProvider,
     private storeOnchainBuySellOrders: StoreOnchainBuySellOrders,
     private readonly orderService: OrdersService,
-  ) {
-    // console.log(decodeOrderDataType('0x1b18cdf6')[0][1], 'encoded dataType');
-    // console.log(formatEther(3000000000000000));
-  }
+  ) {}
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
@@ -49,9 +46,6 @@ export class OrderMatchHandler {
 
     const eventData = getEventData([kind])[0];
     try {
-      // Keep track of all events within the currently processing transaction
-      // let currentTx: string | undefined;
-      // const currentTxLogs: Log[] = [];
       const eventsLog = {
         matchOrders: new Map<string, number>(),
         directPurchase: new Map<string, number>(),
@@ -109,8 +103,6 @@ export class OrderMatchHandler {
             'function directPurchase(tuple(address sellOrderMaker, uint256 sellOrderNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 sellOrderPaymentAmount, address paymentToken, uint256 sellOrderSalt, uint sellOrderStart, uint sellOrderEnd, bytes4 sellOrderDataType, bytes sellOrderData, bytes sellOrderSignature, uint256 buyOrderPaymentAmount, uint256 buyOrderNftAmount, bytes buyOrderData))',
           ]);
           result = iface.decodeFunctionData('directPurchase', callTrace.input);
-          // console.log(result, 'result in directpur');
-
           orderId = leftHash;
           side = OrderSide.sell;
           maker = result[0][0].toLowerCase();
@@ -122,13 +114,6 @@ export class OrderMatchHandler {
 
           paymentCurrency = result[0][5].toLowerCase();
           currencyAssetType = getPaymentCurrency(paymentCurrency);
-
-          // if (paymentCurrency === AddressZero) {
-          //   paymentCurrency = constants.ETH;
-          // } else {
-          //   currencyAssetType = constants.ERC20;
-          // }
-
           currencyPrice = newLeftFill;
           amount = newRightFill;
 
@@ -202,7 +187,6 @@ export class OrderMatchHandler {
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
           result = iface.decodeFunctionData('matchOrders', callTrace.input);
-          // console.log(result, 'logged result match');
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
@@ -273,9 +257,7 @@ export class OrderMatchHandler {
         txHash,
         this.rpcProvider.baseProvider,
       );
-      // console.log(attributionData, 'hello attribution logged oout ');
       if (attributionData.taker) {
-        // console.log(attributionData.taker, 'taker logged');
         taker = attributionData.taker;
       }
 
@@ -288,9 +270,7 @@ export class OrderMatchHandler {
         console.log(currency, 'logged currency');
       } else if (currencyAssetType === constants.ERC20) {
         currency = paymentCurrency;
-        // console.log(currency, paymentCurrency, 'logged currency and payment');
       } else {
-        // break;
         return;
       }
 
@@ -301,7 +281,7 @@ export class OrderMatchHandler {
       const contract: string = decodedNftAsset[0][0].toLowerCase();
       const tokenId: string = decodedNftAsset[0][1].toString();
 
-      currencyPrice = bn(currencyPrice).div(amount).toString();
+      currencyPrice = bigNumber(currencyPrice).div(amount).toString();
 
       const prices = await this.orderPrices.getUSDAndNativePrices(
         currency.toLowerCase(),
@@ -329,7 +309,6 @@ export class OrderMatchHandler {
       };
 
       await this.orderMatchEventService.create(matchEvent);
-      // console.log(savedEvent, 'saved event in event db');
 
       this.storeOnchainBuySellOrders.handleStoreOrders(
         result,
@@ -347,38 +326,10 @@ export class OrderMatchHandler {
         tokenId,
       );
 
-      /**
+      /**TODO
        * checking if order exists locally or not if it exists
        * update it otherwise create a new order locally
        */
-
-      // const response = {
-      //   orderKind,
-      //   orderId,
-      //   //TODO: RECHECK FILL
-      //   fill: 1,
-      //   nftAssetType,
-      //   nftData,
-      //   orderSide: side,
-      //   maker,
-      //   taker,
-      //   price: prices.nativePrice,
-      //   currency,
-      //   currencyPrice,
-      //   usdPrice: prices.usdPrice,
-      //   contract,
-      //   salt: bn(salt).toString(),
-      //   start: bn(start).toString(),
-      //   end: bn(end).toString(),
-      //   dataType,
-      //   data: decodeOrderData(dataType, data),
-      //   tokenId,
-      //   amount,
-      //   timestamp,
-      //   txHash,
-      // };
-
-      // console.log(response, 'data logged out after listening event');
     } catch (error) {
       this.logger.error(`failed Matching Order ${error}`);
     }
@@ -398,8 +349,6 @@ export class OrderMatchHandler {
       };
 
       await this.orderCancelEventService.create(cancelEvent);
-      // console.log(savedEvent, 'saved cancel event in event db');
-
       //updating order in db
       const order = await this.orderService.orderExistOrNot(
         cancelEvent.orderId,
