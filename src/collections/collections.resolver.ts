@@ -129,6 +129,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     return items;
   }
 
+  /**
+   * Return unique propeties and sub properites of a Collection
+   * @param collectionId
+   * @returns Parent Properties & Sub Properties
+   */
   @Query(() => CollectionUniqueItems, { name: 'GetCollectionUniqueItems' })
   async getCollectionUniqueItems(
     @Args('collectionId')
