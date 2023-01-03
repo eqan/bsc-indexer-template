@@ -51,23 +51,24 @@ export class OrdersService {
    */
   async create(createOrdersInput: CreateOrdersInput): Promise<Orders> {
     try {
-      // console.log('hello', createOrdersInput);
       const orderExists = await this.orderExistOrNot(createOrdersInput.orderId);
       if (!orderExists) {
-        console.log(createOrdersInput, 'order logged');
         //checking if order signature is valid or not
         this.ordersHelpers.checkSignature(createOrdersInput as any);
         const orderInput = createOrdersInput as any;
         const side =
           createOrdersInput?.side ||
           getOrderSide(orderInput.make.assetType.assetClass);
+
         const order = {
           ...createOrdersInput,
           side,
-          makePrice:
-            orderInput?.makePrice || formatEther(orderInput.take.value),
         };
-
+        //adding makePrice if order side is buy
+        if (order.side === OrderSide.sell)
+          order.makePrice =
+            orderInput?.makePrice || formatEther(orderInput.take.value);
+        //saving order in database
         const dbOrder = this.ordersRepo.create(order);
         return await this.ordersRepo.save(dbOrder);
       } else throw new BadRequestException('order already exists');

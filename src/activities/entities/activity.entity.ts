@@ -1,15 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsOptional } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { BlockChainInfoDto } from '../dto/nestedActivityObject/activity.blockchain.info.dto';
 import { ActivityBid } from './activity.bid.entity';
 import { ActivityBurn } from './activity.burn.entity';
@@ -19,7 +11,7 @@ import { ActivityType } from './enums/activity.type.enum';
 
 @ObjectType('Activity')
 @Entity('ActivityInput')
-export abstract class Activity extends BaseEntity {
+export abstract class Activity extends Timestamps {
   @Field({ nullable: true })
   @IsEthereumAddress()
   @PrimaryColumn({
@@ -61,8 +53,8 @@ export abstract class Activity extends BaseEntity {
   //   type: 'timestamptz',
   //   nullable: true,
   // })
-  @UpdateDateColumn()
-  lastUpdatedAt: Timestamps;
+  // @UpdateDateColumn()
+  // lastUpdatedAt: Timestamps;
 
   @Field({ nullable: true })
   @Column({

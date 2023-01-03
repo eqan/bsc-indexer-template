@@ -7,10 +7,16 @@
  */
 
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Index, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Index,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @ObjectType()
-export class Timestamps {
+export class Timestamps extends BaseEntity {
   @Field(() => String)
   @CreateDateColumn()
   public createdAt!: Date;

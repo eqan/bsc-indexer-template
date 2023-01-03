@@ -49,7 +49,7 @@ export class OrdersHelpers {
     const message = this.toRawOrder(order);
     // console.log(message, 'message after encode');
     // TODO: Change hardcoded testnet chain id to original chainId while deploying
-    const domain = this.EIP712_DOMAIN(1);
+    const domain = this.EIP712_DOMAIN(5);
     // console.log(domain, 'domain logged');
     // console.log(domain, 'domain');
     // console.log(message, 'answered logged');

@@ -21,7 +21,7 @@ import { TokensMeta } from './nestedObjects/tokens.meta.entity';
  */
 @ObjectType()
 @Entity('Tokens')
-export class Tokens extends BaseEntity {
+export class Tokens extends Timestamps {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -68,8 +68,8 @@ export class Tokens extends BaseEntity {
   //   type: 'timestamptz',
   //   default: null,
   // })
-  @UpdateDateColumn()
-  lastUpdatedAt: Timestamps;
+  // @UpdateDateColumn()
+  // lastUpdatedAt: Timestamps;
 
   @Field({ nullable: true })
   @Column({

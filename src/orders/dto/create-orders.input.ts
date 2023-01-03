@@ -35,6 +35,7 @@ export class CreateOrdersInput {
   @Field(() => ORDER_TYPES)
   type: ORDER_TYPES;
 
+  @IsOptional()
   @IsEnum(OrderSide)
   @Field(() => OrderSide)
   side?: OrderSide;
@@ -146,6 +147,7 @@ export class CreateOrdersInput {
   taker?: string;
 
   @IsEthereumAddress()
+  @IsNotEmpty()
   @Field({ nullable: true })
   contract: string;
 

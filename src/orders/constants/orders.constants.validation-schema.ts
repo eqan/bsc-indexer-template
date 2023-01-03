@@ -64,17 +64,17 @@ export const dataValidationSchema = {
       additionalProperties: false,
       required: ['maxFeesBasePoint'],
     },
-    {
-      properties: {
-        dataType: { enum: ['V3_BUY'] },
-        payout: Part,
-        originFeeFirst: Part,
-        originFeeSecond: Part,
-        maxFeesBasePoint: { type: 'number' },
-        marketplaceMarker: { type: 'string' },
-      },
-      additionalProperties: false,
-    },
+    // {
+    //   properties: {
+    //     dataType: { enum: ['V3_BUY'] },
+    //     payout: Part,
+    //     originFeeFirst: Part,
+    //     originFeeSecond: Part,
+    //     maxFeesBasePoint: { type: 'number' },
+    //     marketplaceMarker: { type: 'string' },
+    //   },
+    //   additionalProperties: false,
+    // },
     {
       properties: {
         dataType: { enum: ['V3_BUY'] },

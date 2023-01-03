@@ -83,6 +83,10 @@ type ActivityTransfer {
 }
 
 type Activity {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   id: String
   userId: String
   itemId: String
@@ -222,6 +226,10 @@ type Asset {
 scalar ASSET_SCALAR
 
 type Orders {
+  createdAt: DateTime
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   orderId: String!
   fill: String!
   kind: OrderKind
@@ -230,7 +238,6 @@ type Orders {
   status: OrderStatus!
   makeStock: String
   cancelled: Boolean
-  createdAt: DateTime
   maker: String
   make: Asset!
   take: Asset
@@ -330,6 +337,10 @@ type CreatorRoyalty {
 }
 
 type Tokens {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   tokenId: String!
   collectionId: String
   contract: String

@@ -2,14 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  Index,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
 import { OrderKind } from './enums/order.kind.enum';
@@ -19,7 +12,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 @ObjectType()
 @Entity('Orders')
 @Index(['orderId', 'maker', 'taker'])
-export class Orders extends BaseEntity {
+export class Orders extends Timestamps {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -109,8 +102,8 @@ export class Orders extends BaseEntity {
   //   nullable: true,
   // })
   // lastUpdatedAt: Date;
-  @UpdateDateColumn()
-  lastUpdatedAt: Timestamps;
+  // @UpdateDateColumn()
+  // lastUpdatedAt: Timestamps;
   //   type: 'timestamptz',
   //   nullable: true,
   // })
@@ -201,8 +194,8 @@ export class Orders extends BaseEntity {
   //   type: 'timestamptz',
   //   nullable: true,
   // })
-  @UpdateDateColumn()
-  dbUpdatedAt?: Timestamps;
+  // @UpdateDateColumn()
+  // dbUpdatedAt?: Timestamps;
 
   @Field({ nullable: true })
   @Column({
