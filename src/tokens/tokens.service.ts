@@ -38,7 +38,8 @@ export class TokensService {
 
       // console.log(token);
       await token.save();
-      console.log(token);
+      console.log('This is: ', token.Meta.attributes);
+      // console.log(token);
       delete token.collection;
       return token;
     } catch (error) {
