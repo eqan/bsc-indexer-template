@@ -43,7 +43,7 @@ export class MetadataApi {
     }
   }
 
-  returnMeta(Meta: any, tokenURI: string, tokenId: string) {
+  returnMeta(Meta: any, tokenURI: string, tokenId: string, collectionId) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -54,6 +54,7 @@ export class MetadataApi {
       attributes: [
         {
           tokenId: '',
+          collectionId: '',
           key: '',
           value: '',
           format: '',
@@ -78,6 +79,7 @@ export class MetadataApi {
           attributes:
             Meta?.attributes?.map((attribute: any) => ({
               tokenId,
+              collectionId,
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
               format: attribute?.display_type || '',
@@ -137,14 +139,17 @@ export class MetadataApi {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '', '') };
+      if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '', '', '') };
 
       // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const Meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, Meta: this.returnMeta(Meta, tokenURI, newTokenId) };
+        return {
+          ...data,
+          Meta: this.returnMeta(Meta, tokenURI, newTokenId, collectionId),
+        };
       }
 
       //else if tokenURI is buffered base64 encoded
@@ -154,9 +159,15 @@ export class MetadataApi {
           const url = await uploadImage(Meta?.image);
           Meta.image = url ?? Meta.image;
         }
-        return { ...data, Meta: this.returnMeta(Meta, tokenURI, newTokenId) };
+        return {
+          ...data,
+          Meta: this.returnMeta(Meta, tokenURI, newTokenId, collectionId),
+        };
       } else {
-        return { ...data, Meta: this.returnMeta({}, tokenURI, newTokenId) };
+        return {
+          ...data,
+          Meta: this.returnMeta({}, tokenURI, newTokenId, collectionId),
+        };
       }
     } catch (error) {
       console.log(

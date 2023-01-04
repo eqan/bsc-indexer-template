@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
 import { IsOptional } from 'class-validator';
 import {
   Column,
@@ -82,6 +83,7 @@ export class TokensMeta {
   attributeId?: string;
 
   @IsOptional()
+  @Type(() => TokensAttributes)
   @Field(() => [TokensAttributes], { nullable: true })
   @OneToMany(() => TokensAttributes, (attributes) => attributes.id)
   @JoinColumn({ name: 'attributeId' })

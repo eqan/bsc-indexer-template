@@ -293,6 +293,7 @@ type Meta {
 type Attributes {
   id: String!
   tokenId: String!
+  collectionId: String!
   key: String!
   format: String!
   value: String!
@@ -303,6 +304,7 @@ type TokensAttributesInput {
   value: String
   format: String
   tokenId: String
+  collectionId: String
 }
 
 type MetadataContent {
@@ -509,6 +511,7 @@ input TokensAttributes {
   value: String
   format: String
   tokenId: String
+  collectionId: String
 }
 
 input MetadataContentInput {

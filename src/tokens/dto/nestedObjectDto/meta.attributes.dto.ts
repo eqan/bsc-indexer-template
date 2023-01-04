@@ -23,4 +23,9 @@ export class TokensAttributesInput {
   @IsString()
   @Field({ nullable: true })
   tokenId?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  collectionId?: string;
 }

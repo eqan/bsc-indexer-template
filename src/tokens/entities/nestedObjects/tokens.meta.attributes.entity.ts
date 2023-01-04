@@ -21,6 +21,10 @@ export class TokensAttributes {
 
   @Field()
   @Column('text', { nullable: true })
+  collectionId: string;
+
+  @Field()
+  @Column('text', { nullable: true })
   key: string;
 
   @Field()
