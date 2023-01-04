@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
-import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
@@ -19,9 +18,7 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
-    private collectionsService: CollectionsService, // private orderMatchEventService: OrderMatchEventService,
-    // private readonly moduleRef: ModuleRef, // @Inject(OrderMatchEventService) // private orderMatchEventService: OrderMatchEventService,
-    private readonly orderMatchEventService: OrderMatchEventService,
+    private collectionsService: CollectionsService, // private orderMatchEventService: OrderMatchEventService, // private readonly moduleRef: ModuleRef, // @Inject(OrderMatchEventService) // private orderMatchEventService: OrderMatchEventService,
   ) {}
 
   /**
@@ -37,7 +34,7 @@ export class TokensService {
       const collection = await this.collectionsService.show(collectionId);
 
       token.collection = collection;
-      token.tokenId = collectionId + ':' + token.tokenId;
+      token.id = collectionId + ':' + token.id;
 
       // console.log(token);
       await token.save();
@@ -59,7 +56,7 @@ export class TokensService {
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
-            tokenId: rest?.tokenId,
+            id: rest?.tokenId,
             contract: rest?.contract,
             owner: rest?.owner,
           },
@@ -72,7 +69,7 @@ export class TokensService {
         }),
         this.tokensRepo.count({
           where: {
-            tokenId: rest?.tokenId,
+            id: rest?.tokenId,
             contract: rest?.contract,
             owner: rest?.owner,
           },
@@ -86,7 +83,7 @@ export class TokensService {
 
   async tokenExistOrNot(tokenId: string): Promise<Tokens> {
     try {
-      return await this.tokensRepo.findOne({ where: { tokenId } });
+      return await this.tokensRepo.findOne({ where: { id: tokenId } });
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -100,7 +97,7 @@ export class TokensService {
   async show(tokenId: string): Promise<Tokens> {
     try {
       const found = await this.tokensRepo.findOneBy({
-        tokenId,
+        id: tokenId,
       });
       if (!found) {
         throw new NotFoundException(`Token against ${tokenId} not found`);

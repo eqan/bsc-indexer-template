@@ -206,12 +206,6 @@ type GetAllAuctions {
   total: Int!
 }
 
-type MetadataAttribute {
-  key: String
-  value: String
-  format: String
-}
-
 type MetaContent {
   type: String
   url: String
@@ -256,7 +250,7 @@ type CreatorRoyalty {
 }
 
 type Tokens {
-  tokenId: String!
+  id: String!
   collectionId: String
   contract: String
   type: String
@@ -291,8 +285,14 @@ type Meta {
   genres: [String!]
   originalMetaUri: String
   externalUri: String
-  attributes: [MetadataAttribute!]
   rightsUri: String
+  attributeId: String
+}
+
+type MetadataAttribute {
+  key: String
+  value: String
+  format: String
 }
 
 type MetadataContent {
@@ -483,12 +483,6 @@ input SellInput {
   value: Float!
 }
 
-input AttributeInput {
-  key: String
-  value: String
-  format: String
-}
-
 input MetaContentInput {
   type: String
   url: String
@@ -498,6 +492,12 @@ input MetaContentInput {
 input CreatorRoyaltyInput {
   account: [String!] = null
   value: Int
+}
+
+input AttributeInput {
+  key: String
+  value: String
+  format: String
 }
 
 input MetadataContentInput {

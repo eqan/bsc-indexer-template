@@ -25,7 +25,7 @@ export class Tokens extends BaseEntity {
     type: 'text',
     unique: true,
   })
-  tokenId: string;
+  id: string;
 
   @Field({ nullable: true })
   @Column('text', { default: null })
