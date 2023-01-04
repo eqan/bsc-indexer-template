@@ -15,11 +15,13 @@ import { Between, In, Not, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
-import { GetAllOrders } from './dto/get-all-orders.dto';
+import { GetAllOrders } from './dto/get-all-orders.output';
+import { GetAllSellOrders } from './dto/get-all-sell-orders.output';
 import { GetOrderBidsByItemDto } from './dto/get-order-bids-by-item-dto';
 import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
+import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { OrderStatus } from './entities/enums/orders.status.enum';
 import { Orders } from './entities/orders.entity';
@@ -347,6 +349,41 @@ export class OrdersService {
         }),
       ]);
       return items;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Searched Sell Orders
+   * @param getSellOrdersDto
+   * @returns Orders[]
+   */
+  async getSellOrders(
+    getSellOrdersDto: GetSellOrdersDto,
+  ): Promise<GetAllSellOrders> {
+    try {
+      const { page, limit, ...rest } = getSellOrdersDto;
+      const [items, total] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            status: rest?.status,
+            side: OrderSide.sell,
+          },
+          order: {
+            createdAt: SortOrder.ASC,
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+        this.ordersRepo.count({
+          where: {
+            status: rest?.status,
+            side: OrderSide.sell,
+          },
+        }),
+      ]);
+      return { items, total };
     } catch (error) {
       throw new BadRequestException(error);
     }

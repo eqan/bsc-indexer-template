@@ -118,7 +118,7 @@ export class TokensService {
   }
 
   /**
-   * DEETE Token
+   * DELETE Token
    * @param tokenIds
    * @returns
    */

@@ -5,11 +5,13 @@ import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { DeleteOrderInput } from './dto/delete-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
-import { GetAllOrders } from './dto/get-all-orders.dto';
+import { GetAllOrders } from './dto/get-all-orders.output';
+import { GetAllSellOrders } from './dto/get-all-sell-orders.output';
 import { GetOrderBidsByItemDto } from './dto/get-order-bids-by-item-dto';
 import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
+import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
 import { OrdersService } from './orders.service';
@@ -158,6 +160,11 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     }
   }
 
+  /**
+   *  Get All Sell Orders By ItemId
+   * @param getSellOrdersByItemDto
+   * @returns Orders[]
+   */
   @Query(() => [Orders], { name: 'GetSellOrdersByItem' })
   async sellOrdersByItem(
     @Args('SellOrdersByItemInput', { nullable: true, defaultValue: {} })
@@ -167,6 +174,23 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
       return await this.ordersService.getSellOrdersByItem(
         getSellOrdersByItemDto,
       );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * GET ALL SELL ORDERS
+   * @param getSellOrdersDto
+   * @returns GetAllSellOrders
+   */
+  @Query(() => [Orders], { name: 'GetSellOrders' })
+  async sellOrders(
+    @Args('SellOrdersInput', { nullable: true, defaultValue: {} })
+    getSellOrdersDto: GetSellOrdersDto,
+  ): Promise<GetAllSellOrders> {
+    try {
+      return await this.ordersService.getSellOrders(getSellOrdersDto);
     } catch (error) {
       throw new BadRequestException(error);
     }
