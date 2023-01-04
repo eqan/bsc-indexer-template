@@ -1,13 +1,11 @@
-import { Interface } from '@ethersproject/abi';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { formatEther, formatUnits } from '@ethersproject/units';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-
 import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { bigNumber } from 'src/common/utils.common';
+import { CurrencyIface } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { UsdPricesService } from 'src/usd-prices/usd-prices.service';
 import * as Addresses from '../constants/orders.constants.addresses';
@@ -29,19 +27,8 @@ export class OrderPrices {
   chainId = this.rpcProvider.chainId;
   baseProvider = this.rpcProvider.baseProvider;
 
-  USD_DECIMALS = 6;
-  // TODO: This should be a per-network setting
-  NATIVE_UNIT = bigNumber('1000000000000000000');
-
   getCurrencyDetails = async (currencyAddress: string) => {
     try {
-      // `name`, `symbol` and `decimals` are fetched on-chain
-      const iface = new Interface([
-        'function name() view returns (string)',
-        'function symbol() view returns (string)',
-        'function decimals() view returns (uint8)',
-      ]);
-
       //for native coins eg; eth or bigNumberb we don't have contract address AddressZero
       // to avoid api failure for AddressZero replace it with space as per in api spec
       let name = '';
@@ -51,7 +38,7 @@ export class OrderPrices {
       if (currencyAddress !== AddressZero) {
         const contract = new Contract(
           currencyAddress,
-          iface,
+          CurrencyIface,
           this.baseProvider,
         );
         name = await contract.name();
@@ -72,8 +59,6 @@ export class OrderPrices {
         const url = `https://api.coingecko.com/api/v3/coins/${coingeckoNetworkId}/contract/${
           currencyAddress === AddressZero ? '%20' : currencyAddress
         }`;
-
-        console.log(url, 'url for the name symbol');
 
         const response = await lastValueFrom(this.httpService.get(url));
         result = response.data;
@@ -114,7 +99,6 @@ export class OrderPrices {
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
-        // console.log(day, 'day logged');
 
         //TODO : CHANGE THE ID FROM ETHEREUM TO BINANCECOIN
         const url = `https://api.coingecko.com/api/v3/coins/${coingeckoCurrencyId}/history?date=${day}-${month}-${year}`;
@@ -128,8 +112,6 @@ export class OrderPrices {
         } = response.data;
 
         const usdPrice = result?.market_data?.current_price?.['usd'];
-        console.log(usdPrice, 'usd price');
-
         if (usdPrice) {
           await this.usdPricesService.create({
             currency: currencyAddress,
@@ -151,7 +133,7 @@ export class OrderPrices {
 
         await this.usdPricesService.create({
           currency: currencyAddress,
-          timestamp,
+          timestamp: truncatedTimestamp,
           value,
         });
 
@@ -269,7 +251,7 @@ export class OrderPrices {
     }
 
     //TODO: ADD bigNumberB IN Addresses also weth equivalent for bigNumberb
-    // // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
+    // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
     if (
       [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
         currencyAddress,

@@ -22,4 +22,8 @@ export class UpdateOrderStatus {
   @IsBoolean()
   @Field()
   cancelled: boolean;
+
+  @IsBoolean()
+  @Field()
+  onchain?: boolean;
 }

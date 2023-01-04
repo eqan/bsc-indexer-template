@@ -94,12 +94,10 @@ export class StoreOnchainBuySellOrders {
             contract,
             tokenId,
           };
-          const saved = await this.orderService.createOnchainOrder(dbOrder);
-          console.log('saved directPurchase in db', saved);
+          await this.orderService.createOnchainOrder(dbOrder);
           break;
         } catch (error) {
-          // tx data doesn't match directPurchase
-          console.log('failed saving directPurchase', error);
+          this.logger.log(`tx data doesn't match directPurchase`);
         }
       }
       // Try to parse calldata as directAcceptBid
@@ -148,12 +146,10 @@ export class StoreOnchainBuySellOrders {
             contract,
             tokenId,
           };
-          const saved = await this.orderService.createOnchainOrder(dbOrder);
-          console.log('direct accept bid in db', saved);
+          await this.orderService.createOnchainOrder(dbOrder);
           break;
         } catch {
-          console.log('tx data doesnt match directAcceptBid');
-          // tx data doesn't match directAcceptBid
+          this.logger.log('tx data doesnt match directAcceptBid');
         }
       }
       case 'match': {
@@ -260,8 +256,7 @@ export class StoreOnchainBuySellOrders {
             console.log(response, 'left and right order');
           }
         } catch {
-          console.log('tx data doesnt match matchOrders');
-          // tx data doesn't match matchOrders
+          this.logger.log('tx data doesnt match matchOrders');
         }
       }
     }

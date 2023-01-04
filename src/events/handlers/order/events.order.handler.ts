@@ -37,7 +37,7 @@ export class OrderMatchHandler {
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
-  handleMatchOrder = async (events: EnhancedEvent) => {
+  handleMatchOrder = async (events: EnhancedEvent): Promise<void> => {
     const {
       log,
       kind,
@@ -144,7 +144,6 @@ export class OrderMatchHandler {
             'function directAcceptBid(tuple(address bidMaker, uint256 bidNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 bidPaymentAmount, address paymentToken, uint256 bidSalt, uint bidStart, uint bidEnd, bytes4 bidDataType, bytes bidData, bytes bidSignature, uint256 sellOrderPaymentAmount, uint256 sellOrderNftAmount, bytes sellOrderData) )',
           ]);
           result = iface.decodeFunctionData('directAcceptBid', callTrace.input);
-          console.log(result, 'logged result dirBid');
           orderId = rightHash;
 
           side = OrderSide.buy;
@@ -267,7 +266,6 @@ export class OrderMatchHandler {
       let currency: string;
       if (currencyAssetType === constants.ETH) {
         currency = Addresses.Eth[this.chainId];
-        console.log(currency, 'logged currency');
       } else if (currencyAssetType === constants.ERC20) {
         currency = paymentCurrency;
       } else {
@@ -310,31 +308,36 @@ export class OrderMatchHandler {
 
       await this.orderMatchEventService.create(matchEvent);
 
-      this.storeOnchainBuySellOrders.handleStoreOrders(
-        result,
-        fillType,
-        orderId,
-        leftHash,
-        rightHash,
-        events.baseEventParams.timestamp,
-        taker,
-        newLeftFill,
-        newRightFill,
-        prices.usdPrice,
-        prices.nativePrice,
-        contract,
-        tokenId,
-      );
-
-      /**TODO
-       * checking if order exists locally or not if it exists
-       * update it otherwise create a new order locally
-       */
+      //updating order in db
+      const order = await this.orderService.orderExistOrNot(matchEvent.orderId);
+      if (order)
+        await this.orderService.update({
+          orderId: order.orderId,
+          status: OrderStatus.Filled,
+          cancelled: false,
+          onchain: true,
+        });
+      else
+        this.storeOnchainBuySellOrders.handleStoreOrders(
+          result,
+          fillType,
+          orderId,
+          leftHash,
+          rightHash,
+          events.baseEventParams.timestamp,
+          taker,
+          newLeftFill,
+          newRightFill,
+          prices.usdPrice,
+          prices.nativePrice,
+          contract,
+          tokenId,
+        );
     } catch (error) {
       this.logger.error(`failed Matching Order ${error}`);
     }
   };
-  handleCancelOrder = async (events: EnhancedEvent) => {
+  handleCancelOrder = async (events: EnhancedEvent): Promise<void> => {
     const { baseEventParams, log, kind } = events;
 
     const eventData = getEventData([kind])[0];
@@ -355,10 +358,12 @@ export class OrderMatchHandler {
       );
       if (order)
         await this.orderService.update({
-          ...order,
+          orderId: order.orderId,
           status: OrderStatus.Cancelled,
           cancelled: true,
+          onchain: true,
         });
+      //TODO:IF ORDER IS NOT IN DB HAVENT UPDATED ITS STATUS
     } catch (error) {
       this.logger.error(`failed Cancelling Order ${error}`);
     }

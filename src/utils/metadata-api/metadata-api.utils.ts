@@ -33,9 +33,9 @@ export class MetadataApi {
   async fetchRequest(uri: string, id: string) {
     try {
       //replace query params
-      if (uri.match(regex.query)) uri = uri?.replace(regex.query, id);
-      //add ipfs domain uri
-      if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsGateway);
+      if (uri?.match(regex.query)) uri = uri?.replace(regex.query, id);
+      //add ipfs gateway
+      if (uri?.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsGateway);
       const response = await lastValueFrom(this.httpService.get(uri));
       return response.data;
     } catch (error) {
@@ -76,7 +76,7 @@ export class MetadataApi {
             Meta?.attributes?.map((attribute: any) => ({
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
-              type: TokenType.BEP721,
+              // type: TokenType.BEP721, TODO:NEED TO DISCUSS
               format: attribute?.display_type || '',
             })) || [],
           Content: Meta?.image

@@ -13,7 +13,6 @@ export const toBuffer = (hexValue: string) =>
   Buffer.from(hexValue.slice(2), 'hex');
 
 // --- Regex ---
-
 export const regex = {
   url: /(\b(https|http?|ftp|file|ipfs):\/\/[\-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-z0-9+&@#\/%=~_|/*])/,
   query: /(\{[a-z]*id\})/g,
@@ -22,12 +21,10 @@ export const regex = {
 };
 
 // ---- returns true if url is base64 encoded
-
 export const isBase64Encoded = (tokenURI: string) =>
   tokenURI?.split(',')[0] === 'data:application/json;base64' ? true : false;
 
 // parses base64 to json
-
 export const base64toJson = (tokenURI: string) =>
   JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('utf8'));
 
@@ -62,6 +59,20 @@ export const TokenIface = new Interface([
   'function tokenURI(uint256 _tokenId) external view returns (string)',
   'function uri(uint256 _id) external view returns (string memory)',
   'function ownerOf(uint256 _tokenId) external view returns (address)',
+]);
+
+export const CurrencyIface = new Interface([
+  'function name() view returns (string)',
+  'function symbol() view returns (string)',
+  'function decimals() view returns (uint8)',
+]);
+
+export const SafeTransferFromERC721Iface = new Interface([
+  'function safeTransferFrom(address from, address to, uint256 tokenId, bytes data)',
+]);
+
+export const SafeTransferFromERC1155Iface = new Interface([
+  'function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes data)',
 ]);
 
 //contract helper methods

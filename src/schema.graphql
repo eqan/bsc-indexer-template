@@ -774,6 +774,7 @@ input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
   cancelled: Boolean!
+  onchain: Boolean!
 }
 
 input CreateUsdPriceInput {
