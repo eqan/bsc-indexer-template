@@ -29,7 +29,7 @@ export const isBase64Encoded = (tokenURI: string) =>
 // parses base64 to json
 
 export const base64toJson = (tokenURI: string) =>
-  JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('ascii'));
+  JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('utf8'));
 
 //Types of Collection and Token
 export const getTypes = (kind: EventDataKind) => {

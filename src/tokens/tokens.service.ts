@@ -35,7 +35,6 @@ export class TokensService {
       token.tokenId = collectionId + ':' + token.tokenId;
 
       await token.save();
-      // console.log(token, 'create token');
       delete token.collection;
       return token;
     } catch (error) {

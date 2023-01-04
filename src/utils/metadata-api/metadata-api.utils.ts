@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -23,6 +22,7 @@ import {
   regex,
   TokenIface,
 } from './../../common/utils.common';
+
 @Injectable()
 export class MetadataApi {
   constructor(
@@ -111,7 +111,6 @@ export class MetadataApi {
       contract: collectionId,
       deleted,
       mintedAt: new Date(timestamp * 1000),
-      // lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
         account: [],
@@ -131,8 +130,6 @@ export class MetadataApi {
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
       if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '') };
-
-      // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
@@ -145,7 +142,7 @@ export class MetadataApi {
         const Meta = base64toJson(tokenURI);
         if (Meta?.image.match(regex.base64)) {
           const url = await uploadImage(Meta?.image);
-          Meta.image = url ?? Meta.image;
+          Meta.image = url ? url : Meta.image;
         }
         return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
       } else return { ...data, Meta: this.returnMeta({}, tokenURI) };
@@ -165,33 +162,16 @@ export class MetadataApi {
     collectionId: string,
     type: CollectionType,
   ): Promise<CreateCollectionsInput> {
-    const collectionData: CreateCollectionsInput = {
-      name: '',
-      symbol: '',
-      owner: AddressZero,
-      id: collectionId,
-      type,
-      Meta: {},
-      discordUrl: '',
-      twitterUrl: '',
-      description: '',
-    };
-    let name;
-    let symbol;
-    let owner;
     try {
       const contract = new Contract(
         collectionId,
         CollectionIface,
         this.rpcProvider.baseProvider,
       );
-      name = await getCollectionName(contract);
-      symbol = await getCollectionSymbol(contract);
-      owner = await getCollectionOwner(contract);
-    } catch (error) {
-      // console.log('error occured owner address not found');
-    } finally {
-      return {
+      const name = await getCollectionName(contract);
+      const symbol = await getCollectionSymbol(contract);
+      const owner = await getCollectionOwner(contract);
+      const collectionData: CreateCollectionsInput = {
         name,
         symbol,
         owner,
@@ -202,6 +182,9 @@ export class MetadataApi {
         twitterUrl: '',
         description: '',
       };
+      return collectionData;
+    } catch (error) {
+      console.log('failed fetching collection meta');
     }
   }
 }

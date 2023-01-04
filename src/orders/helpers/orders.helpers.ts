@@ -21,7 +21,6 @@ export class OrdersHelpers {
 
   toRawOrder = (order: Types.Order): any => {
     const encoded = encodeForMatchOrders(order);
-    // console.log(encoded, 'encoded again logged out');
     return encoded;
   };
 

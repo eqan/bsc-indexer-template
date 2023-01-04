@@ -127,28 +127,19 @@ export class OrderPrices {
           };
         } = response.data;
 
-        // console.log(result, 'result logged out');
-
         const usdPrice = result?.market_data?.current_price?.['usd'];
         console.log(usdPrice, 'usd price');
 
         if (usdPrice) {
-          // const value = parseUnits(
-          //   usdPrice.toFixed(this.USD_DECIMALS),
-          //   this.USD_DECIMALS,
-          // ).toString();
-
           await this.usdPricesService.create({
             currency: currencyAddress,
             timestamp,
-            // value,
             value: usdPrice.toString(),
           });
 
           return {
             currency: currencyAddress,
             timestamp: truncatedTimestamp,
-            // value,
             value: usdPrice.toString(),
           };
         }
@@ -189,10 +180,8 @@ export class OrderPrices {
         currency: currencyAddress,
         timestamp,
       });
-      // console.log(data, 'cahced data', currencyAddress, timestamp);
       return data;
     } catch (error) {
-      // console.log('failed getting cashedUsdPrice', error);
       return undefined;
     }
   };
