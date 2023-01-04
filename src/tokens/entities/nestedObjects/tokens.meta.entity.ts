@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsOptional } from 'class-validator';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MetadataAttribute } from '../../dto/nestedObjectDto/meta.attributes.dto';
 import { Tokens } from '../tokens.entity';
 import { TokensAttributes } from './tokens.meta.attributes.entity';
 import { Content } from './tokens.meta.content.entity';
@@ -81,6 +81,8 @@ export class TokensMeta {
   })
   attributeId?: string;
 
+  @IsOptional()
+  @Field(() => [TokensAttributes], { nullable: true })
   @OneToMany(() => TokensAttributes, (attributes) => attributes.id)
   @JoinColumn({ name: 'attributeId' })
   attributes: TokensAttributes[];

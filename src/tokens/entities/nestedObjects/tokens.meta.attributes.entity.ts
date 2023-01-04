@@ -16,26 +16,22 @@ export class TokensAttributes {
   id: string;
 
   @Field()
-  @Column('text')
+  @Column('text', { nullable: true })
   tokenId: string;
 
   @Field()
-  @Column('text')
+  @Column('text', { nullable: true })
   key: string;
 
   @Field()
   @Column('text', { nullable: true })
-  parent: string;
-
-  @Field()
-  @Column('text')
   format: string;
 
   @Field()
-  @Column('text')
+  @Column('text', { nullable: true })
   value: string;
 
   @ManyToOne(() => TokensMeta, (meta) => meta.id)
-  @JoinColumn({ name: 'id' })
+  // @JoinColumn({ name: 'id' })
   tokensMeta: TokensMeta;
 }

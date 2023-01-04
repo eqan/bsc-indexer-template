@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { MetadataAttribute } from './meta.attributes.dto';
+import { TokensAttributesInput } from './meta.attributes.dto';
 import { MetadataContent } from './meta.content.dto';
 
 @ObjectType()
@@ -42,9 +42,9 @@ export class MetaData {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => MetadataAttribute)
-  @Field(() => [MetadataAttribute], { nullable: true })
-  attributes?: MetadataAttribute[];
+  @Type(() => TokensAttributesInput)
+  @Field(() => [TokensAttributesInput], { nullable: true })
+  attributes?: TokensAttributesInput[];
 
   @IsOptional()
   @ValidateNested()

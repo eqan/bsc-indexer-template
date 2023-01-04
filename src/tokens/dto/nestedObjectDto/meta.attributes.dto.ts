@@ -1,9 +1,9 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsOptional, IsString } from 'class-validator';
 
-@ObjectType('MetadataAttribute')
-@InputType('AttributeInput')
-export class MetadataAttribute {
+@ObjectType()
+@InputType('TokensAttributes')
+export class TokensAttributesInput {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
@@ -18,4 +18,9 @@ export class MetadataAttribute {
   @IsString()
   @Field({ nullable: true })
   format?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  tokenId?: string;
 }

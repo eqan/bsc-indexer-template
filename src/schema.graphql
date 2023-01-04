@@ -287,12 +287,22 @@ type Meta {
   externalUri: String
   rightsUri: String
   attributeId: String
+  attributes: [Attributes!]
 }
 
-type MetadataAttribute {
+type Attributes {
+  id: String!
+  tokenId: String!
+  key: String!
+  format: String!
+  value: String!
+}
+
+type TokensAttributesInput {
   key: String
   value: String
   format: String
+  tokenId: String
 }
 
 type MetadataContent {
@@ -494,10 +504,11 @@ input CreatorRoyaltyInput {
   value: Int
 }
 
-input AttributeInput {
+input TokensAttributes {
   key: String
   value: String
   format: String
+  tokenId: String
 }
 
 input MetadataContentInput {
@@ -668,7 +679,7 @@ input DeleteCollectionsInput {
 }
 
 input CreateTokenInput {
-  tokenId: String!
+  id: String!
   collectionId: String!
   contract: String!
   type: TokenType!
@@ -696,7 +707,7 @@ input MetaDataInput {
   originalMetaUri: String
   externalUri: String
   rightsUri: String
-  attributes: [AttributeInput!]
+  attributes: [TokensAttributes!]
   Content: MetadataContentInput
 }
 

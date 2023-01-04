@@ -43,7 +43,7 @@ export class MetadataApi {
     }
   }
 
-  returnMeta(Meta: any, tokenURI: string) {
+  returnMeta(Meta: any, tokenURI: string, tokenId: string) {
     const metadata: MetaData = {
       name: '',
       description: '',
@@ -53,6 +53,7 @@ export class MetadataApi {
       externalUri: '',
       attributes: [
         {
+          tokenId: '',
           key: '',
           value: '',
           format: '',
@@ -66,8 +67,9 @@ export class MetadataApi {
     };
     try {
       // console.log(Meta.attributes);
-      if (typeof Meta === 'object')
-        return {
+      // console.log('This is:', Meta);
+      if (typeof Meta === 'object') {
+        const data = {
           ...metadata,
           name: Meta?.name || '',
           description: Meta?.description || '',
@@ -75,9 +77,9 @@ export class MetadataApi {
           externalUri: Meta?.external_url || '',
           attributes:
             Meta?.attributes?.map((attribute: any) => ({
+              tokenId,
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
-              type: TokenType.BEP721,
               format: attribute?.display_type || '',
             })) || [],
           Content: Meta?.image
@@ -86,7 +88,10 @@ export class MetadataApi {
               }
             : {},
         };
-      else throw new BadRequestException(`unsupported format ${tokenURI}`);
+        // console.log('This is:', data);
+        // console.log(data);
+        return data;
+      } else throw new BadRequestException(`unsupported format ${tokenURI}`);
     } catch (error) {
       return { ...metadata, attributes: [], Content: {} };
     }
@@ -106,7 +111,7 @@ export class MetadataApi {
     deleted: boolean;
   }) {
     const data: CreateTokenInput = {
-      tokenId,
+      id: tokenId,
       type,
       collectionId,
       contract: collectionId,
@@ -127,18 +132,19 @@ export class MetadataApi {
       TokenIface,
       this.rpcProvider.baseProvider,
     );
+    const newTokenId = collectionId + ':' + tokenId;
     try {
       data.creator.account = await getNFTCreator(contract, tokenId);
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
-      if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '') };
+      if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '', '') };
 
       // console.log(tokenURI);
       urlFailed = tokenURI;
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const Meta = await this.fetchRequest(tokenURI, tokenId);
-        return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
+        return { ...data, Meta: this.returnMeta(Meta, tokenURI, newTokenId) };
       }
 
       //else if tokenURI is buffered base64 encoded
@@ -148,8 +154,10 @@ export class MetadataApi {
           const url = await uploadImage(Meta?.image);
           Meta.image = url ?? Meta.image;
         }
-        return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
-      } else return { ...data, Meta: this.returnMeta({}, tokenURI) };
+        return { ...data, Meta: this.returnMeta(Meta, tokenURI, newTokenId) };
+      } else {
+        return { ...data, Meta: this.returnMeta({}, tokenURI, newTokenId) };
+      }
     } catch (error) {
       console.log(
         'finding issue url, remain this console',
