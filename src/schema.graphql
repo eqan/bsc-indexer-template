@@ -550,6 +550,8 @@ type Query {
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
   GetOrderBidsByMaker(OrderBidsByMakerInput: GetOrderBidsByMakerDto = {}): [Orders!]!
   GetSellOrdersByMaker(SellOrdersByMakerInput: GetSellOrdersByMakerDto = {}): [Orders!]!
+  GetOrderBidsByItem(OrderBidsByItemInput: GetOrderBidsByItemDto = {}): [Orders!]!
+  GetSellOrdersByItem(SellOrdersByItemInput: GetSellOrdersByItemDto = {}): [Orders!]!
   usdPrices: [UsdPrice!]!
   usdPrice(filterUsdPriceInput: FilterUsdPriceInput!): UsdPrice!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
@@ -590,6 +592,24 @@ input GetSellOrdersByMakerDto {
   page: Float
   limit: Float
   maker: [String!]!
+  status: [OrderStatus!]!
+}
+
+input GetOrderBidsByItemDto {
+  page: Float
+  limit: Float
+  itemId: String!
+  maker: [String!]!
+  start: Float
+  end: Float
+  status: [OrderStatus!]!
+}
+
+input GetSellOrdersByItemDto {
+  page: Float
+  limit: Float
+  maker: [String!]!
+  itemId: String!
   status: [OrderStatus!]!
 }
 

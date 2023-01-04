@@ -16,7 +16,9 @@ import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
+import { GetOrderBidsByItemDto } from './dto/get-order-bids-by-item-dto';
 import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
+import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { OrderStatus } from './entities/enums/orders.status.enum';
@@ -220,7 +222,7 @@ export class OrdersService {
           contract: dto.contract,
           tokenId: dto.tokenId,
           side: OrderSide.sell,
-          status: Not(OrderStatus.Filled) || Not(OrderStatus.Cancelled),
+          status: Not(In([OrderStatus.Filled, OrderStatus.Cancelled])),
           onchain: false,
         },
       });
@@ -275,6 +277,68 @@ export class OrdersService {
         this.ordersRepo.find({
           where: {
             maker: In(rest.maker),
+            side: OrderSide.sell,
+            status: In(rest?.status),
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+      ]);
+      return items;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Searched Bids By Item
+   * @param getOrderBidsByItemDto
+   * @returns Bid Orders Array or Bid order against specific parameter
+   */
+  async getOrderBidsByItem(
+    getOrderBidsByItemDto: GetOrderBidsByItemDto,
+  ): Promise<Orders[]> {
+    try {
+      const [contract, tokenId] = getOrderBidsByItemDto.itemId.split(':');
+      const { page, limit, ...rest } = getOrderBidsByItemDto;
+      const [items] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            contract,
+            tokenId,
+            maker: In(rest?.maker),
+            side: OrderSide.buy,
+            start: rest?.start,
+            end: rest?.end,
+            status: In(rest?.status),
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+      ]);
+      return items;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Searched Sell Orders By Item
+   * @param getSellOrdersByItemDto
+   * @returns Orders[]
+   */
+  async getSellOrdersByItem(
+    getSellOrdersByItemDto: GetSellOrdersByItemDto,
+  ): Promise<Orders[]> {
+    try {
+      const [contract, tokenId] = getSellOrdersByItemDto.itemId.split(':');
+      const { page, limit, ...rest } = getSellOrdersByItemDto;
+      const [items] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            contract,
+            tokenId,
+            maker: In(rest?.maker),
             side: OrderSide.sell,
             status: In(rest?.status),
           },
