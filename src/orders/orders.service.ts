@@ -16,6 +16,8 @@ import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
+import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
+import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { OrderStatus } from './entities/enums/orders.status.enum';
 import { Orders } from './entities/orders.entity';
@@ -227,6 +229,62 @@ export class OrdersService {
       throw new Error(
         `Sell Order against ${dto.contract}:${dto.tokenId} not found or is filled or cancelled`,
       );
+    }
+  }
+
+  /**
+   * Get Searched Bids By Makers
+   * @param  GetOrderBidsByMakerDto
+   * @returns Bid Orders Array or Bid order against specific parameter
+   */
+  async getOrderBidsByMaker(
+    getOrderBidsByMakerDto: GetOrderBidsByMakerDto,
+  ): Promise<Orders[]> {
+    try {
+      const { page, limit, ...rest } = getOrderBidsByMakerDto;
+      const [items] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            maker: In(rest.maker),
+            side: OrderSide.buy,
+            start: rest?.start,
+            end: rest?.end,
+            status: In(rest?.status),
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+      ]);
+      return items;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   *  Get Searched Sell Orders by Makers
+   * @param getOrderBidsByMakerDto
+   * @returns Sell Orders Array or Sell order against specific parameter
+   */
+  async getSellOrdersByMaker(
+    getSellOrdersByMakerDto: GetSellOrdersByMakerDto,
+  ): Promise<Orders[]> {
+    try {
+      const { page, limit, ...rest } = getSellOrdersByMakerDto;
+      const [items] = await Promise.all([
+        this.ordersRepo.find({
+          where: {
+            maker: In(rest.maker),
+            side: OrderSide.sell,
+            status: In(rest?.status),
+          },
+          skip: (page - 1) * limit || 0,
+          take: limit || 10,
+        }),
+      ]);
+      return items;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

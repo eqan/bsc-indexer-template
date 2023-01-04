@@ -6,6 +6,8 @@ import { CreateOrdersInput } from './dto/create-orders.input';
 import { DeleteOrderInput } from './dto/delete-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.dto';
+import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
+import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
 import { OrdersService } from './orders.service';
@@ -94,6 +96,44 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   ): Promise<GetAllOrders> {
     try {
       return await this.ordersService.index(filterOrderDto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get ALL BIDS BY MAKERS
+   * @param getOrderBidsByMakerDto
+   * @returns Orders[]
+   */
+  @Query(() => [Orders], { name: 'GetOrderBidsByMaker' })
+  async orderBidsByMaker(
+    @Args('OrderBidsByMakerInput', { nullable: true, defaultValue: {} })
+    getOrderBidsByMakerDto: GetOrderBidsByMakerDto,
+  ): Promise<Orders[]> {
+    try {
+      return await this.ordersService.getOrderBidsByMaker(
+        getOrderBidsByMakerDto,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get All Sell Orders By Maker
+   * @param getSellOrdersByMakerDto
+   * @returns Orders[]
+   */
+  @Query(() => [Orders], { name: 'GetSellOrdersByMaker' })
+  async sellOrdersByMaker(
+    @Args('SellOrdersByMakerInput', { nullable: true, defaultValue: {} })
+    getSellOrdersByMakerDto: GetSellOrdersByMakerDto,
+  ): Promise<Orders[]> {
+    try {
+      return await this.ordersService.getSellOrdersByMaker(
+        getSellOrdersByMakerDto,
+      );
     } catch (error) {
       throw new BadRequestException(error);
     }

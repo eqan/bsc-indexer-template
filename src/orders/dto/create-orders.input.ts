@@ -20,7 +20,6 @@ import { CustomDataScalar } from './nestedObjectsDto/data.dto';
 
 @InputType()
 export class CreateOrdersInput {
-  // @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
   @IsNotEmpty({ message: 'Order ID cannot be null' })
   @Field()
   orderId: string;
@@ -65,11 +64,6 @@ export class CreateOrdersInput {
   @Field()
   createdAt: Date;
 
-  // @IsNotEmpty()
-  // @IsDate()
-  // @Field()
-  // lastUpdatedAt: Date;
-
   @IsNotEmpty()
   @IsEthereumAddress()
   @IsEthereumAddress()
@@ -109,11 +103,6 @@ export class CreateOrdersInput {
   @IsBoolean()
   @Field({ nullable: true })
   optionalRoyalties?: boolean;
-
-  // @IsOptional()
-  // @IsDate()
-  // @Field({ nullable: true })
-  // dbUpdatedAt?: Date;
 
   @IsOptional()
   @IsNumber()
