@@ -8,11 +8,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filter-tokens-by-price-range.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
-import { checkItemIdForamt } from 'src/common/utils.common';
+import {
+  arrayItemsToLowerCase,
+  checkItemIdForamt,
+} from 'src/common/utils.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, In, Not, Repository } from 'typeorm';
+import { Between, ILike, In, Not, Raw, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -250,7 +253,7 @@ export class OrdersService {
       const [items] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            maker: In(rest.maker),
+            maker: In(arrayItemsToLowerCase(rest.maker)),
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
@@ -279,7 +282,7 @@ export class OrdersService {
       const [items] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            maker: In(rest.maker),
+            maker: In(arrayItemsToLowerCase(rest.maker)),
             side: OrderSide.sell,
             // status: In(rest?.status), TODO
             status: In([OrderStatus.FILLED, OrderStatus.CANCELLED]),
@@ -311,12 +314,15 @@ export class OrdersService {
       const [items] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            contract,
-            tokenId,
+            // maker: rest?.maker ? ILike(`%${In(rest.maker)}%`) : undefined,
+            maker: rest?.maker
+              ? In(arrayItemsToLowerCase(rest.maker))
+              : undefined,
+            contract: ILike(`%${contract}%`),
+            tokenId: ILike(`%${tokenId}%`),
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
-            ...(rest?.maker && { maker: In(rest?.maker) }),
             // status: In(rest?.status),
           },
           skip: (page - 1) * limit || 0,
@@ -346,10 +352,12 @@ export class OrdersService {
       const [items] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            contract,
-            tokenId,
+            maker: rest?.maker
+              ? In(arrayItemsToLowerCase(rest.maker))
+              : undefined,
+            contract: ILike(`%${contract}%`),
+            tokenId: ILike(`%${tokenId}%`),
             side: OrderSide.sell,
-            ...(rest?.maker && { maker: In(rest?.maker) }),
             // status: In(rest?.status),
           },
           skip: (page - 1) * limit || 0,

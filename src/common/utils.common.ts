@@ -154,3 +154,7 @@ export const checkItemIdForamt = (
       'ItemId must match format ${token}:${tokenId}',
     );
 };
+
+//converts array items to lowercase
+export const arrayItemsToLowerCase = (items: string[]): string[] =>
+  items.map((item) => item.toLowerCase());
