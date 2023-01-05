@@ -15,7 +15,7 @@ import {
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, ILike, In, Not, Raw, Repository } from 'typeorm';
+import { Between, ILike, In, Not, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -257,7 +257,7 @@ export class OrdersService {
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
-            // status: In(rest?.status),
+            status: rest?.status ? In(rest.status) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -284,8 +284,7 @@ export class OrdersService {
           where: {
             maker: In(arrayItemsToLowerCase(rest.maker)),
             side: OrderSide.sell,
-            // status: In(rest?.status), TODO
-            status: In([OrderStatus.FILLED, OrderStatus.CANCELLED]),
+            status: rest?.status ? In(rest.status) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -306,7 +305,6 @@ export class OrdersService {
     getOrderBidsByItemDto: GetOrderBidsByItemDto,
   ): Promise<Orders[]> {
     try {
-      // const [contract, tokenId] = getOrderBidsByItemDto.itemId.split(':');
       const [contract, tokenId] = checkItemIdForamt(
         getOrderBidsByItemDto.itemId,
       );
@@ -314,7 +312,6 @@ export class OrdersService {
       const [items] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            // maker: rest?.maker ? ILike(`%${In(rest.maker)}%`) : undefined,
             maker: rest?.maker
               ? In(arrayItemsToLowerCase(rest.maker))
               : undefined,
@@ -323,7 +320,7 @@ export class OrdersService {
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
-            // status: In(rest?.status),
+            status: rest?.status ? In(rest.status) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -344,7 +341,6 @@ export class OrdersService {
     getSellOrdersByItemDto: GetSellOrdersByItemDto,
   ): Promise<Orders[]> {
     try {
-      // const [contract, tokenId] = getSellOrdersByItemDto.itemId.split(':');
       const [contract, tokenId] = checkItemIdForamt(
         getSellOrdersByItemDto.itemId,
       );
@@ -358,7 +354,7 @@ export class OrdersService {
             contract: ILike(`%${contract}%`),
             tokenId: ILike(`%${tokenId}%`),
             side: OrderSide.sell,
-            // status: In(rest?.status),
+            status: rest?.status ? In(rest.status) : undefined,
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -383,7 +379,7 @@ export class OrdersService {
       const [items, total] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            // status: In(rest?.status),
+            status: rest?.status ? In(rest.status) : undefined,
             side: OrderSide.sell,
           },
           order: {
@@ -394,7 +390,7 @@ export class OrdersService {
         }),
         this.ordersRepo.count({
           where: {
-            // status: In(rest?.status),
+            status: rest?.status ? In(rest.status) : undefined,
             side: OrderSide.sell,
           },
         }),

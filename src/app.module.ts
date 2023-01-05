@@ -18,6 +18,7 @@ import { SyncEventsModule } from './events/sync-events/sync-events.module';
 import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.module';
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
+import { CustomEnumScalar } from './orders/common/orders-enum-scalar.common';
 import { CustomDataScalar } from './orders/dto/nestedObjectsDto/data.dto';
 import { OrdersModule } from './orders/orders.module';
 import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.module';
@@ -39,7 +40,10 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
       // sortSchema: false,
       autoSchemaFile: join(process.cwd(), 'src/schema.graphql'),
       context: response,
-      resolvers: { DATA_SCALAR: CustomDataScalar },
+      resolvers: {
+        DATA_SCALAR: CustomDataScalar,
+        ENUM_SCALAR: CustomEnumScalar,
+      },
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),
       },

@@ -1,11 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsEnum,
-  IsEthereumAddress,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { CustomEnumScalar } from '../common/orders-enum-scalar.common';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { PaginationParam } from './pagination.dto';
 
@@ -20,8 +15,7 @@ export class GetSellOrdersByItemDto extends PaginationParam {
   @Field()
   itemId: string;
 
-  @IsEnum([OrderStatus])
   @IsOptional()
-  @Field(() => [OrderStatus], { nullable: true })
+  @Field(() => CustomEnumScalar, { nullable: true })
   status?: OrderStatus[];
 }

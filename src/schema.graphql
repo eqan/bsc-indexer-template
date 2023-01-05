@@ -591,14 +591,17 @@ input GetOrderBidsByMakerDto {
   maker: [String!]!
   start: Float
   end: Float
-  status: [OrderStatus!]
+  status: ENUM_SCALAR
 }
+
+"""A simple scalar to input list of enum"""
+scalar ENUM_SCALAR
 
 input GetSellOrdersByMakerDto {
   page: Float
   limit: Float
   maker: [String!]!
-  status: [OrderStatus!]
+  status: ENUM_SCALAR
 }
 
 input GetOrderBidsByItemDto {
@@ -608,7 +611,7 @@ input GetOrderBidsByItemDto {
   maker: [String!]
   start: Float
   end: Float
-  status: [OrderStatus!]
+  status: ENUM_SCALAR
 }
 
 input GetSellOrdersByItemDto {
@@ -616,13 +619,13 @@ input GetSellOrdersByItemDto {
   limit: Float
   maker: [String!]
   itemId: String!
-  status: [OrderStatus!]
+  status: ENUM_SCALAR
 }
 
 input GetSellOrdersDto {
   page: Float
   limit: Float
-  status: [OrderStatus!]
+  status: ENUM_SCALAR
 }
 
 input FilterUsdPriceInput {
