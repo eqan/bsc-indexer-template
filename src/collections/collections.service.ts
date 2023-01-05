@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TransformationType } from 'class-transformer';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ILike, In, Repository } from 'typeorm';

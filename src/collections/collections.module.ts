@@ -15,6 +15,6 @@ import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entit
     forwardRef(() => TokensModule),
   ],
   providers: [CollectionsResolver, CollectionsService],
-  exports: [CollectionsService],
+  exports: [CollectionsResolver, CollectionsService],
 })
 export class CollectionsModule {}

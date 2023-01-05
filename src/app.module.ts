@@ -11,6 +11,7 @@ import { BlockchainConfig } from 'src/config/blockchain.config';
 import { ActivitiesModule } from './activities/activities.module';
 import { AuctionsModule } from './auctions/auctions.module';
 import { CollectionsModule } from './collections/collections.module';
+import { StatsModule } from './collectionStats/stats.module';
 import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
 import { BullConfig } from './config/bull.config';
 import { typeOrmConfigAsync } from './config/typeorm.config';
@@ -90,6 +91,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
     AuctionsModule,
     RefreshMetadataModule,
     UsdPricesModule,
+    StatsModule,
     //Jobs Module
     RealtimeSyncModule,
     SyncEventsModule,

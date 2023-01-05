@@ -351,6 +351,18 @@ type CollectionUniqueItems {
   ParentSubTypes: [DynamicParentSubTypeData!]!
 }
 
+type Stats {
+  id: String
+  dayVolume: Float
+  floorPrice: Float
+  collection: Collections!
+}
+
+type GetAllStats {
+  items: [Stats!]!
+  total: Int!
+}
+
 type Asset {
   value: String!
   valueDecimal: String
@@ -559,6 +571,8 @@ type Query {
   GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
+  GetAllStats(GetAllStatsInput: FilterStatsDto = {}): GetAllStats!
+  GetStatsById(GetStatsByIdInput: String!): Stats!
 }
 
 input FilterDto {
@@ -612,6 +626,14 @@ input FilterAuctionDto {
   seller: String
 }
 
+input FilterStatsDto {
+  page: Int = 1
+  limit: Int = 10
+  id: String!
+  dayVolume: String
+  floorPrice: String
+}
+
 type Mutation {
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
@@ -635,6 +657,7 @@ type Mutation {
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
+  CreateUpdateStats(CreateUpdateStatsInput: String!): Stats!
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType

@@ -18,7 +18,6 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { DynamicParentData } from './dto/nestedObjects/dynamic-ParentType.dto';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 
 @Resolver(() => Collections)
