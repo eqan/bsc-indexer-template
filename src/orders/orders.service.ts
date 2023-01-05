@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filter-tokens-by-price-range.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
+import { checkItemIdForamt } from 'src/common/utils.common';
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
@@ -302,7 +303,10 @@ export class OrdersService {
     getOrderBidsByItemDto: GetOrderBidsByItemDto,
   ): Promise<Orders[]> {
     try {
-      const [contract, tokenId] = getOrderBidsByItemDto.itemId.split(':');
+      // const [contract, tokenId] = getOrderBidsByItemDto.itemId.split(':');
+      const [contract, tokenId] = checkItemIdForamt(
+        getOrderBidsByItemDto.itemId,
+      );
       const { page, limit, ...rest } = getOrderBidsByItemDto;
       const [items] = await Promise.all([
         this.ordersRepo.find({
@@ -334,7 +338,10 @@ export class OrdersService {
     getSellOrdersByItemDto: GetSellOrdersByItemDto,
   ): Promise<Orders[]> {
     try {
-      const [contract, tokenId] = getSellOrdersByItemDto.itemId.split(':');
+      // const [contract, tokenId] = getSellOrdersByItemDto.itemId.split(':');
+      const [contract, tokenId] = checkItemIdForamt(
+        getSellOrdersByItemDto.itemId,
+      );
       const { page, limit, ...rest } = getSellOrdersByItemDto;
       const [items] = await Promise.all([
         this.ordersRepo.find({

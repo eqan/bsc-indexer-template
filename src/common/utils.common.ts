@@ -2,6 +2,7 @@ import { Interface } from '@ethersproject/abi';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
+import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
@@ -18,6 +19,7 @@ export const regex = {
   query: /(\{[a-z]*id\})/g,
   ipfs: /(^(ipfs:|ipns:)\/\/*)/,
   base64: /^data:image\/[a-z]*(\+[a-z]*|);base64/g,
+  itemId: /^.{42}:\d*\S$/,
 };
 
 // ---- returns true if url is base64 encoded
@@ -139,3 +141,16 @@ export const isDeleted = (to: string): boolean => {
 
 // --- Misc ---
 export const lowerCase = (value: string) => value.toLowerCase();
+
+//check if itemId pattern is correct
+export const checkItemIdForamt = (
+  itemId: string,
+): [contract: string, tokenId: string] => {
+  if (itemId.match(regex.itemId)) {
+    const [contract, tokenId] = itemId.split(':');
+    return [contract, tokenId];
+  } else
+    throw new BadRequestException(
+      'ItemId must match format ${token}:${tokenId}',
+    );
+};
