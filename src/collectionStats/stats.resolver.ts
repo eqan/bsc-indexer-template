@@ -5,17 +5,21 @@ import { FilterStatsDto } from './dto/filter-stats.dto';
 import { GetAllStats } from './dto/get-all-stats.dto';
 import { Stats } from './entities/stats.entity';
 import { CollectionsResolver } from 'src/collections/collections.resolver';
-import { Cron } from '@nestjs/schedule';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { CronType } from 'src/jobs/types/cron.types';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
 
 @Resolver(() => Stats)
 export class StatsResolver {
   constructor(
     private readonly statsService: StatsService,
     private readonly collectionsResolver: CollectionsResolver,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
+  CRON_NAME = QueueType.STATS_CRON;
 
   @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
-  @Cron('0 0 * * *')
+  @Cron('0 0 * * *', { name: QueueType.STATS_CRON })
   private async create(): Promise<void> {
     const { items } = await this.collectionsResolver.index({
       page: 0,
@@ -27,20 +31,30 @@ export class StatsResolver {
         id,
       );
       const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
-      return await this.statsService.create({ id, floorPrice, dayVolume });
+      if (floorPrice != null)
+        await this.statsService.create({ id, floorPrice, dayVolume });
     });
-    // results = await Promise.all(results);
-    // console.log(results);
-    // results.map((result) => {
-    //   try {
-    //     finalResults.push(this.statsService.create(result));
-    //   } catch (error) {
-    //     throw new BadRequestException(error);
-    //   }
-    // });
-    // finalResults = await Promise.all(finalResults);
   }
 
+  @Mutation(() => CronType, { name: 'StopStatsCron', nullable: true })
+  async StopStatsCron(): Promise<CronType> {
+    try {
+      this.schedulerRegistry.getCronJob(this.CRON_NAME).stop();
+      return { isDone: true };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Mutation(() => CronType, { name: 'StartStatsCron', nullable: true })
+  async startStatsCron(): Promise<CronType> {
+    try {
+      this.schedulerRegistry.getCronJob(this.CRON_NAME).start();
+      return { isDone: true };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
   /**
    * GET All Stats
    * @returns Stats Array and their total count

@@ -363,6 +363,10 @@ type GetAllStats {
   total: Int!
 }
 
+type CronType {
+  isDone: Boolean!
+}
+
 type Asset {
   value: String!
   valueDecimal: String
@@ -423,10 +427,6 @@ type UsdPrice {
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
-}
-
-type CronType {
-  isDone: Boolean!
 }
 
 type ReturnRefreshMeta {
@@ -658,6 +658,8 @@ type Mutation {
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
   CreateUpdateStats: Stats
+  StopStatsCron: CronType
+  StartStatsCron: CronType
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType

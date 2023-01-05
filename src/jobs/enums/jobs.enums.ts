@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum QueueType {
+  STATS_CRON = 'STATS_CRON',
   REAL_TIME_CRON = 'REAL_TIME_CRON',
   BACKFILL_CRON = 'BACKFILL_CRON',
   REALTIME_QUEUE = 'REALTIME_SYNC_EVENTS',
