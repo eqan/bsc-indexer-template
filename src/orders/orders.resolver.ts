@@ -184,7 +184,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param getSellOrdersDto
    * @returns GetAllSellOrders
    */
-  @Query(() => [Orders], { name: 'GetSellOrders' })
+  @Query(() => GetAllSellOrders, { name: 'GetSellOrders' })
   async sellOrders(
     @Args('SellOrdersInput', { nullable: true, defaultValue: {} })
     getSellOrdersDto: GetSellOrdersDto,

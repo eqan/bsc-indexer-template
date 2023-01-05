@@ -313,7 +313,7 @@ export class OrderMatchHandler {
       if (order)
         await this.orderService.update({
           orderId: order.orderId,
-          status: OrderStatus.Filled,
+          status: OrderStatus.FILLED,
           cancelled: false,
           onchain: true,
         });
@@ -359,7 +359,7 @@ export class OrderMatchHandler {
       if (order)
         await this.orderService.update({
           orderId: order.orderId,
-          status: OrderStatus.Cancelled,
+          status: OrderStatus.CANCELLED,
           cancelled: true,
           onchain: true,
         });

@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
 import { OrderKind } from './enums/order.kind.enum';
@@ -67,7 +67,7 @@ export class Orders extends Timestamps {
     type: 'enum',
     enumName: 'OrderStatus',
     enum: OrderStatus,
-    default: OrderStatus.Active,
+    default: OrderStatus.ACTIVE,
   })
   status?: OrderStatus;
 
@@ -216,4 +216,14 @@ export class Orders extends Timestamps {
     nullable: true,
   })
   tokenId: string;
+
+  @BeforeInsert()
+  changeInputToLowerCase() {
+    this.orderId = this.orderId.toLowerCase();
+    this.maker = this.maker.toLowerCase();
+    this.taker = this?.taker?.toLocaleLowerCase();
+    this.contract = this.contract.toLowerCase();
+    this.signature = this.signature.toLowerCase();
+    this.salt = this.salt.toLowerCase();
+  }
 }

@@ -17,9 +17,8 @@ export class GetOrderBidsByItemDto extends PaginationParam {
   @Field()
   itemId: string;
 
-  @IsEthereumAddress()
   @IsOptional()
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   maker?: string[];
 
   @IsOptional()
@@ -34,6 +33,6 @@ export class GetOrderBidsByItemDto extends PaginationParam {
 
   @IsEnum(OrderStatus)
   @IsOptional()
-  @Field(() => [OrderStatus])
+  @Field(() => [OrderStatus], { nullable: true })
   status?: OrderStatus[];
 }

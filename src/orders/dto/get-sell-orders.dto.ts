@@ -7,6 +7,6 @@ import { PaginationParam } from './pagination.dto';
 export class GetSellOrdersDto extends PaginationParam {
   @IsEnum(OrderStatus)
   @IsOptional()
-  @Field(() => [OrderStatus])
-  status?: OrderStatus;
+  @Field(() => [OrderStatus], { nullable: true })
+  status?: OrderStatus[];
 }

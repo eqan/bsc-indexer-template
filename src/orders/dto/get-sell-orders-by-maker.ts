@@ -10,13 +10,13 @@ import { PaginationParam } from './pagination.dto';
 
 @InputType()
 export class GetSellOrdersByMakerDto extends PaginationParam {
-  @IsEthereumAddress()
+  // @IsEthereumAddress()
   @IsNotEmpty()
   @Field(() => [String])
   maker: string[];
 
   @IsEnum(OrderStatus)
   @IsOptional()
-  @Field(() => [OrderStatus])
+  @Field(() => [OrderStatus], { nullable: true })
   status?: OrderStatus[];
 }

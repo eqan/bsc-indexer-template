@@ -224,7 +224,7 @@ export class OrdersService {
           contract: dto.contract,
           tokenId: dto.tokenId,
           side: OrderSide.sell,
-          status: Not(In([OrderStatus.Filled, OrderStatus.Cancelled])),
+          status: Not(In([OrderStatus.FILLED, OrderStatus.CANCELLED])),
           onchain: false,
         },
       });
@@ -253,7 +253,7 @@ export class OrdersService {
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
-            status: In(rest?.status),
+            // status: In(rest?.status),
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -280,7 +280,8 @@ export class OrdersService {
           where: {
             maker: In(rest.maker),
             side: OrderSide.sell,
-            status: In(rest?.status),
+            // status: In(rest?.status), TODO
+            status: In([OrderStatus.FILLED, OrderStatus.CANCELLED]),
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -308,11 +309,11 @@ export class OrdersService {
           where: {
             contract,
             tokenId,
-            maker: In(rest?.maker),
             side: OrderSide.buy,
             start: rest?.start,
             end: rest?.end,
-            status: In(rest?.status),
+            ...(rest?.maker && { maker: In(rest?.maker) }),
+            // status: In(rest?.status),
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -340,9 +341,9 @@ export class OrdersService {
           where: {
             contract,
             tokenId,
-            maker: In(rest?.maker),
             side: OrderSide.sell,
-            status: In(rest?.status),
+            ...(rest?.maker && { maker: In(rest?.maker) }),
+            // status: In(rest?.status),
           },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
@@ -367,7 +368,7 @@ export class OrdersService {
       const [items, total] = await Promise.all([
         this.ordersRepo.find({
           where: {
-            status: rest?.status,
+            // status: In(rest?.status),
             side: OrderSide.sell,
           },
           order: {
@@ -378,7 +379,7 @@ export class OrdersService {
         }),
         this.ordersRepo.count({
           where: {
-            status: rest?.status,
+            // status: In(rest?.status),
             side: OrderSide.sell,
           },
         }),

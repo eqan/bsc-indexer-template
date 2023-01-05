@@ -272,17 +272,22 @@ enum ORDER_TYPES {
 }
 
 enum OrderStatus {
-  Active
-  Filled
-  Historical
-  InActive
-  Cancelled
+  ACTIVE
+  FILLED
+  HISTORICAL
+  INACTIVE
+  CANCELLED
 }
 
 """A simple Data Parser"""
 scalar DATA_SCALAR
 
 type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
+type GetAllSellOrders {
   items: [Orders!]!
   total: Int!
 }
@@ -552,7 +557,7 @@ type Query {
   GetSellOrdersByMaker(SellOrdersByMakerInput: GetSellOrdersByMakerDto = {}): [Orders!]!
   GetOrderBidsByItem(OrderBidsByItemInput: GetOrderBidsByItemDto = {}): [Orders!]!
   GetSellOrdersByItem(SellOrdersByItemInput: GetSellOrdersByItemDto = {}): [Orders!]!
-  GetSellOrders(SellOrdersInput: GetSellOrdersDto = {}): [Orders!]!
+  GetSellOrders(SellOrdersInput: GetSellOrdersDto = {}): GetAllSellOrders!
   usdPrices: [UsdPrice!]!
   usdPrice(filterUsdPriceInput: FilterUsdPriceInput!): UsdPrice!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
@@ -586,38 +591,38 @@ input GetOrderBidsByMakerDto {
   maker: [String!]!
   start: Float
   end: Float
-  status: [OrderStatus!]!
+  status: [OrderStatus!]
 }
 
 input GetSellOrdersByMakerDto {
   page: Float
   limit: Float
   maker: [String!]!
-  status: [OrderStatus!]!
+  status: [OrderStatus!]
 }
 
 input GetOrderBidsByItemDto {
   page: Float
   limit: Float
   itemId: String!
-  maker: [String!]!
+  maker: [String!]
   start: Float
   end: Float
-  status: [OrderStatus!]!
+  status: [OrderStatus!]
 }
 
 input GetSellOrdersByItemDto {
   page: Float
   limit: Float
-  maker: [String!]!
+  maker: [String!]
   itemId: String!
-  status: [OrderStatus!]!
+  status: [OrderStatus!]
 }
 
 input GetSellOrdersDto {
   page: Float
   limit: Float
-  status: [OrderStatus!]!
+  status: [OrderStatus!]
 }
 
 input FilterUsdPriceInput {

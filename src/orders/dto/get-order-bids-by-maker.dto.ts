@@ -11,7 +11,6 @@ import { PaginationParam } from './pagination.dto';
 
 @InputType()
 export class GetOrderBidsByMakerDto extends PaginationParam {
-  @IsEthereumAddress()
   @IsNotEmpty()
   @Field(() => [String])
   maker: string[];
@@ -28,6 +27,6 @@ export class GetOrderBidsByMakerDto extends PaginationParam {
 
   @IsEnum(OrderStatus)
   @IsOptional()
-  @Field(() => [OrderStatus])
+  @Field(() => [OrderStatus], { nullable: true })
   status?: OrderStatus[];
 }
