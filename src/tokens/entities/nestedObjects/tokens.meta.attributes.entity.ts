@@ -35,7 +35,7 @@ export class TokensAttributes {
   @Column('text', { nullable: true })
   value: string;
 
-  @ManyToOne(() => TokensMeta, (meta) => meta.id)
+  @ManyToOne(() => TokensMeta, (meta) => meta.attributes, { cascade: true })
   // @JoinColumn({ name: 'id' })
   tokensMeta: TokensMeta;
 }

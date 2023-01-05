@@ -286,7 +286,6 @@ type Meta {
   originalMetaUri: String
   externalUri: String
   rightsUri: String
-  attributeId: String
   attributes: [Attributes!]
 }
 

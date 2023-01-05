@@ -75,17 +75,17 @@ export class TokensMeta {
   @OneToOne(() => Tokens, (token) => token.Meta)
   token: Tokens;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  attributeId?: string;
+  // @Field({ nullable: true })
+  // @Column({
+  //   type: 'text',
+  //   nullable: true,
+  // })
+  // attributeId?: string;
 
   @IsOptional()
   @Type(() => TokensAttributes)
   @Field(() => [TokensAttributes], { nullable: true })
-  @OneToMany(() => TokensAttributes, (attributes) => attributes.id)
-  @JoinColumn({ name: 'attributeId' })
+  @OneToMany(() => TokensAttributes, (attributes) => attributes.tokensMeta)
+  // @JoinColumn({ name: 'attributeId' })
   attributes: TokensAttributes[];
 }

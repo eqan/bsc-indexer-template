@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +10,7 @@ import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
+import { TokensAttributes } from './entities/nestedObjects/tokens.meta.attributes.entity';
 import { Tokens } from './entities/tokens.entity';
 
 @Injectable()
@@ -18,6 +18,8 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
+    @InjectRepository(TokensAttributes)
+    private tokenAttributeRepo: Repository<TokensAttributes>,
     private collectionsService: CollectionsService, // private orderMatchEventService: OrderMatchEventService, // private readonly moduleRef: ModuleRef, // @Inject(OrderMatchEventService) // private orderMatchEventService: OrderMatchEventService,
   ) {}
 
@@ -29,7 +31,7 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
-      // console.log(restParams);
+      console.log(restParams, 'restParams');
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
 
@@ -38,6 +40,14 @@ export class TokensService {
 
       // console.log(token);
       await token.save();
+      if (token && token.Meta && token.Meta?.attributes.length !== 0) {
+        const attributes = token.Meta?.attributes.map((attribute) => ({
+          ...attribute,
+          tokensMeta: token.Meta,
+        }));
+        await this.tokenAttributeRepo.save(attributes);
+      }
+
       console.log('This is: ', token.Meta.attributes);
       // console.log(token);
       delete token.collection;
@@ -65,7 +75,7 @@ export class TokensService {
           order: {
             mintedAt: 'ASC' || 'DESC',
           },
-          relations: { Meta: true },
+          relations: { Meta: { attributes: true } },
           skip: (page - 1) * limit || 0,
           take: limit || 10,
         }),
