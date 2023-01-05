@@ -203,7 +203,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   async getCollectionFloorPrice(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<number> {
+  ): Promise<number | null> {
     try {
       return await this.collectionsService.getOrderCollectionFloorPrice(
         collectionId,

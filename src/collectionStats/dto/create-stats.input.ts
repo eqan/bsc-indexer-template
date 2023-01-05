@@ -8,12 +8,10 @@ export class CreateStatsInput {
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   @Field(() => Float, { nullable: true })
   dayVolume: number;
 
   @IsString()
-  @IsNotEmpty()
   @Field(() => Float, { nullable: true })
   floorPrice: number;
 }

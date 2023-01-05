@@ -194,7 +194,9 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Average Price Of Collection
    */
-  async getOrderCollectionFloorPrice(collectionId: string): Promise<number> {
+  async getOrderCollectionFloorPrice(
+    collectionId: string,
+  ): Promise<number | null> {
     try {
       let floorPrice = Number.MAX_SAFE_INTEGER;
       const { items } = await this.orderMatchEventService.show(collectionId);
@@ -202,6 +204,7 @@ export class CollectionsService {
         const tempOrderPrice = parseFloat(order.price);
         if (tempOrderPrice < floorPrice) floorPrice = tempOrderPrice;
       });
+      if (floorPrice === Number.MAX_SAFE_INTEGER) return null;
       return floorPrice;
     } catch (error) {
       throw new NotFoundException(error);

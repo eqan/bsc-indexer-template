@@ -657,7 +657,7 @@ type Mutation {
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
-  CreateUpdateStats(CreateUpdateStatsInput: String!): Stats!
+  CreateUpdateStats: Stats
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType

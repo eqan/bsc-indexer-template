@@ -5,6 +5,7 @@ import { FilterStatsDto } from './dto/filter-stats.dto';
 import { GetAllStats } from './dto/get-all-stats.dto';
 import { Stats } from './entities/stats.entity';
 import { CollectionsResolver } from 'src/collections/collections.resolver';
+import { Cron } from '@nestjs/schedule';
 
 @Resolver(() => Stats)
 export class StatsResolver {
@@ -13,20 +14,31 @@ export class StatsResolver {
     private readonly collectionsResolver: CollectionsResolver,
   ) {}
 
-  @Mutation(() => Stats, { name: 'CreateUpdateStats' })
-  async create(
-    @Args('CreateUpdateStatsInput')
-    id: string,
-  ): Promise<Stats> {
-    try {
-      const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
+  @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
+  @Cron('0 0 * * *')
+  private async create(): Promise<void> {
+    const { items } = await this.collectionsResolver.index({
+      page: 0,
+      limit: 0,
+    });
+    items.map(async (item) => {
+      const id = item.id;
       const floorPrice = await this.collectionsResolver.getCollectionFloorPrice(
         id,
       );
+      const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
       return await this.statsService.create({ id, floorPrice, dayVolume });
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
+    });
+    // results = await Promise.all(results);
+    // console.log(results);
+    // results.map((result) => {
+    //   try {
+    //     finalResults.push(this.statsService.create(result));
+    //   } catch (error) {
+    //     throw new BadRequestException(error);
+    //   }
+    // });
+    // finalResults = await Promise.all(finalResults);
   }
 
   /**

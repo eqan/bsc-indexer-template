@@ -23,12 +23,12 @@ export abstract class Stats extends BaseEntity {
   id: string;
 
   @Field({ nullable: true })
-  @Column('int')
-  dayVolume: number;
+  @Column('int', { nullable: true })
+  dayVolume?: number;
 
   @Field({ nullable: true })
-  @Column('float')
-  floorPrice: number;
+  @Column('float', { nullable: true })
+  floorPrice?: number;
 
   @Field(() => Collections)
   @OneToOne(() => Collections, (collection) => collection.id)
