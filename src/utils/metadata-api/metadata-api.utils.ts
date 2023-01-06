@@ -80,9 +80,8 @@ export class MetadataApi {
             Meta?.attributes?.map((attribute: any) => ({
               tokenId,
               collectionId,
-              key: attribute?.trait_type || '',
-              value: attribute?.value || '',
-              // type: TokenType.BEP721, TODO:NEED TO DISCUSS
+              key: attribute?.trait_type.trim() || '',
+              value: attribute?.value.trim() || '',
               format: attribute?.display_type || '',
             })) || [],
           Content: Meta?.image

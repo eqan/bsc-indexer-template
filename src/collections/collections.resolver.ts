@@ -20,6 +20,7 @@ import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
+import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -131,51 +132,21 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Return unique propeties and sub properites of a Collection
-   * @param collectionId
+   * @param FilterTokenAttributesDto
    * @returns Parent Properties & Sub Properties
    */
   @Query(() => CollectionUniqueItems, { name: 'GetCollectionUniqueItems' })
   async getCollectionUniqueItems(
-    @Args('collectionId')
-    collectionId: string,
+    @Args('FilterTokenAttributesDto')
+    filterTokenAttributesDto: FilterTokenAttributesDto,
   ): Promise<CollectionUniqueItems> {
-    const { items } = await this.tokenService.index({ contract: collectionId });
-    const uniqueParentItemsList = [];
-    const uniqueSubTypeItemsList = [];
-    items.map((item) => {
-      const attributes = item.Meta.attributes;
-      attributes.map((attribute) => {
-        attribute['key'] = attribute['key'].trim();
-        attribute['value'] = attribute['value'].trim();
-        const parentIndex = uniqueParentItemsList.findIndex(
-          (obj) => obj['key'] === attribute['key'],
-        );
-        if (parentIndex !== -1) {
-          uniqueParentItemsList[parentIndex]['count'] += 1;
-        } else {
-          uniqueParentItemsList.push({ key: attribute['key'], count: 1 });
-        }
-
-        const subTypeIndex = uniqueSubTypeItemsList.findIndex(
-          (obj) =>
-            obj['key'] === attribute['value'] &&
-            obj['parent'] === attribute['key'],
-        );
-        if (subTypeIndex !== -1) {
-          uniqueSubTypeItemsList[subTypeIndex]['count'] += 1;
-        } else {
-          uniqueSubTypeItemsList.push({
-            key: attribute['value'],
-            count: 1,
-            parent: attribute['key'],
-          });
-        }
-      });
-    });
-    return {
-      Parent: uniqueParentItemsList,
-      ParentSubTypes: uniqueSubTypeItemsList,
-    };
+    try {
+      return await this.tokenService.getTokenAttributesById(
+        filterTokenAttributesDto,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**

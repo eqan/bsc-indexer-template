@@ -375,7 +375,6 @@ type Meta {
   originalMetaUri: String
   externalUri: String
   rightsUri: String
-  attributeId: String
   attributes: [Attributes!]
 }
 
@@ -591,7 +590,7 @@ input CollectionMetaContentInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
-  GetCollectionUniqueItems(collectionId: String!): CollectionUniqueItems!
+  GetCollectionUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems!
   GetCollectionFloorPrice(collectionId: String!): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
@@ -621,6 +620,11 @@ input FilterDto {
   id: String
   name: String
   owner: String
+}
+
+input FilterTokenAttributesDto {
+  tokenId: String
+  collectionId: String
 }
 
 input FilterOrderDto {
