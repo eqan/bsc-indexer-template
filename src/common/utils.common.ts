@@ -158,3 +158,7 @@ export const checkItemIdForamt = (
 //converts array items to lowercase
 export const arrayItemsToLowerCase = (items: string[]): string[] =>
   items.map((item) => item.toLowerCase());
+
+//checks if the input enum is valid or not
+export const isEnumValid = <T>(value: string, _enum: T) =>
+  Object.values(_enum)?.includes(value);

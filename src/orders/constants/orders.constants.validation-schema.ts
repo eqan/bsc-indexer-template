@@ -136,6 +136,10 @@ export const assetTypeValidationSchema = {
   ],
 };
 
+const throwCustomError = (message: string) => {
+  throw new Error(message);
+};
+
 /**
  * validate union type json schema
  * @param value json to validate
@@ -154,6 +158,6 @@ export const validate = (value: unknown, schema: any): object | never => {
   });
   const validate = ajv.compile(schema);
   const valid = validate(value);
-  if (!valid) throw new Error(validate.errors[0].message);
+  if (!valid) throwCustomError(validate.errors[0].message);
   return value;
 };
