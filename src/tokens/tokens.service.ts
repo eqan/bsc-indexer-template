@@ -5,13 +5,15 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
-import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
+import { FilterTokenAttributesDto } from './dto/filter-token-attributes.dto';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { TokensAttributes } from './entities/nestedObjects/tokens.meta.attributes.entity';
 import { Tokens } from './entities/tokens.entity';
+import { Repository } from 'typeorm';
+import { CollectionUniqueItems } from 'src/collections/dto/get-collectionUniqueItems.dto';
 
 @Injectable()
 export class TokensService {
@@ -31,14 +33,13 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
-      console.log(restParams, 'restParams');
+      // console.log(restParams, 'restParams');
       const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
 
       token.collection = collection;
       token.id = collectionId + ':' + token.id;
 
-      // console.log(token);
       await token.save();
       if (token && token.Meta && token.Meta?.attributes.length !== 0) {
         const attributes = token.Meta?.attributes.map((attribute) => ({
@@ -48,8 +49,6 @@ export class TokensService {
         await this.tokenAttributeRepo.save(attributes);
       }
 
-      console.log('This is: ', token.Meta.attributes);
-      // console.log(token);
       delete token.collection;
       return token;
     } catch (error) {
@@ -59,7 +58,7 @@ export class TokensService {
 
   /**
    * Get All Tokens
-   * @@params No Params
+   * @@params FilterTokenDto
    * @returns Array of Tokens and Total Number of Tokens
    */
   async index(filterTokenDto: FilterTokenDto): Promise<GetAllTokens> {
@@ -88,6 +87,68 @@ export class TokensService {
         }),
       ]);
       return { items, total };
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
+
+  /**
+   * Get All Tokens Attributes
+   * @@params k
+   * @returns Array of Tokens and Total Number of Tokens
+   */
+  async getTokenAttributesById(
+    filterTokenAttributesDto: FilterTokenAttributesDto,
+  ): Promise<CollectionUniqueItems> {
+    try {
+      const { collectionId, tokenId } = filterTokenAttributesDto;
+      const parentQueryBuilder = await this.tokenAttributeRepo
+        .createQueryBuilder('TokensAttributes')
+        .where('TokensAttributes.collectionId = :collectionId', {
+          collectionId,
+        })
+        .select('TokensAttributes.key as key')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('key');
+
+      const parentSubTypesQueryBuilder = await this.tokenAttributeRepo
+        .createQueryBuilder('TokensAttributes')
+        .where('TokensAttributes.collectionId = :collectionId', {
+          collectionId,
+        })
+        .select('DISTINCT TokensAttributes.key as parent')
+        .addSelect('TokensAttributes.value as value')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('parent, value');
+
+      if (collectionId) {
+        parentQueryBuilder.andWhere(
+          'TokensAttributes.collectionId = :collectionId',
+          {
+            collectionId,
+          },
+        );
+        parentSubTypesQueryBuilder.andWhere(
+          'TokensAttributes.collectionId = :collectionId',
+          {
+            collectionId,
+          },
+        );
+      } else if (tokenId) {
+        parentQueryBuilder.andWhere('TokensAttributes.tokenId = :tokenId', {
+          tokenId,
+        });
+        parentSubTypesQueryBuilder.andWhere(
+          'TokensAttributes.tokenId = :tokenId',
+          {
+            tokenId,
+          },
+        );
+      }
+      const parentValues = await parentQueryBuilder.getRawMany();
+      const parentSubTypesValues =
+        await parentSubTypesQueryBuilder.getRawMany();
+      return { Parent: parentValues, ParentSubTypes: parentSubTypesValues };
     } catch (err) {
       throw new BadRequestException(err);
     }

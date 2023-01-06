@@ -335,7 +335,7 @@ type GetAllCollections {
 }
 
 type DynamicParentSubTypeData {
-  key: String!
+  value: String!
   count: Int!
   parent: String!
 }

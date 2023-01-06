@@ -18,7 +18,6 @@ import { FilterDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { DynamicParentData } from './dto/nestedObjects/dynamic-ParentType.dto';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 
 @Resolver(() => Collections)
@@ -139,43 +138,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     @Args('collectionId')
     collectionId: string,
   ): Promise<CollectionUniqueItems> {
-    const { items } = await this.tokenService.index({ contract: collectionId });
-    const uniqueParentItemsList = [];
-    const uniqueSubTypeItemsList = [];
-    items.map((item) => {
-      const attributes = item.Meta.attributes;
-      attributes.map((attribute) => {
-        attribute['key'] = attribute['key'].trim();
-        attribute['value'] = attribute['value'].trim();
-        const parentIndex = uniqueParentItemsList.findIndex(
-          (obj) => obj['key'] === attribute['key'],
-        );
-        if (parentIndex !== -1) {
-          uniqueParentItemsList[parentIndex]['count'] += 1;
-        } else {
-          uniqueParentItemsList.push({ key: attribute['key'], count: 1 });
-        }
-
-        const subTypeIndex = uniqueSubTypeItemsList.findIndex(
-          (obj) =>
-            obj['key'] === attribute['value'] &&
-            obj['parent'] === attribute['key'],
-        );
-        if (subTypeIndex !== -1) {
-          uniqueSubTypeItemsList[subTypeIndex]['count'] += 1;
-        } else {
-          uniqueSubTypeItemsList.push({
-            key: attribute['value'],
-            count: 1,
-            parent: attribute['key'],
-          });
-        }
+    try {
+      return await this.tokenService.getTokenAttributesById({
+        collectionId,
       });
-    });
-    return {
-      Parent: uniqueParentItemsList,
-      ParentSubTypes: uniqueSubTypeItemsList,
-    };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   /**
