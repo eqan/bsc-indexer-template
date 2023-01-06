@@ -1,4 +1,5 @@
-import * as Ajv from 'ajv';
+import { BadRequestException } from '@nestjs/common';
+import Ajv from 'ajv';
 //graphql union type field validation schema using ajv
 const Part = {
   type: 'object',
@@ -10,10 +11,19 @@ const Part = {
   required: ['account', 'value'],
 };
 
+enum DataType {
+  V1 = 'V1',
+  V2 = 'V2',
+  ETH_RARIBLE_V2 = 'ETH_RARIBLE_V2',
+  V3_SELL = 'V3_SELL',
+  V3_BUY = 'V3_BUY',
+}
+
 export const dataValidationSchema = {
   type: 'object',
   discriminator: { propertyName: 'dataType' },
   required: ['dataType'],
+  // errorMessage: 'should be an object with an integer property foo only',
   oneOf: [
     {
       properties: {
@@ -26,6 +36,7 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees'],
+      errorMessage: 'should be an object with an integer property foo only',
     },
     {
       properties: {
@@ -39,6 +50,10 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees', 'isMakeFill'],
+      errorMessage: {
+        // In here must be errorMessage not errorMessages
+        type: 'foo must be an Integer', // Your Custom Error Message
+      },
     },
     {
       properties: {
@@ -51,6 +66,7 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees'],
+      errorMessage: 'should be an object with an integer property foo only',
     },
     {
       properties: {
@@ -63,6 +79,7 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['maxFeesBasePoint'],
+      errorMessage: 'should be an object with an integer property foo only',
     },
     {
       properties: {
@@ -74,8 +91,16 @@ export const dataValidationSchema = {
         marketplaceMarker: { type: 'string' },
       },
       additionalProperties: false,
+      errorMessage: 'should be an object with an integer property foo only',
     },
   ],
+  errorMessages: {
+    type: 'should be an object',
+    required: `should have property dataType Enum of type ${Object.values(
+      DataType,
+    )}`,
+    additionalProperties: 'should not have properties other than dataType',
+  },
 };
 
 export const assetTypeValidationSchema = {
@@ -136,19 +161,15 @@ export const assetTypeValidationSchema = {
   ],
 };
 
-const throwCustomError = (message: string) => {
-  throw new Error(message);
-};
-
 /**
  * validate union type json schema
  * @param value json to validate
  * @param schema to match value with
  */
 
-export const validate = (value: unknown, schema: any): object | never => {
-  if (typeof value !== 'object') {
-    throw new Error('invalid input type');
+export const validate = (data: unknown, schema: any): object | never => {
+  if (typeof data !== 'object') {
+    throw new Error('invalid input type must be of type object');
   }
   const ajv = new Ajv({
     formats: {
@@ -157,7 +178,9 @@ export const validate = (value: unknown, schema: any): object | never => {
     allErrors: true,
   });
   const validate = ajv.compile(schema);
-  const valid = validate(value);
-  if (!valid) throwCustomError(validate.errors[0].message);
-  return value;
+  const valid = validate(data);
+  // const output = betterAjvErrors(schema, data, validate.errors);
+  if (!valid) throw new BadRequestException(validate.errors);
+  // if (!valid) throw new BadRequestException(output);
+  return data;
 };
