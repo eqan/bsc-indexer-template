@@ -19,6 +19,7 @@ import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
+import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -135,13 +136,13 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    */
   @Query(() => CollectionUniqueItems, { name: 'GetCollectionUniqueItems' })
   async getCollectionUniqueItems(
-    @Args('collectionId')
-    collectionId: string,
+    @Args('FilterTokenAttributesDto')
+    filterTokenAttributesDto: FilterTokenAttributesDto,
   ): Promise<CollectionUniqueItems> {
     try {
-      return await this.tokenService.getTokenAttributesById({
-        collectionId,
-      });
+      return await this.tokenService.getTokenAttributesById(
+        filterTokenAttributesDto,
+      );
     } catch (error) {
       throw new BadRequestException(error);
     }

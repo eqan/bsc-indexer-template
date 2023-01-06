@@ -540,7 +540,7 @@ input AssetInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
-  GetCollectionUniqueItems(collectionId: String!): CollectionUniqueItems!
+  GetCollectionUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems!
   GetCollectionAveragePrice(collectionId: String!): Float!
   GetCollectionFloorPrice(collectionId: String!): Float!
   GetCollectionVolume(collectionId: String!): Float!
@@ -566,6 +566,11 @@ input FilterDto {
   id: String
   name: String
   owner: String
+}
+
+input FilterTokenAttributesDto {
+  tokenId: String
+  collectionId: String
 }
 
 input FilterOrderDto {
