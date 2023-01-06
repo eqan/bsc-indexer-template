@@ -13,11 +13,14 @@ import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto'
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { OrderMatchEvent } from 'src/events/entities/events.entity.order-match-events';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>, // @Inject(forwardRef(() => MetadataApi)) // private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
+    @InjectRepository(OrderMatchEvent)
+    private ordersRepo: Repository<OrderMatchEvent>,
     private readonly orderMatchEventService: OrderMatchEventService,
   ) {
     // sample function to use JsonRpcProvider and getting blockNumber
@@ -176,14 +179,13 @@ export class CollectionsService {
    */
   async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
     try {
-      let sum = 0;
-      const { items, total } = await this.orderMatchEventService.show(
-        collectionId,
-      );
-      items.map((order) => {
-        if (order.price) sum += parseFloat(order.price);
-      });
-      return sum / total;
+      return await this.ordersRepo
+        .createQueryBuilder('OrderMatchEvent')
+        .select('AVG(OrderMatchEvent.price)', 'avg_price')
+        .where('OrderMatchEvent.collectionId = :collectionId', {
+          collectionId,
+        })
+        .getRawOne();
     } catch (error) {
       throw new NotFoundException(error);
     }
