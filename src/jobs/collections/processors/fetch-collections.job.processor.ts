@@ -34,13 +34,12 @@ export class FetchCollectionsProcessor {
           collectionId,
         );
         const token = await this.tokensService.tokenExistOrNot(tokenId);
-
+        // console.log(token, 'created Token');
         if (!collection) {
           const response = await this.metadataApi.getCollectionMetadata(
             collectionId,
             collectionType,
           );
-          // console.log(response);
           await this.collectionsService.create(response);
         }
 
@@ -75,6 +74,8 @@ export class FetchCollectionsProcessor {
 
   @OnQueueError()
   onError(error: Error, job: Job) {
-    this.logger.error(`Job ${job.id} failed fetching collections: ${error}`);
+    this.logger.error(
+      `Job ${job.data.jobId} failed fetching collections: ${error}`,
+    );
   }
 }

@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Collections } from 'src/collections/entities/collections.entity';
+import { Timestamps } from 'src/core/embed/timestamps.embed';
 import {
-  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -14,12 +14,9 @@ import { CreatorRoyalty } from '../dto/nestedObjectDto/creator.dto';
 import { TokenType } from './enum/token.type.enum';
 import { TokensMeta } from './nestedObjects/tokens.meta.entity';
 
-/**Create tokens table in database
- *
- */
 @ObjectType()
 @Entity('Tokens')
-export class Tokens extends BaseEntity {
+export class Tokens extends Timestamps {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -60,13 +57,6 @@ export class Tokens extends BaseEntity {
     default: null,
   })
   mintedAt: Date;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'timestamptz',
-    default: null,
-  })
-  lastUpdatedAt: Date;
 
   @Field({ nullable: true })
   @Column({

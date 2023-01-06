@@ -7,10 +7,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { OrdersService } from 'src/orders/orders.service';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
+import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -18,8 +22,11 @@ import { Collections } from './entities/collections.entity';
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    @Inject(forwardRef(() => MetadataApi))
+    @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
+    private readonly ordersService: OrdersService,
+    @Inject(forwardRef(() => TokensService))
+    private readonly tokenService: TokensService,
   ) {}
 
   /**
@@ -92,6 +99,11 @@ export class CollectionsService {
     }
   }
 
+  /**
+   * Check if collection exist or not
+   * @param id
+   * @returns Collection against Provided Id
+   */
   async collectionExistOrNot(id: string): Promise<Collections> {
     try {
       return await this.collectionsRepo.findOne({ where: { id } });
@@ -141,6 +153,29 @@ export class CollectionsService {
       return ids;
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Filtered Tokens by Price Range
+   * @param FilterTokensByPriceRangeDto
+   * @returns Sorted list of Tokens
+   */
+  async filterTokensByPriceRange(
+    filterTokensDto: FilterTokensByPriceRangeDto,
+  ): Promise<Tokens[]> {
+    try {
+      const items = await this.ordersService.filterByPrice(filterTokensDto);
+      const tokens: Tokens[] = [];
+      for (const item of items) {
+        const token = await this.tokenService.find(
+          `${item.contract}:${item.tokenId}`,
+        );
+        if (token) tokens.push(token);
+      }
+      return tokens;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }

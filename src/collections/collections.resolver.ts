@@ -15,6 +15,7 @@ import { CollectionsService } from './collections.service';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { DeleteCollectionsInput } from './dto/delete-collections.input';
 import { FilterDto } from './dto/filter.collections.dto';
+import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
@@ -125,5 +126,25 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     filterTokenDto.contract = collectionId;
     const { items } = await this.tokenService.index(filterTokenDto);
     return items;
+  }
+
+  /**
+   * Sort and Filter the collection tokens for provided range
+   * @param FilterTokensByPriceRangeDto
+   * @returns Tokens
+   */
+  @Mutation(() => [Tokens], { name: 'filterTokensByPriceRange' })
+  async filterTokensByPriceRange(
+    @Args('FilterTokensByPriceRangeDto')
+    filterTokensByPriceRangeDto: FilterTokensByPriceRangeDto,
+  ) {
+    try {
+      const tokens = await this.collectionsService.filterTokensByPriceRange(
+        filterTokensByPriceRangeDto,
+      );
+      return tokens;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

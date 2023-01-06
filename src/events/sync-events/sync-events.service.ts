@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { lowerCase } from 'src/common/utils.common';
 import { getEventData, parseEvent } from '../data';
-import { ERC1155Handler } from '../handlers/erc721/erc1155/erc1155.handler';
+import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
+import { OrderMatchHandler } from '../handlers/order/events.order.handler';
 import { EnhancedEvent } from '../types/events.types';
 @Injectable()
 export class SyncEventsService {
@@ -10,46 +12,33 @@ export class SyncEventsService {
     private readonly rpcProvider: RpcProvider,
     private readonly erc721Handler: ERC721Handler,
     private readonly erc1155Handler: ERC1155Handler,
+    private readonly orderMatchHandler: OrderMatchHandler,
   ) {}
   private readonly logger = new Logger('Sync Events');
 
-  syncEvents = async (
-    fromBlock: number,
-    toBlock: number,
-    // options?: {
-    //   // When backfilling, certain processes will be disabled
-    //   backfill?: boolean;
-    //   syncDetails:
-    //     | {
-    //         method: 'events';
-    //         events: EventDataKind[];
-    //       }
-    //     | {
-    //         method: 'address';
-    //       };
-    // },
-  ) => {
+  syncEvents = async (fromBlock: number, toBlock: number) => {
     try {
       const filter: { fromBlock: number; toBlock: number } = {
         fromBlock,
         toBlock,
       };
-
       const logs = await this.rpcProvider.baseProvider.getLogs(filter);
 
       for (const log of logs) {
         const availableEventData = getEventData([
           'erc721-transfer',
           'erc1155-transfer-single',
-          // 'erc721/1155-approval-for-all',
+          'erc721/1155-approval-for-all',
           'erc1155-transfer-batch',
+          'order-match',
+          'order-cancel',
         ]);
 
         const eventData = availableEventData.find(
           ({ addresses, topic, numTopics }) =>
             log.topics[0] === topic &&
             log.topics.length === numTopics &&
-            (addresses ? addresses[log.address.toLowerCase()] : true),
+            (addresses ? addresses[lowerCase(log.address)] : true),
         );
 
         if (eventData) {
@@ -63,7 +52,6 @@ export class SyncEventsService {
             log,
           };
           switch (eventData?.kind) {
-            // NFT Collections
             case 'erc721-transfer': {
               await this.erc721Handler.handleTransferEvent(enhancedEvents);
               await this.erc721Handler.handleActivity(enhancedEvents);
@@ -83,6 +71,14 @@ export class SyncEventsService {
             }
             case 'erc721/1155-approval-for-all': {
               await this.erc721Handler.handleApprovalForAll(enhancedEvents);
+              break;
+            }
+            case 'order-match': {
+              await this.orderMatchHandler.handleMatchOrder(enhancedEvents);
+              break;
+            }
+            case 'order-cancel': {
+              await this.orderMatchHandler.handleCancelOrder(enhancedEvents);
               break;
             }
             default:

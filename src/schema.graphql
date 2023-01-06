@@ -23,7 +23,7 @@ enum OrderTypeEnum {
 
 type Make {
   value: Int!
-  type: MakeType!
+  assetType: MakeType!
 }
 
 type ActivityBid {
@@ -83,13 +83,16 @@ type ActivityTransfer {
 }
 
 type Activity {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   id: String
   userId: String
   itemId: String
   collectionId: String
   type: ActivityType
   date: DateTime
-  lastUpdatedAt: DateTime
   cursor: String
   reverted: Boolean
   blockchainInfo: BlockchainInfo
@@ -206,6 +209,84 @@ type GetAllAuctions {
   total: Int!
 }
 
+type UsdPrice {
+  id: String!
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
+"""A simple Asset Parser"""
+scalar ASSET_SCALAR
+
+type Orders {
+  createdAt: DateTime
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
+  orderId: String!
+  fill: String!
+  kind: OrderKind
+  side: OrderSide
+  type: ORDER_TYPES
+  status: OrderStatus!
+  makeStock: String
+  cancelled: Boolean
+  maker: String
+  make: Asset!
+  take: Asset
+  salt: String
+  data: DATA_SCALAR!
+  start: Float
+  end: Float
+  optionalRoyalties: Boolean
+  makePrice: Float
+  takePrice: Float
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String
+  taker: String
+  contract: String
+  tokenId: String
+}
+
+enum OrderKind {
+  SINGLE_TOKEN
+  CONTRACT_WIDE
+}
+
+enum OrderSide {
+  buy
+  sell
+}
+
+enum ORDER_TYPES {
+  V1
+  V2
+}
+
+enum OrderStatus {
+  Active
+  Filled
+  Historical
+  InActive
+  Cancelled
+}
+
+"""A simple Data Parser"""
+scalar DATA_SCALAR
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
 type MetadataAttribute {
   key: String
   value: String
@@ -256,13 +337,16 @@ type CreatorRoyalty {
 }
 
 type Tokens {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   tokenId: String!
   collectionId: String
   contract: String
   type: String
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyalty
@@ -323,41 +407,6 @@ type GetAllCollections {
   total: Int!
 }
 
-type DataOriginFee {
-  account: String!
-  value: Int!
-}
-
-type Data {
-  type: String!
-  originFees: DataOriginFee
-}
-
-type Orders {
-  orderId: String!
-  fill: Float
-  status: String
-  makeStock: Float
-  cancelled: Boolean
-  createdAt: DateTime
-  lastUpdatedAt: DateTime
-  maker: String
-  Make: Make
-  Take: Make
-  salt: String
-  data: Data
-  startedAt: DateTime
-  endedAt: DateTime
-  optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
-  makePrice: Float
-  takePrice: Float
-  makePriceUsed: Float
-  takePriceUsed: Float
-  signature: String
-  taker: String
-}
-
 type Users {
   id: String!
   userSignature: String
@@ -369,17 +418,13 @@ type Users {
   type: String
 }
 
-type SignatureType {
-  signature: String!
-}
-
-type GetAllOrders {
-  items: [Orders!]!
-  total: Int!
-}
-
 type CronType {
   isDone: Boolean!
+}
+
+type ReturnRefreshMeta {
+  collection: Collections!
+  token: Tokens!
 }
 
 type GetAllUsers {
@@ -390,11 +435,6 @@ type GetAllUsers {
 type LoggedUserOutput {
   """Generated access_token of the user"""
   access_token: String!
-}
-
-type ReturnRefreshMeta {
-  collection: Collections!
-  token: Tokens!
 }
 
 input BlockchainInfoInput {
@@ -412,7 +452,7 @@ input MakeTypeInput {
 
 input MakeInput {
   value: Int!
-  type: MakeTypeInput!
+  assetType: MakeTypeInput!
 }
 
 input ActivityMakeTypeInput {
@@ -460,6 +500,12 @@ input SellInput {
   value: Float!
 }
 
+input AssetInput {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
 input AttributeInput {
   key: String
   value: String
@@ -495,16 +541,6 @@ input CollectionMetaContentInput {
   representation: String
 }
 
-input DataOrginFeeInput {
-  account: String!
-  value: Int!
-}
-
-input DataInput {
-  type: String!
-  originFees: DataOrginFeeInput
-}
-
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
@@ -512,6 +548,8 @@ type Query {
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
+  usdPrices: [UsdPrice!]!
+  usdPrice(filterUsdPriceInput: FilterUsdPriceInput!): UsdPrice!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
   GetActivityById(GetActivityByIdInput: String!): Activity!
   LoginUser(LoginUserInput: LoginUserInput!): LoggedUserOutput!
@@ -535,6 +573,11 @@ input FilterOrderDto {
   orderId: String
   maker: String
   taker: String
+}
+
+input FilterUsdPriceInput {
+  currency: String
+  timestamp: Float!
 }
 
 input FilterActivityDto {
@@ -571,6 +614,7 @@ type Mutation {
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+  filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto!): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
@@ -578,7 +622,9 @@ type Mutation {
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
-  CreateSignature(CreatSignatureInput: CreateSignatureInput!): SignatureType!
+  createUsdPrice(createUsdPriceInput: CreateUsdPriceInput!): UsdPrice!
+  updateUsdPrice(updateUsdPriceInput: UpdateUsdPriceInput!): UsdPrice!
+  removeUsdPrice(id: String!): UsdPrice!
   CreateActivity(CreateActivityInput: CreateActivityInput!): Activity!
   DeleteActivity(DeleteActivityInput: DeleteActivityInput!): Activity
   CreateUser(CreateUserInput: CreateUserInput!): Users!
@@ -634,6 +680,20 @@ input DeleteCollectionsInput {
   id: [String!]!
 }
 
+input FilterTokensByPriceRangeDto {
+  page: Float
+  limit: Float
+  collectionId: String!
+  min: Float
+  max: Float
+  sortOrder: SortOrder!
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
 input CreateTokenInput {
   tokenId: String!
   collectionId: String!
@@ -641,7 +701,6 @@ input CreateTokenInput {
   type: TokenType!
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
   creator: CreatorRoyaltyInput
@@ -669,7 +728,6 @@ input MetaDataInput {
 
 input UpdateTokensInput {
   tokenId: String!
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
@@ -682,35 +740,30 @@ input DeleteTokensInput {
 
 input CreateOrdersInput {
   orderId: String!
-  fill: Float!
+  fill: String!
+  type: ORDER_TYPES!
+  side: OrderSide!
+  kind: OrderKind!
   status: OrderStatus!
-  makeStock: Float!
+  makeStock: String!
   cancelled: Boolean!
   createdAt: DateTime!
-  lastUpdatedAt: DateTime!
   maker: String!
-  Make: MakeInput!
-  Take: MakeInput!
+  make: AssetInput!
+  take: AssetInput!
   salt: String!
-  data: DataInput!
-  startedAt: DateTime
-  endedAt: DateTime
+  data: DATA_SCALAR!
+  start: Float
+  end: Float
   optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
   makePrice: Float
   takePrice: Float
-  makePriceUsed: Float
-  takePriceUsed: Float
-  signature: String
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String!
   taker: String
-}
-
-enum OrderStatus {
-  Active
-  Filled
-  Historical
-  InActive
-  Cancelled
+  contract: String
+  tokenId: String
 }
 
 input DeleteOrderInput {
@@ -720,14 +773,21 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
+  cancelled: Boolean!
+  onchain: Boolean!
 }
 
-input CreateSignatureInput {
-  orderId: String!
-  maker: String!
-  Make: MakeInput!
-  Take: MakeInput!
-  salt: String!
+input CreateUsdPriceInput {
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
+input UpdateUsdPriceInput {
+  currency: String
+  value: String!
+  timestamp: Float!
+  id: String!
 }
 
 input CreateActivityInput {
@@ -737,7 +797,6 @@ input CreateActivityInput {
   collectionId: String
   type: ActivityType!
   date: DateTime!
-  lastUpdatedAt: DateTime!
   cursor: String!
   reverted: Boolean!
   blockchainInfo: BlockchainInfoInput

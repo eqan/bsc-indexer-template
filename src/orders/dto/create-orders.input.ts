@@ -11,21 +11,39 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { OrderKind } from '../entities/enums/order.kind.enum';
+import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
-import { Data } from './nestedObjectsDto/data.object';
-import { Make } from './nestedObjectsDto/make.dto';
+import { Asset } from './nestedObjectsDto/asset-type.dto';
+import { CustomDataScalar } from './nestedObjectsDto/data.dto';
 
 @InputType()
 export class CreateOrdersInput {
-  @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
+  // @IsEthereumAddress({ message: 'Order ID should be an ethereum address' })
   @IsNotEmpty({ message: 'Order ID cannot be null' })
   @Field()
   orderId: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   @Field()
-  fill: number;
+  fill: string;
+
+  @IsEnum(ORDER_TYPES)
+  @IsNotEmpty()
+  @Field(() => ORDER_TYPES)
+  type: ORDER_TYPES;
+
+  @IsOptional()
+  @IsEnum(OrderSide)
+  @Field(() => OrderSide)
+  side?: OrderSide;
+
+  @IsEnum(OrderKind)
+  @IsOptional()
+  @Field(() => OrderKind)
+  kind?: OrderKind;
 
   @IsEnum(OrderStatus)
   @IsNotEmpty()
@@ -33,9 +51,9 @@ export class CreateOrdersInput {
   status: OrderStatus;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   @Field()
-  makeStock: number;
+  makeStock: string;
 
   @IsBoolean()
   @IsNotEmpty()
@@ -47,25 +65,26 @@ export class CreateOrdersInput {
   @Field()
   createdAt: Date;
 
-  @IsNotEmpty()
-  @IsDate()
-  @Field()
-  lastUpdatedAt: Date;
+  // @IsNotEmpty()
+  // @IsDate()
+  // @Field()
+  // lastUpdatedAt: Date;
 
   @IsNotEmpty()
+  @IsEthereumAddress()
   @IsEthereumAddress()
   @Field()
   maker: string;
 
   @ValidateNested()
-  @Type(() => Make)
-  @Field(() => Make)
-  Make: Make;
+  @Type(() => Asset)
+  @Field(() => Asset)
+  make: Asset;
 
   @ValidateNested()
-  @Type(() => Make)
-  @Field()
-  Take: Make;
+  @Type(() => Asset)
+  @Field(() => Asset)
+  take: Asset;
 
   @IsString()
   @IsNotEmpty()
@@ -73,29 +92,28 @@ export class CreateOrdersInput {
   salt: string;
 
   @ValidateNested()
-  @Type(() => Data)
-  @Field()
-  data: Data;
+  @Field(() => CustomDataScalar)
+  data: JSON;
 
   @IsOptional()
-  @IsDate()
+  @IsNumber()
   @Field({ nullable: true })
-  startedAt?: Date;
+  start?: number;
 
   @IsOptional()
-  @IsDate()
+  @IsNumber()
   @Field({ nullable: true })
-  endedAt?: Date;
+  end?: number;
 
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
-  @IsOptional()
-  @IsDate()
-  @Field({ nullable: true })
-  dbUpdatedAt?: Date;
+  // @IsOptional()
+  // @IsDate()
+  // @Field({ nullable: true })
+  // dbUpdatedAt?: Date;
 
   @IsOptional()
   @IsNumber()
@@ -110,20 +128,31 @@ export class CreateOrdersInput {
   @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
-  makePriceUsed?: number;
+  makePriceUsd?: number;
 
   @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
-  takePriceUsed?: number;
+  takePriceUsd?: number;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  signature?: string;
+  @IsNotEmpty()
+  @Field()
+  signature: string;
 
+  @IsEthereumAddress()
   @IsOptional()
   @IsEthereumAddress()
   @Field({ nullable: true })
   taker?: string;
+
+  @IsEthereumAddress()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  contract: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  tokenId: string;
 }

@@ -1,5 +1,6 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { DeleteOrderInput } from './dto/delete-orders.input';
@@ -20,6 +21,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param createOrdersInput
    * @returns Orders
    */
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Orders, { name: 'CreateOrder' })
   async create(
     @Args('CreateOrderInput') createOrdersInput: CreateOrdersInput,
