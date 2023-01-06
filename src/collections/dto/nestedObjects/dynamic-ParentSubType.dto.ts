@@ -5,7 +5,7 @@ import { IsString } from 'class-validator';
 export class DynamicParentSubTypeData {
   @IsString()
   @Field()
-  key: string;
+  value: string;
 
   @Field(() => Int)
   count: number;

@@ -1,60 +1,39 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
+import { OrdersService } from 'src/orders/orders.service';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
+import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
+import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { OrderMatchEvent } from 'src/events/entities/events.entity.order-match-events';
+// import { OrderMatchEvents } from 'src/events/entities/events.entity.order-match-events';
+import { SortOrder } from './enums/collections.sort-order.enum';
+import { Orders } from 'src/orders/entities/orders.entity';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    private collectionsRepo: Repository<Collections>, // @Inject(forwardRef(() => MetadataApi)) // private rpcProvider: RpcProvider, // private metadataApi: MetadataApi,
-    @InjectRepository(OrderMatchEvent)
-    private ordersRepo: Repository<OrderMatchEvent>,
-    private readonly orderMatchEventService: OrderMatchEventService,
-  ) {
-    // sample function to use JsonRpcProvider and getting blockNumber
-    // const getBlock = async () => {
-    //   try {
-    //     const blockNumber =
-    //       await this.rpcProvider.baseProvider.getBlockNumber();
-    //     console.log(blockNumber, 'logged out blockNumber');
-    //     const filter: { fromBlock: number; toBlock: number } = {
-    //       fromBlock: blockNumber,
-    //       toBlock: blockNumber,
-    //     };
-    //     const logs = await this.rpcProvider.baseProvider.getLogs(filter);
-    //     for (const log of logs) {
-    //       const availableEventData = getEventData(['erc721-transfer']);
-    //       const eventData = availableEventData.find(
-    //         ({ addresses, topic, numTopics }) =>
-    //           log.topics[0] === topic &&
-    //           log.topics.length === numTopics &&
-    //           (addresses ? addresses[lc(log.address)] : true),
-    //       );
-    //       if (eventData) {
-    //         const timestamp = (
-    //           await this.rpcProvider.baseProvider.getBlock(log.blockNumber)
-    //         ).timestamp;
-    //         const { args } = eventData.abi.parseLog(log);
-    //         const collectionId = log?.address;
-    //       }
-    //     }
-    //   } catch (e) {
-    //     console.log(e, 'error occured');
-    //   }
-    // };
-  }
+    // @InjectRepository(Orders)
+    @Inject(forwardRef(() => [MetadataApi]))
+    private collectionsRepo: Repository<Collections>,
+    // private ordersRepo: Repository<Orders>,
+    // private orderMatchEventRepo: Repository<OrderMatchEvents>,
+    private readonly ordersService: OrdersService,
+    @Inject(forwardRef(() => TokensService))
+    private readonly tokenService: TokensService,
+  ) {}
 
   /**
    * Create Collection in Database
@@ -177,19 +156,19 @@ export class CollectionsService {
    * @param ContractAddress
    * @returns  Average Price Of Collection
    */
-  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
-    try {
-      return await this.ordersRepo
-        .createQueryBuilder('OrderMatchEvent')
-        .select('AVG(OrderMatchEvent.price)', 'avg_price')
-        .where('OrderMatchEvent.collectionId = :collectionId', {
-          collectionId,
-        })
-        .getRawOne();
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
+  // async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
+  //   try {
+  //     return await this.orderMatchEventRepo
+  //       .createQueryBuilder('OrderMatchEvent')
+  //       .select('AVG(OrderMatchEvent.price)', 'avg_price')
+  //       .where('OrderMatchEvent.collectionId = :collectionId', {
+  //         collectionId,
+  //       })
+  //       .getRawOne();
+  //   } catch (error) {
+  //     throw new NotFoundException(error);
+  //   }
+  // }
 
   /**
    * Get Average Collection Price Of Tokens
@@ -200,63 +179,60 @@ export class CollectionsService {
     collectionId: string,
   ): Promise<number | null> {
     try {
-      let floorPrice = Number.MAX_SAFE_INTEGER;
-      const { items } = await this.orderMatchEventService.show(collectionId);
-      items.map((order) => {
-        const tempOrderPrice = parseFloat(order.price);
-        if (tempOrderPrice < floorPrice) floorPrice = tempOrderPrice;
-      });
-      if (floorPrice === Number.MAX_SAFE_INTEGER) return null;
-      return floorPrice;
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
-
-  /**
-   * Get The Total Eth Value For The Last 24 Hours
-   * @param ContractAddress
-   * @returns  Last 24 Hours Transactions Amount
-   */
-  async getCollectionVolume(collectionId: string): Promise<number> {
-    try {
-      const now = Date.now();
-      const oneDayAgo = now - 24 * 60 * 60 * 1000;
-      let sum = 0;
-      const { items } = await this.orderMatchEventService.show(
+      const items = await this.ordersService.filterByPrice({
         collectionId,
-        oneDayAgo,
-      );
-      items.map((order) => {
-        if (order.price) sum += parseFloat(order.price);
+        sortOrder: SortOrder.ASC,
       });
-      return sum;
+      return items[0].makePrice;
     } catch (error) {
       throw new NotFoundException(error);
     }
   }
 
-  /**
-   * Get Unique owners of a collection
-   * @param ContractAddress
-   * @returns  Number
-   */
-  async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
-    try {
-      const { items } = await this.orderMatchEventService.show(collectionId);
-      const owners = [];
-      let sum = 1;
-      items.map((order) => {
-        if (owners.includes(order.taker)) {
-          owners.push(order.taker);
-          sum++;
-        }
-      });
-      return sum;
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
+  // /**
+  //  * Get The Total Eth Value For The Last 24 Hours
+  //  * @param ContractAddress
+  //  * @returns  Last 24 Hours Transactions Amount
+  //  */
+  // async getCollectionVolume(collectionId: string): Promise<number> {
+  //   try {
+  //     const now = Date.now();
+  //     const oneDayAgo = now - 24 * 60 * 60 * 1000;
+  //     let sum = 0;
+  //     const { items } = await this.orderMatchEventService.show(
+  //       collectionId,
+  //       oneDayAgo,
+  //     );
+  //     items.map((order) => {
+  //       if (order.price) sum += parseFloat(order.price);
+  //     });
+  //     return sum;
+  //   } catch (error) {
+  //     throw new NotFoundException(error);
+  //   }
+  // }
+
+  // /**
+  //  * Get Unique owners of a collection
+  //  * @param ContractAddress
+  //  * @returns  Number
+  //  */
+  // async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
+  //   try {
+  //     const { items } = await this.orderMatchEventService.show(collectionId);
+  //     const owners = [];
+  //     let sum = 1;
+  //     items.map((order) => {
+  //       if (owners.includes(order.taker)) {
+  //         owners.push(order.taker);
+  //         sum++;
+  //       }
+  //     });
+  //     return sum;
+  //   } catch (error) {
+  //     throw new NotFoundException(error);
+  //   }
+  // }
 
   normalizeData(error: string) {
     const regex = /value \"\d+\" is out of range for type integer/;
@@ -265,6 +241,29 @@ export class CollectionsService {
       return 0;
     } else {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Filtered Tokens by Price Range
+   * @param FilterTokensByPriceRangeDto
+   * @returns Sorted list of Tokens
+   */
+  async filterTokensByPriceRange(
+    filterTokensDto: FilterTokensByPriceRangeDto,
+  ): Promise<Tokens[]> {
+    try {
+      const items = await this.ordersService.filterByPrice(filterTokensDto);
+      const tokens: Tokens[] = [];
+      for (const item of items) {
+        const token = await this.tokenService.find(
+          `${item.contract}:${item.tokenId}`,
+        );
+        if (token) tokens.push(token);
+      }
+      return tokens;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }

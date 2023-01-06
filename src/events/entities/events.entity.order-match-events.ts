@@ -1,4 +1,4 @@
-import { ObjectType } from '@nestjs/graphql';
+import { IsEthereumAddress } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -10,25 +10,8 @@ import {
 import { OrderSide } from '../enums/events.enums.order-side';
 import { BaseEventParams } from './entities.entity.base-event-params';
 
-// export type Event = {
-//   // OrderSide: OrderSide;
-//   orderId?: string;
-//   orderSide: 'buy' | 'sell';
-//   maker: string;
-//   taker: string;
-//   price: string;
-//   contract: string;
-//   tokenId: string;
-//   amount: string;
-//   currency: string;
-//   currencyPrice?: string;
-//   usdPrice?: string;
-//   baseEventParams: BaseEventParams;
-// };
-
-@ObjectType()
-@Entity('OrderMatchEvent')
-export class OrderMatchEvent extends BaseEntity {
+@Entity('OrderMatchEvents')
+export abstract class OrderMatchEvents extends BaseEntity {
   @PrimaryColumn({
     type: 'text',
     unique: true,
@@ -45,12 +28,14 @@ export class OrderMatchEvent extends BaseEntity {
   })
   orderSide: OrderSide;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
   })
   maker: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
@@ -63,6 +48,7 @@ export class OrderMatchEvent extends BaseEntity {
   })
   price: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,
@@ -81,6 +67,7 @@ export class OrderMatchEvent extends BaseEntity {
   })
   amount: string;
 
+  @IsEthereumAddress()
   @Column({
     type: 'text',
     nullable: false,

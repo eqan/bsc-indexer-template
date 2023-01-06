@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   Index,
@@ -16,7 +17,7 @@ import { CollectionsMeta } from './nestedObjects/collections.meta.entity';
 @ObjectType()
 @Entity('Collections')
 @Index(['name', 'type', 'owner'])
-export class Collections {
+export class Collections extends BaseEntity {
   @Field()
   @PrimaryColumn({
     type: 'text',

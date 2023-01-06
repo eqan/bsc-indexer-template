@@ -1,21 +1,19 @@
-import { Interface } from '@ethersproject/abi';
+import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
-import { parseUnits } from '@ethersproject/units';
+import { formatEther, formatUnits } from '@ethersproject/units';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { bn } from 'src/common/utils.common';
+import { CurrencyIface } from 'src/common/utils.common';
 import { getNetworkSettings } from 'src/config/network.config';
 import { UsdPricesService } from 'src/usd-prices/usd-prices.service';
-import { AddressZero } from '@ethersproject/constants';
+import * as Addresses from '../constants/orders.constants.addresses';
 import {
   CurrencyMetadata,
   Price,
   USDAndNativePrices,
 } from '../types/order.prices.types';
-import { result } from 'lodash';
-import * as Addresses from '../constants/orders.constants.addresses';
 
 @Injectable()
 export class OrderPrices {
@@ -29,20 +27,9 @@ export class OrderPrices {
   chainId = this.rpcProvider.chainId;
   baseProvider = this.rpcProvider.baseProvider;
 
-  USD_DECIMALS = 6;
-  // TODO: This should be a per-network setting
-  NATIVE_UNIT = bn('1000000000000000000');
-
   getCurrencyDetails = async (currencyAddress: string) => {
     try {
-      // `name`, `symbol` and `decimals` are fetched on-chain
-      const iface = new Interface([
-        'function name() view returns (string)',
-        'function symbol() view returns (string)',
-        'function decimals() view returns (uint8)',
-      ]);
-
-      //for native coins eg; eth or bnb we don't have contract address AddressZero
+      //for native coins eg; eth or bigNumberb we don't have contract address AddressZero
       // to avoid api failure for AddressZero replace it with space as per in api spec
       let name = '';
       let symbol = '';
@@ -51,7 +38,7 @@ export class OrderPrices {
       if (currencyAddress !== AddressZero) {
         const contract = new Contract(
           currencyAddress,
-          iface,
+          CurrencyIface,
           this.baseProvider,
         );
         name = await contract.name();
@@ -59,6 +46,12 @@ export class OrderPrices {
         decimals = await contract.decimals();
       }
       const metadata: CurrencyMetadata = {};
+      let result: {
+        name?: string;
+        id?: string;
+        symbol?: string;
+        image?: { large?: string };
+      };
 
       const coingeckoNetworkId = getNetworkSettings().coingecko?.networkId;
       if (coingeckoNetworkId) {
@@ -67,15 +60,8 @@ export class OrderPrices {
           currencyAddress === AddressZero ? '%20' : currencyAddress
         }`;
 
-        // console.log(url, 'url for the name symbol');
-
         const response = await lastValueFrom(this.httpService.get(url));
-        const result: {
-          name?: string;
-          id?: string;
-          symbol?: string;
-          image?: { large?: string };
-        } = response.data;
+        result = response.data;
         if (result.id) {
           metadata.coingeckoCurrencyId = result.id;
         }
@@ -113,7 +99,6 @@ export class OrderPrices {
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
-        // console.log(day, 'day logged');
 
         //TODO : CHANGE THE ID FROM ETHEREUM TO BINANCECOIN
         const url = `https://api.coingecko.com/api/v3/coins/${coingeckoCurrencyId}/history?date=${day}-${month}-${year}`;
@@ -126,27 +111,18 @@ export class OrderPrices {
           };
         } = response.data;
 
-        // console.log(result, 'result logged out');
-
         const usdPrice = result?.market_data?.current_price?.['usd'];
-        console.log(usdPrice, 'usd price');
-
         if (usdPrice) {
-          const value = parseUnits(
-            usdPrice.toFixed(this.USD_DECIMALS),
-            this.USD_DECIMALS,
-          ).toString();
-
           await this.usdPricesService.create({
             currency: currencyAddress,
             timestamp,
-            value,
+            value: usdPrice.toString(),
           });
 
           return {
             currency: currencyAddress,
             timestamp: truncatedTimestamp,
-            value,
+            value: usdPrice.toString(),
           };
         }
       } else if (
@@ -157,7 +133,7 @@ export class OrderPrices {
 
         await this.usdPricesService.create({
           currency: currencyAddress,
-          timestamp,
+          timestamp: truncatedTimestamp,
           value,
         });
 
@@ -186,10 +162,8 @@ export class OrderPrices {
         currency: currencyAddress,
         timestamp,
       });
-      // console.log(data, 'cahced data', currencyAddress, timestamp);
       return data;
     } catch (error) {
-      // console.log('failed getting cashedUsdPrice', error);
       return undefined;
     }
   };
@@ -266,33 +240,25 @@ export class OrderPrices {
 
       const currency = await this.getCurrencyDetails(currencyAddress);
       if (currency?.decimals && currencyUSDPrice) {
-        const currencyUnit = bn(10).pow(currency?.decimals);
-        usdPrice = bn(price)
-          .mul(currencyUSDPrice.value)
-          .div(currencyUnit)
-          .toString();
+        usdPrice = (
+          Number(formatUnits(price, currency.decimals)) *
+          Number(currencyUSDPrice.value)
+        ).toString();
         if (nativeUSDPrice) {
-          nativePrice = bn(price)
-            .mul(currencyUSDPrice.value)
-            .mul(this.NATIVE_UNIT)
-            .div(nativeUSDPrice.value)
-            .div(currencyUnit)
-            .toString();
+          nativePrice = formatUnits(price, currency.decimals).toString();
         }
       }
     }
 
-    //TODO: ADD BNB IN Addresses also weth equivalent for bnb
-    // // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
+    //TODO: ADD bigNumberB IN Addresses also weth equivalent for bigNumberb
+    // Make sure to handle the case where the currency is the native one (or the wrapped equivalent)
     if (
       [Addresses.Eth[this.chainId], Addresses.Weth[this.chainId]].includes(
         currencyAddress,
       )
     ) {
-      nativePrice = price;
+      nativePrice = formatEther(price).toString();
     }
-
-    // return { usdPrice };
     return { usdPrice, nativePrice };
   };
 }

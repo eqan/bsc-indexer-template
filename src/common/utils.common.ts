@@ -2,6 +2,7 @@ import { Interface } from '@ethersproject/abi';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
+import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
 import { EventDataKind } from 'src/events/types/events.types';
@@ -13,23 +14,21 @@ export const toBuffer = (hexValue: string) =>
   Buffer.from(hexValue.slice(2), 'hex');
 
 // --- Regex ---
-
 export const regex = {
   url: /(\b(https|http?|ftp|file|ipfs):\/\/[\-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[\-A-Za-z0-9+&@#\/%=~_|/*])/,
   query: /(\{[a-z]*id\})/g,
   ipfs: /(^(ipfs:|ipns:)\/\/*)/,
   base64: /^data:image\/[a-z]*(\+[a-z]*|);base64/g,
+  itemId: /^.{42}:\d*\S$/,
 };
 
 // ---- returns true if url is base64 encoded
-
 export const isBase64Encoded = (tokenURI: string) =>
   tokenURI?.split(',')[0] === 'data:application/json;base64' ? true : false;
 
 // parses base64 to json
-
 export const base64toJson = (tokenURI: string) =>
-  JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('ascii'));
+  JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('utf8'));
 
 //Types of Collection and Token
 export const getTypes = (kind: EventDataKind) => {
@@ -46,60 +45,10 @@ export const getTypes = (kind: EventDataKind) => {
 };
 
 // BigNumbers
-export const bn = (value: BigNumberish) => BigNumber.from(value);
+export const bigNumber = (value: BigNumberish) => BigNumber.from(value);
 
-// export const getTypesUsingInterface = async (collectionId: string) => {
-//   const types = {
-//     collectionType: CollectionType.BEP721,
-//     type: TokenType.BEP721,
-//   };
-
-//   const ERC1155InterfaceId = '0xd9b67a26';
-//   const ERC721InterfaceId = '0x80ac58cd';
-//   const ERC165Abi: any = [
-//     {
-//       inputs: [
-//         {
-//           internalType: 'bytes4',
-//           name: 'interfaceId',
-//           type: 'bytes4',
-//         },
-//       ],
-//       name: 'supportsInterface',
-//       outputs: [
-//         {
-//           internalType: 'bool',
-//           name: '',
-//           type: 'bool',
-//         },
-//       ],
-//       stateMutability: 'view',
-//       type: 'function',
-//     },
-//   ];
-//   try {
-//     const baseNetworkHttpUrl = process.env.BASE_NETWORK_HTTP_URL;
-//     const chainId = 56 || process.env.CHAIN_ID;
-
-//     const baseProvider = new StaticJsonRpcProvider(baseNetworkHttpUrl, chainId);
-
-//     const contract = new Contract(collectionId, ERC165Abi, baseProvider);
-//     const result = await contract.methods.supportsInterface(ERC721InterfaceId);
-//     console.log(result, 'call result');
-//   } catch (e) {
-//     console.log(e, 'failed method');
-//   }
-// };
-
-export const ipfsDomain = 'https://ipfs.io/ipfs/';
-
-//queue names
-// export const realtimeQueue = 'realtime-sync-events';
-// export const REAL_TIME_CRON = 'REAL_TIME_CRON';
-// export const BACKFILL_CRON = 'BACKFILL_CRON';
-// export const midwayQueue = 'midway-sync-events';
-// export const backfillQueue = 'backfill-sync-events';
-// export const fetchCollectionQueue = 'fetch-collections';
+//ipfs gateway for fast retrival of metadata
+export const ipfsGateway = 'https://ipfs.io/ipfs/';
 
 //Contract Interfaces
 export const CollectionIface = new Interface([
@@ -112,6 +61,20 @@ export const TokenIface = new Interface([
   'function tokenURI(uint256 _tokenId) external view returns (string)',
   'function uri(uint256 _id) external view returns (string memory)',
   'function ownerOf(uint256 _tokenId) external view returns (address)',
+]);
+
+export const CurrencyIface = new Interface([
+  'function name() view returns (string)',
+  'function symbol() view returns (string)',
+  'function decimals() view returns (uint8)',
+]);
+
+export const SafeTransferFromERC721Iface = new Interface([
+  'function safeTransferFrom(address from, address to, uint256 tokenId, bytes data)',
+]);
+
+export const SafeTransferFromERC1155Iface = new Interface([
+  'function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes data)',
 ]);
 
 //contract helper methods
@@ -176,22 +139,22 @@ export const isDeleted = (to: string): boolean => {
   return to === AddressZero ? true : false;
 };
 
-//absolute path to pem files
-// const PATH_TO_PRIVATE_KEY = '/home/elitebook/bsc-indexer/rsa_4096_priv.pem';
-// const PATH_TO_PUBLIC_KEY = '/home/elitebook/bsc-indexer/rsa_4096_pub.pem';
-
-// export const getPublicKey = () => {
-//   const absolutePath = path.resolve(PATH_TO_PUBLIC_KEY);
-//   const publicKey = fs.readFileSync(absolutePath, 'utf8');
-//   return publicKey;
-// };
-
-// export const getPrivateKey = () => {
-//   const absolutePath = path.resolve(PATH_TO_PRIVATE_KEY);
-//   const privateKey = fs.readFileSync(absolutePath, 'utf8');
-//   return privateKey;
-// };
-
 // --- Misc ---
+export const lowerCase = (value: string) => value.toLowerCase();
 
-export const lc = (value: string) => value.toLowerCase();
+//check if itemId pattern is correct
+export const checkItemIdForamt = (
+  itemId: string,
+): [contract: string, tokenId: string] => {
+  if (itemId.match(regex.itemId)) {
+    const [contract, tokenId] = itemId.split(':');
+    return [contract, tokenId];
+  } else
+    throw new BadRequestException(
+      'ItemId must match format ${token}:${tokenId}',
+    );
+};
+
+//converts array items to lowercase
+export const arrayItemsToLowerCase = (items: string[]): string[] =>
+  items.map((item) => item.toLowerCase());

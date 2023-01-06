@@ -1,12 +1,12 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsArray, IsNumber } from 'class-validator';
-import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
+import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
 
 @ObjectType('GetAllOrdersMatchEvent')
 export class GetAllOrdersMatchEvent {
-  @Field(() => [OrderMatchEvent])
+  @Field(() => [OrderMatchEvents])
   @IsArray()
-  items: OrderMatchEvent[];
+  items: OrderMatchEvents[];
 
   @IsNumber()
   @Field(() => Int)

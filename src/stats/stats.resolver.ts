@@ -18,23 +18,23 @@ export class StatsResolver {
   ) {}
   CRON_NAME = QueueType.STATS_CRON;
 
-  @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
-  @Cron('0 0 * * *', { name: QueueType.STATS_CRON })
-  private async create(): Promise<void> {
-    const { items } = await this.collectionsResolver.index({
-      page: 0,
-      limit: 0,
-    });
-    items.map(async (item) => {
-      const id = item.id;
-      const floorPrice = await this.collectionsResolver.getCollectionFloorPrice(
-        id,
-      );
-      const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
-      if (floorPrice != null)
-        await this.statsService.create({ id, floorPrice, dayVolume });
-    });
-  }
+  // @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
+  // @Cron('0 0 * * *', { name: QueueType.STATS_CRON })
+  // private async create(): Promise<void> {
+  //   const { items } = await this.collectionsResolver.index({
+  //     page: 0,
+  //     limit: 0,
+  //   });
+  //   items.map(async (item) => {
+  //     const id = item.id;
+  //     const floorPrice = await this.collectionsResolver.getCollectionFloorPrice(
+  //       id,
+  //     );
+  //     const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
+  //     if (floorPrice != null)
+  //       await this.statsService.create({ id, floorPrice, dayVolume });
+  //   });
+  // }
 
   @Mutation(() => CronType, { name: 'StopStatsCron', nullable: true })
   async StopStatsCron(): Promise<CronType> {

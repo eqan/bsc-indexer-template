@@ -83,13 +83,16 @@ type ActivityTransfer {
 }
 
 type Activity {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   id: String
   userId: String
   itemId: String
   collectionId: String
   type: ActivityType
   date: DateTime
-  lastUpdatedAt: DateTime
   cursor: String
   reverted: Boolean
   blockchainInfo: BlockchainInfo
@@ -206,6 +209,89 @@ type GetAllAuctions {
   total: Int!
 }
 
+type UsdPrice {
+  id: String!
+  currency: String
+  value: String!
+  timestamp: Float!
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
+"""A simple Asset Parser"""
+scalar ASSET_SCALAR
+
+type Orders {
+  createdAt: DateTime
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
+  orderId: String!
+  fill: String!
+  kind: OrderKind
+  side: OrderSide
+  type: ORDER_TYPES
+  status: OrderStatus!
+  makeStock: String
+  cancelled: Boolean
+  maker: String
+  make: Asset!
+  take: Asset
+  salt: String
+  data: DATA_SCALAR!
+  start: Float
+  end: Float
+  optionalRoyalties: Boolean
+  makePrice: Float
+  takePrice: Float
+  makePriceUsd: Float
+  takePriceUsd: Float
+  signature: String
+  taker: String
+  contract: String
+  tokenId: String
+}
+
+enum OrderKind {
+  SINGLE_TOKEN
+  CONTRACT_WIDE
+}
+
+enum OrderSide {
+  buy
+  sell
+}
+
+enum ORDER_TYPES {
+  V1
+  V2
+}
+
+enum OrderStatus {
+  ACTIVE
+  FILLED
+  HISTORICAL
+  INACTIVE
+  CANCELLED
+}
+
+"""A simple Data Parser"""
+scalar DATA_SCALAR
+
+type GetAllOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
+type GetAllSellOrders {
+  items: [Orders!]!
+  total: Int!
+}
+
 type MetaContent {
   type: String
   url: String
@@ -250,13 +336,16 @@ type CreatorRoyalty {
 }
 
 type Tokens {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
   id: String!
   collectionId: String
   contract: String
   type: String
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyalty
@@ -336,7 +425,7 @@ type GetAllCollections {
 }
 
 type DynamicParentSubTypeData {
-  key: String!
+  value: String!
   count: Int!
   parent: String!
 }
@@ -367,45 +456,6 @@ type CronType {
   isDone: Boolean!
 }
 
-type Asset {
-  value: String!
-  valueDecimal: String
-  assetType: ASSET_SCALAR!
-}
-
-"""A simple Asset Parser"""
-scalar ASSET_SCALAR
-
-type Orders {
-  orderId: String!
-  fill: Float!
-  kind: String
-  type: String
-  status: String
-  makeStock: Float
-  cancelled: Boolean
-  createdAt: DateTime
-  lastUpdatedAt: DateTime
-  maker: String
-  make: Asset!
-  take: Asset
-  salt: String
-  data: DATA_SCALAR!
-  start: Float
-  end: Float
-  optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
-  makePrice: Float
-  takePrice: Float
-  makePriceUsd: Float
-  takePriceUsd: Float
-  signature: String
-  taker: String
-}
-
-"""A simple Data Parser"""
-scalar DATA_SCALAR
-
 type Users {
   id: String!
   userSignature: String
@@ -415,18 +465,6 @@ type Users {
   websiteUrl: String
   twitterUrl: String
   type: String
-}
-
-type UsdPrice {
-  id: String!
-  currency: String
-  value: String!
-  timestamp: Float!
-}
-
-type GetAllOrders {
-  items: [Orders!]!
-  total: Int!
 }
 
 type ReturnRefreshMeta {
@@ -507,6 +545,12 @@ input SellInput {
   value: Float!
 }
 
+input AssetInput {
+  value: String!
+  valueDecimal: String
+  assetType: ASSET_SCALAR!
+}
+
 input MetaContentInput {
   type: String
   url: String
@@ -544,24 +588,20 @@ input CollectionMetaContentInput {
   representation: String
 }
 
-input AssetInput {
-  value: String!
-  valueDecimal: String
-  assetType: ASSET_SCALAR!
-}
-
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
   GetCollectionUniqueItems(collectionId: String!): CollectionUniqueItems!
-  GetCollectionAveragePrice(collectionId: String!): Float!
   GetCollectionFloorPrice(collectionId: String!): Float!
-  GetCollectionVolume(collectionId: String!): Float!
-  GetCollectionUniqueOwners(collectionId: String!): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
+  GetOrderBidsByMaker(OrderBidsByMakerInput: GetOrderBidsByMakerDto = {}): [Orders!]!
+  GetSellOrdersByMaker(SellOrdersByMakerInput: GetSellOrdersByMakerDto = {}): [Orders!]!
+  GetOrderBidsByItem(OrderBidsByItemInput: GetOrderBidsByItemDto = {}): [Orders!]!
+  GetSellOrdersByItem(SellOrdersByItemInput: GetSellOrdersByItemDto = {}): [Orders!]!
+  GetSellOrders(SellOrdersInput: GetSellOrdersDto = {}): GetAllSellOrders!
   usdPrices: [UsdPrice!]!
   usdPrice(filterUsdPriceInput: FilterUsdPriceInput!): UsdPrice!
   GetAllActivities(GetAllActivitiesInput: FilterActivityDto = {}): GetAllActivities!
@@ -589,6 +629,49 @@ input FilterOrderDto {
   orderId: String
   maker: String
   taker: String
+}
+
+input GetOrderBidsByMakerDto {
+  page: Float
+  limit: Float
+  maker: [String!]!
+  start: Float
+  end: Float
+  status: ENUM_SCALAR
+}
+
+"""A simple scalar to input list of enum"""
+scalar ENUM_SCALAR
+
+input GetSellOrdersByMakerDto {
+  page: Float
+  limit: Float
+  maker: [String!]!
+  status: ENUM_SCALAR
+}
+
+input GetOrderBidsByItemDto {
+  page: Float
+  limit: Float
+  itemId: String!
+  maker: [String!]
+  start: Float
+  end: Float
+  status: ENUM_SCALAR
+}
+
+input GetSellOrdersByItemDto {
+  page: Float
+  limit: Float
+  maker: [String!]
+  itemId: String!
+  status: ENUM_SCALAR
+}
+
+input GetSellOrdersDto {
+  page: Float
+  limit: Float
+  status: ENUM_SCALAR
 }
 
 input FilterUsdPriceInput {
@@ -638,6 +721,7 @@ type Mutation {
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
+  filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto!): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
@@ -657,7 +741,6 @@ type Mutation {
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
-  CreateUpdateStats: Stats
   StopStatsCron: CronType
   StartStatsCron: CronType
   StopRealTimeCron: CronType
@@ -706,6 +789,20 @@ input DeleteCollectionsInput {
   id: [String!]!
 }
 
+input FilterTokensByPriceRangeDto {
+  page: Float
+  limit: Float
+  collectionId: String!
+  min: Float
+  max: Float
+  sortOrder: SortOrder!
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
 input CreateTokenInput {
   id: String!
   collectionId: String!
@@ -713,7 +810,6 @@ input CreateTokenInput {
   type: TokenType!
   owner: String
   mintedAt: DateTime
-  lastUpdatedAt: DateTime
   deleted: Boolean!
   sellers: Float!
   creator: CreatorRoyaltyInput
@@ -741,7 +837,6 @@ input MetaDataInput {
 
 input UpdateTokensInput {
   tokenId: String!
-  lastUpdatedAt: DateTime
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
@@ -754,14 +849,14 @@ input DeleteTokensInput {
 
 input CreateOrdersInput {
   orderId: String!
-  fill: Float!
+  fill: String!
   type: ORDER_TYPES!
+  side: OrderSide!
   kind: OrderKind!
   status: OrderStatus!
-  makeStock: Float!
+  makeStock: String!
   cancelled: Boolean!
   createdAt: DateTime!
-  lastUpdatedAt: DateTime!
   maker: String!
   make: AssetInput!
   take: AssetInput!
@@ -770,31 +865,14 @@ input CreateOrdersInput {
   start: Float
   end: Float
   optionalRoyalties: Boolean
-  dbUpdatedAt: DateTime
   makePrice: Float
   takePrice: Float
   makePriceUsd: Float
   takePriceUsd: Float
   signature: String!
   taker: String
-}
-
-enum ORDER_TYPES {
-  V1
-  V2
-}
-
-enum OrderKind {
-  SINGLE_TOKEN
-  CONTRACT_WIDE
-}
-
-enum OrderStatus {
-  Active
-  Filled
-  Historical
-  InActive
-  Cancelled
+  contract: String
+  tokenId: String
 }
 
 input DeleteOrderInput {
@@ -804,6 +882,8 @@ input DeleteOrderInput {
 input UpdateOrderStatus {
   orderId: String!
   status: OrderStatus!
+  cancelled: Boolean!
+  onchain: Boolean!
 }
 
 input CreateUsdPriceInput {
@@ -826,7 +906,6 @@ input CreateActivityInput {
   collectionId: String
   type: ActivityType!
   date: DateTime!
-  lastUpdatedAt: DateTime!
   cursor: String!
   reverted: Boolean!
   blockchainInfo: BlockchainInfoInput

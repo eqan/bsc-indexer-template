@@ -2,6 +2,7 @@ export type ChainIdToAddressMap = {
   [chainId: number]: { [address: string]: string };
 };
 
+//TODO:NEED TO INCLUDE OUR MARKETPLACE ROUTER CONTRACT
 export const Routers: ChainIdToAddressMap = {
   // Network.Ethereum
   1: {
@@ -37,3 +38,16 @@ export const Routers: ChainIdToAddressMap = {
     '0x29fcac61d9b2a3c55f3e1149d0278126c31abe74': 'reservoir.tools',
   },
 };
+
+//TODO: NEED TO CHANGE THE TYPES TO BNB
+export const ERC20 = '0x8ae85d84';
+export const ETH = '0xaaaebeba';
+export const ERC721 = '0x73ad2146';
+export const ERC1155 = '0x973bb640';
+export const COLLECTION = '0xf63c2825';
+
+export const matchOrdersSigHash = '0xe99a3f80';
+export const directPurchaseSigHash = '0x0d5f7d35';
+export const directAcceptBidSigHash = '0x67d49a3b';
+
+export const assetTypes = [ERC721, ERC1155, ERC20, ETH, COLLECTION];

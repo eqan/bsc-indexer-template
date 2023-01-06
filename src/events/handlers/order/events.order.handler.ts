@@ -1,34 +1,43 @@
-import { defaultAbiCoder, Interface } from '@ethersproject/abi';
+import { defaultAbiCoder, Interface, Result } from '@ethersproject/abi';
 import { AddressZero } from '@ethersproject/constants';
 import { getTxTrace, searchForCall } from '@georgeroman/evm-tx-simulator';
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { bn } from 'src/common/utils.common';
+import { bigNumber } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { OrderMatchEventInput } from 'src/events/dto/events.dto.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { OrderCancelEventService } from 'src/events/service/events.order-cancel-events.service';
 import { OrderMatchEventService } from 'src/events/service/events.order-match-events.service';
-import { EnhancedEvent } from 'src/events/types/events.types';
-import { decodeOrderData } from 'src/orders/helpers/orders.helpers.decode-order';
+import {
+  EnhancedEvent,
+  fillMatchFunctionType,
+} from 'src/events/types/events.types';
+import { OrderStatus } from 'src/orders/entities/enums/orders.status.enum';
 import { OrderPrices } from 'src/orders/helpers/orders.helpers.order-prices';
+import { OrdersService } from 'src/orders/orders.service';
 import * as Addresses from '../../../orders/constants/orders.constants.addresses';
-import { extractAttributionData } from '../utils/utils.order';
+import * as constants from '../utils/events.utils.constants.order';
+import { StoreOnchainBuySellOrders } from '../utils/events.utils.events.store-buy-sell-orders';
+import {
+  extractAttributionData,
+  getPaymentCurrency,
+} from '../utils/events.utils.helpers.orders';
 
 @Injectable()
 export class OrderMatchHandler {
   constructor(
     private readonly orderPrices: OrderPrices,
     private readonly orderMatchEventService: OrderMatchEventService,
+    private readonly orderCancelEventService: OrderCancelEventService,
     private rpcProvider: RpcProvider,
-  ) {
-    // const res =
-    //   Routers[1]?.['0x9757F2d2b135150BBeb65308D4a91804107cd8D6'.toLowerCase()];
-    // console.log(res, 'logged res');
-  }
+    private storeOnchainBuySellOrders: StoreOnchainBuySellOrders,
+    private readonly orderService: OrdersService,
+  ) {}
   chainId = this.rpcProvider.chainId;
   private readonly logger = new Logger('OrderMatchHandler');
 
-  handleMatchOrder = async (events: EnhancedEvent) => {
+  handleMatchOrder = async (events: EnhancedEvent): Promise<void> => {
     const {
       log,
       kind,
@@ -37,9 +46,6 @@ export class OrderMatchHandler {
 
     const eventData = getEventData([kind])[0];
     try {
-      // Keep track of all events within the currently processing transaction
-      // let currentTx: string | undefined;
-      // const currentTxLogs: Log[] = [];
       const eventsLog = {
         matchOrders: new Map<string, number>(),
         directPurchase: new Map<string, number>(),
@@ -52,19 +58,7 @@ export class OrderMatchHandler {
       const newLeftFill = args['newLeftFill'].toString();
       const newRightFill = args['newRightFill'].toString();
 
-      const ERC20 = '0x8ae85d84';
-      const ETH = '0xaaaebeba';
-      const ERC721 = '0x73ad2146';
-      const ERC1155 = '0x973bb640';
-      const COLLECTION = '0xf63c2825';
-
-      const matchOrdersSigHash = '0xe99a3f80';
-      const directPurchaseSigHash = '0x0d5f7d35';
-      const directAcceptBidSigHash = '0x67d49a3b';
-
-      const assetTypes = [ERC721, ERC1155, ERC20, ETH, COLLECTION];
-
-      const orderKind = 'rarible';
+      let result: Result;
       let side: OrderSide = OrderSide.sell;
       let taker = AddressZero;
       let currencyAssetType = '';
@@ -75,11 +69,7 @@ export class OrderMatchHandler {
       let amount = '';
       let currencyPrice = '';
       let orderId = '';
-      let salt = '';
-      let start = 0;
-      let end = 0;
-      let dataType = '';
-      let data = '';
+      let fillType: fillMatchFunctionType = 'directPurchase';
 
       // Event data doesn't include full order information so we have to parse the calldata
       const txTrace = await getTxTrace(
@@ -104,7 +94,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [directPurchaseSigHash],
+            sigHashes: [constants.directPurchaseSigHash],
           },
           eventRank,
         );
@@ -112,12 +102,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function directPurchase(tuple(address sellOrderMaker, uint256 sellOrderNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 sellOrderPaymentAmount, address paymentToken, uint256 sellOrderSalt, uint sellOrderStart, uint sellOrderEnd, bytes4 sellOrderDataType, bytes sellOrderData, bytes sellOrderSignature, uint256 buyOrderPaymentAmount, uint256 buyOrderNftAmount, bytes buyOrderData))',
           ]);
-          const result = iface.decodeFunctionData(
-            'directPurchase',
-            callTrace.input,
-          );
-          // console.log(result, 'result in directpur');
-
+          result = iface.decodeFunctionData('directPurchase', callTrace.input);
           orderId = leftHash;
           side = OrderSide.sell;
           maker = result[0][0].toLowerCase();
@@ -125,19 +110,10 @@ export class OrderMatchHandler {
           taker = callTrace.to.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          salt = result[0][6];
-          start = result[0]['sellOrderStart'];
-          end = result[0]['sellOrderEnd'];
-          dataType = result[0]['sellOrderDataType'];
-          data = result[0]['sellOrderData'];
+          fillType = 'directPurchase';
 
           paymentCurrency = result[0][5].toLowerCase();
-          if (paymentCurrency === AddressZero) {
-            currencyAssetType = ETH;
-          } else {
-            currencyAssetType = ERC20;
-          }
-
+          currencyAssetType = getPaymentCurrency(paymentCurrency);
           currencyPrice = newLeftFill;
           amount = newRightFill;
 
@@ -158,7 +134,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [directAcceptBidSigHash],
+            sigHashes: [constants.directAcceptBidSigHash],
           },
           eventRank,
         );
@@ -167,11 +143,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function directAcceptBid(tuple(address bidMaker, uint256 bidNftAmount, bytes4 nftAssetClass, bytes nftData, uint256 bidPaymentAmount, address paymentToken, uint256 bidSalt, uint bidStart, uint bidEnd, bytes4 bidDataType, bytes bidData, bytes bidSignature, uint256 sellOrderPaymentAmount, uint256 sellOrderNftAmount, bytes sellOrderData) )',
           ]);
-          const result = iface.decodeFunctionData(
-            'directAcceptBid',
-            callTrace.input,
-          );
-          console.log(result, 'logged result dirBid');
+          result = iface.decodeFunctionData('directAcceptBid', callTrace.input);
           orderId = rightHash;
 
           side = OrderSide.buy;
@@ -180,18 +152,10 @@ export class OrderMatchHandler {
           taker = callTrace.from.toLowerCase();
           nftAssetType = result[0][2];
           nftData = result[0][3];
-          salt = result[0][6];
-          start = result[0][7];
-          end = result[0][8];
-          dataType = result[0][9];
-          data = result[0][10];
+          fillType = 'directAcceptBid';
 
           paymentCurrency = result[0][5].toLowerCase();
-          if (paymentCurrency === AddressZero) {
-            currencyAssetType = ETH;
-          } else {
-            currencyAssetType = ERC20;
-          }
+          currencyAssetType = getPaymentCurrency(paymentCurrency);
 
           currencyPrice = newLeftFill;
           amount = newRightFill;
@@ -212,7 +176,7 @@ export class OrderMatchHandler {
           {
             to: address,
             type: 'CALL',
-            sigHashes: [matchOrdersSigHash],
+            sigHashes: [constants.matchOrdersSigHash],
           },
           eventRank,
         );
@@ -221,11 +185,7 @@ export class OrderMatchHandler {
           const iface = new Interface([
             'function matchOrders(tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderLeft, bytes signatureLeft, tuple(address maker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) makeAsset, address taker, tuple(tuple(bytes4 assetClass, bytes data) assetType, uint256 value) takeAsset, uint256 salt, uint256 start, uint256 end, bytes4 dataType, bytes data) orderRight, bytes signatureRight)',
           ]);
-          const result = iface.decodeFunctionData(
-            'matchOrders',
-            callTrace.input,
-          );
-          console.log(result, 'logged result match');
+          result = iface.decodeFunctionData('matchOrders', callTrace.input);
           const orderLeft = result.orderLeft;
           const orderRight = result.orderRight;
           const leftMakeAsset = orderLeft.makeAsset;
@@ -234,49 +194,43 @@ export class OrderMatchHandler {
           maker = orderLeft.maker.toLowerCase();
           // taker will be overwritten in extractAttributionData step if router is used
           taker = orderRight.maker.toLowerCase();
-          side = [ERC721, ERC1155].includes(leftMakeAsset.assetType.assetClass)
+          side = [constants.ERC721, constants.ERC1155].includes(
+            leftMakeAsset.assetType.assetClass,
+          )
             ? OrderSide.sell
             : OrderSide.buy;
+          fillType = 'match';
 
           const nftAsset =
             side === OrderSide.buy ? rightMakeAsset : leftMakeAsset;
           const currencyAsset =
             side === OrderSide.buy ? leftMakeAsset : rightMakeAsset;
 
-          salt = side === OrderSide.buy ? orderRight.salt : orderLeft.salt;
-          dataType =
-            side === OrderSide.buy ? orderRight.dataType : orderLeft.dataType;
-
           orderId = leftHash;
           nftAssetType = nftAsset.assetType.assetClass;
           currencyAssetType = currencyAsset.assetType.assetClass;
           switch (nftAssetType) {
-            case COLLECTION:
+            case constants.COLLECTION:
               // Left order doesn't contain token id. We need to use the right order
               nftData = orderRight.makeAsset.assetType.data;
               break;
-            case ERC721:
-            case ERC1155:
+            case constants.ERC721:
+            case constants.ERC1155:
               nftData = nftAsset.assetType.data;
               break;
             default:
               throw Error('Unsupported asset type');
           }
 
-          if (currencyAssetType === ETH) {
+          if (currencyAssetType === constants.ETH) {
             paymentCurrency = 'ETH';
-          } else if (currencyAssetType === ERC20) {
+          } else if (currencyAssetType === constants.ERC20) {
             const decodedCurrencyAsset = defaultAbiCoder.decode(
               ['(address token)'],
               currencyAsset.assetType.data,
             );
             paymentCurrency = decodedCurrencyAsset[0][0].toLowerCase();
           }
-
-          //TODO : RECHECK THE START END DATES AND DATA
-          start = side === OrderSide.buy ? orderLeft.start : orderRight.start;
-          end = side === OrderSide.buy ? orderRight.end : orderLeft.end;
-          data = side === OrderSide.buy ? orderLeft.data : orderRight.data;
 
           // Match order has amount in newLeftFill when it's a buy order and amount in newRightFill when it's sell order
           amount = side === OrderSide.buy ? newLeftFill : newRightFill;
@@ -291,8 +245,8 @@ export class OrderMatchHandler {
 
       // Exclude orders with exotic asset types
       if (
-        !assetTypes.includes(nftAssetType) ||
-        !assetTypes.includes(currencyAssetType)
+        !constants.assetTypes.includes(nftAssetType) ||
+        !constants.assetTypes.includes(currencyAssetType)
       ) {
         return;
       }
@@ -302,9 +256,7 @@ export class OrderMatchHandler {
         txHash,
         this.rpcProvider.baseProvider,
       );
-      // console.log(attributionData, 'hello attribution logged oout ');
       if (attributionData.taker) {
-        // console.log(attributionData.taker, 'taker logged');
         taker = attributionData.taker;
       }
 
@@ -312,14 +264,11 @@ export class OrderMatchHandler {
 
       // Handle: prices
       let currency: string;
-      if (currencyAssetType === ETH) {
+      if (currencyAssetType === constants.ETH) {
         currency = Addresses.Eth[this.chainId];
-        console.log(currency, 'logged currency');
-      } else if (currencyAssetType === ERC20) {
+      } else if (currencyAssetType === constants.ERC20) {
         currency = paymentCurrency;
-        // console.log(currency, paymentCurrency, 'logged currency and payment');
       } else {
-        // break;
         return;
       }
 
@@ -330,7 +279,7 @@ export class OrderMatchHandler {
       const contract: string = decodedNftAsset[0][0].toLowerCase();
       const tokenId: string = decodedNftAsset[0][1].toString();
 
-      currencyPrice = bn(currencyPrice).div(amount).toString();
+      currencyPrice = bigNumber(currencyPrice).div(amount).toString();
 
       const prices = await this.orderPrices.getUSDAndNativePrices(
         currency.toLowerCase(),
@@ -356,41 +305,39 @@ export class OrderMatchHandler {
         amount,
         baseEventParams: events.baseEventParams,
       };
-      const savedEvent = await this.orderMatchEventService.create(matchEvent);
-      console.log(savedEvent, 'saved event in event db');
 
-      const response = {
-        orderKind,
-        orderId,
-        //TODO: RECHECK FILL
-        fill: 1,
-        nftAssetType,
-        nftData,
-        orderSide: side,
-        maker,
-        taker,
-        price: prices.nativePrice,
-        currency,
-        currencyPrice,
-        usdPrice: prices.usdPrice,
-        contract,
-        salt: bn(salt).toString(),
-        start: bn(start).toString(),
-        end: bn(end).toString(),
-        dataType,
-        data: decodeOrderData(dataType, data),
-        tokenId,
-        amount,
-        timestamp,
-        txHash,
-      };
+      await this.orderMatchEventService.create(matchEvent);
 
-      // console.log(response, 'data logged out after listening event');
+      //updating order in db
+      const order = await this.orderService.orderExistOrNot(matchEvent.orderId);
+      if (order)
+        await this.orderService.update({
+          orderId: order.orderId,
+          status: OrderStatus.FILLED,
+          cancelled: false,
+          onchain: true,
+        });
+      else
+        this.storeOnchainBuySellOrders.handleStoreOrders(
+          result,
+          fillType,
+          orderId,
+          leftHash,
+          rightHash,
+          events.baseEventParams.timestamp,
+          taker,
+          newLeftFill,
+          newRightFill,
+          prices.usdPrice,
+          prices.nativePrice,
+          contract,
+          tokenId,
+        );
     } catch (error) {
       this.logger.error(`failed Matching Order ${error}`);
     }
   };
-  handleCancelOrder = async (events: EnhancedEvent) => {
+  handleCancelOrder = async (events: EnhancedEvent): Promise<void> => {
     const { baseEventParams, log, kind } = events;
 
     const eventData = getEventData([kind])[0];
@@ -398,12 +345,25 @@ export class OrderMatchHandler {
       const { args } = eventData.abi.parseLog(log);
       const orderId = args['hash'].toLowerCase();
 
-      const returnData = {
+      const cancelEvent = {
         orderKind: 'rarible',
         orderId,
         baseEventParams,
       };
-      console.log(returnData, 'cancel event return data');
+
+      await this.orderCancelEventService.create(cancelEvent);
+      //updating order in db
+      const order = await this.orderService.orderExistOrNot(
+        cancelEvent.orderId,
+      );
+      if (order)
+        await this.orderService.update({
+          orderId: order.orderId,
+          status: OrderStatus.CANCELLED,
+          cancelled: true,
+          onchain: true,
+        });
+      //TODO:IF ORDER IS NOT IN DB HAVENT UPDATED ITS STATUS
     } catch (error) {
       this.logger.error(`failed Cancelling Order ${error}`);
     }

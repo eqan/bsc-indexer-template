@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -18,11 +17,12 @@ import {
   getCollectionSymbol,
   getNFTCreator,
   getTokenURI,
-  ipfsDomain,
+  ipfsGateway,
   isBase64Encoded,
   regex,
   TokenIface,
 } from './../../common/utils.common';
+
 @Injectable()
 export class MetadataApi {
   constructor(
@@ -33,9 +33,9 @@ export class MetadataApi {
   async fetchRequest(uri: string, id: string) {
     try {
       //replace query params
-      if (uri.match(regex.query)) uri = uri?.replace(regex.query, id);
-      //add ipfs domain uri
-      if (uri.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsDomain);
+      if (uri?.match(regex.query)) uri = uri?.replace(regex.query, id);
+      //add ipfs gateway
+      if (uri?.match(regex.ipfs)) uri = uri?.replace(regex.ipfs, ipfsGateway);
       const response = await lastValueFrom(this.httpService.get(uri));
       return response.data;
     } catch (error) {
@@ -82,6 +82,7 @@ export class MetadataApi {
               collectionId,
               key: attribute?.trait_type || '',
               value: attribute?.value || '',
+              // type: TokenType.BEP721, TODO:NEED TO DISCUSS
               format: attribute?.display_type || '',
             })) || [],
           Content: Meta?.image
@@ -119,7 +120,6 @@ export class MetadataApi {
       contract: collectionId,
       deleted,
       mintedAt: new Date(timestamp * 1000),
-      lastUpdatedAt: new Date(),
       sellers: 0,
       creator: {
         account: [],
@@ -155,9 +155,9 @@ export class MetadataApi {
       //else if tokenURI is buffered base64 encoded
       else if (isBase64Encoded(tokenURI)) {
         const Meta = base64toJson(tokenURI);
-        if (Meta?.image.match(regex.base64)) {
+        if (Meta?.image?.match(regex.base64)) {
           const url = await uploadImage(Meta?.image);
-          Meta.image = url ?? Meta.image;
+          Meta.image = url ? url : Meta.image;
         }
         return {
           ...data,
@@ -185,33 +185,16 @@ export class MetadataApi {
     collectionId: string,
     type: CollectionType,
   ): Promise<CreateCollectionsInput> {
-    const collectionData: CreateCollectionsInput = {
-      name: '',
-      symbol: '',
-      owner: AddressZero,
-      id: collectionId,
-      type,
-      Meta: {},
-      discordUrl: '',
-      twitterUrl: '',
-      description: '',
-    };
-    let name;
-    let symbol;
-    let owner;
     try {
       const contract = new Contract(
         collectionId,
         CollectionIface,
         this.rpcProvider.baseProvider,
       );
-      name = await getCollectionName(contract);
-      symbol = await getCollectionSymbol(contract);
-      owner = await getCollectionOwner(contract);
-    } catch (error) {
-      console.log('error occured owner address not found');
-    } finally {
-      return {
+      const name = await getCollectionName(contract);
+      const symbol = await getCollectionSymbol(contract);
+      const owner = await getCollectionOwner(contract);
+      const collectionData: CreateCollectionsInput = {
         name,
         symbol,
         owner,
@@ -222,6 +205,9 @@ export class MetadataApi {
         twitterUrl: '',
         description: '',
       };
+      return collectionData;
+    } catch (error) {
+      console.log('failed fetching collection meta');
     }
   }
 }

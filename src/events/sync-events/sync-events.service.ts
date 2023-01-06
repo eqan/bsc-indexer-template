@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { lc } from 'src/common/utils.common';
+import { lowerCase } from 'src/common/utils.common';
 import { getEventData, parseEvent } from '../data';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
-import { OrderMatchHandler } from '../handlers/order/order.handler';
+import { OrderMatchHandler } from '../handlers/order/events.order.handler';
 import { EnhancedEvent } from '../types/events.types';
 @Injectable()
 export class SyncEventsService {
@@ -16,22 +16,7 @@ export class SyncEventsService {
   ) {}
   private readonly logger = new Logger('Sync Events');
 
-  syncEvents = async (
-    fromBlock: number,
-    toBlock: number,
-    // options?: {
-    //   // When backfilling, certain processes will be disabled
-    //   backfill?: boolean;
-    //   syncDetails:
-    //     | {
-    //         method: 'events';
-    //         events: EventDataKind[];
-    //       }
-    //     | {
-    //         method: 'address';
-    //       };
-    // },
-  ) => {
+  syncEvents = async (fromBlock: number, toBlock: number) => {
     try {
       const filter: { fromBlock: number; toBlock: number } = {
         fromBlock,
@@ -53,7 +38,7 @@ export class SyncEventsService {
           ({ addresses, topic, numTopics }) =>
             log.topics[0] === topic &&
             log.topics.length === numTopics &&
-            (addresses ? addresses[lc(log.address)] : true),
+            (addresses ? addresses[lowerCase(log.address)] : true),
         );
 
         if (eventData) {
@@ -67,7 +52,6 @@ export class SyncEventsService {
             log,
           };
           switch (eventData?.kind) {
-            // NFT Collections
             case 'erc721-transfer': {
               await this.erc721Handler.handleTransferEvent(enhancedEvents);
               await this.erc721Handler.handleActivity(enhancedEvents);

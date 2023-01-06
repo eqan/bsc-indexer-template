@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
+import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
+import { Timestamps } from 'src/core/embed/timestamps.embed';
+import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.dto';
-import { OrderAvailability } from './enums/order.availability.enum';
 import { OrderKind } from './enums/order.kind.enum';
 import { ORDER_TYPES } from './enums/order.order-types.enum';
 import { OrderStatus } from './enums/orders.status.enum';
@@ -10,7 +12,7 @@ import { OrderStatus } from './enums/orders.status.enum';
 @ObjectType()
 @Entity('Orders')
 @Index(['orderId', 'maker', 'taker'])
-export class Orders {
+export class Orders extends Timestamps {
   @Field()
   @PrimaryColumn({
     type: 'text',
@@ -20,21 +22,20 @@ export class Orders {
   orderId: string;
 
   @Column({
-    type: 'enum',
-    enumName: 'Order',
-    enum: OrderAvailability,
-    default: OrderAvailability.OFF_CHAIN,
+    type: 'boolean',
+    nullable: true,
+    default: false,
   })
-  availability?: OrderAvailability;
+  onchain?: boolean;
 
   //TODO : CONFIRM FILL DATATYPE DECIMAL OR INT
   @Field()
   @Column({
-    type: 'decimal',
+    type: 'text',
   })
-  fill: number;
+  fill: string;
 
-  @Field({ nullable: true })
+  @Field(() => OrderKind, { nullable: true })
   @Column({
     type: 'enum',
     enumName: 'OrderKind',
@@ -43,32 +44,39 @@ export class Orders {
   })
   kind?: OrderKind;
 
-  @Field({ nullable: true })
+  @Field(() => OrderSide, { nullable: true })
   @Column({
     type: 'enum',
-    // nullable: true,
+    enumName: 'OrderSide',
+    enum: OrderSide,
+    default: OrderSide.sell,
+  })
+  side?: OrderSide;
+
+  @Field(() => ORDER_TYPES, { nullable: true })
+  @Column({
+    type: 'enum',
     enumName: 'ORDER_TYPES',
     enum: ORDER_TYPES,
     default: ORDER_TYPES.V2,
   })
   type: ORDER_TYPES;
 
-  @Field({ nullable: true })
+  @Field(() => OrderStatus)
   @Column({
     type: 'enum',
-    // nullable: true,
     enumName: 'OrderStatus',
     enum: OrderStatus,
-    default: OrderStatus.Active,
+    default: OrderStatus.ACTIVE,
   })
   status?: OrderStatus;
 
   @Field({ nullable: true })
   @Column({
-    type: 'int',
+    type: 'text',
     nullable: true,
   })
-  makeStock: number;
+  makeStock: string;
 
   @Field({ nullable: true })
   @Column({
@@ -78,7 +86,7 @@ export class Orders {
   })
   cancelled: boolean;
 
-  //TODO : NEED TO DICUSS TIMESTAMP REQUIRED OR NOT
+  //TODO : NEED TO DISCUSS TIMESTAMP REQUIRED OR NOT
   @Field({ nullable: true })
   @Column({
     type: 'timestamptz',
@@ -86,13 +94,7 @@ export class Orders {
   })
   createdAt: Date;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'timestamptz',
-    nullable: true,
-  })
-  lastUpdatedAt: Date;
-
+  @IsEthereumAddress()
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -126,26 +128,12 @@ export class Orders {
   })
   salt: string;
 
-  // @Field(() => CustomAssetScalar)
-  // assetType: JSON;
-  // @ValidateNested()
   @Field(() => CustomDataScalar)
   @Column({
     type: 'json',
     nullable: false,
   })
   data: JSON;
-  // data: OrderRaribleV2Data;
-  // data: {
-  //   type: string;
-  //   nullable: true;
-  //   // nullable: true;
-  //   // payouts?: number[];
-  //   originFees?: {
-  //     account: string;
-  //     value: number;
-  //   };
-  // };
 
   @Field({ nullable: true })
   @Column({
@@ -167,13 +155,6 @@ export class Orders {
     nullable: true,
   })
   optionalRoyalties?: boolean;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'timestamptz',
-    nullable: true,
-  })
-  dbUpdatedAt?: Date;
 
   @Field({ nullable: true })
   @Column({
@@ -209,10 +190,40 @@ export class Orders {
   })
   signature: string;
 
+  @IsEthereumAddress()
   @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
   taker?: string;
+
+  @IsNotEmpty()
+  @IsEthereumAddress({
+    message: 'Contract Address should be an ethereum address',
+  })
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+  })
+  contract: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  tokenId: string;
+
+  @BeforeInsert()
+  changeInputToLowerCase() {
+    this.orderId = this.orderId.toLowerCase();
+    this.maker = this.maker.toLowerCase();
+    this.taker = this?.taker?.toLocaleLowerCase();
+    this.contract = this.contract.toLowerCase();
+    this.signature = this.signature.toLowerCase();
+    this.salt = this.salt.toLowerCase();
+  }
 }

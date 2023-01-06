@@ -49,10 +49,10 @@ export class CreateTokenInput {
   @Field({ nullable: true })
   mintedAt?: Date;
 
-  @IsOptional()
-  @IsDate()
-  @Field({ nullable: true })
-  lastUpdatedAt?: Date;
+  // @IsOptional()
+  // @IsDate()
+  // @Field({ nullable: true })
+  // lastUpdatedAt?: Date;
 
   @IsNotEmpty()
   @IsBoolean()

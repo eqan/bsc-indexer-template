@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -18,71 +18,59 @@ import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Asset } from './nestedObjectsDto/asset-type.dto';
 import { CustomDataScalar } from './nestedObjectsDto/data.dto';
 
-@InputType()
-export class CreateOrdersInput {
+export class CreateOnchainOrdersInput {
   @IsNotEmpty({ message: 'Order ID cannot be null' })
-  @Field()
   orderId: string;
+
+  @IsBoolean()
+  onchain: boolean;
 
   @IsNotEmpty()
   @IsString()
-  @Field()
   fill: string;
 
   @IsEnum(ORDER_TYPES)
   @IsNotEmpty()
-  @Field(() => ORDER_TYPES)
   type: ORDER_TYPES;
 
-  @IsOptional()
   @IsEnum(OrderSide)
-  @Field(() => OrderSide)
   side?: OrderSide;
 
   @IsEnum(OrderKind)
   @IsOptional()
-  @Field(() => OrderKind)
   kind?: OrderKind;
 
   @IsEnum(OrderStatus)
   @IsNotEmpty()
-  @Field(() => OrderStatus)
   status: OrderStatus;
 
   @IsNotEmpty()
   @IsString()
-  @Field()
   makeStock: string;
 
   @IsBoolean()
   @IsNotEmpty()
-  @Field()
   cancelled: boolean;
 
   @IsNotEmpty()
   @IsDate()
-  @Field()
   createdAt: Date;
 
   @IsNotEmpty()
   @IsEthereumAddress()
   @IsEthereumAddress()
-  @Field()
   maker: string;
 
   @ValidateNested()
   @Type(() => Asset)
-  @Field(() => Asset)
   make: Asset;
 
   @ValidateNested()
   @Type(() => Asset)
-  @Field(() => Asset)
   take: Asset;
 
   @IsString()
   @IsNotEmpty()
-  @Field()
   salt: string;
 
   @ValidateNested()
@@ -91,57 +79,45 @@ export class CreateOrdersInput {
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   start?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   end?: number;
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true })
   optionalRoyalties?: boolean;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   makePrice?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   takePrice?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   makePriceUsd?: number;
 
   @IsOptional()
   @IsNumber()
-  @Field({ nullable: true })
   takePriceUsd?: number;
 
   @IsString()
   @IsNotEmpty()
-  @Field()
   signature: string;
 
   @IsEthereumAddress()
   @IsOptional()
-  @IsEthereumAddress()
-  @Field({ nullable: true })
   taker?: string;
 
   @IsEthereumAddress()
   @IsNotEmpty()
-  @Field({ nullable: true })
   contract: string;
 
   @IsString()
   @IsNotEmpty()
-  @Field({ nullable: true })
   tokenId: string;
 }

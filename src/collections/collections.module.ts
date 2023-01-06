@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrderMatchEvent } from 'src/events/entities/events.entity.order-match-events';
-import { EventsOrderModule } from 'src/events/service/events.orders.module';
+import { OrdersModule } from 'src/orders/orders.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { CollectionsResolver } from './collections.resolver';
 import { CollectionsService } from './collections.service';
@@ -10,10 +9,10 @@ import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entit
 
 @Module({
   imports: [
-    EventsOrderModule,
     TokensModule,
-    TypeOrmModule.forFeature([Collections, CollectionsMeta, OrderMatchEvent]),
+    TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
+    OrdersModule,
   ],
   providers: [CollectionsResolver, CollectionsService],
   exports: [CollectionsResolver, CollectionsService],

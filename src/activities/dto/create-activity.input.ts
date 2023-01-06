@@ -45,9 +45,9 @@ export class CreateActivityInput {
   @Field(() => Date)
   date: Date;
 
-  @IsNotEmpty()
-  @Field(() => Date)
-  lastUpdatedAt: Date;
+  // @IsNotEmpty()
+  // @Field(() => Date)
+  // lastUpdatedAt: Date;
 
   @IsNotEmpty()
   @Field()

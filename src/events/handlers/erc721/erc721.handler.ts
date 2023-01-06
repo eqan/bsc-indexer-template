@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivitiesService } from 'src/activities/activities.service';
-import { isDeleted, lc } from 'src/common/utils.common';
+import { isDeleted, lowerCase } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
@@ -42,14 +42,15 @@ export class ERC721Handler {
     }
   };
 
+  //TODO:approval for all event storage in db
   handleApprovalForAll = async (events: EnhancedEvent) => {
     const { log, kind } = events;
 
     try {
       const eventData = getEventData([kind])[0];
       const parsedLog = eventData.abi.parseLog(log);
-      const owner = lc(parsedLog.args['owner']);
-      const operator = lc(parsedLog.args['operator']);
+      const owner = lowerCase(parsedLog.args['owner']);
+      const operator = lowerCase(parsedLog.args['operator']);
       const approved = parsedLog.args['approved'];
     } catch (error) {
       this.logger.error(`failed handling ApprovalForAll ${error}`);
@@ -66,8 +67,8 @@ export class ERC721Handler {
     try {
       // Activity Data
       const parsedLog = eventData.abi.parseLog(log);
-      const from = lc(parsedLog.args['from']);
-      const to = lc(parsedLog.args['to']);
+      const from = lowerCase(parsedLog.args['from']);
+      const to = lowerCase(parsedLog.args['to']);
       const reverted = log?.removed || false;
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address;
@@ -77,7 +78,6 @@ export class ERC721Handler {
       } catch (error) {
         owner = null;
       }
-      // console.log(log);
       const activityData = extractActivityData(
         tokenId,
         collectionId,

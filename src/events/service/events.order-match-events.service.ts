@@ -4,16 +4,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OrderMatchEventInput } from '../dto/events.dto.order-match-events';
-import { GetAllOrdersMatchEvent } from '../dto/get-all-activities.dto';
-import { OrderMatchEvent } from '../entities/events.entity.order-match-events';
+import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
 
 @Injectable()
 export class OrderMatchEventService {
   constructor(
-    @InjectRepository(OrderMatchEvent)
-    private orderMatchEventRepo: Repository<OrderMatchEvent>,
+    @InjectRepository(OrderMatchEvents)
+    private orderMatchEventRepo: Repository<OrderMatchEvents>,
   ) {}
 
   /**
@@ -23,7 +22,7 @@ export class OrderMatchEventService {
    */
   async create(
     createOrderMatchInput: OrderMatchEventInput,
-  ): Promise<OrderMatchEvent> {
+  ): Promise<OrderMatchEvents> {
     try {
       const matchEvent = this.orderMatchEventRepo.create(createOrderMatchInput);
       return await this.orderMatchEventRepo.save(matchEvent);
@@ -33,91 +32,21 @@ export class OrderMatchEventService {
   }
 
   /**
-   * Get All Collections ... With Filters
-   * @@params No Params
-   * @returns Array of Collections and Total Number of Collections
-   */
-  // async index(
-  //   filterOrderMatchEvent: FilterOrderMatchEvent,
-  // ): Promise<GetAllOrdersMatchEvent> {
-  //   try {
-  //     const { page = 1, limit = 20, ...rest } = filterOrderMatchEvent;
-  //     const [items, total] = await Promise.all([
-  //       this.orderMatchEventRepo.find({
-  //         where: {
-  //           orderId: rest?.orderId,
-  //           tokenId: rest?.tokenId,
-  //         },
-  //         skip: (page - 1) * limit || 0,
-  //         take: limit || 10,
-  //       }),
-  //       this.orderMatchEventRepo.count({
-  //         where: {
-  //           orderId: rest?.orderId,
-  //           tokenId: rest?.tokenId,
-  //         },
-  //       }),
-  //     ]);
-  //     return { items, total };
-  //   } catch (err) {
-  //     throw new BadRequestException(err);
-  //   }
-  // }
-
-  /**
-   * GET Order By Id
+   * GET MatchEvent by orderId
    * @param id
-   * @returns Order against Provided Id
+   * @returns MatchEvent against provided OrderId
    */
-  async show(
-    contract: string,
-    timestamp: number = undefined,
-  ): Promise<GetAllOrdersMatchEvent> {
+  async show(orderId: string): Promise<OrderMatchEvents> {
     try {
-      // Initialize where clause to an empty object
-      const where: any = {};
-      if (contract) {
-        // If contract is provided, add it to the where clause
-        where.contract = contract;
+      const found = await this.orderMatchEventRepo.findOneBy({
+        orderId,
+      });
+      if (!found) {
+        throw new NotFoundException(`MatchEvent against ${orderId} not found`);
       }
-      if (timestamp) {
-        // If timestamp is provided, add it to the where clause
-        where.baseEventParams = { timestamp: MoreThan(timestamp) };
-      }
-      const [items, total] = await Promise.all([
-        this.orderMatchEventRepo.find({ where }),
-        this.orderMatchEventRepo.count({ where }),
-      ]);
-      return { items, total };
+      return found;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
-
-  //   /**
-  //    * Edit Activity
-  //    * @param activityId
-  //    * @returns Updated Activity
-  //    */
-  //   edit(id: number) {
-  //     return `This action updates a #${id} activity`;
-  //   }
-
-  /**
-   * DEETE Activity
-   * @param activityIds
-   * @returns
-   */
-  //   async delete(deleteWithIds: { id: string[] }): Promise<void> {
-  //     try {
-  //       const ids = deleteWithIds.id;
-  //       const values = await this.orderMatchEventsRepo.delete({ id: In(ids) });
-  //       if (!values) {
-  //         throw new NotFoundException('Activity not found');
-  //       }
-  //       return null;
-  //     } catch (error) {
-  //       throw new BadRequestException(error);
-  //     }
-  //   }
 }
