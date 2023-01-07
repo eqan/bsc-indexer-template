@@ -724,6 +724,8 @@ input FilterStatsDto {
   id: String!
   dayVolume: String
   floorPrice: String
+  averagePrice: Float
+  uniqueOwners: Int
 }
 
 type Mutation {
