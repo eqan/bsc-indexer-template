@@ -30,6 +30,14 @@ export abstract class Stats extends BaseEntity {
   @Column('float', { nullable: true })
   floorPrice?: number;
 
+  @Field({ nullable: true })
+  @Column('float', { nullable: true })
+  averagePrice?: number;
+
+  @Field({ nullable: true })
+  @Column('float', { nullable: true })
+  uniqueOwners?: number;
+
   @Field(() => Collections)
   @OneToOne(() => Collections, (collection) => collection.id)
   @JoinColumn({ name: 'id' })

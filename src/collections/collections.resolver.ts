@@ -215,7 +215,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     collectionId: string,
   ): Promise<number> {
     try {
-      return await this.collectionsService.getNumberOfUnqiueOwners(
+      return await this.collectionsService.getNumberOfUniqueOwners(
         collectionId,
       );
     } catch (error) {

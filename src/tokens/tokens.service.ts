@@ -240,4 +240,23 @@ export class TokensService {
       throw new BadRequestException(error);
     }
   }
+
+  /**
+   * Get Unique Owners Of A Collection
+   * @param ContractAddress
+   * @returns  Unique Owners
+   */
+  async getNumberOfUniqueOwners(collectionId: string): Promise<number> {
+    try {
+      const result = await this.tokensRepo
+        .createQueryBuilder('Tokens')
+        .select('Tokens.owner', 'owner')
+        .where('Tokens.id = :collectionId', { collectionId })
+        .groupBy('Tokens.owner')
+        .getCount();
+      return result;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
 }

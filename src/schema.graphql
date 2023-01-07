@@ -443,6 +443,8 @@ type Stats {
   id: String
   dayVolume: Float
   floorPrice: Float
+  averagePrice: Float
+  uniqueOwners: Float
   collection: Collections!
 }
 
@@ -748,6 +750,7 @@ type Mutation {
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
+  CreateUpdateStats: Stats
   StopStatsCron: CronType
   StartStatsCron: CronType
   StopRealTimeCron: CronType

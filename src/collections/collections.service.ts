@@ -184,28 +184,12 @@ export class CollectionsService {
    */
   async getCollectionVolume(contract: string): Promise<number> {
     try {
-      return await this.ordersService.calculateTotalPriceInLast24Hours(
-        contract,
-      );
+      return await this.ordersService.getOrderCollectionVolume(contract);
     } catch (error) {
       throw new NotFoundException(error);
     }
   }
 
-  /**
-   * Get Unique owners of a collection
-   * @param ContractAddress
-   * @returns  Number
-   */
-  async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
-    try {
-      return this.ordersService.getNumberOfUniqueOwnersOfACollection(
-        collectionId,
-      );
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
   /**
    * Get Filtered Tokens by Price Range
    * @param FilterTokensByPriceRangeDto
@@ -224,6 +208,18 @@ export class CollectionsService {
         if (token) tokens.push(token);
       }
       return tokens;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+  /**
+   * Get Unique Owners Of A Collection
+   * @param ContractAddress
+   * @returns  Unique Owners
+   */
+  async getNumberOfUniqueOwners(collectionId: string): Promise<number> {
+    try {
+      return await this.tokenService.getNumberOfUniqueOwners(collectionId);
     } catch (error) {
       throw new NotFoundException(error);
     }

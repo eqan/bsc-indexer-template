@@ -1,4 +1,4 @@
-import { Field, Float, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType, Int } from '@nestjs/graphql';
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 
 @InputType('CreateStatsInput')
@@ -14,4 +14,12 @@ export class CreateStatsInput {
   @IsString()
   @Field(() => Float, { nullable: true })
   floorPrice: number;
+
+  @IsString()
+  @Field(() => Float, { nullable: true })
+  averagePrice: number;
+
+  @IsString()
+  @Field(() => Int, { nullable: true })
+  uniqueOwners: number;
 }

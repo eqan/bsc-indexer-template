@@ -422,48 +422,41 @@ export class OrdersService {
   }
 
   /**
-   * Calculate the total price within 24 hours
-   * @param id
-   * @returns Calculate the total price within 24 hours
-   */
-  async calculateTotalPriceInLast24Hours(contract: string): Promise<number> {
-    const now = Date.now();
-    const timestamp = now - 24 * 60 * 60 * 1000;
-    try {
-      // Use the sum query builder function to sum up the "price" field of all orders that match the where clause
-      const totalPrice = await this.ordersRepo
-        .createQueryBuilder('Orders')
-        .select('COALESCE(SUM(Orders.makePrice), 0)', 'totalPrice')
-        .where('Orders.contract = :contract', {
-          contract,
-        })
-        .andWhere('Orders.end > :timestamp', { timestamp: timestamp })
-        .getRawOne();
-      console.log(totalPrice);
-      return totalPrice;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
-
-  /**
-   * Get Unique Owners Of A Collection
+   * Get Unique Owners Of A Collection related to Orders
    * @param ContractAddress
-   * @returns  Unique Owners
+   * @returns  Number of Unique Owners
    */
-  async getNumberOfUniqueOwnersOfACollection(
-    collectionId: string,
-  ): Promise<number> {
+  async getNumberOfUniqueOwners(collectionId: string): Promise<number> {
     try {
       const result = await this.ordersRepo
         .createQueryBuilder('Orders')
         .select('Orders.maker', 'owner')
-        .where('Orders.contract = :collectionId', { collectionId })
-        .groupBy('Orders.maker')
+        .where('Orders.id = :collectionId', { collectionId })
+        .groupBy('Orders.owner')
         .getCount();
       return result;
     } catch (error) {
       throw new NotFoundException(error);
+    }
+  }
+  /**
+   * Calculate the volume of a collection
+   * @param id
+   * @returns volume
+   */
+  async getOrderCollectionVolume(contract: string): Promise<number> {
+    try {
+      // Use the sum query builder function to sum up the "price" field of all orders that match the where clause
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('COALESCE(SUM(Orders.makePrice), 0)', 'volume')
+        .where('Orders.contract = :contract', {
+          contract,
+        })
+        .getRawOne();
+      return result.volume;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }
