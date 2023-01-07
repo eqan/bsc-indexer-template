@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from 'src/activities/activities.module';
 import { CollectionsModule } from 'src/collections/collections.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
-import { MetadataJobModule } from 'src/jobs/metadata/metdata.job.module';
 import { OrdersModule } from 'src/orders/orders.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { BaseEventParams } from '../entities/entities.entity.base-event-params';
@@ -20,7 +19,6 @@ import { SyncEventsService } from './sync-events.service';
 
 @Module({
   imports: [
-    MetadataJobModule,
     RpcProviderModule,
     ActivitiesModule,
     CollectionsModule,
