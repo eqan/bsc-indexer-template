@@ -152,6 +152,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Get Average Price Of A Collection
+   * @param collectionId
    * @returns Average Price Of A Collection
    */
   @Query(() => Number, { name: 'GetCollectionAveragePrice' })
@@ -170,6 +171,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Get Floor Price Of A Collection
+   * @param collectionId
    * @returns Average Price Of A Collection
    */
   @Query(() => Number, { name: 'GetCollectionFloorPrice', nullable: true })
@@ -188,6 +190,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Get Volume Of A Collection Trade in Last 24 Hours
+   * @param collectionId
    * @returns Volumne
    */
   @Query(() => Number, { name: 'GetCollectionVolume' })
@@ -204,6 +207,7 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
 
   /**
    * Get Number Of Unique Owners in a Collection
+   * @param collectionId
    * @returns Volumne
    */
   @Query(() => Number, { name: 'GetCollectionUniqueOwners' })
