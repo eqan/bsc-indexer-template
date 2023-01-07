@@ -1,7 +1,6 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from 'src/activities/activities.module';
-import { CollectionsModule } from 'src/collections/collections.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { CollectionsJobModule } from 'src/jobs/collections/collections.job.module';
 import { OrdersModule } from 'src/orders/orders.module';

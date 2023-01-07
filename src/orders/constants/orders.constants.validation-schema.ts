@@ -1,5 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import Ajv from 'ajv';
+import ajvErrors from 'ajv-errors';
+import { AssetClassEnum } from '../entities/enums/orders.asset-class.enum';
+
 //graphql union type field validation schema using ajv
 const Part = {
   type: 'object',
@@ -9,6 +12,8 @@ const Part = {
   },
   additionalProperties: false,
   required: ['account', 'value'],
+  errorMessage:
+    'Object must be of required type { account:string, value:number }',
 };
 
 enum DataType {
@@ -23,7 +28,6 @@ export const dataValidationSchema = {
   type: 'object',
   discriminator: { propertyName: 'dataType' },
   required: ['dataType'],
-  // errorMessage: 'should be an object with an integer property foo only',
   oneOf: [
     {
       properties: {
@@ -36,7 +40,8 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees'],
-      errorMessage: 'should be an object with an integer property foo only',
+      errorMessage:
+        'V1 must be of type { payouts:[Part], originFees:Part } where Part {account:string,value:number}',
     },
     {
       properties: {
@@ -50,10 +55,8 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees', 'isMakeFill'],
-      errorMessage: {
-        // In here must be errorMessage not errorMessages
-        type: 'foo must be an Integer', // Your Custom Error Message
-      },
+      errorMessage:
+        'V2 must be of type { payouts:[Part], originFees:Part, isMakeFill:boolean } where Part {account:string,value:number}',
     },
     {
       properties: {
@@ -66,7 +69,8 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['payouts', 'originFees'],
-      errorMessage: 'should be an object with an integer property foo only',
+      errorMessage:
+        'ETH_RARIBLE_V2 must be of type { payouts:[Part], originFees:Part } where Part {account:string,value:number}',
     },
     {
       properties: {
@@ -79,7 +83,8 @@ export const dataValidationSchema = {
       },
       additionalProperties: false,
       required: ['maxFeesBasePoint'],
-      errorMessage: 'should be an object with an integer property foo only',
+      errorMessage:
+        'V3_SELL  must be of type { payout?:Part, originFeeFirst?:Part, originFeeSecond?:Part, maxFeesBasePoint:number, marketplaceMarker:string } where Part {account:string,value:number}',
     },
     {
       properties: {
@@ -91,16 +96,13 @@ export const dataValidationSchema = {
         marketplaceMarker: { type: 'string' },
       },
       additionalProperties: false,
-      errorMessage: 'should be an object with an integer property foo only',
+      errorMessage:
+        'V3_BUY must be of type { payout?:Part, originFeeFirst?:Part, originFeeSecond?:Part, maxFeesBasePoint?:number, marketplaceMarker?:string } where Part {account:string,value:number}',
     },
   ],
-  errorMessages: {
-    type: 'should be an object',
-    required: `should have property dataType Enum of type ${Object.values(
-      DataType,
-    )}`,
-    additionalProperties: 'should not have properties other than dataType',
-  },
+  errorMessage: `should have property dataType oneOf Enum type [${Object.values(
+    DataType,
+  )}]`,
 };
 
 export const assetTypeValidationSchema = {
@@ -113,6 +115,7 @@ export const assetTypeValidationSchema = {
         assetClass: { enum: ['ETH'] },
       },
       additionalProperties: false,
+      errorMessage: 'ETH type should not have any additional property',
     },
     {
       properties: {
@@ -121,6 +124,8 @@ export const assetTypeValidationSchema = {
       },
       additionalProperties: false,
       required: ['contract'],
+      errorMessage:
+        'type ERC20 must have required property contract of type string',
     },
     {
       properties: {
@@ -129,6 +134,8 @@ export const assetTypeValidationSchema = {
         tokenId: { type: 'string' },
       },
       additionalProperties: false,
+      errorMessage:
+        'must have required properties contract of type string and tokenId of type string',
       required: ['contract', 'tokenId'],
     },
     {
@@ -139,9 +146,11 @@ export const assetTypeValidationSchema = {
         uri: { type: 'string' },
         creators: { type: 'array', items: Part },
         royalties: { type: 'array', items: Part },
-        signatures: { types: 'array', items: { type: 'string' } },
+        signatures: { type: 'array', items: { type: 'string' } },
       },
       additionalProperties: false,
+      errorMessage:
+        'type ERC721_LAZY must be of type { contract:string, tokenId:string, uri:string, creators?:[Part] royalties?:[Part] signatures:[string] } where Part {account:string,value:number}',
       required: ['contract', 'tokenId', 'uri', 'signatures'],
     },
     {
@@ -153,12 +162,17 @@ export const assetTypeValidationSchema = {
         supply: { type: 'number' },
         creators: { type: 'array', items: Part },
         royalties: { type: 'array', items: Part },
-        signatures: { types: 'array', items: { type: 'string' } },
+        signatures: { type: 'array', items: { type: 'string' } },
       },
       additionalProperties: false,
+      errorMessage:
+        'type ERC1155_LAZY must be of type { contract:string, tokenId:string, supply:number, uri:string, creators?:[Part] royalties?:[Part] signatures:[string] } where Part {account:string,value:number}',
       required: ['contract', 'tokenId', 'uri', 'supply', 'signatures'],
     },
   ],
+  errorMessage: `should have property assetClass oneOf Enum type [${Object.values(
+    AssetClassEnum,
+  )}]`,
 };
 
 /**
@@ -172,15 +186,15 @@ export const validate = (data: unknown, schema: any): object | never => {
     throw new Error('invalid input type must be of type object');
   }
   const ajv = new Ajv({
-    formats: {
-      reserved: true,
-    },
     allErrors: true,
+    discriminator: true,
   });
+  ajvErrors(ajv);
+
   const validate = ajv.compile(schema);
   const valid = validate(data);
-  // const output = betterAjvErrors(schema, data, validate.errors);
-  if (!valid) throw new BadRequestException(validate.errors);
-  // if (!valid) throw new BadRequestException(output);
+  console.log(validate.errors);
+
+  if (!valid) throw new BadRequestException(validate.errors[0]);
   return data;
 };
