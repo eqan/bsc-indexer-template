@@ -153,7 +153,6 @@ export class MetadataApi {
         urlFailed,
         error,
       );
-      //TODO: NEED TO ADD JOB FAILED TOKEN FETCHING JOB HERE
       return data;
     }
   }
