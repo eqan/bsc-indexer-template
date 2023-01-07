@@ -18,18 +18,14 @@ import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-// import { OrderMatchEvents } from 'src/events/entities/events.entity.order-match-events';
 import { SortOrder } from './enums/collections.sort-order.enum';
-import { Orders } from 'src/orders/entities/orders.entity';
+import { GetOwners } from 'src/orders/dto/get-owners.output';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    // @InjectRepository(Orders)
     @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
-    // private ordersRepo: Repository<Orders>,
-    // private orderMatchEventRepo: Repository<OrderMatchEvents>,
     private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
@@ -150,25 +146,13 @@ export class CollectionsService {
       throw new BadRequestException(error);
     }
   }
-
-  /**
-   * Get Average Collection Price Of Tokens
-   * @param ContractAddress
-   * @returns  Average Price Of Collection
-   */
-  // async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
-  //   try {
-  //     return await this.orderMatchEventRepo
-  //       .createQueryBuilder('OrderMatchEvent')
-  //       .select('AVG(OrderMatchEvent.price)', 'avg_price')
-  //       .where('OrderMatchEvent.collectionId = :collectionId', {
-  //         collectionId,
-  //       })
-  //       .getRawOne();
-  //   } catch (error) {
-  //     throw new NotFoundException(error);
-  //   }
-  // }
+  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
+    try {
+      return this.ordersService.getOrderCollectionAveragePrice(collectionId);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 
   /**
    * Get Average Collection Price Of Tokens
@@ -183,67 +167,45 @@ export class CollectionsService {
         collectionId,
         sortOrder: SortOrder.ASC,
       });
-      return items[0].makePrice;
+      try {
+        return items[0].makePrice;
+      } catch (error) {
+        return null;
+      }
     } catch (error) {
       throw new NotFoundException(error);
     }
   }
 
-  // /**
-  //  * Get The Total Eth Value For The Last 24 Hours
-  //  * @param ContractAddress
-  //  * @returns  Last 24 Hours Transactions Amount
-  //  */
-  // async getCollectionVolume(collectionId: string): Promise<number> {
-  //   try {
-  //     const now = Date.now();
-  //     const oneDayAgo = now - 24 * 60 * 60 * 1000;
-  //     let sum = 0;
-  //     const { items } = await this.orderMatchEventService.show(
-  //       collectionId,
-  //       oneDayAgo,
-  //     );
-  //     items.map((order) => {
-  //       if (order.price) sum += parseFloat(order.price);
-  //     });
-  //     return sum;
-  //   } catch (error) {
-  //     throw new NotFoundException(error);
-  //   }
-  // }
-
-  // /**
-  //  * Get Unique owners of a collection
-  //  * @param ContractAddress
-  //  * @returns  Number
-  //  */
-  // async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
-  //   try {
-  //     const { items } = await this.orderMatchEventService.show(collectionId);
-  //     const owners = [];
-  //     let sum = 1;
-  //     items.map((order) => {
-  //       if (owners.includes(order.taker)) {
-  //         owners.push(order.taker);
-  //         sum++;
-  //       }
-  //     });
-  //     return sum;
-  //   } catch (error) {
-  //     throw new NotFoundException(error);
-  //   }
-  // }
-
-  normalizeData(error: string) {
-    const regex = /value \"\d+\" is out of range for type integer/;
-
-    if (regex.test(error)) {
-      return 0;
-    } else {
-      throw new BadRequestException(error);
+  /**
+   * Get The Total Eth Value For The Last 24 Hours
+   * @param ContractAddress
+   * @returns  Last 24 Hours Transactions Amount
+   */
+  async getCollectionVolume(contract: string): Promise<number> {
+    try {
+      return await this.ordersService.calculateTotalPriceInLast24Hours(
+        contract,
+      );
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 
+  /**
+   * Get Unique owners of a collection
+   * @param ContractAddress
+   * @returns  Number
+   */
+  async getNumberOfUnqiueOwners(collectionId: string): Promise<number> {
+    try {
+      return this.ordersService.getNumberOfUniqueOwnersOfACollection(
+        collectionId,
+      );
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
   /**
    * Get Filtered Tokens by Price Range
    * @param FilterTokensByPriceRangeDto
@@ -264,6 +226,16 @@ export class CollectionsService {
       return tokens;
     } catch (error) {
       throw new NotFoundException(error);
+    }
+  }
+
+  normalizeData(error: string) {
+    const regex = /value \"\d+\" is out of range for type integer/;
+
+    if (regex.test(error)) {
+      return 0;
+    } else {
+      throw new BadRequestException(error);
     }
   }
 }

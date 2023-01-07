@@ -591,7 +591,10 @@ type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
   GetCollectionUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems!
-  GetCollectionFloorPrice(collectionId: String!): Float!
+  GetCollectionAveragePrice(collectionId: String!): Float!
+  GetCollectionFloorPrice(collectionId: String!): Float
+  GetCollectionVolume(collectionId: String!): Float!
+  GetCollectionUniqueOwners(collectionId: String!): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!

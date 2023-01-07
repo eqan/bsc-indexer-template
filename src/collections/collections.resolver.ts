@@ -21,6 +21,7 @@ import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
+import { GetOwners } from 'src/orders/dto/get-owners.output';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -153,25 +154,25 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * Get Average Price Of A Collection
    * @returns Average Price Of A Collection
    */
-  // @Query(() => Number, { name: 'GetCollectionAveragePrice' })
-  // async getCollectionAveragePrice(
-  //   @Args('collectionId')
-  //   collectionId: string,
-  // ): Promise<number> {
-  //   try {
-  //     return await this.collectionsService.getOrderCollectionAveragePrice(
-  //       collectionId,
-  //     );
-  //   } catch (error) {
-  //     return this.collectionsService.normalizeData(error);
-  //   }
-  // }
+  @Query(() => Number, { name: 'GetCollectionAveragePrice' })
+  async getCollectionAveragePrice(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getOrderCollectionAveragePrice(
+        collectionId,
+      );
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
 
   /**
    * Get Floor Price Of A Collection
    * @returns Average Price Of A Collection
    */
-  @Query(() => Number, { name: 'GetCollectionFloorPrice' })
+  @Query(() => Number, { name: 'GetCollectionFloorPrice', nullable: true })
   async getCollectionFloorPrice(
     @Args('collectionId')
     collectionId: string,
@@ -185,39 +186,39 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
     }
   }
 
-  // /**
-  //  * Get Volume Of A Collection Trade in Last 24 Hours
-  //  * @returns Volumne
-  //  */
-  // @Query(() => Number, { name: 'GetCollectionVolume' })
-  // async getCollectionVolume(
-  //   @Args('collectionId')
-  //   collectionId: string,
-  // ): Promise<number> {
-  //   try {
-  //     return await this.collectionsService.getCollectionVolume(collectionId);
-  //   } catch (error) {
-  //     return this.collectionsService.normalizeData(error);
-  //   }
-  // }
+  /**
+   * Get Volume Of A Collection Trade in Last 24 Hours
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionVolume' })
+  async getCollectionVolume(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getCollectionVolume(collectionId);
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
 
-  // /**
-  //  * Get Number Of Unique Owners in a Collection
-  //  * @returns Volumne
-  //  */
-  // @Query(() => Number, { name: 'GetCollectionUniqueOwners' })
-  // async getNumberOfUniqueOwners(
-  //   @Args('collectionId')
-  //   collectionId: string,
-  // ): Promise<number> {
-  //   try {
-  //     return await this.collectionsService.getNumberOfUnqiueOwners(
-  //       collectionId,
-  //     );
-  //   } catch (error) {
-  //     return this.collectionsService.normalizeData(error);
-  //   }
-  // }
+  /**
+   * Get Number Of Unique Owners in a Collection
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionUniqueOwners' })
+  async getNumberOfUniqueOwners(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getNumberOfUnqiueOwners(
+        collectionId,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 
   //  Sort and Filter the collection tokens for provided range
   //  @param FilterTokensByPriceRangeDto

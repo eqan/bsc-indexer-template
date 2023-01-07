@@ -13,9 +13,10 @@ import {
   checkItemIdForamt,
 } from 'src/common/utils.common';
 import { SystemErrors } from 'src/constants/errors.enum';
+import { OrderMatchEvents } from 'src/events/entities/events.entity.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, ILike, In, Not, Repository } from 'typeorm';
+import { Between, ILike, In, MoreThan, Not, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -23,6 +24,7 @@ import { GetAllOrders } from './dto/get-all-orders.output';
 import { GetAllSellOrders } from './dto/get-all-sell-orders.output';
 import { GetOrderBidsByItemDto } from './dto/get-order-bids-by-item-dto';
 import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
+import { GetOwners } from './dto/get-owners.output';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
@@ -398,6 +400,72 @@ export class OrdersService {
       return { items, total };
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param ContractAddress
+   * @returns  Average Price Of Collection
+   */
+  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
+    try {
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('COALESCE(AVG(Orders.makePrice), 0)', 'avg_price')
+        .where('Orders.contract = :collectionId', {
+          collectionId,
+        })
+        .getRawOne();
+      return result.avg_price;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * Calculate the total price within 24 hours
+   * @param id
+   * @returns Calculate the total price within 24 hours
+   */
+  async calculateTotalPriceInLast24Hours(contract: string): Promise<number> {
+    const now = Date.now();
+    const timestamp = now - 24 * 60 * 60 * 1000;
+    try {
+      // Use the sum query builder function to sum up the "price" field of all orders that match the where clause
+      const totalPrice = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('COALESCE(SUM(Orders.makePrice), 0)', 'totalPrice')
+        .where('Orders.contract = :contract', {
+          contract,
+        })
+        .andWhere('Orders.end > :timestamp', { timestamp: timestamp })
+        .getRawOne();
+      console.log(totalPrice);
+      return totalPrice;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Unique Owners Of A Collection
+   * @param ContractAddress
+   * @returns  Unique Owners
+   */
+  async getNumberOfUniqueOwnersOfACollection(
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('Orders.maker', 'owner')
+        .where('Orders.contract = :collectionId', { collectionId })
+        .groupBy('Orders.maker')
+        .getCount();
+      return result;
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }
