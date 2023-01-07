@@ -10,6 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrdersService } from 'src/orders/orders.service';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
+import { NftTokenId } from 'src/repositories/tokenIdRepository/dto/nft-tokenid.dto';
+import { TokenIdRepository } from 'src/repositories/tokenIdRepository/tokenId.repository';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
@@ -18,6 +20,9 @@ import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
+import { AbiCoder } from '@ethersproject/abi';
+import { hexConcat } from '@ethersproject/bytes';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -27,8 +32,39 @@ export class CollectionsService {
     private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
+    @Inject(forwardRef(() => CollectionsRegistrationService))
+    private readonly collectionRegistrationService: CollectionsRegistrationService,
+    private readonly tokenIdRepository: TokenIdRepository,
   ) {}
 
+  /**
+   * Generate new token id for specific collection and minter
+   * @param  collectionId
+   * @param collectionId
+   * @returns  new token id
+   */
+  async generateId(collectionId: string, minter: string): Promise<NftTokenId> {
+    try {
+      const collection = await this.collectionRegistrationService.register(
+        collectionId,
+      );
+      if (!collection) {
+        throw new NotFoundException(
+          `Collection against ${collectionId} not found`,
+        );
+      }
+      const tokenId = await this.tokenIdRepository.generateTokenId(
+        `${collectionId}:${minter}`,
+      );
+      const encoder = new AbiCoder();
+      const encoded = encoder.encode(['uint'], [tokenId]);
+      const concated = hexConcat([minter, `0x${encoded.slice(40)}`]);
+      const decoded = encoder.decode(['uint'], concated);
+      return { tokenId: decoded.toString() };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
   /**
    * Create Collection in Database
    * @param createCollectionsInput

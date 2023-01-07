@@ -8,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import BaseProvider from 'src/core/base.BaseProvider';
+import { NftTokenId } from 'src/repositories/tokenIdRepository/dto/nft-tokenid.dto';
 import { FilterTokenDto } from 'src/tokens/dto/filter-token.dto';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -15,6 +16,7 @@ import { CollectionsService } from './collections.service';
 import { CreateCollectionsInput } from './dto/create-collections.input';
 import { DeleteCollectionsInput } from './dto/delete-collections.input';
 import { FilterDto } from './dto/filter.collections.dto';
+import { GenerateTokenIdInput } from './dto/generate-tokenid.input';
 import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
@@ -28,6 +30,27 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   ) {
     super();
   }
+
+  /**
+   * Generate new tokenid
+   * @param GenerateTokenIdInput
+   * @returns tokenid
+   */
+  @Mutation(() => NftTokenId, { name: 'GenerateNftTokenId' })
+  async generateNftTokenId(
+    @Args('generateTokenIdInput')
+    generateTokenIdInput: GenerateTokenIdInput,
+  ): Promise<NftTokenId> {
+    try {
+      return await this.collectionsService.generateId(
+        generateTokenIdInput.collectionId,
+        generateTokenIdInput.minter,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
   /**
    * Create Collections
    * @param createCollectionsInput

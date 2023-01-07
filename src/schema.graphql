@@ -401,6 +401,10 @@ type GetAllTokens {
   total: Float!
 }
 
+type NftTokenId {
+  tokenId: String!
+}
+
 type CollectionMetaContent {
   type: String
   url: String
@@ -664,6 +668,7 @@ input FilterAuctionDto {
 }
 
 type Mutation {
+  GenerateNftTokenId(generateTokenIdInput: GenerateTokenIdInput!): NftTokenId!
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
   UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
@@ -691,6 +696,11 @@ type Mutation {
   StartRealTimeCron: CronType
   StopBackFillCron: CronType
   StartBackFillCron: CronType
+}
+
+input GenerateTokenIdInput {
+  collectionId: String!
+  minter: String!
 }
 
 input CreateCollectionsInput {

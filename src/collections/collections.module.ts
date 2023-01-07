@@ -1,17 +1,22 @@
+import { BigNumber } from '@ethersproject/bignumber';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TokenIdModule } from 'src/repositories/tokenIdRepository/tokenId.module';
 import { OrdersModule } from 'src/orders/orders.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { CollectionsResolver } from './collections.resolver';
 import { CollectionsService } from './collections.service';
 import { Collections } from './entities/collections.entity';
 import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entity';
+import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService/collectionRegistration.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
+    TokenIdModule.register(BigNumber.from(2).pow(96)),
     OrdersModule,
+    forwardRef(() => CollectionsRegistrationModule),
   ],
   providers: [CollectionsResolver, CollectionsService],
   exports: [CollectionsService],

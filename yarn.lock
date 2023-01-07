@@ -5538,9 +5538,9 @@
     "safe-buffer" "^5.0.1"
 
 "keccak@^3.0.0":
-  "integrity" "sha512-JZrLIAJWuZxKbCilMpNz5Vj7Vtb4scDG3dMXLOsbzBmQGyjwE61BbW7bJkfKKCShXiQZt3T6sBgALRtmd+nZaQ=="
-  "resolved" "https://registry.npmjs.org/keccak/-/keccak-3.0.3.tgz"
-  "version" "3.0.3"
+  "integrity" "sha512-PyKKjkH53wDMLGrvmRGSNWgmSxZOUqbnXwKL9tmgbFYA1iAYqW21kfR7mZXV0MlESiefxQQE9X9fTa3X+2MPDQ=="
+  "resolved" "https://registry.npmjs.org/keccak/-/keccak-3.0.2.tgz"
+  "version" "3.0.2"
   dependencies:
     "node-addon-api" "^2.0.0"
     "node-gyp-build" "^4.2.0"

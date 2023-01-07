@@ -2,4 +2,4 @@
 sudo service postgresql start
 sudo service redis-server start
 npm run start:dev
-yarn start:debug
+# yarn start:debug

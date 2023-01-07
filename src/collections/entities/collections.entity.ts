@@ -22,6 +22,14 @@ export class Collections extends BaseEntity {
   @PrimaryColumn({
     type: 'text',
     unique: true,
+    transformer: {
+      to(value) {
+        return value.toLowerCase();
+      },
+      from(value) {
+        return value;
+      },
+    },
   })
   id: string;
 
