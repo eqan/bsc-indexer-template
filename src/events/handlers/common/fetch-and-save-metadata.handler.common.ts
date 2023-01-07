@@ -1,32 +1,22 @@
-import { OnQueueError, Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Job } from 'bull';
-import Redis from 'ioredis';
+import { Injectable, Logger } from '@nestjs/common';
 import { CollectionsService } from 'src/collections/collections.service';
 import { getTypes } from 'src/common/utils.common';
-import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { FetchMetadataJobType } from 'src/jobs/types/job.types';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
-@Processor(QueueType.FETCH_METADATA_QUEUE)
-export class FetchMetadataProcessor {
+@Injectable()
+export class FetchAndSaveMetadataService {
   constructor(
     private readonly collectionsService: CollectionsService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
-    private readonly config: ConfigService,
   ) {}
-  QUEUE_NAME = QueueType.FETCH_METADATA_QUEUE;
-  private readonly logger = new Logger(this.QUEUE_NAME);
-  redis = new Redis(this.config.get('REDIS_URL'));
+  private readonly logger = new Logger('FetchAndSaveMetadataService');
 
-  @Process()
-  async FetchMetadata({
-    data: { collectionId, tokenId, timestamp, kind, deleted },
-  }: Job<FetchMetadataJobType>) {
+  async handleMetadata(data: FetchMetadataJobType) {
     try {
+      const { collectionId, tokenId, timestamp, kind, deleted } = data;
       const { collectionType, type } = getTypes(kind);
 
       if (collectionId && tokenId) {
@@ -34,7 +24,7 @@ export class FetchMetadataProcessor {
           collectionId,
         );
         const token = await this.tokensService.tokenExistOrNot(tokenId);
-        // console.log(token, 'created Token');
+
         if (!collection) {
           const response = await this.metadataApi.getCollectionMetadata(
             collectionId,
@@ -53,16 +43,14 @@ export class FetchMetadataProcessor {
               deleted,
             });
 
-            // console.log(tokenMeta.Meta);
             if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
               tokenMeta.Meta = null;
             }
 
-            const result = await this.tokensService.create(tokenMeta);
-            // console.log(result);
-          } catch (error) {
-            console.log(error, collectionId);
-            throw error;
+            await this.tokensService.create(tokenMeta);
+          } catch (err) {
+            console.log(err, collectionId);
+            throw err;
           }
         }
       }
@@ -70,12 +58,5 @@ export class FetchMetadataProcessor {
       this.logger.error(`Failed Fetching Metadata: ${error}`);
       throw error;
     }
-  }
-
-  @OnQueueError()
-  onError(error: Error, job: Job) {
-    this.logger.error(
-      `Job ${job.data.jobId} failed fetching Metadata: ${error}`,
-    );
   }
 }

@@ -7,8 +7,8 @@ import { EventDataKind } from 'src/events/types/events.types';
 import { randomUUID } from 'crypto';
 
 /**
- * Fetch Collections
- * Job for fetching nft collections onchain and storing them offchain
+ * Fetch Metadata
+ * Job for fetching nft metadata and storing them offchain
  */
 
 @Injectable()

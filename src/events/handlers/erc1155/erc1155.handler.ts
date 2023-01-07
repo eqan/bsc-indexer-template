@@ -3,14 +3,14 @@ import { ActivitiesService } from 'src/activities/activities.service';
 import { isDeleted } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { FetchMetadataService } from 'src/jobs/metadata/metdata.job.service';
 import { extractActivityData } from '../common/activity.handler.common';
+import { FetchAndSaveMetadataService } from '../common/fetch-and-save-metadata.handler.common';
 
 @Injectable()
 export class ERC1155Handler {
   constructor(
-    private readonly fetchMetadataService: FetchMetadataService, // private readonly activitiesService: ActivitiesService,
     private readonly activitiesService: ActivitiesService,
+    private readonly fetchAndSaveMetadataService: FetchAndSaveMetadataService,
   ) {}
 
   private readonly logger = new Logger('ERC1155Handler');
@@ -31,13 +31,13 @@ export class ERC1155Handler {
       const to = parsedLog.args['to'].toString();
       const deleted = isDeleted(to);
       //   const amount = parsedLog.args["amount"].toString();
-      await this.fetchMetadataService.addFetchMetadataJob(
+      await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
         timestamp,
         kind,
         deleted,
-      );
+      });
     } catch (error) {
       this.logger.error(`failed handling SingletransferEvent ${error}`);
     }
@@ -68,13 +68,13 @@ export class ERC1155Handler {
         owner = null;
       }
       for (let i = 0; i < count; i++) {
-        await this.fetchMetadataService.addFetchMetadataJob(
+        await this.fetchAndSaveMetadataService.handleMetadata({
           collectionId,
-          tokenIds[i],
+          tokenId: tokenIds[i],
           timestamp,
           kind,
           deleted,
-        );
+        });
         try {
           const activityData = extractActivityData(
             tokenIds[i],
