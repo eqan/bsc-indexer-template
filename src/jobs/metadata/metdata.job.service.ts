@@ -12,15 +12,15 @@ import { randomUUID } from 'crypto';
  */
 
 @Injectable()
-export class FetchCollectionsService {
+export class FetchMetadataService {
   constructor(
-    @InjectQueue(QueueType.FETCH_COLLECTIONS_QUEUE)
-    private fetchCollections: Queue,
+    @InjectQueue(QueueType.FETCH_METADATA_QUEUE)
+    private fetchMetadataQueue: Queue,
   ) {}
-  private readonly logger = new Logger(QueueType.FETCH_COLLECTIONS_QUEUE);
+  private readonly logger = new Logger(QueueType.FETCH_METADATA_QUEUE);
   networkSettings = getNetworkSettings();
 
-  async fetchCollection(
+  async addFetchMetadataJob(
     collectionId: string,
     tokenId: string,
     timestamp: number,
@@ -28,7 +28,7 @@ export class FetchCollectionsService {
     deleted: boolean,
   ) {
     try {
-      await this.fetchCollections.add(
+      await this.fetchMetadataQueue.add(
         { collectionId, tokenId, timestamp, kind, deleted },
         {
           jobId: randomUUID(),

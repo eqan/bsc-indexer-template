@@ -9,7 +9,7 @@ export class MidWayJobType {
   toBlock: number;
 }
 
-export class FetchCollectionTypeJob {
+export class FetchMetadataJobType {
   collectionId: string;
   tokenId: string;
   timestamp: number;

@@ -5,21 +5,17 @@ import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { QueueType } from '../enums/jobs.enums';
-import { FetchCollectionsService } from './collections.job.service';
-import { FetchCollectionsProcessor } from './processors/fetch-collections.job.processor';
+import { FetchMetadataService } from './metdata.job.service';
+import { FetchMetadataProcessor } from './processors/fetch-metdata.job.processor';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: QueueType.FETCH_COLLECTIONS_QUEUE }),
+    BullModule.registerQueue({ name: QueueType.FETCH_METADATA_QUEUE }),
     CollectionsModule,
     TokensModule,
     MetadataApiModule,
   ],
-  providers: [
-    FetchCollectionsProcessor,
-    FetchCollectionsService,
-    RpcProviderModule,
-  ],
-  exports: [FetchCollectionsService],
+  providers: [FetchMetadataProcessor, FetchMetadataService, RpcProviderModule],
+  exports: [FetchMetadataService],
 })
-export class CollectionsJobModule {}
+export class MetadataJobModule {}

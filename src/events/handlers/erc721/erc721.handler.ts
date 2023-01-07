@@ -3,13 +3,13 @@ import { ActivitiesService } from 'src/activities/activities.service';
 import { isDeleted, lowerCase } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { FetchCollectionsService } from 'src/jobs/collections/collections.job.service';
+import { FetchMetadataService } from 'src/jobs/metadata/metdata.job.service';
 import { extractActivityData } from '../common/activity.handler.common';
 
 @Injectable()
 export class ERC721Handler {
   constructor(
-    private readonly fetchCollectionsService: FetchCollectionsService,
+    private readonly fetchMetadataService: FetchMetadataService,
     private readonly activitiesService: ActivitiesService,
   ) {}
 
@@ -30,7 +30,7 @@ export class ERC721Handler {
       const kind = eventData.kind;
       const to = parsedLog.args['to'].toString();
       const deleted = isDeleted(to);
-      await this.fetchCollectionsService.fetchCollection(
+      await this.fetchMetadataService.addFetchMetadataJob(
         collectionId,
         tokenId,
         timestamp,

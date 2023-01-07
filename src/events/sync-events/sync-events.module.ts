@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from 'src/activities/activities.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
-import { CollectionsJobModule } from 'src/jobs/collections/collections.job.module';
+import { MetadataJobModule } from 'src/jobs/metadata/metdata.job.module';
 import { OrdersModule } from 'src/orders/orders.module';
 import { BaseEventParams } from '../entities/entities.entity.base-event-params';
 import { OrderCancelEvents } from '../entities/events.entity.order-cancel-events';
@@ -17,7 +17,7 @@ import { SyncEventsService } from './sync-events.service';
 
 @Module({
   imports: [
-    CollectionsJobModule,
+    MetadataJobModule,
     RpcProviderModule,
     ActivitiesModule,
     OrdersModule,

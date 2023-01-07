@@ -1,31 +1,31 @@
-import { ConfigService } from '@nestjs/config';
 import { OnQueueError, Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
 import Redis from 'ioredis';
 import { CollectionsService } from 'src/collections/collections.service';
 import { getTypes } from 'src/common/utils.common';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
-import { FetchCollectionTypeJob } from 'src/jobs/types/job.types';
+import { FetchMetadataJobType } from 'src/jobs/types/job.types';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
-@Processor(QueueType.FETCH_COLLECTIONS_QUEUE)
-export class FetchCollectionsProcessor {
+@Processor(QueueType.FETCH_METADATA_QUEUE)
+export class FetchMetadataProcessor {
   constructor(
     private readonly collectionsService: CollectionsService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
     private readonly config: ConfigService,
   ) {}
-  QUEUE_NAME = QueueType.FETCH_COLLECTIONS_QUEUE;
+  QUEUE_NAME = QueueType.FETCH_METADATA_QUEUE;
   private readonly logger = new Logger(this.QUEUE_NAME);
   redis = new Redis(this.config.get('REDIS_URL'));
 
   @Process()
-  async FetchCollection({
+  async FetchMetadata({
     data: { collectionId, tokenId, timestamp, kind, deleted },
-  }: Job<FetchCollectionTypeJob>) {
+  }: Job<FetchMetadataJobType>) {
     try {
       const { collectionType, type } = getTypes(kind);
 
@@ -67,7 +67,7 @@ export class FetchCollectionsProcessor {
         }
       }
     } catch (error) {
-      this.logger.error(`Failed fetching collection: ${error}`);
+      this.logger.error(`Failed Fetching Metadata: ${error}`);
       throw error;
     }
   }
@@ -75,7 +75,7 @@ export class FetchCollectionsProcessor {
   @OnQueueError()
   onError(error: Error, job: Job) {
     this.logger.error(
-      `Job ${job.data.jobId} failed fetching collections: ${error}`,
+      `Job ${job.data.jobId} failed fetching Metadata: ${error}`,
     );
   }
 }
