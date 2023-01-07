@@ -13,7 +13,8 @@ import { CollectionsModule } from 'src/collections/collections.module';
     CollectionsModule,
 
     HttpModule.register({
-      timeout: 60000,
+      //increased timeout to 2 mins for fetching data from ipfs
+      timeout: 120000,
       maxRedirects: 5,
     }),
   ],

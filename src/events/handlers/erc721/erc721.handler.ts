@@ -3,14 +3,12 @@ import { ActivitiesService } from 'src/activities/activities.service';
 import { isDeleted, lowerCase } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { FetchMetadataService } from 'src/jobs/metadata/metdata.job.service';
 import { extractActivityData } from '../common/activity.handler.common';
 import { FetchAndSaveMetadataService } from '../common/fetch-and-save-metadata.handler.common';
 
 @Injectable()
 export class ERC721Handler {
   constructor(
-    private readonly fetchMetadataService: FetchMetadataService,
     private readonly activitiesService: ActivitiesService,
     private readonly fetchAndSaveMetadataService: FetchAndSaveMetadataService,
   ) {}
