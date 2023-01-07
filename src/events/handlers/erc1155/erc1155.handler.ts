@@ -17,7 +17,7 @@ export class ERC1155Handler {
 
   handleTransferSingleEvent = async (events: EnhancedEvent) => {
     const {
-      baseEventParams: { timestamp },
+      baseEventParams: { timestamp, logIndex, blockHash, blockNumber, txHash },
       log,
       kind,
     } = events;
@@ -29,8 +29,15 @@ export class ERC1155Handler {
       const collectionId = log?.address || '';
       const kind = eventData.kind;
       const to = parsedLog.args['to'].toString();
+      const from = parsedLog.args['from'].toString();
       const deleted = isDeleted(to);
-      //   const amount = parsedLog.args["amount"].toString();
+      const amount = parsedLog.args['amount'].toString();
+      let owner = '';
+      try {
+        owner = parsedLog.args['owner'].toLowerCase();
+      } catch (error) {
+        owner = null;
+      }
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
@@ -38,6 +45,26 @@ export class ERC1155Handler {
         kind,
         deleted,
       });
+      try {
+        const activityData = extractActivityData(
+          tokenId,
+          collectionId,
+          logIndex,
+          blockHash,
+          blockNumber,
+          txHash,
+          amount,
+          false,
+          to,
+          from,
+          owner,
+          timestamp,
+        );
+        await this.activitiesService.create(activityData);
+      } catch (error) {
+        this.logger.error(`Failed creating activity : ${error}`);
+        throw error;
+      }
     } catch (error) {
       this.logger.error(`failed handling SingletransferEvent ${error}`);
     }
