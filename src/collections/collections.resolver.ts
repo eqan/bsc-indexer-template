@@ -21,7 +21,6 @@ import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
-import { GetOwners } from 'src/orders/dto/get-owners.output';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {

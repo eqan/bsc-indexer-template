@@ -13,10 +13,9 @@ import {
   checkItemIdForamt,
 } from 'src/common/utils.common';
 import { SystemErrors } from 'src/constants/errors.enum';
-import { OrderMatchEvents } from 'src/events/entities/events.entity.order-match-events';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, ILike, In, MoreThan, Not, Repository } from 'typeorm';
+import { Between, ILike, In, Not, Repository } from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -24,7 +23,6 @@ import { GetAllOrders } from './dto/get-all-orders.output';
 import { GetAllSellOrders } from './dto/get-all-sell-orders.output';
 import { GetOrderBidsByItemDto } from './dto/get-order-bids-by-item-dto';
 import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
-import { GetOwners } from './dto/get-owners.output';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
