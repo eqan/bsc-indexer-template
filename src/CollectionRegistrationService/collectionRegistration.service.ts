@@ -120,7 +120,7 @@ export class CollectionsRegistrationService {
         const nonMatchingSignatures = standard.functionSignatures.filter(
           (signature) => {
             const functionId = utils.id(signature).substring(0, 10);
-            byteCode.includes(functionId);
+            return !byteCode.includes(functionId);
           },
         );
         if (nonMatchingSignatures.length === 0) {
