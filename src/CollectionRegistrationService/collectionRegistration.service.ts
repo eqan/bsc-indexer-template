@@ -33,13 +33,14 @@ export class CollectionsRegistrationService {
     return this.getOrSaveToken(address);
   }
 
-  async getOrSaveToken(address: string): Promise<Collections> {
+  async getOrSaveToken(address: string): Promise<Collections | null> {
     try {
       const collection = await this.collectionsRepo.findOneBy({ id: address });
       if (collection) {
         return collection;
       }
       const fetchedToken = await this.fetchCollection(address);
+      if (!fetchedToken) return null;
       return this.saveOrReturn(fetchedToken);
     } catch (error) {}
   }
@@ -60,7 +61,7 @@ export class CollectionsRegistrationService {
 
   private async fetchCollection(
     address: string,
-  ): Promise<CreateCollectionsInput> {
+  ): Promise<CreateCollectionsInput | null> {
     const contract = new Contract(
       address,
       CollectionIface,
@@ -73,6 +74,7 @@ export class CollectionsRegistrationService {
       this.fetchTokenStandard(contract),
     ]);
     const [name, symbol, owner, type] = result;
+    if (!type) return null;
     const collectionData: CreateCollectionsInput = {
       name,
       symbol,
@@ -89,7 +91,7 @@ export class CollectionsRegistrationService {
 
   private async fetchTokenStandard(
     contract: Contract,
-  ): Promise<CollectionType> {
+  ): Promise<CollectionType | null> {
     const address = contract.address;
     for (const key of Object.keys(TokenStandards)) {
       const standard = TokenStandards[key];
@@ -106,6 +108,7 @@ export class CollectionsRegistrationService {
     }
     return this.fetchTokenStandardByFunctionSignatures(address);
   }
+
   async fetchTokenStandardByFunctionSignatures(
     address: string,
   ): Promise<CollectionType | null> {
