@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
+import { CollectionsRegistrationService } from 'src/collectionRegistrationService/collectionRegistration.service';
 import { getTypes } from 'src/common/utils.common';
 import { FetchMetadataJobType } from 'src/jobs/types/job.types';
 import { TokensService } from 'src/tokens/tokens.service';

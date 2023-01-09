@@ -8,7 +8,7 @@ import { CollectionsResolver } from './collections.resolver';
 import { CollectionsService } from './collections.service';
 import { Collections } from './entities/collections.entity';
 import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entity';
-import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService/collectionRegistration.module';
+import { CollectionsRegistrationModule } from 'src/collectionRegistrationService/collectionRegistration.module';
 
 @Module({
   imports: [

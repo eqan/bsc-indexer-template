@@ -20,7 +20,7 @@ import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
+import { CollectionsRegistrationService } from 'src/collectionRegistrationService/collectionRegistration.service';
 import { AbiCoder } from '@ethersproject/abi';
 import { hexConcat } from '@ethersproject/bytes';
 
