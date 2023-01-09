@@ -147,12 +147,12 @@ export class MetadataApi {
         return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
       } else return { ...data, Meta: this.returnMeta({}, tokenURI) };
     } catch (error) {
-      console.log(
-        'finding issue url, remain this console',
-        { type, tokenId, collectionId },
-        urlFailed,
-        error,
-      );
+      // console.log(
+      //   'finding issue url, remain this console',
+      //   { type, tokenId, collectionId },
+      //   urlFailed,
+      //   error,
+      // );
       return data;
     }
   }

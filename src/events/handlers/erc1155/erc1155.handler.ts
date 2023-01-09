@@ -38,6 +38,7 @@ export class ERC1155Handler {
       } catch (error) {
         owner = null;
       }
+      //ACTIVITY FOR HANDLING ERC721 TRANSFER SINGLE EVENT
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
@@ -102,6 +103,7 @@ export class ERC1155Handler {
           kind,
           deleted,
         });
+        //activity for ERC1155 TRANSFER BATCH EVENT
         try {
           const activityData = extractActivityData(
             tokenIds[i],

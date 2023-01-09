@@ -82,6 +82,7 @@ export class TokensService {
     try {
       return await this.tokensRepo.findOne({ where: { tokenId } });
     } catch (error) {
+      console.log(error, 'errro in tokenexist');
       throw new BadRequestException(error);
     }
   }
