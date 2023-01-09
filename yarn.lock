@@ -1833,12 +1833,12 @@
     "exponential-backoff" "^3.1.0"
     "merkletreejs" "^0.2.31"
 
-"@rarible/types@~0.9.2":
+"@rarible/types@^0.9.6", "@rarible/types@~0.9.2":
   "integrity" "sha512-yzbJIcOCdoMMmycRSGZKdt8AdAIcHOPPUes2biJioMHYalGk+8jzP6xB1dqtW7jqv9Wg5Ur5V/DtqVhuajlj+w=="
   "resolved" "https://registry.npmjs.org/@rarible/types/-/types-0.9.6.tgz"
   "version" "0.9.6"
 
-"@rarible/utils@~0.9.10":
+"@rarible/utils@^0.9.10", "@rarible/utils@~0.9.10":
   "integrity" "sha512-efq8jxlLsNQAC6iY7jcKYlxeV0SAOfp2F4c7VXQv/JCivoDxkMnMzUWaQuxR/XN6UjV2UjpJ364xmaisiqh82g=="
   "resolved" "https://registry.npmjs.org/@rarible/utils/-/utils-0.9.10.tgz"
   "version" "0.9.10"
@@ -4180,6 +4180,11 @@
   "integrity" "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="
   "resolved" "https://registry.npmjs.org/events/-/events-3.3.0.tgz"
   "version" "3.3.0"
+
+"evm-proxy-detection@^1.0.1":
+  "integrity" "sha512-EBMqSPNlUu8WWD7roOaD+8k57eWTZMTtP4o5BOvMWDOEw5QnDFwDj4d38+9i388ZxNrHvFt7I+sdlP0zRpS3tA=="
+  "resolved" "https://registry.npmjs.org/evm-proxy-detection/-/evm-proxy-detection-1.0.1.tgz"
+  "version" "1.0.1"
 
 "evp_bytestokey@^1.0.3":
   "integrity" "sha512-/f2Go4TognH/KvCISP7OUsHn85hT9nUkxxA9BEWxFn+Oj9o8ZNLm/40hdlgSLyuOimsrTKLUMEorQexp/aPQeA=="

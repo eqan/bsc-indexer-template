@@ -16,7 +16,7 @@ import { CollectionsService } from 'src/collections/collections.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
-
+import detectProxyTarget from 'evm-proxy-detection';
 @Injectable()
 export class CollectionsRegistrationService {
   // todo need to handle cache here for the tokens.
@@ -97,7 +97,9 @@ export class CollectionsRegistrationService {
       const standard = TokenStandards[key];
       if (standard) {
         try {
-          const isSupported = contract.supportsInterface(standard.interfaceId);
+          const isSupported = await contract.supportsInterface(
+            standard.interfaceId,
+          );
           if (isSupported) {
             return standard.id;
           }
@@ -134,7 +136,11 @@ export class CollectionsRegistrationService {
   async getBytecode(address: string): Promise<string> {
     let code: string;
     try {
-      code = await this.rpcProvider.baseProvider.getCode(address);
+      const decodedAddress = await detectProxyTarget(
+        address,
+        this.rpcProvider.baseProvider.send as any,
+      );
+      code = await this.rpcProvider.baseProvider.getCode(decodedAddress);
     } catch (error) {}
     return code;
   }

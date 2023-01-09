@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from 'src/activities/activities.module';
-import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService/collectionRegistration.module';
+import { CollectionsRegistrationModule } from 'src/collectionRegistrationService/collectionRegistration.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { OrdersModule } from 'src/orders/orders.module';
 import { TokensRegistrationModule } from 'src/token-registration-service/token-registration-service.module';

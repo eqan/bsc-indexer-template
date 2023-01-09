@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
+import { CollectionsRegistrationService } from 'src/collectionRegistrationService/collectionRegistration.service';
 import { OrdersService } from 'src/orders/orders.service';
 import { NftTokenId } from 'src/repositories/tokenIdRepository/dto/nft-tokenid.dto';
 import { TokenIdRepository } from 'src/repositories/tokenIdRepository/tokenId.repository';
@@ -22,6 +22,7 @@ import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto'
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+
 @Injectable()
 export class CollectionsService {
   constructor(
