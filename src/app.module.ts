@@ -14,6 +14,7 @@ import { CollectionsModule } from './collections/collections.module';
 import { RpcProviderModule } from './common/rpc-provider/rpc-provider.module';
 import { BullConfig } from './config/bull.config';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { CustomBigNumberScalar } from './core/customScalars/bignumber';
 import { SyncEventsModule } from './events/sync-events/sync-events.module';
 import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.module';
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
@@ -43,6 +44,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
       resolvers: {
         DATA_SCALAR: CustomDataScalar,
         ENUM_SCALAR: CustomEnumScalar,
+        BigNumber: CustomBigNumberScalar,
       },
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),

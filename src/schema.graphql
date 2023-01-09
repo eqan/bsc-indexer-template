@@ -402,8 +402,11 @@ type GetAllTokens {
 }
 
 type NftTokenId {
-  tokenId: String!
+  tokenId: BigNumber!
 }
+
+"""BigNumber Parser"""
+scalar BigNumber
 
 type CollectionMetaContent {
   type: String

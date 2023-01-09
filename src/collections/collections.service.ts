@@ -23,7 +23,7 @@ import { Collections } from './entities/collections.entity';
 import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
 import { AbiCoder } from '@ethersproject/abi';
 import { hexConcat } from '@ethersproject/bytes';
-import { BigNumber } from '@ethersproject/bignumber';
+
 @Injectable()
 export class CollectionsService {
   constructor(
