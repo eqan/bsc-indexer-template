@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivitiesModule } from 'src/activities/activities.module';
-import { CollectionsModule } from 'src/collections/collections.module';
+import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService/collectionRegistration.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { OrdersModule } from 'src/orders/orders.module';
 import { TokensModule } from 'src/tokens/tokens.module';
@@ -21,7 +21,7 @@ import { SyncEventsService } from './sync-events.service';
   imports: [
     RpcProviderModule,
     ActivitiesModule,
-    CollectionsModule,
+    CollectionsRegistrationModule,
     TokensModule,
     OrdersModule,
     TypeOrmModule.forFeature([

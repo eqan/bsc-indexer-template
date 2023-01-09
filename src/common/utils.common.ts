@@ -55,6 +55,7 @@ export const CollectionIface = new Interface([
   'function name() view returns (string)',
   'function symbol() view returns (string)',
   'function owner() public view returns (address)',
+  'function supportsInterface(bytes4 interfaceId) public view returns (bool)',
 ]);
 
 export const TokenIface = new Interface([

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CollectionsService } from 'src/collections/collections.service';
+import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
 import { getTypes } from 'src/common/utils.common';
 import { FetchMetadataJobType } from 'src/jobs/types/job.types';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -8,7 +8,7 @@ import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 @Injectable()
 export class FetchAndSaveMetadataService {
   constructor(
-    private readonly collectionsService: CollectionsService,
+    private readonly collectionRegistrationService: CollectionsRegistrationService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
   ) {}
@@ -17,40 +17,34 @@ export class FetchAndSaveMetadataService {
   async handleMetadata(data: FetchMetadataJobType) {
     try {
       const { collectionId, tokenId, timestamp, kind, deleted } = data;
-      const { collectionType, type } = getTypes(kind);
+      const { type } = getTypes(kind);
 
       if (collectionId && tokenId) {
-        const collection = await this.collectionsService.collectionExistOrNot(
+        const collection = await this.collectionRegistrationService.register(
           collectionId,
         );
-        const token = await this.tokensService.tokenExistOrNot(tokenId);
+        if (collection) {
+          const token = await this.tokensService.tokenExistOrNot(tokenId);
 
-        if (!collection) {
-          const response = await this.metadataApi.getCollectionMetadata(
-            collectionId,
-            collectionType,
-          );
-          await this.collectionsService.create(response);
-        }
+          if (!token) {
+            try {
+              const tokenMeta = await this.metadataApi.getTokenMetadata({
+                collectionId,
+                tokenId,
+                type,
+                timestamp,
+                deleted,
+              });
 
-        if (!token) {
-          try {
-            const tokenMeta = await this.metadataApi.getTokenMetadata({
-              collectionId,
-              tokenId,
-              type,
-              timestamp,
-              deleted,
-            });
+              if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
+                tokenMeta.Meta = null;
+              }
 
-            if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
-              tokenMeta.Meta = null;
+              await this.tokensService.create(tokenMeta);
+            } catch (err) {
+              console.log(err, collectionId);
+              throw err;
             }
-
-            await this.tokensService.create(tokenMeta);
-          } catch (err) {
-            console.log(err, collectionId);
-            throw err;
           }
         }
       }
