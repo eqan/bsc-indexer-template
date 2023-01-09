@@ -1,7 +1,7 @@
-import { Global, Module } from '@nestjs/common';
-import { MetadataApi } from './metadata-api.utils';
 import { HttpModule } from '@nestjs/axios';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { CollectionsModule } from 'src/collections/collections.module';
+import { MetadataApi } from './metadata-api.utils';
 
 /**
  * @MetadataApiModule
@@ -10,8 +10,7 @@ import { CollectionsModule } from 'src/collections/collections.module';
 @Global()
 @Module({
   imports: [
-    CollectionsModule,
-
+    forwardRef(() => CollectionsModule),
     HttpModule.register({
       //increased timeout to 2 mins for fetching data from ipfs
       timeout: 120000,

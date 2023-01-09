@@ -45,6 +45,7 @@ export class SyncEventsService {
           const timestamp = (
             await this.rpcProvider.baseProvider.getBlock(log?.blockNumber)
           ).timestamp;
+
           const baseEventParams = await parseEvent(log, timestamp);
           const enhancedEvents: EnhancedEvent = {
             kind: eventData?.kind,

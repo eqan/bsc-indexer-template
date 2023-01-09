@@ -3,7 +3,7 @@ import { RpcProvider } from './rpc-provider.common';
 
 /**
  * @RpcProviderModule
- * global module that povides connection to interact with blockchain
+ * global module that provides connection to interact with blockchain
  */
 @Global()
 @Module({ providers: [RpcProvider], exports: [RpcProvider] })

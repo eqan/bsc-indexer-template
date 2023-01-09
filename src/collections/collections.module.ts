@@ -9,6 +9,7 @@ import { CollectionsService } from './collections.service';
 import { Collections } from './entities/collections.entity';
 import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entity';
 import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService/collectionRegistration.module';
+import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CollectionsRegistrationModule } from 'src/CollectionRegistrationService
     TokenIdModule.register(BigNumber.from(2).pow(96)),
     OrdersModule,
     forwardRef(() => CollectionsRegistrationModule),
+    forwardRef(() => MetadataApiModule),
   ],
   providers: [CollectionsResolver, CollectionsService],
   exports: [CollectionsService],

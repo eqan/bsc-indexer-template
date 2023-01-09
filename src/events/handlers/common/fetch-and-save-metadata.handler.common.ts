@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
-import { getTypes } from 'src/common/utils.common';
 import { FetchMetadataJobType } from 'src/jobs/types/job.types';
+import { TokensRegistrationService } from 'src/token-registration-service/token-registration.service';
 import { TokensService } from 'src/tokens/tokens.service';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 
@@ -9,6 +9,7 @@ import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 export class FetchAndSaveMetadataService {
   constructor(
     private readonly collectionRegistrationService: CollectionsRegistrationService,
+    private readonly tokenRegistrationService: TokensRegistrationService,
     private readonly tokensService: TokensService,
     private readonly metadataApi: MetadataApi,
   ) {}
@@ -16,36 +17,18 @@ export class FetchAndSaveMetadataService {
 
   async handleMetadata(data: FetchMetadataJobType) {
     try {
-      const { collectionId, tokenId, timestamp, kind, deleted } = data;
-      const { type } = getTypes(kind);
+      const { collectionId, tokenId, event } = data;
 
       if (collectionId && tokenId) {
         const collection = await this.collectionRegistrationService.register(
           collectionId,
         );
         if (collection) {
-          const token = await this.tokensService.tokenExistOrNot(tokenId);
-
-          if (!token) {
-            try {
-              const tokenMeta = await this.metadataApi.getTokenMetadata({
-                collectionId,
-                tokenId,
-                type,
-                timestamp,
-                deleted,
-              });
-
-              if (!tokenMeta.Meta || !tokenMeta.Meta.name) {
-                tokenMeta.Meta = null;
-              }
-
-              await this.tokensService.create(tokenMeta);
-            } catch (err) {
-              console.log(err, collectionId);
-              throw err;
-            }
-          }
+          await this.tokenRegistrationService.register(
+            collectionId,
+            tokenId,
+            event,
+          );
         }
       }
     } catch (error) {

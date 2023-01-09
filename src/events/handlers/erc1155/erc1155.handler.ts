@@ -15,22 +15,20 @@ export class ERC1155Handler {
 
   private readonly logger = new Logger('ERC1155Handler');
 
-  handleTransferSingleEvent = async (events: EnhancedEvent) => {
+  handleTransferSingleEvent = async (event: EnhancedEvent) => {
     const {
       baseEventParams: { timestamp, logIndex, blockHash, blockNumber, txHash },
       log,
       kind,
-    } = events;
+    } = event;
 
     const eventData = getEventData([kind])[0];
     try {
       const parsedLog = eventData.abi.parseLog(log);
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address || '';
-      const kind = eventData.kind;
       const to = parsedLog.args['to'].toString();
       const from = parsedLog.args['from'].toString();
-      const deleted = isDeleted(to);
       const amount = parsedLog.args['amount'].toString();
       let owner = '';
       try {
@@ -42,9 +40,7 @@ export class ERC1155Handler {
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
-        timestamp,
-        kind,
-        deleted,
+        event,
       });
       try {
         const activityData = extractActivityData(
@@ -71,12 +67,12 @@ export class ERC1155Handler {
     }
   };
 
-  handleTransferBatchEvent = async (events: EnhancedEvent) => {
+  handleTransferBatchEvent = async (event: EnhancedEvent) => {
     const {
       baseEventParams: { timestamp, blockHash, logIndex, txHash, blockNumber },
       log,
       kind,
-    } = events;
+    } = event;
 
     const eventData = getEventData([kind])[0];
     try {
@@ -87,8 +83,6 @@ export class ERC1155Handler {
       const collectionId = log?.address || '';
       const from = parsedLog.args['from'].toLowerCase();
       const to = parsedLog.args['to'].toLowerCase();
-      const kind = eventData.kind;
-      const deleted = isDeleted(to);
       let owner = '';
       try {
         owner = parsedLog.args['owner'].toLowerCase();
@@ -99,9 +93,7 @@ export class ERC1155Handler {
         await this.fetchAndSaveMetadataService.handleMetadata({
           collectionId,
           tokenId: tokenIds[i],
-          timestamp,
-          kind,
-          deleted,
+          event,
         });
         //activity for ERC1155 TRANSFER BATCH EVENT
         try {

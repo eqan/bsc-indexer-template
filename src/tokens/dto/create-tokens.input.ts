@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsDate,
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
@@ -13,8 +12,8 @@ import {
 } from 'class-validator';
 import { TokenType } from '../entities/enum/token.type.enum';
 
-import { MetaData } from './nestedObjectDto/meta.dto';
 import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
+import { MetaData } from './nestedObjectDto/meta.dto';
 
 /**Create tokens table in database
  *
@@ -48,11 +47,6 @@ export class CreateTokenInput {
   @IsOptional()
   @Field({ nullable: true })
   mintedAt?: Date;
-
-  // @IsOptional()
-  // @IsDate()
-  // @Field({ nullable: true })
-  // lastUpdatedAt?: Date;
 
   @IsNotEmpty()
   @IsBoolean()

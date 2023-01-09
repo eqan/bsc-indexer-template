@@ -1,3 +1,5 @@
+import { AbiCoder } from '@ethersproject/abi';
+import { hexConcat } from '@ethersproject/bytes';
 import {
   BadRequestException,
   forwardRef,
@@ -7,28 +9,23 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
 import { OrdersService } from 'src/orders/orders.service';
-import { Tokens } from 'src/tokens/entities/tokens.entity';
-import { TokensService } from 'src/tokens/tokens.service';
 import { NftTokenId } from 'src/repositories/tokenIdRepository/dto/nft-tokenid.dto';
 import { TokenIdRepository } from 'src/repositories/tokenIdRepository/tokenId.repository';
-import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { TokensService } from 'src/tokens/tokens.service';
 import { ILike, In, Repository } from 'typeorm';
 import { CreateCollectionsInput } from './dto/create-collections.input';
-import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.dto';
+import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto';
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
-import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
-import { AbiCoder } from '@ethersproject/abi';
-import { hexConcat } from '@ethersproject/bytes';
-import { BigNumber } from '@ethersproject/bignumber';
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
-    @Inject(forwardRef(() => [MetadataApi]))
     private collectionsRepo: Repository<Collections>,
     private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))

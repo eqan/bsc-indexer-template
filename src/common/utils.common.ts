@@ -5,8 +5,10 @@ import { Contract } from '@ethersproject/contracts';
 import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
-import { EventDataKind } from 'src/events/types/events.types';
+import { EnhancedEvent, EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
+import { ActivityType } from 'src/activities/entities/enums/activity.type.enum';
+import { getEventData } from 'src/events/data';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -42,6 +44,14 @@ export const getTypes = (kind: EventDataKind) => {
     types.type = TokenType.BEP1155;
   }
   return types;
+};
+
+export const getTokenType = (collectionType: CollectionType): TokenType => {
+  const tokenType =
+    collectionType === CollectionType.BEP721
+      ? TokenType.BEP721
+      : TokenType.BEP1155;
+  return tokenType;
 };
 
 // BigNumbers
@@ -125,6 +135,19 @@ export const getTokenURI = async (
   } catch (error) {
     return '';
   }
+};
+
+//get activity type
+export const getActivityType = (event: EnhancedEvent): ActivityType => {
+  const { log, kind } = event;
+  const eventData = getEventData([kind])[0];
+  const parsedLog = eventData.abi.parseLog(log);
+  const from = lowerCase(parsedLog.args['from']);
+  const to = lowerCase(parsedLog.args['to']);
+
+  if (from === AddressZero) return ActivityType.MINT;
+  else if (to === AddressZero) return ActivityType.BURN;
+  else ActivityType.TRANSFER;
 };
 
 //helper functions to create chunks of blocks
