@@ -74,6 +74,7 @@ export class SyncEventsService {
               break;
             }
             case 'order-match': {
+              console.log('helo i am called order-match');
               await this.orderMatchHandler.handleMatchOrder(enhancedEvents);
               break;
             }
