@@ -23,6 +23,7 @@ import { Collections } from './entities/collections.entity';
 import { CollectionsRegistrationService } from 'src/CollectionRegistrationService/collectionRegistration.service';
 import { AbiCoder } from '@ethersproject/abi';
 import { hexConcat } from '@ethersproject/bytes';
+import { BigNumber } from '@ethersproject/bignumber';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -58,8 +59,12 @@ export class CollectionsService {
       );
       const encoder = new AbiCoder();
       const encoded = encoder.encode(['uint'], [tokenId]);
-      const concated = hexConcat([minter, `0x${encoded.slice(40)}`]);
-      const decoded = encoder.decode(['uint'], concated);
+      const concated = hexConcat([
+        minter,
+        `0x${encoded.slice(encoded.length - 24)}`,
+      ]);
+      const decoded = encoder.decode(['uint'], concated)[0];
+
       return { tokenId: decoded.toString() };
     } catch (error) {
       throw new BadRequestException(error);

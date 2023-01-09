@@ -21,7 +21,6 @@ export class TokenIdRepository {
     tokenId.value = BigNumber.from(tokenId.value)
       .add(BigNumber.from(1))
       .toString();
-    console.log(tokenId);
     return (await this.tokenIdRepository.save(tokenId)).value;
   }
   private async generateTokenIdWithInitialValue(id: string): Promise<TokenId> {
