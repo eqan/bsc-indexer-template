@@ -43,45 +43,7 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('LoginUserInput') loginUserInput: LoginUserInput,
   ): Promise<{ access_token: string }> {
     const token = this.userService.loginUser(loginUserInput);
-    // res.set(
-    //   'set-cookie',
-    //   'access_token=my-cookie-value; Max-Age=604800; HttpOnly; Secure',
-    // );
-    // res.cookie('access_token', token, {
-    //   maxAge: 60 * 60 * 24 * 7, // 7 days
-    //   httpOnly: true,
-    //   secure: true,
-    // });
-    // res.cookie('access_token', token);
-    // Set the access token in a cookie
-    // ctx.res.cookie('access_token', token);
-
-    // Check if the response has a 'set-cookie' property
-    // try {
-    // Get the 'set-cookie' property from the GraphQL execution context
-    const setCookie = this.gqlExecutionContext['set-cookie'];
-
-    // Check if the 'set-cookie' property exists
-    if (typeof setCookie !== 'undefined') {
-      // Print the first cookie in the array
-      console.log(setCookie[0]);
-    }
-    console.log(setCookie);
-    // const ctx = this.gqlExecutionContext.getContext();
-    // const res = ctx.response;
-    // if (res.hasOwnProperty('set-cookie')) {
-    //   // Get the 'set-cookie' property
-    //   const setCookie = res['set-cookie'];
-
-    //   // Print the first cookie in the array
-    //   console.log(setCookie[0]);
-    // }
-    // } catch (error) {
-    //   console.log(error);
-    // }
     return token;
-    // res.cookie('access_token', token, { httpOnly: true });
-    // return token;
   }
 
   /**
@@ -94,7 +56,8 @@ export class UsersResolver extends BaseProvider<Users> {
     @Args('CreateUserInput') createUsersInput: CreateUserInput,
   ): Promise<Users> {
     try {
-      return await this.userService.create(createUsersInput);
+      const data = await this.userService.create(createUsersInput);
+      return data;
     } catch (error) {
       throw new BadRequestException(error);
     }
