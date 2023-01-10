@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Global, Module } from '@nestjs/common';
 import { CollectionsModule } from 'src/collections/collections.module';
+import { TokensRegistrationModule } from 'src/token-registration-service/token-registration-service.module';
 import { MetadataApi } from './metadata-api.utils';
 
 /**
@@ -16,6 +17,7 @@ import { MetadataApi } from './metadata-api.utils';
       timeout: 120000,
       maxRedirects: 5,
     }),
+    forwardRef(() => TokensRegistrationModule),
   ],
   providers: [MetadataApi],
   exports: [MetadataApi],

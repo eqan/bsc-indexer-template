@@ -1,7 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { response } from 'express';
-import { ActivityType } from 'src/activities/entities/enums/activity.type.enum';
 import { getActivityType } from 'src/common/utils.common';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
@@ -14,8 +12,6 @@ export class TokensRegistrationService {
   constructor(
     @Inject(forwardRef(() => TokensService))
     private readonly tokensService: TokensService,
-    @InjectRepository(Tokens)
-    @Inject(forwardRef(() => [MetadataApi]))
     private readonly metadataApi: MetadataApi,
   ) {}
 
@@ -35,7 +31,9 @@ export class TokensRegistrationService {
     const {
       baseEventParams: { timestamp },
     } = event;
-    const token = await this.tokensService.show(`${collectionId}:${tokenId}`);
+    const token = await this.tokensService.tokenExistOrNot(
+      `${collectionId}:${tokenId}`,
+    );
     const { deleted, mintedAt } = getActivityType(event);
     if (token) {
       if (!deleted) return token;
@@ -59,11 +57,10 @@ export class TokensRegistrationService {
 
   async saveOrReturn(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
-      const savedToken = this.tokensService.create(createTokensInput);
+      const savedToken = await this.tokensService.create(createTokensInput);
       return savedToken;
     } catch (error) {
       // need to handle dublicate enter error
-      console.log('in catch', createTokensInput.tokenId);
       return this.tokensService.show(
         `${createTokensInput.collectionId}:${createTokensInput.tokenId}`,
       );

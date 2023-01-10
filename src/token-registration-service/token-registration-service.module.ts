@@ -10,9 +10,9 @@ import { TokensRegistrationService } from './token-registration.service';
 @Module({
   imports: [
     RpcProviderModule,
-    MetadataApiModule,
     TypeOrmModule.forFeature([Tokens, TokensMeta]),
     forwardRef(() => TokensModule),
+    forwardRef(() => MetadataApiModule),
   ],
   providers: [TokensRegistrationService],
   exports: [TokensRegistrationService],
