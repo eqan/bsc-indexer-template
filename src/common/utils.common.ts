@@ -138,16 +138,19 @@ export const getTokenURI = async (
 };
 
 //get activity type
-export const getActivityType = (event: EnhancedEvent): ActivityType => {
+export const getActivityType = (event: EnhancedEvent) => {
   const { log, kind } = event;
   const eventData = getEventData([kind])[0];
   const parsedLog = eventData.abi.parseLog(log);
   const from = lowerCase(parsedLog.args['from']);
   const to = lowerCase(parsedLog.args['to']);
-
-  if (from === AddressZero) return ActivityType.MINT;
-  else if (to === AddressZero) return ActivityType.BURN;
-  else ActivityType.TRANSFER;
+  const response = {
+    deleted: false,
+    mintedAt: false,
+  };
+  if (from === AddressZero) response.mintedAt = true;
+  else if (to === AddressZero) response.deleted = true;
+  return response;
 };
 
 //helper functions to create chunks of blocks
