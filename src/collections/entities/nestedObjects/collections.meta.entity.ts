@@ -19,11 +19,6 @@ export class CollectionsMeta {
   @Column('text', { nullable: true })
   description?: string;
 
-  @IsOptional()
-  @Field(() => Content, { nullable: true })
-  @Column({ nullable: true, type: 'jsonb' })
-  Content?: Content;
-
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -36,14 +31,19 @@ export class CollectionsMeta {
     type: 'text',
     nullable: true,
   })
-  sellerFeeBasisPoints?: number;
+  feeRecipient?: string;
 
   @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,
   })
-  feeRecipient?: string;
+  sellerFeeBasisPoints?: number;
+
+  @IsOptional()
+  @Field(() => Content, { nullable: true })
+  @Column({ nullable: true, type: 'jsonb' })
+  Content?: Content;
 
   @OneToOne(() => Collections, (collection) => collection.Meta)
   collection: Collections;

@@ -117,6 +117,7 @@ enum CollectionType {
   BEP20
   BEP721
   BEP1155
+  NONE
 }
 
 type GetAllActivities {
@@ -355,18 +356,18 @@ type MetaContent {
 type CollectionsMeta {
   name: String
   description: String
-  Content: MetaContent
   externalLink: String
-  sellerFeeBasisPoints: Float
   feeRecipient: String
+  sellerFeeBasisPoints: Float
+  Content: MetaContent
 }
 
 type Collections {
   id: String!
   name: String
-  type: String!
-  parent: String
   symbol: String
+  type: String!
+  features: [CollectionFeature!]!
   owner: String
   twitterUrl: String
   discordUrl: String
@@ -374,6 +375,16 @@ type Collections {
   bannerImageUrl: String
   Meta: CollectionsMeta
   tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
+}
+
+"""Feautes of token"""
+enum CollectionFeature {
+  APPROVE_FOR_ALL
+  SET_URI_PREFIX
+  BURN
+  MINT_WITH_ADDRESS
+  SECONDARY_SALE_FEES
+  MINT_AND_TRANSFER
 }
 
 input FilterTokenDto {
