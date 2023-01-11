@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ActivitiesService } from 'src/activities/activities.service';
-import { isDeleted, lowerCase } from 'src/common/utils.common';
+import { lowerCase } from 'src/common/utils.common';
 import { getEventData } from 'src/events/data';
 import { EnhancedEvent } from 'src/events/types/events.types';
-import { extractActivityData } from '../common/activity.handler.common';
+import { ExtractActivityService } from '../common/activity.handler.common';
 import { FetchAndSaveMetadataService } from '../common/fetch-and-save-metadata.handler.common';
 
 @Injectable()
@@ -11,6 +11,7 @@ export class ERC721Handler {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly fetchAndSaveMetadataService: FetchAndSaveMetadataService,
+    private readonly extractActivityService: ExtractActivityService,
   ) {}
 
   private readonly logger = new Logger('ERC721Handler');
@@ -26,7 +27,6 @@ export class ERC721Handler {
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
-        event,
       });
     } catch (error) {
       this.logger.error(`failed handling trnasferEvent ${error}`);
@@ -69,7 +69,7 @@ export class ERC721Handler {
       } catch (error) {
         owner = null;
       }
-      const activityData = extractActivityData(
+      const activityData = await this.extractActivityService.handleExtraction(
         tokenId,
         collectionId,
         logIndex,

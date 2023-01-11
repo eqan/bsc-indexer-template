@@ -841,6 +841,7 @@ input UpdateTokensInput {
   sellers: Float
   creator: CreatorRoyaltyInput
   Meta: MetaDataInput
+  mintedAt: DateTime
 }
 
 input DeleteTokensInput {

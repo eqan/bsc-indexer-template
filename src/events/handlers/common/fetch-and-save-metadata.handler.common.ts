@@ -13,18 +13,14 @@ export class FetchAndSaveMetadataService {
 
   async handleMetadata(data: FetchMetadataJobType) {
     try {
-      const { collectionId, tokenId, event } = data;
+      const { collectionId, tokenId } = data;
 
       if (collectionId && tokenId) {
         const collection = await this.collectionRegistrationService.register(
           collectionId,
         );
         if (collection) {
-          await this.tokenRegistrationService.register(
-            collectionId,
-            tokenId,
-            event,
-          );
+          await this.tokenRegistrationService.register(collectionId, tokenId);
         }
       }
     } catch (error) {

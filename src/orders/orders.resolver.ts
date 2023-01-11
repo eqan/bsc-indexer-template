@@ -27,7 +27,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
    * @param createOrdersInput
    * @returns Orders
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Orders, { name: 'CreateOrder' })
   async create(
     @Args('CreateOrderInput') createOrdersInput: CreateOrdersInput,

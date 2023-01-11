@@ -5,10 +5,7 @@ import { Contract } from '@ethersproject/contracts';
 import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
-import { EnhancedEvent, EventDataKind } from 'src/events/types/events.types';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-import { ActivityType } from 'src/activities/entities/enums/activity.type.enum';
-import { getEventData } from 'src/events/data';
 
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
@@ -31,20 +28,6 @@ export const isBase64Encoded = (tokenURI: string) =>
 // parses base64 to json
 export const base64toJson = (tokenURI: string) =>
   JSON.parse(Buffer.from(tokenURI?.split(',')[1], 'base64').toString('utf8'));
-
-//Types of Collection and Token
-export const getTypes = (kind: EventDataKind) => {
-  const types = {
-    collectionType: CollectionType.BEP721,
-    type: TokenType.BEP721,
-  };
-
-  if (!kind?.startsWith('erc721')) {
-    types.collectionType = CollectionType.BEP1155;
-    types.type = TokenType.BEP1155;
-  }
-  return types;
-};
 
 export const getTokenType = (collectionType: CollectionType): TokenType => {
   const tokenType =
@@ -289,22 +272,6 @@ export const getTokenURI = async (
   } catch (error) {
     return '';
   }
-};
-
-//get activity type
-export const getActivityType = (event: EnhancedEvent) => {
-  const { log, kind } = event;
-  const eventData = getEventData([kind])[0];
-  const parsedLog = eventData.abi.parseLog(log);
-  const from = lowerCase(parsedLog.args['from']);
-  const to = lowerCase(parsedLog.args['to']);
-  const response = {
-    deleted: false,
-    mintedAt: false,
-  };
-  if (from === AddressZero) response.mintedAt = true;
-  else if (to === AddressZero) response.deleted = true;
-  return response;
 };
 
 //helper functions to create chunks of blocks
