@@ -1,5 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { getActivityType } from 'src/common/utils.common';
 import { EnhancedEvent } from 'src/events/types/events.types';
 import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
@@ -60,6 +59,7 @@ export class TokensRegistrationService {
       const savedToken = await this.tokensService.create(createTokensInput);
       return savedToken;
     } catch (error) {
+      console.log(error, 'error duplication');
       // need to handle dublicate enter error
       return this.tokensService.show(
         `${createTokensInput.collectionId}:${createTokensInput.tokenId}`,

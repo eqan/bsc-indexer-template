@@ -74,7 +74,7 @@ export class Tokens extends Timestamps {
 
   @Field(() => CreatorRoyalty, { nullable: true })
   @Column({
-    type: 'json',
+    type: 'jsonb',
     default: null,
   })
   creator?: {

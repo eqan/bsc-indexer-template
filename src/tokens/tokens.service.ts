@@ -28,14 +28,16 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
-      const token = this.tokensRepo.create(restParams);
       const collection = await this.collectionsService.show(collectionId);
-
-      token.collection = collection;
-      token.tokenId = collectionId + ':' + token.tokenId;
-
-      await token.save();
-      delete token.collection;
+      const tokenId = collectionId + ':' + restParams.tokenId;
+      await this.tokensRepo.upsert(
+        { ...restParams, tokenId, collection },
+        {
+          skipUpdateIfNoValuesChanged: true,
+          conflictPaths: ['tokenId'],
+        },
+      );
+      const token = await this.tokensRepo.findOne({ where: { tokenId } });
       return token;
     } catch (error) {
       throw new BadRequestException(error);
