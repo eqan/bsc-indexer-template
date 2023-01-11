@@ -78,6 +78,160 @@ export const SafeTransferFromERC1155Iface = new Interface([
   'function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes data)',
 ]);
 
+export const IERC721LazyMint = new Interface([
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'tokenId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'string',
+            name: 'tokenURI',
+            type: 'string',
+          },
+          {
+            components: [
+              {
+                internalType: 'address payable',
+                name: 'account',
+                type: 'address',
+              },
+              {
+                internalType: 'uint96',
+                name: 'value',
+                type: 'uint96',
+              },
+            ],
+            internalType: 'struct LibPart.Part[]',
+            name: 'creators',
+            type: 'tuple[]',
+          },
+          {
+            components: [
+              {
+                internalType: 'address payable',
+                name: 'account',
+                type: 'address',
+              },
+              {
+                internalType: 'uint96',
+                name: 'value',
+                type: 'uint96',
+              },
+            ],
+            internalType: 'struct LibPart.Part[]',
+            name: 'royalties',
+            type: 'tuple[]',
+          },
+          {
+            internalType: 'bytes[]',
+            name: 'signatures',
+            type: 'bytes[]',
+          },
+        ],
+        internalType: 'struct LibERC721LazyMint.Mint721Data',
+        name: 'data',
+        type: 'tuple',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+    ],
+    name: 'mintAndTransfer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+]);
+
+export const IERC1155LazyMint = new Interface([
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'tokenId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'string',
+            name: 'tokenURI',
+            type: 'string',
+          },
+          {
+            internalType: 'uint256',
+            name: 'supply',
+            type: 'uint256',
+          },
+          {
+            components: [
+              {
+                internalType: 'address payable',
+                name: 'account',
+                type: 'address',
+              },
+              {
+                internalType: 'uint96',
+                name: 'value',
+                type: 'uint96',
+              },
+            ],
+            internalType: 'struct LibPart.Part[]',
+            name: 'creators',
+            type: 'tuple[]',
+          },
+          {
+            components: [
+              {
+                internalType: 'address payable',
+                name: 'account',
+                type: 'address',
+              },
+              {
+                internalType: 'uint96',
+                name: 'value',
+                type: 'uint96',
+              },
+            ],
+            internalType: 'struct LibPart.Part[]',
+            name: 'royalties',
+            type: 'tuple[]',
+          },
+          {
+            internalType: 'bytes[]',
+            name: 'signatures',
+            type: 'bytes[]',
+          },
+        ],
+        internalType: 'struct LibERC1155LazyMint.Mint1155Data',
+        name: 'data',
+        type: 'tuple',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'mintAndTransfer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+]);
+
 //contract helper methods
 export const getCollectionName = async (contract: Contract) => {
   try {
