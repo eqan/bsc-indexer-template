@@ -49,11 +49,9 @@ export class RefreshMetadataService {
         const tokenMeta = await this.metadataApi.getTokenMetadata({
           collectionId,
           tokenId,
-          type: token.type,
-          timestamp: token.mintedAt.getTime() / 1000,
-          deleted: token.deleted,
         });
-
+        tokenMeta.deleted = token.deleted;
+        tokenMeta.mintedAt = token.mintedAt;
         const refreshedToken = await this.tokensService.create(tokenMeta);
         return { collection: refreshedCollection, token: refreshedToken };
       } else throw new BadRequestException('Token or Collection Id not found');

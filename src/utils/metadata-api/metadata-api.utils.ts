@@ -1,13 +1,18 @@
 import { Contract } from '@ethersproject/contracts';
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
+import { CollectionsService } from 'src/collections/collections.service';
 import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
 import { MetaData } from 'src/tokens/dto/nestedObjectDto/meta.dto';
-import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { uploadImage } from '../../config/cloudinary.config';
 import {
   base64toJson,
@@ -16,6 +21,7 @@ import {
   getCollectionOwner,
   getCollectionSymbol,
   getNFTCreator,
+  getTokenType,
   getTokenURI,
   ipfsGateway,
   isBase64Encoded,
@@ -28,6 +34,8 @@ export class MetadataApi {
   constructor(
     private readonly rpcProvider: RpcProvider,
     private readonly httpService: HttpService,
+    @Inject(forwardRef(() => CollectionsService))
+    private readonly collectionService: CollectionsService,
   ) {}
 
   async fetchRequest(uri: string, id: string) {
@@ -94,31 +102,24 @@ export class MetadataApi {
   public async getTokenMetadata({
     collectionId,
     tokenId,
-    type,
-    timestamp,
-    deleted,
   }: {
     collectionId: string;
     tokenId: string;
-    type: TokenType;
-    timestamp: number;
-    deleted: boolean;
   }) {
+    const collectionType = await this.collectionService.show(collectionId);
+    const type = getTokenType(collectionType.type);
     const data: CreateTokenInput = {
       tokenId,
       type,
       collectionId,
       contract: collectionId,
-      deleted,
-      mintedAt: new Date(timestamp * 1000),
+      deleted: false,
       sellers: 0,
       creator: {
         account: [],
         value: 10000,
       },
     };
-
-    let urlFailed = '';
 
     const contract = new Contract(
       collectionId,
@@ -130,7 +131,7 @@ export class MetadataApi {
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
       if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '') };
-      urlFailed = tokenURI;
+
       //if tokenURI is a https address like ipfs and any other central server
       if (tokenURI?.match(regex.url)) {
         const Meta = await this.fetchRequest(tokenURI, tokenId);
@@ -147,12 +148,6 @@ export class MetadataApi {
         return { ...data, Meta: this.returnMeta(Meta, tokenURI) };
       } else return { ...data, Meta: this.returnMeta({}, tokenURI) };
     } catch (error) {
-      // console.log(
-      //   'finding issue url, remain this console',
-      //   { type, tokenId, collectionId },
-      //   urlFailed,
-      //   error,
-      // );
       return data;
     }
   }

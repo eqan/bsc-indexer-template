@@ -1,0 +1,69 @@
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { getActivityType } from 'src/common/utils.common';
+import { EnhancedEvent } from 'src/events/types/events.types';
+import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import { TokensService } from 'src/tokens/tokens.service';
+import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
+
+@Injectable()
+export class TokensRegistrationService {
+  constructor(
+    @Inject(forwardRef(() => TokensService))
+    private readonly tokensService: TokensService,
+    private readonly metadataApi: MetadataApi,
+  ) {}
+
+  async register(
+    collectionId: string,
+    tokenId: string,
+    event: EnhancedEvent,
+  ): Promise<Tokens> {
+    return this.getOrSaveToken(collectionId, tokenId, event);
+  }
+
+  async getOrSaveToken(
+    collectionId: string,
+    tokenId: string,
+    event: EnhancedEvent,
+  ): Promise<Tokens> {
+    const {
+      baseEventParams: { timestamp },
+    } = event;
+    const token = await this.tokensService.tokenExistOrNot(
+      `${collectionId}:${tokenId}`,
+    );
+    const { deleted, mintedAt } = getActivityType(event);
+    if (token) {
+      if (!deleted) return token;
+      else {
+        const deletedtoken = await this.tokensService.update({
+          tokenId: token.tokenId,
+          deleted: true,
+        });
+        return deletedtoken;
+      }
+    }
+    const fetchedToken = await this.metadataApi.getTokenMetadata({
+      collectionId,
+      tokenId,
+    });
+    if (mintedAt) {
+      fetchedToken.mintedAt = new Date(timestamp * 1000);
+    } else if (deleted) fetchedToken.deleted = true;
+    return this.saveOrReturn(fetchedToken);
+  }
+
+  async saveOrReturn(createTokensInput: CreateTokenInput): Promise<Tokens> {
+    try {
+      const savedToken = await this.tokensService.create(createTokensInput);
+      return savedToken;
+    } catch (error) {
+      console.log(error, 'error duplication');
+      // need to handle dublicate enter error
+      return this.tokensService.show(
+        `${createTokensInput.collectionId}:${createTokensInput.tokenId}`,
+      );
+    }
+  }
+}

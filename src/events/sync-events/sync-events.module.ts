@@ -4,6 +4,7 @@ import { ActivitiesModule } from 'src/activities/activities.module';
 import { CollectionsRegistrationModule } from 'src/collectionRegistrationService/collectionRegistration.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 import { OrdersModule } from 'src/orders/orders.module';
+import { TokensRegistrationModule } from 'src/token-registration-service/token-registration-service.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { BaseEventParams } from '../entities/entities.entity.base-event-params';
 import { OrderCancelEvents } from '../entities/events.entity.order-cancel-events';
@@ -22,6 +23,7 @@ import { SyncEventsService } from './sync-events.service';
     RpcProviderModule,
     ActivitiesModule,
     CollectionsRegistrationModule,
+    TokensRegistrationModule,
     TokensModule,
     OrdersModule,
     TypeOrmModule.forFeature([

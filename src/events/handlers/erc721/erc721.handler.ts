@@ -15,27 +15,18 @@ export class ERC721Handler {
 
   private readonly logger = new Logger('ERC721Handler');
 
-  handleTransferEvent = async (events: EnhancedEvent) => {
-    const {
-      baseEventParams: { timestamp },
-      log,
-      kind,
-    } = events;
+  handleTransferEvent = async (event: EnhancedEvent) => {
+    const { log, kind } = event;
 
     const eventData = getEventData([kind])[0];
     try {
       const parsedLog = eventData.abi.parseLog(log);
       const tokenId = parsedLog.args['tokenId'].toString();
       const collectionId = log?.address || '';
-      const kind = eventData.kind;
-      const to = parsedLog.args['to'].toString();
-      const deleted = isDeleted(to);
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
-        timestamp,
-        kind,
-        deleted,
+        event,
       });
     } catch (error) {
       this.logger.error(`failed handling trnasferEvent ${error}`);

@@ -23,25 +23,20 @@ export class UpdateTokensInput {
   @Field()
   tokenId: string;
 
-  // @IsOptional()
-  // @IsDate()
-  // @Field({ nullable: true })
-  // lastUpdatedAt: Date;
-
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
-  deleted: boolean;
+  deleted?: boolean;
 
   @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
-  sellers: number;
+  sellers?: number;
 
   @IsOptional()
   @Type(() => CreatorRoyalty)
   @Field(() => CreatorRoyalty, { nullable: true })
-  creator: CreatorRoyalty;
+  creator?: CreatorRoyalty;
 
   @IsOptional()
   @ValidateNested()
