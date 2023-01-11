@@ -27,7 +27,6 @@ export class ERC721Handler {
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
-        event,
       });
     } catch (error) {
       this.logger.error(`failed handling trnasferEvent ${error}`);

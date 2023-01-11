@@ -27,6 +27,8 @@ export class ExtractActivityService {
     const itemId = collectionId + ':' + tokenId;
     const bid = null;
 
+    const token = await this.tokensService.tokenExistOrNot(itemId);
+
     if (from === AddressZero) {
       activityType = ActivityType.MINT;
       mint = {
@@ -37,6 +39,11 @@ export class ExtractActivityService {
         itemId,
         value,
       };
+      if (token)
+        await this.tokensService.update({
+          tokenId: itemId,
+          mintedAt: new Date(timestamp * 1000),
+        });
     } else if (to === AddressZero) {
       activityType = ActivityType.BURN;
       burn = {
@@ -46,6 +53,11 @@ export class ExtractActivityService {
         value,
         owner,
       };
+      if (token)
+        await this.tokensService.update({
+          tokenId: itemId,
+          deleted: true,
+        });
     } else {
       activityType = ActivityType.TRANSFER;
       transfer = {

@@ -14,43 +14,19 @@ export class TokensRegistrationService {
     private readonly metadataApi: MetadataApi,
   ) {}
 
-  async register(
-    collectionId: string,
-    tokenId: string,
-    event: EnhancedEvent,
-  ): Promise<Tokens> {
-    return this.getOrSaveToken(collectionId, tokenId, event);
+  async register(collectionId: string, tokenId: string): Promise<Tokens> {
+    return this.getOrSaveToken(collectionId, tokenId);
   }
 
-  async getOrSaveToken(
-    collectionId: string,
-    tokenId: string,
-    event: EnhancedEvent,
-  ): Promise<Tokens> {
-    const {
-      baseEventParams: { timestamp },
-    } = event;
+  async getOrSaveToken(collectionId: string, tokenId: string): Promise<Tokens> {
     const token = await this.tokensService.tokenExistOrNot(
       `${collectionId}:${tokenId}`,
     );
-    const { deleted, mintedAt } = getActivityType(event);
-    if (token) {
-      if (!deleted) return token;
-      else {
-        const deletedtoken = await this.tokensService.update({
-          tokenId: token.tokenId,
-          deleted: true,
-        });
-        return deletedtoken;
-      }
-    }
+    if (token) return token;
     const fetchedToken = await this.metadataApi.getTokenMetadata({
       collectionId,
       tokenId,
     });
-    if (mintedAt) {
-      fetchedToken.mintedAt = new Date(timestamp * 1000);
-    } else if (deleted) fetchedToken.deleted = true;
     return this.saveOrReturn(fetchedToken);
   }
 

@@ -12,5 +12,4 @@ export class MidWayJobType {
 export class FetchMetadataJobType {
   collectionId: string;
   tokenId: string;
-  event: EnhancedEvent;
 }

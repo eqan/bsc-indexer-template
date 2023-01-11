@@ -40,7 +40,6 @@ export class ERC1155Handler {
       await this.fetchAndSaveMetadataService.handleMetadata({
         collectionId,
         tokenId,
-        event,
       });
       try {
         const activityData = await this.extractActivityService.handleExtraction(
@@ -93,7 +92,6 @@ export class ERC1155Handler {
         await this.fetchAndSaveMetadataService.handleMetadata({
           collectionId,
           tokenId: tokenIds[i],
-          event,
         });
         //activity for ERC1155 TRANSFER BATCH EVENT
         try {

@@ -43,4 +43,8 @@ export class UpdateTokensInput {
   @Type(() => MetaData)
   @Field(() => MetaData, { nullable: true })
   Meta?: MetaData;
+
+  @IsOptional()
+  @Field({ nullable: true })
+  mintedAt?: Date;
 }
