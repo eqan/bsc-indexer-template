@@ -9,6 +9,7 @@ import { TokensModule } from 'src/tokens/tokens.module';
 import { BaseEventParams } from '../entities/entities.entity.base-event-params';
 import { OrderCancelEvents } from '../entities/events.entity.order-cancel-events';
 import { OrderMatchEvents } from '../entities/events.entity.order-match-events';
+import { ExtractActivityService } from '../handlers/common/activity.handler.common';
 import { FetchAndSaveMetadataService } from '../handlers/common/fetch-and-save-metadata.handler.common';
 import { ERC1155Handler } from '../handlers/erc1155/erc1155.handler';
 import { ERC721Handler } from '../handlers/erc721/erc721.handler';
@@ -41,6 +42,7 @@ import { SyncEventsService } from './sync-events.service';
     OrderCancelEventService,
     StoreOnchainBuySellOrders,
     FetchAndSaveMetadataService,
+    ExtractActivityService,
   ],
   exports: [
     SyncEventsService,
