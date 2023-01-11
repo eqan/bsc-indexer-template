@@ -5,6 +5,7 @@ import { CreateTokenInput } from './dto/create-tokens.input';
 import { DeleteTokensInput } from './dto/delete-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
+import { LazyTokenInput } from './dto/lazy-token-dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { Tokens } from './entities/tokens.entity';
 import { TokensService as TokenService } from './tokens.service';
@@ -27,6 +28,22 @@ export class TokensResolver extends BaseProvider<Tokens | FilterTokenDto> {
   ): Promise<Tokens> {
     try {
       return await this.tokenService.create(createTokenInput);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+  /**
+   * Create Tokens
+   * @param createTokenInput
+   * @returns Created  Tokens
+   */
+  @Mutation(() => Tokens, { name: 'MintLazyToken' })
+  async mintNftAsset(
+    @Args('lazyTokenInput')
+    lazyTokenInput: LazyTokenInput,
+  ): Promise<Tokens> {
+    try {
+      return await this.tokenService.mintNftAsset(lazyTokenInput);
     } catch (error) {
       throw new BadRequestException(error);
     }
