@@ -254,7 +254,7 @@ export class TokensService {
         .where('Tokens.id = :collectionId', { collectionId })
         .groupBy('Tokens.owner')
         .getCount();
-      return result;
+      return result + 1;
     } catch (error) {
       throw new NotFoundException(error);
     }

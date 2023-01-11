@@ -135,7 +135,10 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param FilterTokenAttributesDto
    * @returns Parent Properties & Sub Properties
    */
-  @ResolveField('UniqueItems', () => CollectionUniqueItems, { nullable: true })
+  @Query(() => CollectionUniqueItems, {
+    nullable: true,
+    name: 'GetUniqueItems',
+  })
   async getCollectionUniqueItems(
     @Args('FilterTokenAttributesDto')
     filterTokenAttributesDto: FilterTokenAttributesDto,
