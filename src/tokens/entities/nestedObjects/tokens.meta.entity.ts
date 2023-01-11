@@ -13,7 +13,7 @@ export class TokensMeta {
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
-  name: string;
+  name?: string;
 
   @Field({ nullable: true })
   @Column('text', { nullable: true })
