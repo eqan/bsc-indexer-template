@@ -11,7 +11,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { CollectionType } from './enum/collection.type.enum';
+import { CollectionType, CollectionFeature } from './enum/collection.type.enum';
 import { CollectionsMeta } from './nestedObjects/collections.meta.entity';
 
 @ObjectType()
@@ -37,22 +37,6 @@ export class Collections extends BaseEntity {
   @Column('text')
   name: string;
 
-  @Field()
-  @Column({
-    type: 'enum',
-    enum: CollectionType,
-    enumName: 'CollectionType',
-    default: CollectionType.BEP721,
-  })
-  type: CollectionType;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  parent?: string;
-
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -60,11 +44,29 @@ export class Collections extends BaseEntity {
   })
   symbol?: string;
 
+  @Field()
+  @Column({
+    type: 'enum',
+    enum: CollectionType,
+    enumName: 'CollectionType',
+  })
+  type: CollectionType;
+
+  @Field(() => [CollectionFeature])
+  @Column({
+    array: true,
+    type: 'enum',
+    enum: CollectionFeature,
+    enumName: 'CollectionFeature',
+    default: [],
+  })
+  features: CollectionFeature[];
+
   @Field({ nullable: true })
   @Column({
     type: 'text',
   })
-  owner: string;
+  owner?: string;
 
   @Field({ nullable: true })
   @Column({

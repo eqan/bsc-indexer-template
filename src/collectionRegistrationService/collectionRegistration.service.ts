@@ -8,15 +8,20 @@ import {
   getCollectionOwner,
 } from 'src/common/utils.common';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { CreateCollectionsInput } from 'src/collections/dto/create-collections.input';
 import { TokenStandards } from 'src/events/data/contractStandards';
 import { utils } from 'ethers';
-import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
+import {
+  CollectionType,
+  FEATURE_SIGNATURES,
+  CollectionFeature,
+  CollectionFeatures,
+} from 'src/collections/entities/enum/collection.type.enum';
 import { CollectionsService } from 'src/collections/collections.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MetadataApi } from 'src/utils/metadata-api/metadata-api.utils';
 import detectProxyTarget from 'evm-proxy-detection';
+import type { RequestArguments } from 'evm-proxy-detection/build/cjs/types';
 @Injectable()
 export class CollectionsRegistrationService {
   // todo need to handle cache here for the tokens.
@@ -45,23 +50,18 @@ export class CollectionsRegistrationService {
     } catch (error) {}
   }
 
-  async saveOrReturn(
-    createCollectionsInput: CreateCollectionsInput,
-  ): Promise<Collections> {
+  async saveOrReturn(collection: Collections): Promise<Collections> {
     try {
-      const collection = this.collectionsRepo.create(createCollectionsInput);
       const savedCollection = await this.collectionsRepo.save(collection);
       return savedCollection;
     } catch (error) {
       // need to handle dublicate enter error
-      return this.collectionsService.show(createCollectionsInput.id);
+      return this.collectionsService.show(collection.id);
       //   throw new BadRequestException(error);
     }
   }
 
-  private async fetchCollection(
-    address: string,
-  ): Promise<CreateCollectionsInput | null> {
+  private async fetchCollection(address: string): Promise<Collections | null> {
     const contract = new Contract(
       address,
       CollectionIface,
@@ -72,26 +72,24 @@ export class CollectionsRegistrationService {
       getCollectionSymbol(contract),
       getCollectionOwner(contract),
       this.fetchTokenStandard(contract),
+      this.fetchFeatures(address),
     ]);
-    const [name, symbol, owner, type] = result;
-    if (!type) return null;
-    const collectionData: CreateCollectionsInput = {
+    const [name, symbol, owner, type, features] = result;
+    if (!type || type === CollectionType.NONE) return null;
+    const collectionData: Collections = this.collectionsRepo.create({
       name,
       symbol,
       owner,
       id: address,
       type: CollectionType[type],
-      Meta: { name },
-      discordUrl: '',
-      twitterUrl: '',
-      description: '',
-    };
+      features,
+    });
     return collectionData;
   }
 
   private async fetchTokenStandard(
     contract: Contract,
-  ): Promise<CollectionType | null> {
+  ): Promise<CollectionType> {
     const address = contract.address;
     for (const key of Object.keys(TokenStandards)) {
       const standard = TokenStandards[key];
@@ -113,7 +111,7 @@ export class CollectionsRegistrationService {
 
   async fetchTokenStandardByFunctionSignatures(
     address: string,
-  ): Promise<CollectionType | null> {
+  ): Promise<CollectionType> {
     const byteCode = await this.getBytecode(address);
     if (!byteCode) return null;
     for (const key of Object.keys(TokenStandards)) {
@@ -130,7 +128,47 @@ export class CollectionsRegistrationService {
         }
       }
     }
-    return null;
+    return CollectionType.NONE;
+  }
+
+  private async fetchFeatures(address: string): Promise<CollectionFeature[]> {
+    const features: Set<CollectionFeature> = new Set();
+    const byteCode = await this.getBytecode(address);
+    if (!byteCode) return [...features];
+    Object.keys(FEATURE_SIGNATURES)
+      .filter((signature) => byteCode.includes(signature.slice(2, 10)))
+      .map((signature) => features.add(FEATURE_SIGNATURES[signature]));
+    await Promise.all(
+      Object.keys(CollectionFeatures).map(
+        async (feature: CollectionFeature) => {
+          const interfaces = CollectionFeatures[feature];
+          const results = await Promise.allSettled(
+            interfaces.map((iface) =>
+              this.isErc165FeatureEnabled(address, iface),
+            ),
+          );
+          if (
+            results.some(
+              (value) => value.status === 'fulfilled' && !!value.value,
+            )
+          )
+            features.add(feature);
+        },
+      ),
+    );
+    return [...features];
+  }
+
+  private async isErc165FeatureEnabled(
+    address: string,
+    iface: string,
+  ): Promise<boolean> {
+    const contract = new Contract(
+      address,
+      CollectionIface,
+      this.rpcProvider.baseProvider,
+    );
+    return await contract.supportsInterface(iface);
   }
 
   async getBytecode(address: string): Promise<string> {
@@ -138,10 +176,13 @@ export class CollectionsRegistrationService {
     try {
       const decodedAddress = await detectProxyTarget(
         address,
-        this.rpcProvider.baseProvider.send as any,
+        async ({ method, params }: RequestArguments) =>
+          this.rpcProvider.baseProvider.send(method, params),
       );
       code = await this.rpcProvider.baseProvider.getCode(decodedAddress);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     return code;
   }
 }
