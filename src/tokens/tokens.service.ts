@@ -5,11 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsService } from 'src/collections/collections.service';
+import { LazyTokenValidator } from 'src/utils/validator/mint/lazy-token-validator.utils';
 import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
+import { LazyTokenInput } from './dto/lazy-token-dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
+import { TokenType } from './entities/enum/token.type.enum';
 import { Tokens } from './entities/tokens.entity';
 
 @Injectable()
@@ -18,6 +21,7 @@ export class TokensService {
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
     private collectionsService: CollectionsService,
+    private lazyTokenValidator: LazyTokenValidator,
   ) {}
 
   /**
@@ -39,6 +43,26 @@ export class TokensService {
       );
       const token = await this.tokensRepo.findOne({ where: { tokenId } });
       return token;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async mintNftAsset(lazyNftToken: LazyTokenInput): Promise<Tokens> {
+    try {
+      await this.lazyTokenValidator.validate(lazyNftToken);
+      const nft = lazyNftToken.erc721
+        ? lazyNftToken.erc721
+        : lazyNftToken.erc1155;
+      const args: CreateTokenInput = {
+        tokenId: nft.tokenId,
+        sellers: 0,
+        collectionId: nft.contract,
+        contract: nft.contract,
+        deleted: false,
+        type: lazyNftToken.erc721 ? TokenType.BEP721 : TokenType.BEP1155,
+      };
+      return this.create(args);
     } catch (error) {
       throw new BadRequestException(error);
     }

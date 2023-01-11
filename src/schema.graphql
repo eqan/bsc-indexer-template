@@ -292,10 +292,58 @@ type GetAllSellOrders {
   total: Int!
 }
 
+type CreatorRoyalty {
+  account: [String!]
+  value: Int
+}
+
 type MetadataAttribute {
   key: String
   value: String
   format: String
+}
+
+type Content {
+  fileName: String
+  representation: String
+  mimeType: String
+  type: String
+  url: String
+  size: Float
+  available: Boolean
+  width: Float
+  height: Float
+}
+
+type Meta {
+  id: String!
+  name: String
+  description: String
+  Content: Content
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
+  attributes: [MetadataAttribute!]
+  rightsUri: String
+}
+
+type Tokens {
+  createdAt: String!
+  lastUpdatedAt: String!
+  dbUpdatedAt: String!
+  deletedAt: String
+  tokenId: String!
+  collectionId: String
+  contract: String
+  type: String
+  owner: String
+  mintedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  creator: CreatorRoyalty
+  royalties: CreatorRoyalty
+  Meta: Meta
 }
 
 type MetaContent {
@@ -334,54 +382,6 @@ input FilterTokenDto {
   tokenId: String
   contract: String
   owner: String
-}
-
-type CreatorRoyalty {
-  account: [String!]
-  value: Int
-}
-
-type Tokens {
-  createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
-  deletedAt: String
-  tokenId: String!
-  collectionId: String
-  contract: String
-  type: String
-  owner: String
-  mintedAt: DateTime
-  deleted: Boolean
-  sellers: Float
-  creator: CreatorRoyalty
-  royalties: CreatorRoyalty
-  Meta: Meta
-}
-
-type Content {
-  fileName: String
-  representation: String
-  mimeType: String
-  type: String
-  url: String
-  size: Float
-  available: Boolean
-  width: Float
-  height: Float
-}
-
-type Meta {
-  id: String!
-  name: String
-  description: String
-  Content: Content
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  attributes: [MetadataAttribute!]
-  rightsUri: String
 }
 
 type MetadataContent {
@@ -518,6 +518,11 @@ input AssetInput {
   assetType: ASSET_SCALAR!
 }
 
+input CreatorRoyaltyInput {
+  account: [String!] = null
+  value: Int
+}
+
 input AttributeInput {
   key: String
   value: String
@@ -528,11 +533,6 @@ input MetaContentInput {
   type: String
   url: String
   representation: String
-}
-
-input CreatorRoyaltyInput {
-  account: [String!] = null
-  value: Int
 }
 
 input MetadataContentInput {
@@ -677,6 +677,7 @@ type Mutation {
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto!): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
+  MintLazyToken(lazyTokenInput: LazyTokenInput!): Tokens!
   UpdateToken(UpdateTokensInput: UpdateTokensInput!): Tokens!
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens
@@ -790,6 +791,37 @@ input MetaDataInput {
   rightsUri: String
   attributes: [AttributeInput!]
   Content: MetadataContentInput
+}
+
+input LazyTokenInput {
+  erc721: LazyErc721Input
+  erc1155: LazyErc1155Input
+}
+
+input LazyErc721Input {
+  type: String = "ERC721"
+  tokenId: String!
+  contract: String!
+  uri: String!
+  creators: [PartDtoInput!]!
+  royalties: [PartDtoInput!]!
+  signatures: [String!]!
+}
+
+input PartDtoInput {
+  account: String!
+  value: Int!
+}
+
+input LazyErc1155Input {
+  type: String = "ERC721"
+  tokenId: String!
+  contract: String!
+  uri: String!
+  creators: [PartDtoInput!]!
+  royalties: [PartDtoInput!]!
+  signatures: [String!]!
+  supply: BigNumber!
 }
 
 input UpdateTokensInput {

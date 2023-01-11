@@ -158,13 +158,13 @@ export class LazyTokenValidator {
     const results = creators.map((creator, i) => {
       const signature = signatures[i];
       const recoveredAddress = recoverAddress(hash, signature);
-      console.log(recoveredAddress, creator.account);
+      // console.log(recoveredAddress, creator.account);
       return (
         recoveredAddress.toString().toLowerCase() ===
         creator.account.toLowerCase()
       );
     });
-    console.log(hash, results, 'result');
+    // console.log(hash, results, 'result');
     if (results.some((result) => !result)) {
       throw new BadRequestException('Invalid Signatures');
     }
