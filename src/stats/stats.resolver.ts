@@ -90,7 +90,7 @@ export class StatsResolver {
 
   /**
    * GET Stats by Id
-   * @returns Stats Data such as Collection Day Volume, and Floor Price
+   * @returns Stats Data such as Collection Day Volume, Average Price, Unique Owners, and Floor Price
    */
   @Query(() => Stats, { name: 'GetStatsById' })
   async show(@Args('GetStatsByIdInput') id: string): Promise<Stats> {
