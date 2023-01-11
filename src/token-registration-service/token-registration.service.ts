@@ -1,6 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { getActivityType } from 'src/common/utils.common';
-import { EnhancedEvent } from 'src/events/types/events.types';
 import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { TokensService } from 'src/tokens/tokens.service';
