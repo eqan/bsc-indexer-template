@@ -4,14 +4,7 @@ import { StatsService } from './stats.service';
 import { FilterStatsDto } from './dto/filter-stats.dto';
 import { GetAllStats } from './dto/get-all-stats.dto';
 import { Stats } from './entities/stats.entity';
-import { CollectionsResolver } from 'src/collections/collections.resolver';
-import {
-  Cron,
-  CronExpression,
-  Interval,
-  SchedulerRegistry,
-  Timeout,
-} from '@nestjs/schedule';
+import { SchedulerRegistry, Timeout } from '@nestjs/schedule';
 import { CronType } from 'src/jobs/types/cron.types';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 

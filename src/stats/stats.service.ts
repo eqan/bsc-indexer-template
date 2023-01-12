@@ -6,7 +6,6 @@ import {
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionsResolver } from 'src/collections/collections.resolver';
-import { CollectionsService } from 'src/collections/collections.service';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { In, Repository } from 'typeorm';
 import { CreateStatsInput } from './dto/create-stats.input';
