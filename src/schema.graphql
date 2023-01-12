@@ -325,7 +325,7 @@ type Collections {
 input FilterTokenDto {
   page: Int
   limit: Int
-  tokenId: String
+  id: String
   contract: String
   owner: String
 }
@@ -848,7 +848,7 @@ input MetaDataInput {
 }
 
 input UpdateTokensInput {
-  tokenId: String!
+  id: String!
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput

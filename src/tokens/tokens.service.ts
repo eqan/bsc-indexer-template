@@ -66,7 +66,7 @@ export class TokensService {
       const [items, total] = await Promise.all([
         this.tokensRepo.find({
           where: {
-            id: rest?.tokenId,
+            id: rest?.id,
             contract: rest?.contract,
             owner: rest?.owner,
           },
@@ -79,7 +79,7 @@ export class TokensService {
         }),
         this.tokensRepo.count({
           where: {
-            id: rest?.tokenId,
+            id: rest?.id,
             contract: rest?.contract,
             owner: rest?.owner,
           },
