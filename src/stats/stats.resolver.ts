@@ -5,7 +5,13 @@ import { FilterStatsDto } from './dto/filter-stats.dto';
 import { GetAllStats } from './dto/get-all-stats.dto';
 import { Stats } from './entities/stats.entity';
 import { CollectionsResolver } from 'src/collections/collections.resolver';
-import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
+import {
+  Cron,
+  CronExpression,
+  Interval,
+  SchedulerRegistry,
+  Timeout,
+} from '@nestjs/schedule';
 import { CronType } from 'src/jobs/types/cron.types';
 import { QueueType } from 'src/jobs/enums/jobs.enums';
 
@@ -19,6 +25,7 @@ export class StatsResolver {
   CRON_NAME = QueueType.STATS_CRON;
 
   @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
+  @Timeout(5000)
   @Cron(CronExpression.EVERY_12_HOURS, { name: QueueType.STATS_CRON })
   async create(): Promise<void> {
     const { items } = await this.collectionsResolver.index({
@@ -83,7 +90,7 @@ export class StatsResolver {
 
   /**
    * GET Stats by Id
-   * @returns Stats Data such as Collection Day Volume, and Floor Price
+   * @returns Stats Data such as Collection Day Volume, Average Price, Unique Owners, and Floor Price
    */
   @Query(() => Stats, { name: 'GetStatsById' })
   async show(@Args('GetStatsByIdInput') id: string): Promise<Stats> {

@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsDate,
   IsEnum,
   IsEthereumAddress,
   IsNotEmpty,

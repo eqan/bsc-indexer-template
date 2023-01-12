@@ -7,7 +7,7 @@ export class FilterTokenDto extends PaginationParam {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  tokenId?: string;
+  id?: string;
 
   @IsOptional()
   @IsEthereumAddress()

@@ -320,20 +320,14 @@ type Collections {
   bannerImageUrl: String
   Meta: CollectionsMeta
   tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
-  UniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems
 }
 
 input FilterTokenDto {
   page: Int
   limit: Int
-  tokenId: String
+  id: String
   contract: String
   owner: String
-}
-
-input FilterTokenAttributesDto {
-  tokenId: String
-  collectionId: String
 }
 
 type CreatorRoyalty {
@@ -598,6 +592,7 @@ input CollectionMetaContentInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
+  GetUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems
   GetCollectionAveragePrice(collectionId: String!): Float!
   GetCollectionFloorPrice(collectionId: String!): Float
   GetCollectionVolume(collectionId: String!): Float!
@@ -630,6 +625,11 @@ input FilterDto {
   id: String
   name: String
   owner: String
+}
+
+input FilterTokenAttributesDto {
+  tokenId: String
+  collectionId: String
 }
 
 input FilterOrderDto {
@@ -848,7 +848,7 @@ input MetaDataInput {
 }
 
 input UpdateTokensInput {
-  tokenId: String!
+  id: String!
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput
