@@ -11,8 +11,10 @@ import { CreateTokenInput } from './dto/create-tokens.input';
 import { FilterTokenDto } from './dto/filter-token.dto';
 import { GetAllTokens } from './dto/get-all-tokens.dto';
 import { LazyTokenInput } from './dto/lazy-token-dto';
+import { MetaData } from './dto/nestedObjectDto/meta.dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { TokenType } from './entities/enum/token.type.enum';
+import { TokensMeta } from './entities/nestedObjects/tokens.meta.entity';
 import { Tokens } from './entities/tokens.entity';
 
 @Injectable()
@@ -20,6 +22,8 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
+    @InjectRepository(TokensMeta)
+    private tokensMetaRepo: Repository<TokensMeta>,
     private collectionsService: CollectionsService,
     private lazyTokenValidator: LazyTokenValidator,
   ) {}
@@ -41,6 +45,9 @@ export class TokensService {
           conflictPaths: ['tokenId'],
         },
       );
+      if (restParams?.Meta)
+        await this.update({ tokenId, Meta: restParams.Meta });
+
       const token = await this.tokensRepo.findOne({ where: { tokenId } });
       return token;
     } catch (error) {
