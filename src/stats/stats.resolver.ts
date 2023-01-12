@@ -19,38 +19,18 @@ import { QueueType } from 'src/jobs/enums/jobs.enums';
 export class StatsResolver {
   constructor(
     private readonly statsService: StatsService,
-    private readonly collectionsResolver: CollectionsResolver,
     private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
   CRON_NAME = QueueType.STATS_CRON;
 
   @Mutation(() => Stats, { name: 'CreateUpdateStats', nullable: true })
   @Timeout(5000)
-  @Cron(CronExpression.EVERY_12_HOURS, { name: QueueType.STATS_CRON })
   async create(): Promise<void> {
-    const { items } = await this.collectionsResolver.index({
-      page: 0,
-      limit: 0,
-    });
-    items.map(async (item) => {
-      const id = item.id;
-      const floorPrice = await this.collectionsResolver.getCollectionFloorPrice(
-        id,
-      );
-      const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
-      const averagePrice =
-        await this.collectionsResolver.getCollectionAveragePrice(id);
-      const uniqueOwners =
-        await this.collectionsResolver.getNumberOfUniqueOwners(id);
-      if (floorPrice != null)
-        await this.statsService.create({
-          id,
-          floorPrice,
-          dayVolume,
-          averagePrice,
-          uniqueOwners,
-        });
-    });
+    try {
+      this.statsService.fetchDataAndCreate();
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   @Mutation(() => CronType, { name: 'StopStatsCron', nullable: true })

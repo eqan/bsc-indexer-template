@@ -3,7 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CollectionsResolver } from 'src/collections/collections.resolver';
+import { CollectionsService } from 'src/collections/collections.service';
+import { QueueType } from 'src/jobs/enums/jobs.enums';
 import { In, Repository } from 'typeorm';
 import { CreateStatsInput } from './dto/create-stats.input';
 import { FilterStatsDto } from './dto/filter-stats.dto';
@@ -15,6 +19,7 @@ export class StatsService {
   constructor(
     @InjectRepository(Stats)
     private statsRepo: Repository<Stats>,
+    private collectionsResolver: CollectionsResolver,
   ) {}
 
   /**
@@ -31,6 +36,32 @@ export class StatsService {
     }
   }
 
+  @Cron(CronExpression.EVERY_12_HOURS, { name: QueueType.STATS_CRON })
+  async fetchDataAndCreate() {
+    const { items } = await this.collectionsResolver.index({
+      page: 0,
+      limit: 0,
+    });
+    items.map(async (item) => {
+      const id = item.id;
+      const floorPrice = await this.collectionsResolver.getCollectionFloorPrice(
+        id,
+      );
+      const dayVolume = await this.collectionsResolver.getCollectionVolume(id);
+      const averagePrice =
+        await this.collectionsResolver.getCollectionAveragePrice(id);
+      const uniqueOwners =
+        await this.collectionsResolver.getNumberOfUniqueOwners(id);
+      if (floorPrice != null)
+        await this.create({
+          id,
+          floorPrice,
+          dayVolume,
+          averagePrice,
+          uniqueOwners,
+        });
+    });
+  }
   /**
    * Get All Collections ... With Filters
    * @@params No Params
