@@ -22,12 +22,14 @@ import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto'
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { CollectionsMetaService } from './services/collections.meta.service';
 
 @Injectable()
 export class CollectionsService {
   constructor(
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>,
+    private readonly collectionsMetaService: CollectionsMetaService,
     private readonly ordersService: OrdersService,
     @Inject(forwardRef(() => TokensService))
     private readonly tokenService: TokensService,
@@ -132,6 +134,7 @@ export class CollectionsService {
       if (!found) {
         throw new NotFoundException(`Collection against ${id}} not found`);
       }
+      await this.collectionsMetaService.resolve(found.id);
       return found;
     } catch (error) {
       throw new BadRequestException(error);

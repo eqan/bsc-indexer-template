@@ -40,7 +40,9 @@ export class CollectionsRegistrationService {
 
   async getOrSaveToken(address: string): Promise<Collections | null> {
     try {
-      const collection = await this.collectionsRepo.findOneBy({ id: address });
+      const collection = await this.collectionsRepo.findOneBy({
+        id: address.toLowerCase(),
+      });
       if (collection) {
         return collection;
       }
@@ -81,7 +83,7 @@ export class CollectionsRegistrationService {
       symbol,
       owner,
       id: address,
-      type: CollectionType[type],
+      type,
       features,
     });
     return collectionData;
@@ -179,9 +181,11 @@ export class CollectionsRegistrationService {
         async ({ method, params }: RequestArguments) =>
           this.rpcProvider.baseProvider.send(method, params),
       );
-      code = await this.rpcProvider.baseProvider.getCode(decodedAddress);
+      code = await this.rpcProvider.baseProvider.getCode(
+        decodedAddress ? decodedAddress : address,
+      );
     } catch (error) {
-      console.log(error);
+      console.log(error, 'byte code error');
     }
     return code;
   }

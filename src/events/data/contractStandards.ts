@@ -1,4 +1,4 @@
-import { CollectionType } from 'src/graphqlFile';
+import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 
 export interface Standard {
   id: CollectionType;

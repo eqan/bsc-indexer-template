@@ -14,7 +14,6 @@ export class FetchAndSaveMetadataService {
   async handleMetadata(data: FetchMetadataJobType) {
     try {
       const { collectionId, tokenId } = data;
-
       if (collectionId && tokenId) {
         const collection = await this.collectionRegistrationService.register(
           collectionId,

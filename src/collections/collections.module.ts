@@ -10,6 +10,8 @@ import { Collections } from './entities/collections.entity';
 import { CollectionsMeta } from './entities/nestedObjects/collections.meta.entity';
 import { CollectionsRegistrationModule } from 'src/collectionRegistrationService/collectionRegistration.module';
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
+import { UrlServiceModule } from 'src/utils/url-service/url-service.module';
+import { CollectionsMetaService } from './services/collections.meta.service';
 
 @Module({
   imports: [
@@ -19,8 +21,9 @@ import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
     OrdersModule,
     forwardRef(() => CollectionsRegistrationModule),
     forwardRef(() => MetadataApiModule),
+    UrlServiceModule,
   ],
-  providers: [CollectionsResolver, CollectionsService],
+  providers: [CollectionsResolver, CollectionsService, CollectionsMetaService],
   exports: [CollectionsService],
 })
 export class CollectionsModule {}

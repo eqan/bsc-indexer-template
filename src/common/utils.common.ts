@@ -6,7 +6,6 @@ import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
-
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
 export const toBuffer = (hexValue: string) =>
@@ -49,6 +48,7 @@ export const CollectionIface = new Interface([
   'function symbol() view returns (string)',
   'function owner() public view returns (address)',
   'function supportsInterface(bytes4 interfaceId) public view returns (bool)',
+  'function contractURI() public view returns(string)',
 ]);
 
 export const TokenIface = new Interface([
@@ -258,6 +258,16 @@ export const getNFTCreator = async (contract: Contract, tokenId: string) => {
   }
 };
 
+export const getContractURI = async (
+  contract: Contract,
+): Promise<string | null> => {
+  try {
+    return await contract.contractURI();
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getTokenURI = async (
   type: TokenType,
   tokenId: string,
@@ -310,3 +320,15 @@ export const arrayItemsToLowerCase = (items: string[]): string[] =>
 //checks if the input enum is valid or not
 export const isEnumValid = <T>(value: string, _enum: T) =>
   Object.values(_enum)?.includes(value);
+
+export function removeLeadingSlashes(str: string): string {
+  let result = str;
+  while (result.startsWith('/')) {
+    result = result.replace(/^\/+/, '');
+  }
+  return result;
+}
+
+export function isCID(hash: string): boolean {
+  return true;
+}
