@@ -4,7 +4,6 @@ import { IsOptional } from 'class-validator';
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -54,17 +53,6 @@ export class TokensMeta {
   })
   externalUri?: string;
 
-  // @Field(() => [MetadataAttribute], { nullable: true })
-  // @Column('jsonb', {
-  //   nullable: true,
-  //   default: null,
-  // })
-  // attributes?: {
-  //   key?: string;
-  //   value?: string;
-  //   format?: string;
-  // }[];
-
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -75,17 +63,11 @@ export class TokensMeta {
   @OneToOne(() => Tokens, (token) => token.Meta)
   token: Tokens;
 
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'text',
-  //   nullable: true,
-  // })
-  // attributeId?: string;
-
   @IsOptional()
   @Type(() => TokensAttributes)
   @Field(() => [TokensAttributes], { nullable: true })
-  @OneToMany(() => TokensAttributes, (attributes) => attributes.tokensMeta)
-  // @JoinColumn({ name: 'attributeId' })
+  @OneToMany(() => TokensAttributes, (attributes) => attributes.tokensMeta, {
+    nullable: true,
+  })
   attributes: TokensAttributes[];
 }

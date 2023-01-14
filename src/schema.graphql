@@ -84,8 +84,8 @@ type ActivityTransfer {
 
 type Activity {
   createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   id: String
   userId: String
@@ -227,8 +227,8 @@ scalar ASSET_SCALAR
 
 type Orders {
   createdAt: DateTime
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   orderId: String!
   fill: String!
@@ -337,8 +337,8 @@ type CreatorRoyalty {
 
 type Tokens {
   createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   id: String!
   collectionId: String
@@ -379,12 +379,12 @@ type Meta {
 }
 
 type Attributes {
-  id: String!
-  tokenId: String!
-  collectionId: String!
-  key: String!
-  format: String!
-  value: String!
+  id: String
+  tokenId: String
+  collectionId: String
+  key: String
+  format: String
+  value: String
 }
 
 type TokensAttributesInput {
