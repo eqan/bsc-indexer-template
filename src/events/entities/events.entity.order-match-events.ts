@@ -10,22 +10,6 @@ import {
 import { OrderSide } from '../enums/events.enums.order-side';
 import { BaseEventParams } from './entities.entity.base-event-params';
 
-// export type Event = {
-//   // OrderSide: OrderSide;
-//   orderId?: string;
-//   orderSide: 'buy' | 'sell';
-//   maker: string;
-//   taker: string;
-//   price: string;
-//   contract: string;
-//   tokenId: string;
-//   amount: string;
-//   currency: string;
-//   currencyPrice?: string;
-//   usdPrice?: string;
-//   baseEventParams: BaseEventParams;
-// };
-
 @Entity('OrderMatchEvents')
 export abstract class OrderMatchEvents extends BaseEntity {
   @PrimaryColumn({

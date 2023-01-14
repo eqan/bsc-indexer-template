@@ -30,15 +30,16 @@ export class UsersService {
    * Create User
    * @params createUser
    * @return Users
+
    */
   async create(
     createUserInput: CreateUserInput | CreateUserOnLoginInput,
   ): Promise<Users> {
     try {
-      const user = this.usersRepo.create(createUserInput);
-      return await this.usersRepo.save(user);
+      const user = this.usersRepo.save(createUserInput);
+      return user;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_USER);
+      throw new BadRequestException(error);
     }
   }
 
@@ -52,9 +53,10 @@ export class UsersService {
   ): Promise<Users> {
     try {
       const user = this.usersRepo.create(createUserInput);
+      console.log(user);
       return await this.usersRepo.save(user);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.CREATE_USER_ON_LOGIN);
+      throw new BadRequestException(error);
     }
   }
 
@@ -71,7 +73,7 @@ export class UsersService {
       }
       return userData;
     } catch (error) {
-      throw new BadRequestException(SystemErrors.GET_USER_DATA_BY_ID);
+      throw new BadRequestException(error);
     }
   }
   /*
@@ -103,15 +105,13 @@ export class UsersService {
       loginUserInput.userSignature,
       loginUserInput.id,
     );
-
+    console.log(user);
     if (user) {
       try {
         availableUser = await this.usersRepo.findOneBy({ id: user });
         availableUser = this.modifyUserOnLogin(availableUser, loginUserInput);
       } catch (error) {
-        throw new BadRequestException(
-          SystemErrors.LOGIN_USER_CREATION_OR_UPDATION,
-        );
+        throw new BadRequestException(error);
       }
     } else throw new UnauthorizedException(SystemErrors.LOGIN_AUTHORIZATION);
 
@@ -135,7 +135,7 @@ export class UsersService {
       await this.usersRepo.update({ id }, { userSignature });
       return this.show(id);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.UPDATE_USER);
+      throw new BadRequestException(error);
     }
   }
 
@@ -150,7 +150,7 @@ export class UsersService {
       await this.usersRepo.update({ id }, rest);
       return this.show(id);
     } catch (error) {
-      throw new BadRequestException(SystemErrors.UPDATE_USER);
+      throw new BadRequestException(error);
     }
   }
 
@@ -165,7 +165,7 @@ export class UsersService {
       await this.usersRepo.delete({ id: In(ids) });
     } catch (error) {
       console.log(error);
-      throw new BadRequestException(SystemErrors.DELETE_USER);
+      throw new BadRequestException(error);
     }
   }
 
@@ -193,7 +193,7 @@ export class UsersService {
       ]);
       return { items, total };
     } catch (error) {
-      throw new BadRequestException(SystemErrors.FIND_USERS);
+      throw new BadRequestException(error);
     }
   }
 }

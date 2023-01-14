@@ -400,4 +400,63 @@ export class OrdersService {
       throw new BadRequestException(error);
     }
   }
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param ContractAddress
+   * @returns  Average Price Of Collection
+   */
+  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
+    try {
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('COALESCE(AVG(Orders.makePrice), 0)', 'avg_price')
+        .where('Orders.contract = :collectionId', {
+          collectionId,
+        })
+        .getRawOne();
+      return result.avg_price;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * Get Unique Owners Of A Collection related to Orders
+   * @param ContractAddress
+   * @returns  Number of Unique Owners
+   */
+  async getNumberOfUniqueOwners(collectionId: string): Promise<number> {
+    try {
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('Orders.maker', 'owner')
+        .where('Orders.id = :collectionId', { collectionId })
+        .groupBy('Orders.owner')
+        .getCount();
+      return result;
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+  /**
+   * Calculate the volume of a collection
+   * @param id
+   * @returns volume
+   */
+  async getOrderCollectionVolume(contract: string): Promise<number> {
+    try {
+      // Use the sum query builder function to sum up the "price" field of all orders that match the where clause
+      const result = await this.ordersRepo
+        .createQueryBuilder('Orders')
+        .select('COALESCE(SUM(Orders.makePrice), 0)', 'volume')
+        .where('Orders.contract = :contract', {
+          contract,
+        })
+        .getRawOne();
+      return result.volume;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }

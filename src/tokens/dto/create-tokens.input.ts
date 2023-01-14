@@ -23,7 +23,7 @@ export class CreateTokenInput {
   @IsNotEmpty()
   @IsString()
   @Field()
-  tokenId: string;
+  id: string;
 
   @IsEthereumAddress()
   @IsNotEmpty()

@@ -1,7 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { MetadataAttribute } from '../../dto/nestedObjectDto/meta.attributes.dto';
+import { Type } from 'class-transformer';
+import { IsOptional } from 'class-validator';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Tokens } from '../tokens.entity';
+import { TokensAttributes } from './tokens.meta.attributes.entity';
 import { Content } from './tokens.meta.content.entity';
 
 @ObjectType('Meta')
@@ -45,17 +53,6 @@ export class TokensMeta {
   })
   externalUri?: string;
 
-  @Field(() => [MetadataAttribute], { nullable: true })
-  @Column('jsonb', {
-    nullable: true,
-    default: null,
-  })
-  attributes?: {
-    key?: string;
-    value?: string;
-    format?: string;
-  }[];
-
   @Field({ nullable: true })
   @Column({
     type: 'text',
@@ -65,4 +62,12 @@ export class TokensMeta {
 
   @OneToOne(() => Tokens, (token) => token.Meta)
   token: Tokens;
+
+  @IsOptional()
+  @Type(() => TokensAttributes)
+  @Field(() => [TokensAttributes], { nullable: true })
+  @OneToMany(() => TokensAttributes, (attributes) => attributes.tokensMeta, {
+    nullable: true,
+  })
+  attributes: TokensAttributes[];
 }

@@ -22,8 +22,8 @@ import { FilterDto as FilterCollectionsDto } from './dto/filter.collections.dto'
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { SortOrder } from './enums/collections.sort-order.enum';
 import { CollectionsMetaService } from './services/collections.meta.service';
-
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -186,15 +186,47 @@ export class CollectionsService {
       throw new BadRequestException(error);
     }
   }
-
-  // Work Under Progress
-  calculateAverageCollectionPrice(id: string): string {
+  async getOrderCollectionAveragePrice(collectionId: string): Promise<number> {
     try {
-      const ids = id;
-      // await this.collectionsRepo.delete({ id: In(ids) });
-      return ids;
+      return this.ordersService.getOrderCollectionAveragePrice(collectionId);
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Average Collection Price Of Tokens
+   * @param ContractAddress
+   * @returns  Average Price Of Collection
+   */
+  async getOrderCollectionFloorPrice(
+    collectionId: string,
+  ): Promise<number | null> {
+    try {
+      const items = await this.ordersService.filterByPrice({
+        collectionId,
+        sortOrder: SortOrder.ASC,
+      });
+      try {
+        return items[0].makePrice;
+      } catch (error) {
+        return null;
+      }
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  /**
+   * Get The Total Eth Value For The Last 24 Hours
+   * @param ContractAddress
+   * @returns  Last 24 Hours Transactions Amount
+   */
+  async getCollectionVolume(contract: string): Promise<number> {
+    try {
+      return await this.ordersService.getOrderCollectionVolume(contract);
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 
@@ -218,6 +250,28 @@ export class CollectionsService {
       return tokens;
     } catch (error) {
       throw new NotFoundException(error);
+    }
+  }
+  /**
+   * Get Unique Owners Of A Collection
+   * @param ContractAddress
+   * @returns  Unique Owners
+   */
+  async getNumberOfUniqueOwners(collectionId: string): Promise<number> {
+    try {
+      return await this.tokenService.getNumberOfUniqueOwners(collectionId);
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
+  normalizeData(error: string) {
+    const regex = /value \"\d+\" is out of range for type integer/;
+
+    if (regex.test(error)) {
+      return 0;
+    } else {
+      throw new BadRequestException(error);
     }
   }
 }

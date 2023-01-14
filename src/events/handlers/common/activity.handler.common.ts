@@ -41,7 +41,7 @@ export class ExtractActivityService {
       };
       if (token)
         await this.tokensService.update({
-          tokenId: itemId,
+          id: itemId,
           mintedAt: new Date(timestamp * 1000),
         });
     } else if (to === AddressZero) {
@@ -55,7 +55,7 @@ export class ExtractActivityService {
       };
       if (token)
         await this.tokensService.update({
-          tokenId: itemId,
+          id: itemId,
           deleted: true,
         });
     } else {

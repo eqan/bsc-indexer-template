@@ -17,16 +17,16 @@ import {
 
 @ObjectType()
 export class Timestamps extends BaseEntity {
-  @Field(() => String)
-  @CreateDateColumn()
+  @Field(() => String, { nullable: true })
+  @CreateDateColumn({ nullable: true })
   public createdAt!: Date;
 
-  @Field(() => String)
-  @UpdateDateColumn()
+  @Field(() => String, { nullable: true })
+  @UpdateDateColumn({ nullable: true })
   public lastUpdatedAt!: Date;
 
-  @Field(() => String)
-  @UpdateDateColumn()
+  @Field(() => String, { nullable: true })
+  @UpdateDateColumn({ nullable: true })
   public dbUpdatedAt!: Date;
 
   @Field(() => String, { nullable: true })

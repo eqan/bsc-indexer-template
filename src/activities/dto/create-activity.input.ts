@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
+  IsEnum,
   IsEthereumAddress,
   IsNotEmpty,
   IsOptional,
@@ -36,6 +37,7 @@ export class CreateActivityInput {
   collectionId: string;
 
   @IsOptional()
+  @IsEnum(ActivityType)
   @Field(() => ActivityType)
   type?: ActivityType;
 

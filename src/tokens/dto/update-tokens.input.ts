@@ -21,7 +21,7 @@ export class UpdateTokensInput {
   @IsNotEmpty()
   @IsString()
   @Field()
-  tokenId: string;
+  id: string;
 
   @IsOptional()
   @IsBoolean()

@@ -106,6 +106,6 @@ export class Collections extends BaseEntity {
   @JoinColumn()
   Meta?: CollectionsMeta;
 
-  @OneToMany(() => Tokens, (token) => token.tokenId)
+  @OneToMany(() => Tokens, (token) => token.id)
   tokens: Tokens[];
 }

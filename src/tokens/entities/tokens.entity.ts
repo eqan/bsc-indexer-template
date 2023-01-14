@@ -22,7 +22,7 @@ export class Tokens extends Timestamps {
     type: 'text',
     unique: true,
   })
-  tokenId: string;
+  id: string;
 
   @Field({ nullable: true })
   @Column('text', { default: null })

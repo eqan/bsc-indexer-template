@@ -15,6 +15,7 @@ import { CollectionsMetaService } from './services/collections.meta.service';
 
 @Module({
   imports: [
+    TokensModule,
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
     TokenIdModule.register(BigNumber.from(2).pow(96)),
@@ -24,6 +25,6 @@ import { CollectionsMetaService } from './services/collections.meta.service';
     UrlServiceModule,
   ],
   providers: [CollectionsResolver, CollectionsService, CollectionsMetaService],
-  exports: [CollectionsService],
+  exports: [CollectionsResolver, CollectionsService],
 })
 export class CollectionsModule {}

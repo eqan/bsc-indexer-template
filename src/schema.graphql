@@ -83,9 +83,9 @@ type ActivityTransfer {
 }
 
 type Activity {
-  createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   id: String
   userId: String
@@ -228,8 +228,8 @@ scalar ASSET_SCALAR
 
 type Orders {
   createdAt: DateTime
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   orderId: String!
   fill: String!
@@ -298,10 +298,13 @@ type CreatorRoyalty {
   value: Int
 }
 
-type MetadataAttribute {
+type Attributes {
+  id: String
+  tokenId: String
+  collectionId: String
   key: String
-  value: String
   format: String
+  value: String
 }
 
 type Content {
@@ -325,16 +328,16 @@ type Meta {
   genres: [String!]
   originalMetaUri: String
   externalUri: String
-  attributes: [MetadataAttribute!]
   rightsUri: String
+  attributes: [Attributes!]
 }
 
 type Tokens {
-  createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
-  tokenId: String!
+  id: String!
   collectionId: String
   contract: String
   type: String
@@ -390,9 +393,17 @@ enum CollectionFeature {
 input FilterTokenDto {
   page: Int
   limit: Int
-  tokenId: String
+  id: String
   contract: String
   owner: String
+}
+
+type TokensAttributesInput {
+  key: String
+  value: String
+  format: String
+  tokenId: String
+  collectionId: String
 }
 
 type MetadataContent {
@@ -430,6 +441,40 @@ type GetAllCollections {
   total: Int!
 }
 
+type DynamicParentSubTypeData {
+  value: String!
+  count: Int!
+  parent: String!
+}
+
+type DynamicParentData {
+  key: String!
+  count: Int!
+}
+
+type CollectionUniqueItems {
+  Parent: [DynamicParentData!]!
+  ParentSubTypes: [DynamicParentSubTypeData!]!
+}
+
+type Stats {
+  id: String
+  dayVolume: Float
+  floorPrice: Float
+  averagePrice: Float
+  uniqueOwners: Float
+  collection: Collections!
+}
+
+type GetAllStats {
+  items: [Stats!]!
+  total: Int!
+}
+
+type CronType {
+  isDone: Boolean!
+}
+
 type Users {
   id: String!
   userSignature: String
@@ -439,10 +484,6 @@ type Users {
   websiteUrl: String
   twitterUrl: String
   type: String
-}
-
-type CronType {
-  isDone: Boolean!
 }
 
 type ReturnRefreshMeta {
@@ -534,16 +575,18 @@ input CreatorRoyaltyInput {
   value: Int
 }
 
-input AttributeInput {
-  key: String
-  value: String
-  format: String
-}
-
 input MetaContentInput {
   type: String
   url: String
   representation: String
+}
+
+input TokensAttributes {
+  key: String
+  value: String
+  format: String
+  tokenId: String
+  collectionId: String
 }
 
 input MetadataContentInput {
@@ -567,6 +610,11 @@ input CollectionMetaContentInput {
 type Query {
   GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
   GetCollectionById(collectionId: String!): Collections!
+  GetUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems
+  GetCollectionAveragePrice(collectionId: String!): Float!
+  GetCollectionFloorPrice(collectionId: String!): Float
+  GetCollectionVolume(collectionId: String!): Float!
+  GetCollectionUniqueOwners(collectionId: String!): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
   GetOrderById(orderId: String!): Orders!
@@ -585,6 +633,8 @@ type Query {
   GetAllUsers(filterUserDto: FilterUserDto = {}): GetAllUsers!
   GetAllAuctions(GetAllAuctions: FilterAuctionDto = {}): GetAllAuctions!
   GetAuctionById(GetAuctionById: Float!): Auction!
+  GetAllStats(GetAllStatsInput: FilterStatsDto = {}): GetAllStats!
+  GetStatsById(GetStatsByIdInput: String!): Stats!
 }
 
 input FilterDto {
@@ -593,6 +643,11 @@ input FilterDto {
   id: String
   name: String
   owner: String
+}
+
+input FilterTokenAttributesDto {
+  tokenId: String
+  collectionId: String
 }
 
 input FilterOrderDto {
@@ -681,6 +736,16 @@ input FilterAuctionDto {
   seller: String
 }
 
+input FilterStatsDto {
+  page: Int = 1
+  limit: Int = 10
+  id: String!
+  dayVolume: String
+  floorPrice: String
+  averagePrice: Float
+  uniqueOwners: Int
+}
+
 type Mutation {
   GenerateNftTokenId(generateTokenIdInput: GenerateTokenIdInput!): NftTokenId!
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
@@ -707,6 +772,9 @@ type Mutation {
   UpdateAuctionStatus(UpdateAuctionStatus: UpdateAuctionStatusInput!): Auction!
   DeleteAuction(DeleteAuctionInput: DeleteAuctionsInput!): Auction
   RefreshMetadata(RefreshMetadatInput: RefreshMetadataInput!): ReturnRefreshMeta!
+  CreateUpdateStats: Stats
+  StopStatsCron: CronType
+  StartStatsCron: CronType
   StopRealTimeCron: CronType
   StartRealTimeCron: CronType
   StopBackFillCron: CronType
@@ -773,7 +841,7 @@ enum SortOrder {
 }
 
 input CreateTokenInput {
-  tokenId: String!
+  id: String!
   collectionId: String!
   contract: String!
   type: TokenType!
@@ -800,7 +868,7 @@ input MetaDataInput {
   originalMetaUri: String
   externalUri: String
   rightsUri: String
-  attributes: [AttributeInput!]
+  attributes: [TokensAttributes!]
   Content: MetadataContentInput
 }
 
@@ -836,7 +904,7 @@ input LazyErc1155Input {
 }
 
 input UpdateTokensInput {
-  tokenId: String!
+  id: String!
   deleted: Boolean
   sellers: Float
   creator: CreatorRoyaltyInput

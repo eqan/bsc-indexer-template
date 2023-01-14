@@ -21,6 +21,8 @@ import { FilterTokensByPriceRangeDto } from './dto/filter-tokens-by-price-range.
 import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
+import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
+import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -75,9 +77,9 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   @Query(() => GetAllCollections, { name: 'GetAllCollections' })
   async index(
     @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
-    filteCollectionInput: FilterDto,
+    filterCollectionInput: FilterDto,
   ): Promise<GetAllCollections> {
-    return await this.collectionsService.index(filteCollectionInput);
+    return await this.collectionsService.index(filterCollectionInput);
   }
 
   /**
@@ -152,10 +154,104 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
   }
 
   /**
-   * Sort and Filter the collection tokens for provided range
-   * @param FilterTokensByPriceRangeDto
-   * @returns Tokens
+   * Return unique propeties and sub properites of a Collection
+   * @param FilterTokenAttributesDto
+   * @returns Parent Properties & Sub Properties
    */
+  @Query(() => CollectionUniqueItems, {
+    nullable: true,
+    name: 'GetUniqueItems',
+  })
+  async getCollectionUniqueItems(
+    @Args('FilterTokenAttributesDto')
+    filterTokenAttributesDto: FilterTokenAttributesDto,
+  ): Promise<CollectionUniqueItems> {
+    try {
+      return await this.tokenService.getTokenAttributesById(
+        filterTokenAttributesDto,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  /**
+   * Get Average Price Of A Collection
+   * @param collectionId
+   * @returns Average Price Of A Collection
+   */
+  @Query(() => Number, { name: 'GetCollectionAveragePrice' })
+  async getCollectionAveragePrice(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getOrderCollectionAveragePrice(
+        collectionId,
+      );
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
+
+  /**
+   * Get Floor Price Of A Collection
+   * @param collectionId
+   * @returns Average Price Of A Collection
+   */
+  @Query(() => Number, { name: 'GetCollectionFloorPrice', nullable: true })
+  async getCollectionFloorPrice(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number | null> {
+    try {
+      return await this.collectionsService.getOrderCollectionFloorPrice(
+        collectionId,
+      );
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
+
+  /**
+   * Get Volume Of A Collection Trade in Last 24 Hours
+   * @param collectionId
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionVolume' })
+  async getCollectionVolume(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getCollectionVolume(collectionId);
+    } catch (error) {
+      return this.collectionsService.normalizeData(error);
+    }
+  }
+
+  /**
+   * Get Number Of Unique Owners in a Collection
+   * @param collectionId
+   * @returns Volumne
+   */
+  @Query(() => Number, { name: 'GetCollectionUniqueOwners' })
+  async getNumberOfUniqueOwners(
+    @Args('collectionId')
+    collectionId: string,
+  ): Promise<number> {
+    try {
+      return await this.collectionsService.getNumberOfUniqueOwners(
+        collectionId,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  //  Sort and Filter the collection tokens for provided range
+  //  @param FilterTokensByPriceRangeDto
+  //  @returns Tokens
   @Mutation(() => [Tokens], { name: 'filterTokensByPriceRange' })
   async filterTokensByPriceRange(
     @Args('FilterTokensByPriceRangeDto')

@@ -36,7 +36,7 @@ export class TokensRegistrationService {
       console.log(error, 'error duplication');
       // need to handle dublicate enter error
       return this.tokensService.show(
-        `${createTokensInput.collectionId}:${createTokensInput.tokenId}`,
+        `${createTokensInput.collectionId}:${createTokensInput.id}`,
       );
     }
   }
