@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUsdPriceInput } from './dto/create-usd-price.input';
 import { FilterUsdPriceInput } from './dto/filter-usd-price.input';
 import { UsdPrice } from './entities/usd-price.entity';

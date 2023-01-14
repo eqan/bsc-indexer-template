@@ -167,7 +167,8 @@ export class CollectionsService {
       const { owner } = await this.show(id);
       if (owner != rest.owner)
         throw new UnauthorizedException('The user is not the owner');
-      return await this.collectionsRepo.save(updateCollectionsInput);
+      await this.collectionsRepo.update({ id }, rest);
+      return await this.show(id);
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -181,7 +182,12 @@ export class CollectionsService {
   async delete(deleteWithIds: { id: string[] }): Promise<void> {
     try {
       const ids = deleteWithIds.id;
-      await this.collectionsRepo.delete({ id: In(ids) });
+      await Promise.all(
+        ids?.map(async (id) => {
+          const _id = id.toLowerCase();
+          return await this.collectionsRepo.delete({ id: _id });
+        }),
+      );
     } catch (error) {
       throw new BadRequestException(error);
     }

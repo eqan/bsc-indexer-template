@@ -19,18 +19,4 @@ export abstract class UsdPrice extends BaseEntity {
   @Field()
   @Column('int')
   timestamp: number;
-
-  // @Field({ nullable: true })
-  // @Column('text')
-  // name: string;
-
-  // @Field(() => CurrencyMetaData, { nullable: true })
-  // @Column({
-  //   type: 'jsonb',
-  //   nullable: true,
-  // })
-  // metadata?: {
-  //   coingeckoCurrencyId?: string;
-  //   image?: string;
-  // };
 }
