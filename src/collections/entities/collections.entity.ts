@@ -1,3 +1,4 @@
+import { Optional } from '@nestjs/common';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
@@ -96,15 +97,26 @@ export class Collections extends BaseEntity {
   })
   bannerImageUrl?: string;
 
-  @IsOptional()
+  // @IsOptional()
+  // @Field(() => CollectionsMeta, { nullable: true })
+  // @OneToOne(
+  //   () => CollectionsMeta,
+  //   (collectionMeta) => collectionMeta.collection,
+  //   {
+  //     eager: true,
+  //     cascade: true,
+  //     nullable: true,
+  //   },
+  // )
+  // @JoinColumn()
+  // Meta?: CollectionsMeta;
+
   @Field(() => CollectionsMeta, { nullable: true })
-  @OneToOne(() => CollectionsMeta, {
-    eager: true,
-    cascade: true,
-    nullable: true,
-  })
-  @JoinColumn()
-  Meta?: CollectionsMeta;
+  @OneToOne(
+    () => CollectionsMeta,
+    (collectionMeta) => collectionMeta.collection,
+  )
+  Meta: CollectionsMeta;
 
   @OneToMany(() => Tokens, (token) => token.tokenId)
   tokens: Tokens[];

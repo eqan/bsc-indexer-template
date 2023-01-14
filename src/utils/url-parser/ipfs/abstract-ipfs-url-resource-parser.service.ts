@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { removeLeadingSlashes } from 'src/common/utils.common';
-import { IpfsUrl } from '../dto/url-parser.dto';
+import { IpfsUrl, IPFS_PREFIX } from '../dto/url-parser.dto';
 import { UrlResourceParser } from '../url-resource-parser-service';
-
 @Injectable()
 export class AbstractIpfsUrlResourceParser
   implements UrlResourceParser<IpfsUrl>
@@ -11,22 +10,26 @@ export class AbstractIpfsUrlResourceParser
     'ipfs:///ipfs/',
     'ipfs://ipfs/',
     'ipfs:/ipfs/',
-    'ipfs:',
+    IPFS_PREFIX,
   ];
 
   parse(url: string): IpfsUrl {
-    if (url.length < 'ipfs:'.length) {
+    if (url.length < IPFS_PREFIX.length) {
       return null;
     }
 
-    const potentialIpfsPrefix = url.substring(0, 'ipfs:'.length).toLowerCase();
+    const potentialIpfsPrefix = url
+      .substring(0, IPFS_PREFIX.length)
+      .toLowerCase();
 
-    if (potentialIpfsPrefix !== 'ipfs:') {
+    if (potentialIpfsPrefix !== IPFS_PREFIX) {
       return null;
     }
 
     const lowerCaseIpfsPrefixUri = removeLeadingSlashes(
-      `ipfs:${url.substring('ipfs:'.length)}`,
+      `${IPFS_PREFIX}${removeLeadingSlashes(
+        url.substring(IPFS_PREFIX.length),
+      )}`,
     );
 
     for (const prefix of this.IPFS_PREFIXES) {

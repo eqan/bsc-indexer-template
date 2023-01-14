@@ -360,6 +360,7 @@ type CollectionsMeta {
   feeRecipient: String
   sellerFeeBasisPoints: Float
   Content: MetaContent
+  collectionId: String!
 }
 
 type Collections {

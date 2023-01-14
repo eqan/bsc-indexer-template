@@ -12,6 +12,7 @@ import { CollectionsRegistrationModule } from 'src/collectionRegistrationService
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { UrlServiceModule } from 'src/utils/url-service/url-service.module';
 import { CollectionsMetaService } from './services/collections.meta.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CollectionsMetaService } from './services/collections.meta.service';
     forwardRef(() => CollectionsRegistrationModule),
     forwardRef(() => MetadataApiModule),
     UrlServiceModule,
+    HttpModule,
   ],
   providers: [CollectionsResolver, CollectionsService, CollectionsMetaService],
   exports: [CollectionsService],

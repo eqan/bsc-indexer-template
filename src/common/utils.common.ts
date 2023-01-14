@@ -6,6 +6,7 @@ import { BadRequestException } from '@nestjs/common';
 import { CollectionType } from 'src/collections/entities/enum/collection.type.enum';
 import { getNetworkSettings } from 'src/config/network.config';
 import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
+import { CID } from 'multiformats';
 export const fromBuffer = (buffer: Buffer) => '0x' + buffer.toString('hex');
 
 export const toBuffer = (hexValue: string) =>
@@ -329,6 +330,24 @@ export function removeLeadingSlashes(str: string): string {
   return result;
 }
 
-export function isCID(hash: string): boolean {
-  return true;
+/**
+ * @param {any} input
+ */
+function isString(input: any): input is string {
+  return typeof input === 'string';
+}
+export function isCID(hash: CID | Uint8Array | string): hash is CID {
+  try {
+    if (isString(hash)) {
+      return Boolean(CID.parse(hash));
+    }
+
+    if (hash instanceof Uint8Array) {
+      return Boolean(CID.decode(hash));
+    }
+
+    return Boolean(CID.asCID(hash)); // eslint-disable-line no-new
+  } catch {
+    return false;
+  }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IpfsUrl } from '../dto/url-parser.dto';
+import { IpfsUrl, IPFS_PATH_PART } from '../dto/url-parser.dto';
 import { UrlResourceParser } from '../url-resource-parser-service';
 import { isCID, removeLeadingSlashes } from 'src/common/utils.common';
 @Injectable()
@@ -13,7 +13,7 @@ export class ForeignIpfsUrlResourceParser
     }
 
     const pathEnd = removeLeadingSlashes(
-      url.substring(ipfsPathIndex + '/ipfs/'.length),
+      url.substring(ipfsPathIndex + IPFS_PATH_PART.length),
     );
 
     const cid = pathEnd.substring(0, pathEnd.indexOf('/'));
@@ -25,7 +25,7 @@ export class ForeignIpfsUrlResourceParser
   }
 
   private getIpfsPathIndex(url: string): number | null {
-    const ipfsPathIndex = url.lastIndexOf('/ipfs/');
+    const ipfsPathIndex = url.lastIndexOf(IPFS_PATH_PART);
     if (ipfsPathIndex < 0) {
       return null;
     }
