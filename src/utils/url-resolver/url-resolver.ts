@@ -22,7 +22,7 @@ export class UrlResolver {
     } else if (resource instanceof SchemaUrl) {
       return `${resource.gateway}/${resource.path}`;
     } else if (resource instanceof IpfsUrl) {
-      return resource.original;
+      return `https://ipfs.io/ipfs/${resource.path}`;
     } else {
       throw new Error('Unsupported resolving for resolver class');
     }

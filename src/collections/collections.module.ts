@@ -12,17 +12,19 @@ import { CollectionsRegistrationModule } from 'src/collectionRegistrationService
 import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { UrlServiceModule } from 'src/utils/url-service/url-service.module';
 import { CollectionsMetaService } from './services/collections.meta.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     TokensModule,
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
-    TokenIdModule.register(BigNumber.from(2).pow(96)),
+    TokenIdModule.register(BigNumber.from(1)),
     OrdersModule,
     forwardRef(() => CollectionsRegistrationModule),
     forwardRef(() => MetadataApiModule),
     UrlServiceModule,
+    HttpModule,
   ],
   providers: [CollectionsResolver, CollectionsService, CollectionsMetaService],
   exports: [CollectionsResolver, CollectionsService],

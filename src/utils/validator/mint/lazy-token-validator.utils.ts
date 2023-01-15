@@ -1,6 +1,6 @@
 import { AbiCoder } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -15,6 +15,7 @@ import {
 } from 'src/tokens/dto/lazy-token-dto';
 import { Repository } from 'typeorm';
 import { recoverAddress } from '@ethersproject/transactions';
+import { CollectionFeature } from 'src/collections/entities/enum/collection.type.enum';
 
 @Injectable()
 export class LazyTokenValidator {
@@ -38,6 +39,12 @@ export class LazyTokenValidator {
     if (!collection)
       throw new BadRequestException('LazyNft collection not find');
 
+    if (!collection.features.includes(CollectionFeature.MINT_AND_TRANSFER)) {
+      throw new BadRequestException(
+        `This collection (${collection.id}) doesn't support lazy mint`,
+      );
+    }
+
     const encoder = new AbiCoder();
     const tokenId = encoder.encode(['uint256'], [lazyTokenId]);
     const firstCreator = creators[0].account;
@@ -60,7 +67,7 @@ export class LazyTokenValidator {
     try {
       await this.checkOwner(lazyToken);
     } catch (e: any) {
-      // console.log(e, 'error');
+      Logger.error('Lazy Mint', e);
       throw new BadRequestException("It isn't allowed to lazy mint");
     }
   }

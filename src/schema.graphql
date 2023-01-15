@@ -357,12 +357,17 @@ type MetaContent {
 }
 
 type CollectionsMeta {
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
+  deletedAt: String
   name: String
   description: String
   externalLink: String
   feeRecipient: String
   sellerFeeBasisPoints: Float
   Content: MetaContent
+  collectionId: String!
 }
 
 type Collections {

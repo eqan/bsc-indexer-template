@@ -1,13 +1,20 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Timestamps } from 'src/core/embed/timestamps.embed';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Collections } from '../collections.entity';
 import { Content } from './collections.meta.content.entity';
 
 @ObjectType()
 @Entity('CollectionsMeta')
 // @InputType('CollectionsMetaInput')
-export class CollectionsMeta {
+export class CollectionsMeta extends Timestamps {
   @PrimaryGeneratedColumn()
   id: string;
 
@@ -45,6 +52,42 @@ export class CollectionsMeta {
   @Column({ nullable: true, type: 'jsonb' })
   Content?: Content;
 
-  @OneToOne(() => Collections, (collection) => collection.Meta)
+  @OneToOne(() => Collections, (collection) => collection.Meta, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
   collection: Collections;
+
+  @Field()
+  @Column({
+    transformer: {
+      to(value) {
+        return value.toLowerCase();
+      },
+      from(value) {
+        return value;
+      },
+    },
+    unique: true,
+    type: 'text',
+  })
+  collectionId: string;
+
+  // @OneToOne(() => Collections, (collection) => collection.Meta)
+  // collection: Collections;
+
+  // @IsOptional()
+  // @Field(() => CollectionsMeta, { nullable: true })
+  // @OneToOne(
+  //   () => CollectionsMeta,
+  //   (collectionMeta) => collectionMeta.collection,
+  //   {
+  //     eager: true,
+  //     cascade: true,
+  //     nullable: true,
+  //   },
+  // )
+  // @JoinColumn()
+  // Meta?: CollectionsMeta;
 }
