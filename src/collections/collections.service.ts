@@ -1,4 +1,5 @@
 import { AbiCoder } from '@ethersproject/abi';
+import { BigNumber } from '@ethersproject/bignumber';
 import { hexConcat } from '@ethersproject/bytes';
 import {
   BadRequestException,
@@ -63,6 +64,7 @@ export class CollectionsService {
       );
 
       if (hasMintAndTransferFeature) {
+        tokenId = BigNumber.from(2).pow(96).add(tokenId).toString();
         const encoder = new AbiCoder();
         const encoded = encoder.encode(['uint'], [tokenId]);
         const concated = hexConcat([
