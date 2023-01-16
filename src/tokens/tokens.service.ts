@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CollectionsService } from 'src/collections/collections.service';
 import { CollectionUniqueItems } from 'src/collections/dto/get-collectionUniqueItems.dto';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { LazyTokenValidator } from 'src/utils/validator/mint/lazy-token-validator.utils';

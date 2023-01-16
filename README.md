@@ -24,6 +24,6 @@ replica of Binance
 
 
 ## Postman
-https://api.postman.com/collections/24585901-6d268f83-df3a-476e-aae1-ea08051f8d92?access_key=PMAT-01GKA7D6J4JPNGYFRX9E6H5E1F
+https://api.postman.com/collections/24585901-fb6a756e-f81d-4e05-979a-bcc581dc7dd6?access_key=PMAT-01GPX583WR9VBHDWGESKM6NBTE
 
 PS: Remember to setup postman enviromnet containing variable "url" having value of the local host
