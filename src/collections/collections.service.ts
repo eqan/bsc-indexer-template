@@ -26,6 +26,8 @@ import { Collections } from './entities/collections.entity';
 import { SortOrder } from './enums/collections.sort-order.enum';
 import { CollectionFeature } from './entities/enum/collection.type.enum';
 import { CollectionsMetaService } from './services/collections.meta.service';
+import { GetAllNftCollection, NftCollection } from './dto/nft-collection.dto';
+import { NftCollectionConverter } from './converters/nft-collection.converter';
 @Injectable()
 export class CollectionsService {
   constructor(
@@ -38,6 +40,7 @@ export class CollectionsService {
     @Inject(forwardRef(() => CollectionsRegistrationService))
     private readonly collectionRegistrationService: CollectionsRegistrationService,
     private readonly tokenIdRepository: TokenIdRepository,
+    private readonly nftCollectionConverter: NftCollectionConverter,
   ) {}
 
   /**
@@ -103,7 +106,7 @@ export class CollectionsService {
    */
   async index(
     filterCollectionsDto: FilterCollectionsDto,
-  ): Promise<GetAllCollections> {
+  ): Promise<GetAllNftCollection> {
     try {
       const { page = 1, limit = 20, ...rest } = filterCollectionsDto;
       const [items, total] = await Promise.all([
@@ -124,7 +127,15 @@ export class CollectionsService {
           },
         }),
       ]);
-      return { items, total };
+
+      const results = await Promise.all(
+        items.map(async (item) => {
+          const meta = await this.collectionsMetaService.get(item.id);
+          return this.nftCollectionConverter.convert(item, meta);
+        }),
+      );
+
+      return { items: results, total };
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -135,19 +146,20 @@ export class CollectionsService {
    * @param id
    * @returns Collection against Provided Id
    */
-  async show(id: string): Promise<Collections> {
+  async show(id: string): Promise<NftCollection> {
     try {
       const found = await this.collectionsRepo.findOne({
         where: {
           id,
         },
-        relations: { Meta: true },
+        // relations: { Meta: true },
       });
       if (!found) {
         throw new NotFoundException(`Collection against ${id}} not found`);
       }
-      await this.collectionsMetaService.get(found.id);
-      return found;
+      const meta = await this.collectionsMetaService.get(found.id);
+      const result = this.nftCollectionConverter.convert(found, meta);
+      return result;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -173,7 +185,7 @@ export class CollectionsService {
    */
   async update(
     updateCollectionsInput: UpdateCollectionsInput,
-  ): Promise<Collections> {
+  ): Promise<NftCollection> {
     try {
       const { id, ...rest } = updateCollectionsInput;
       const { owner } = await this.show(id);

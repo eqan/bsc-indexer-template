@@ -13,6 +13,7 @@ import { MetadataApiModule } from 'src/utils/metadata-api/metadata-api.module';
 import { UrlServiceModule } from 'src/utils/url-service/url-service.module';
 import { CollectionsMetaService } from './services/collections.meta.service';
 import { HttpModule } from '@nestjs/axios';
+import { NftCollectionConverter } from './converters/nft-collection.converter';
 
 @Module({
   imports: [
@@ -26,7 +27,12 @@ import { HttpModule } from '@nestjs/axios';
     UrlServiceModule,
     HttpModule,
   ],
-  providers: [CollectionsResolver, CollectionsService, CollectionsMetaService],
+  providers: [
+    CollectionsResolver,
+    CollectionsService,
+    CollectionsMetaService,
+    NftCollectionConverter,
+  ],
   exports: [CollectionsResolver, CollectionsService],
 })
 export class CollectionsModule {}

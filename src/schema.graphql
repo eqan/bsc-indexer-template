@@ -441,8 +441,40 @@ type CollectionMetaContent {
   representation: String
 }
 
-type GetAllCollections {
-  items: [Collections!]!
+type CollectionMeta {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  Content: CollectionMetaContent
+}
+
+type NftCollection {
+  id: Address!
+  type: NftCollectionType!
+  status: String!
+  owner: Address!
+  name: String!
+  symbol: String!
+  features: [CollectionFeature!]!
+  supportsLazyMint: Boolean!
+  minters: [Address!]!
+  meta: CollectionMeta!
+  isRaribleContract: Boolean!
+}
+
+"""Address Parser"""
+scalar Address
+
+"""Nft collection type"""
+enum NftCollectionType {
+  BEP721
+  BEP1155
+}
+
+type GetAllNftCollection {
+  items: [NftCollection!]!
   total: Int!
 }
 
@@ -612,9 +644,18 @@ input CollectionMetaContentInput {
   representation: String
 }
 
+input CollectionMetaInput {
+  name: String
+  description: String
+  externalLink: String
+  sellerFeeBasisPoints: Float
+  feeRecipient: String
+  Content: CollectionMetaContentInput
+}
+
 type Query {
-  GetAllCollections(FilterCollectionInput: FilterDto = {}): GetAllCollections!
-  GetCollectionById(collectionId: String!): Collections!
+  GetAllNftCollection(FilterCollectionInput: FilterDto = {}): GetAllNftCollection!
+  GetCollectionById(collectionId: String!): NftCollection!
   GetUniqueItems(FilterTokenAttributesDto: FilterTokenAttributesDto!): CollectionUniqueItems
   GetCollectionAveragePrice(collectionId: String!): Float!
   GetCollectionFloorPrice(collectionId: String!): Float
@@ -754,7 +795,7 @@ input FilterStatsDto {
 type Mutation {
   GenerateNftTokenId(generateTokenIdInput: GenerateTokenIdInput!): NftTokenId!
   CreateCollection(CreateCollectionInput: CreateCollectionsInput!): Collections!
-  UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): Collections!
+  UpdateCollection(UpdateCollectionsInput: UpdateCollectionsInput!): NftCollection!
   DeleteCollections(DeleteCollectionInput: DeleteCollectionsInput!): Collections
   filterTokensByPriceRange(FilterTokensByPriceRangeDto: FilterTokensByPriceRangeDto!): [Tokens!]!
   CreateToken(CreateTokensInput: CreateTokenInput!): Tokens!
@@ -802,15 +843,6 @@ input CreateCollectionsInput {
   discordUrl: String
   description: String
   Meta: CollectionMetaInput
-}
-
-input CollectionMetaInput {
-  name: String
-  description: String
-  externalLink: String
-  sellerFeeBasisPoints: Float
-  feeRecipient: String
-  Content: CollectionMetaContentInput
 }
 
 input UpdateCollectionsInput {

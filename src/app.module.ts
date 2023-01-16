@@ -28,6 +28,7 @@ import { TokensModule } from './tokens/tokens.module';
 import { UsdPricesModule } from './usd-prices/usd-prices.module';
 import { UsersModule } from './users/users.module';
 import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
+import { CustomAddressScalar } from './core/customScalars/address';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MetadataApiModule } from './utils/metadata-api/metadata-api.module';
         DATA_SCALAR: CustomDataScalar,
         ENUM_SCALAR: CustomEnumScalar,
         BigNumber: CustomBigNumberScalar,
+        Address: CustomAddressScalar,
       },
       definitions: {
         path: join(process.cwd(), 'src/graphqlFile.ts'),

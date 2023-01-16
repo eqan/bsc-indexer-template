@@ -19,7 +19,7 @@ export class CollectionsMetaService {
     private httpService: HttpService,
   ) {}
 
-  async get(collection: string) {
+  async get(collection: string): Promise<CollectionMeta> {
     try {
       const savedMeta = await this.collectionsMetaRepo.findOneBy({
         collectionId: collection,
@@ -32,7 +32,7 @@ export class CollectionsMetaService {
           60 <
           1
       ) {
-        return;
+        return savedMeta;
       }
       const metadata = await this.resolve(collection);
       if (metadata) {
@@ -45,6 +45,7 @@ export class CollectionsMetaService {
           },
           { conflictPaths: ['collectionId'] },
         );
+        return this.collectionsMetaRepo.findOneBy({ collectionId: collection });
       }
     } catch (error) {
       console.error(error);
