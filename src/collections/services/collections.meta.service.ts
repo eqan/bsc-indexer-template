@@ -21,6 +21,20 @@ export class CollectionsMetaService {
 
   async get(collection: string) {
     try {
+      const savedMeta = await this.collectionsMetaRepo.findOneBy({
+        collectionId: collection,
+      });
+
+      if (
+        savedMeta &&
+        (new Date().getTime() - new Date(savedMeta.lastUpdatedAt).getTime()) /
+          60 /
+          60 <
+          1
+      ) {
+        return;
+      }
+      console.log(savedMeta, 'saved meta');
       const metadata = await this.resolve(collection);
       if (metadata) {
         // todo add cache here

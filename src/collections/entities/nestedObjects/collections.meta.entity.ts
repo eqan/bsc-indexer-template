@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
+import { Timestamps } from 'src/core/embed/timestamps.embed';
 import {
   Column,
   Entity,
@@ -13,7 +14,7 @@ import { Content } from './collections.meta.content.entity';
 @ObjectType()
 @Entity('CollectionsMeta')
 // @InputType('CollectionsMetaInput')
-export class CollectionsMeta {
+export class CollectionsMeta extends Timestamps {
   @PrimaryGeneratedColumn()
   id: string;
 
