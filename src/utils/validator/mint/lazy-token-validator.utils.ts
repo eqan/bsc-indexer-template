@@ -15,6 +15,7 @@ import {
 } from 'src/tokens/dto/lazy-token-dto';
 import { Repository } from 'typeorm';
 import { recoverAddress } from '@ethersproject/transactions';
+import { CollectionFeature } from 'src/collections/entities/enum/collection.type.enum';
 
 @Injectable()
 export class LazyTokenValidator {
@@ -37,6 +38,12 @@ export class LazyTokenValidator {
     const collection = await this.collectionsRepo.findOneBy({ id: contract });
     if (!collection)
       throw new BadRequestException('LazyNft collection not find');
+
+    if (!collection.features.includes(CollectionFeature.MINT_AND_TRANSFER)) {
+      throw new BadRequestException(
+        `This collection (${collection.id}) doesn't support lazy mint`,
+      );
+    }
 
     const encoder = new AbiCoder();
     const tokenId = encoder.encode(['uint256'], [lazyTokenId]);
