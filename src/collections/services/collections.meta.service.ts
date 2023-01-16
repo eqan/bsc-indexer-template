@@ -21,6 +21,19 @@ export class CollectionsMetaService {
 
   async get(collection: string) {
     try {
+      const savedMeta = await this.collectionsMetaRepo.findOneBy({
+        collectionId: collection,
+      });
+      // if the metadata is already saved but not being updated for the last hour. Try to update that.
+      if (
+        savedMeta &&
+        (new Date().getTime() - new Date(savedMeta.lastUpdatedAt).getTime()) /
+          60 /
+          60 <
+          1
+      ) {
+        return;
+      }
       const metadata = await this.resolve(collection);
       if (metadata) {
         // todo add cache here

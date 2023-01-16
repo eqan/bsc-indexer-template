@@ -1,4 +1,5 @@
 import { AbiCoder } from '@ethersproject/abi';
+import { BigNumber } from '@ethersproject/bignumber';
 import { hexConcat } from '@ethersproject/bytes';
 import {
   BadRequestException,
@@ -23,6 +24,7 @@ import { GetAllCollections } from './dto/get-all-collections.dto';
 import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { SortOrder } from './enums/collections.sort-order.enum';
+import { CollectionFeature } from './entities/enum/collection.type.enum';
 import { CollectionsMetaService } from './services/collections.meta.service';
 @Injectable()
 export class CollectionsService {
@@ -54,18 +56,25 @@ export class CollectionsService {
           `Collection against ${collectionId} not found`,
         );
       }
-      const tokenId = await this.tokenIdRepository.generateTokenId(
-        `${collectionId}:${minter}`,
+      const hasMintAndTransferFeature = collection.features.includes(
+        CollectionFeature.MINT_AND_TRANSFER,
       );
-      const encoder = new AbiCoder();
-      const encoded = encoder.encode(['uint'], [tokenId]);
-      const concated = hexConcat([
-        minter,
-        `0x${encoded.slice(encoded.length - 24)}`,
-      ]);
-      const decoded = encoder.decode(['uint'], concated)[0];
+      let tokenId: string = await this.tokenIdRepository.generateTokenId(
+        hasMintAndTransferFeature ? `${collectionId}:${minter}` : collectionId,
+      );
 
-      return { tokenId: decoded.toString() };
+      if (hasMintAndTransferFeature) {
+        tokenId = BigNumber.from(2).pow(96).add(tokenId).toString();
+        const encoder = new AbiCoder();
+        const encoded = encoder.encode(['uint'], [tokenId]);
+        const concated = hexConcat([
+          minter,
+          `0x${encoded.slice(encoded.length - 24)}`,
+        ]);
+        tokenId = encoder.decode(['uint'], concated)[0];
+      }
+
+      return { tokenId: tokenId.toString() };
     } catch (error) {
       throw new BadRequestException(error);
     }

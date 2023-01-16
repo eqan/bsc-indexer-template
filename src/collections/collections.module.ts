@@ -19,7 +19,7 @@ import { HttpModule } from '@nestjs/axios';
     TokensModule,
     TypeOrmModule.forFeature([Collections, CollectionsMeta]),
     forwardRef(() => TokensModule),
-    TokenIdModule.register(BigNumber.from(2).pow(96)),
+    TokenIdModule.register(BigNumber.from(1)),
     OrdersModule,
     forwardRef(() => CollectionsRegistrationModule),
     forwardRef(() => MetadataApiModule),
