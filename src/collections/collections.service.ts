@@ -128,13 +128,16 @@ export class CollectionsService {
    */
   async show(id: string): Promise<Collections> {
     try {
-      const found = await this.collectionsRepo.findOneByOrFail({
-        id,
+      const found = await this.collectionsRepo.findOne({
+        where: {
+          id,
+        },
+        relations: { Meta: true },
       });
       if (!found) {
         throw new NotFoundException(`Collection against ${id}} not found`);
       }
-      await this.collectionsMetaService.resolve(found.id);
+      await this.collectionsMetaService.get(found.id);
       return found;
     } catch (error) {
       throw new BadRequestException(error);
