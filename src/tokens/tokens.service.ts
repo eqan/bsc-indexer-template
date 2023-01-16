@@ -220,7 +220,10 @@ export class TokensService {
    */
   async update(updateTokensInput: UpdateTokensInput): Promise<Tokens> {
     try {
-      return await this.tokensRepo.save(updateTokensInput);
+      await this.tokensRepo.save(updateTokensInput);
+      return await this.tokensRepo.findOne({
+        where: { id: updateTokensInput.id },
+      });
     } catch (error) {
       throw new BadRequestException(error);
     }
