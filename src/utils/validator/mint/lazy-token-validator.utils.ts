@@ -1,6 +1,6 @@
 import { AbiCoder } from '@ethersproject/abi';
 import { Contract } from '@ethersproject/contracts';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
@@ -67,7 +67,7 @@ export class LazyTokenValidator {
     try {
       await this.checkOwner(lazyToken);
     } catch (e: any) {
-      // console.log(e, 'error');
+      Logger.error('Lazy Mint', e);
       throw new BadRequestException("It isn't allowed to lazy mint");
     }
   }
