@@ -10,13 +10,9 @@ import { TokensService } from './tokens.service';
 
 @Module({
   imports: [
-<<<<<<< HEAD
     TypeOrmModule.forFeature([Tokens, TokensMeta, TokensAttributes]),
-    forwardRef(() => CollectionsModule),
-=======
     TypeOrmModule.forFeature([Tokens, TokensMeta]),
     TypeOrmModule.forFeature([Collections]),
->>>>>>> b35831885577256e8ef13a55d0e64fc4ac9d27e7
     MintModule,
   ],
   providers: [TokensResolver, TokensService],

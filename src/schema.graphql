@@ -357,9 +357,9 @@ type MetaContent {
 }
 
 type CollectionsMeta {
-  createdAt: String!
-  lastUpdatedAt: String!
-  dbUpdatedAt: String!
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
   deletedAt: String
   name: String
   description: String

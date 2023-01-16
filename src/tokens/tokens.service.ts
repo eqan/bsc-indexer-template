@@ -4,12 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CollectionsService } from 'src/collections/collections.service';
-<<<<<<< HEAD
 import { CollectionUniqueItems } from 'src/collections/dto/get-collectionUniqueItems.dto';
-=======
 import { Collections } from 'src/collections/entities/collections.entity';
->>>>>>> b35831885577256e8ef13a55d0e64fc4ac9d27e7
 import { LazyTokenValidator } from 'src/utils/validator/mint/lazy-token-validator.utils';
 import { Repository } from 'typeorm';
 import { CreateTokenInput } from './dto/create-tokens.input';
@@ -45,15 +41,10 @@ export class TokensService {
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
       const { collectionId, ...restParams } = createTokensInput;
-<<<<<<< HEAD
-      const collection = await this.collectionsService.show(collectionId);
       const id = collectionId + ':' + restParams.id;
-=======
       const collection = await this.collectionsRepo.findOneByOrFail({
         id: collectionId,
       });
-      const tokenId = collectionId + ':' + restParams.tokenId;
->>>>>>> b35831885577256e8ef13a55d0e64fc4ac9d27e7
       await this.tokensRepo.upsert(
         { ...restParams, id, collection },
         {
