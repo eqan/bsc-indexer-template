@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Collections } from 'src/collections/entities/collections.entity';
 import { Contract } from '@ethersproject/contracts';
 import {
@@ -57,9 +63,21 @@ export class CollectionsRegistrationService {
       const savedCollection = await this.collectionsRepo.save(collection);
       return savedCollection;
     } catch (error) {
-      // need to handle dublicate enter error
-      return this.collectionsService.show(collection.id);
-      //   throw new BadRequestException(error);
+      try {
+        // need to handle dublicate enter error
+        const found = await this.collectionsRepo.findOneBy({
+          id: collection.id,
+        });
+        if (found)
+          throw new NotFoundException(
+            `Collection against ${collection.id}} not found`,
+          );
+
+        return found;
+        //   throw new BadRequestException(error);
+      } catch (e) {
+        throw new BadRequestException(e);
+      }
     }
   }
 

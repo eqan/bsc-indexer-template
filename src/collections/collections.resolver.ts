@@ -23,6 +23,7 @@ import { UpdateCollectionsInput } from './dto/update-collections.input';
 import { Collections } from './entities/collections.entity';
 import { CollectionUniqueItems } from './dto/get-collectionUniqueItems.dto';
 import { FilterTokenAttributesDto } from 'src/tokens/dto/filter-token-attributes.dto';
+import { GetAllNftCollection, NftCollection } from './dto/nft-collection.dto';
 
 @Resolver(() => Collections)
 export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
@@ -74,11 +75,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * GET All Collections
    * @returns Collections Array and their total count
    */
-  @Query(() => GetAllCollections, { name: 'GetAllCollections' })
+  @Query(() => GetAllNftCollection, { name: 'GetAllNftCollection' })
   async index(
     @Args('FilterCollectionInput', { nullable: true, defaultValue: {} })
     filterCollectionInput: FilterDto,
-  ): Promise<GetAllCollections> {
+  ): Promise<GetAllNftCollection> {
     return await this.collectionsService.index(filterCollectionInput);
   }
 
@@ -87,11 +88,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param collectionId
    * @returns Collection Against provided ID
    */
-  @Query(() => Collections, { name: 'GetCollectionById' })
+  @Query(() => NftCollection, { name: 'GetCollectionById' })
   async show(
     @Args('collectionId')
     collectionId: string,
-  ): Promise<Collections> {
+  ): Promise<NftCollection> {
     try {
       return await this.collectionsService.show(collectionId);
     } catch (error) {
@@ -104,11 +105,11 @@ export class CollectionsResolver extends BaseProvider<Collections | FilterDto> {
    * @param updateCollectionsInput
    * @returns Updated Collection
    */
-  @Mutation(() => Collections, { name: 'UpdateCollection' })
+  @Mutation(() => NftCollection, { name: 'UpdateCollection' })
   async edit(
     @Args('UpdateCollectionsInput')
     updateCollectionsInput: UpdateCollectionsInput,
-  ): Promise<Collections> {
+  ): Promise<NftCollection> {
     try {
       return await this.collectionsService.update(updateCollectionsInput);
     } catch (error) {

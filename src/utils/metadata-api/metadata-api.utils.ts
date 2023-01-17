@@ -13,6 +13,7 @@ import { CollectionType } from 'src/collections/entities/enum/collection.type.en
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { CreateTokenInput } from 'src/tokens/dto/create-tokens.input';
 import { MetaData } from 'src/tokens/dto/nestedObjectDto/meta.dto';
+import { TokenType } from 'src/tokens/entities/enum/token.type.enum';
 import { uploadImage } from '../../config/cloudinary.config';
 import {
   base64toJson,
@@ -112,8 +113,9 @@ export class MetadataApi {
     collectionId: string;
     tokenId: string;
   }) {
-    const collectionType = await this.collectionService.show(collectionId);
-    const type = getTokenType(collectionType.type);
+    // const collectionType = await this.collectionService.show(collectionId);
+    // const type = getTokenType(collectionType.type);
+    const type = TokenType.BEP721;
     const data: CreateTokenInput = {
       id: tokenId,
       type,
