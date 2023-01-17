@@ -68,9 +68,9 @@ export class CollectionsRegistrationService {
         const found = await this.collectionsRepo.findOneBy({
           id: collection.id,
         });
-        if (found)
+        if (!found)
           throw new NotFoundException(
-            `Collection against ${collection.id}} not found`,
+            `Collection against ${collection.id} not found`,
           );
 
         return found;
