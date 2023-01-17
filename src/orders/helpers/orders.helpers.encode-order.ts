@@ -44,22 +44,22 @@ export const encodeOrderData = (
   let encodedOrderData = '';
 
   switch (order.data.dataType) {
-    case ORDER_DATA_TYPES.V1:
-    case ORDER_DATA_TYPES.API_V1:
-      const v1Data = order.data as Types.IV1OrderData;
+    // case ORDER_DATA_TYPES.V1:
+    // case ORDER_DATA_TYPES.API_V1:
+    //   const v1Data = order.data as Types.IV1OrderData;
 
-      encodedOrderData = defaultAbiCoder.encode(
-        [
-          'tuple(tuple(address account,uint96 value)[] payouts, tuple(address account,uint96 value)[] originFees)',
-        ],
-        [
-          {
-            payouts: encodeV2OrderData(v1Data.payouts),
-            originFees: encodeV2OrderData(v1Data.originFees),
-          },
-        ],
-      );
-      break;
+    //   encodedOrderData = defaultAbiCoder.encode(
+    //     [
+    //       'tuple(tuple(address account,uint96 value)[] payouts, tuple(address account,uint96 value)[] originFees)',
+    //     ],
+    //     [
+    //       {
+    //         payouts: encodeV2OrderData(v1Data.payouts),
+    //         originFees: encodeV2OrderData(v1Data.originFees),
+    //       },
+    //     ],
+    //   );
+    //   break;
 
     case ORDER_DATA_TYPES.V2:
     case ORDER_DATA_TYPES.API_V2:

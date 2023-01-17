@@ -15,7 +15,7 @@ export class OrderRaribleV2Data {
   @Column({
     type: 'enum',
     enum: ORDER_DATA_TYPES,
-    default: ORDER_DATA_TYPES.V1,
+    default: ORDER_DATA_TYPES.V2,
   })
   // @Field({ nullable: true })
   readonly dataType!: ORDER_DATA_TYPES;

@@ -15,19 +15,19 @@ export const decodeOrderData = (dataType: string, data: string) => {
   let decodedOrderData: any;
 
   switch (dataType) {
-    case encodeAssetClass(ORDER_DATA_TYPES.V1):
-    case encodeAssetClass(ORDER_DATA_TYPES.API_V1):
-      decodedOrderData = defaultAbiCoder.decode(
-        [
-          'tuple(tuple(address account,uint96 value)[] payouts, tuple(address account,uint96 value)[] originFees)',
-        ],
-        data,
-      );
-      return {
-        dataType: getDecodedOrderData(dataType)[0][1],
-        payouts: docodePart(decodedOrderData[0][0]),
-        originFees: docodePart(decodedOrderData[0][1]),
-      };
+    // case encodeAssetClass(ORDER_DATA_TYPES.V1):
+    // case encodeAssetClass(ORDER_DATA_TYPES.API_V1):
+    //   decodedOrderData = defaultAbiCoder.decode(
+    //     [
+    //       'tuple(tuple(address account,uint96 value)[] payouts, tuple(address account,uint96 value)[] originFees)',
+    //     ],
+    //     data,
+    //   );
+    //   return {
+    //     dataType: getDecodedOrderData(dataType)[0][1],
+    //     payouts: docodePart(decodedOrderData[0][0]),
+    //     originFees: docodePart(decodedOrderData[0][1]),
+    //   };
 
     case encodeAssetClass(ORDER_DATA_TYPES.V2):
     case encodeAssetClass(ORDER_DATA_TYPES.API_V2):
@@ -136,9 +136,9 @@ export const decodeAssetClass = (assetTypeHash: string) => {
 
 const dataTypes = {
   '0x23d235ef': ORDER_DATA_TYPES.V2,
-  '0x4c234266': ORDER_DATA_TYPES.V1,
-  '0x31dbbba7': ORDER_DATA_TYPES.LEGACY,
-  '0xfddd8b1c': ORDER_DATA_TYPES.API_V1,
+  // '0x4c234266': ORDER_DATA_TYPES.V1,
+  // '0x31dbbba7': ORDER_DATA_TYPES.LEGACY,
+  // '0xfddd8b1c': ORDER_DATA_TYPES.API_V1,
   '0x62622660': ORDER_DATA_TYPES.API_V3_BUY,
   '0x6e3114ac': ORDER_DATA_TYPES.API_V3_SELL,
   '0x1b18cdf6': ORDER_DATA_TYPES.V3_BUY,

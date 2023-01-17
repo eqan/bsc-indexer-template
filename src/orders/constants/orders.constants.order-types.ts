@@ -3,9 +3,9 @@ export const DATA_TYPE_0X = '0x';
 
 export enum ORDER_DATA_TYPES {
   DEFAULT_DATA_TYPE = '0xffffffff',
-  LEGACY = 'LEGACY',
-  V1 = 'V1',
-  API_V1 = 'ETH_RARIBLE_V1',
+  // LEGACY = 'LEGACY',
+  // V1 = 'V1',
+  // API_V1 = 'ETH_RARIBLE_V1',
   V2 = 'V2',
   API_V2 = 'ETH_RARIBLE_V2',
   V3_SELL = 'V3_SELL',
@@ -15,6 +15,6 @@ export enum ORDER_DATA_TYPES {
 }
 
 export enum ORDER_TYPES {
-  V1 = 'RARIBLE_V1',
+  // V1 = 'RARIBLE_V1',
   V2 = 'RARIBLE_V2',
 }

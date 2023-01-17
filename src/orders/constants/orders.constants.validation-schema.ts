@@ -2,22 +2,23 @@ import { BadRequestException } from '@nestjs/common';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import { AssetClassEnum } from '../entities/enums/orders.asset-class.enum';
+import { PartDto as Part } from 'src/core/dto/part.dto';
 
 //graphql union type field validation schema using ajv
-const Part = {
-  type: 'object',
-  properties: {
-    account: { type: 'string' },
-    value: { type: 'number' },
-  },
-  additionalProperties: false,
-  required: ['account', 'value'],
-  errorMessage:
-    'Object must be of required type { account:string, value:number }',
-};
+// const Part = {
+//   type: 'object',
+//   properties: {
+//     account: { type: 'string' },
+//     value: { type: 'number' },
+//   },
+//   additionalProperties: false,
+//   required: ['account', 'value'],
+//   errorMessage:
+//     'Object must be of required type { account:string, value:number }',
+// };
 
 enum DataType {
-  V1 = 'V1',
+  // V1 = 'V1',
   V2 = 'V2',
   ETH_RARIBLE_V2 = 'ETH_RARIBLE_V2',
   V3_SELL = 'V3_SELL',
@@ -29,20 +30,20 @@ export const dataValidationSchema = {
   discriminator: { propertyName: 'dataType' },
   required: ['dataType'],
   oneOf: [
-    {
-      properties: {
-        dataType: { enum: ['V1'] },
-        payouts: {
-          type: 'array',
-          items: Part,
-        },
-        originFees: { type: 'array', items: Part },
-      },
-      additionalProperties: false,
-      required: ['payouts', 'originFees'],
-      errorMessage:
-        'V1 must be of type { payouts:[Part], originFees:Part } where Part {account:string,value:number}',
-    },
+    // {
+    //   properties: {
+    //     dataType: { enum: ['V1'] },
+    //     payouts: {
+    //       type: 'array',
+    //       items: Part,
+    //     },
+    //     originFees: { type: 'array', items: Part },
+    //   },
+    //   additionalProperties: false,
+    //   required: ['payouts', 'originFees'],
+    //   errorMessage:
+    //     'V1 must be of type { payouts:[Part], originFees:Part } where Part {account:string,value:number}',
+    // },
     {
       properties: {
         dataType: { enum: ['V2'] },

@@ -118,14 +118,10 @@ export type TakerOrderParams = {
   salt: number;
   start: number;
   end: number;
-  data:
-    | ILegacyOrderData
-    | IV1OrderData
-    | IV2OrderData
-    | IV3OrderSellData
-    | IV3OrderBuyData;
+  data: IV2OrderData | IV3OrderSellData | IV3OrderBuyData;
 };
-
+// | ILegacyOrderData
+// | IV1OrderData
 export type Order = {
   kind?: OrderKind;
   hash?: string;
@@ -138,14 +134,11 @@ export type Order = {
   salt: string;
   start: number;
   end: number;
-  data:
-    | ILegacyOrderData
-    | IV1OrderData
-    | IV2OrderData
-    | IV3OrderSellData
-    | IV3OrderBuyData;
+  data: IV2OrderData | IV3OrderSellData | IV3OrderBuyData;
   signature?: string;
   side?: string;
   createdAt?: string;
   endedAt?: string;
 };
+// | ILegacyOrderData
+// | IV1OrderData
