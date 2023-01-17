@@ -66,17 +66,17 @@ export type LocalAssetType = {
   signatures?: string[];
 };
 
-export interface ILegacyOrderData {
-  '@type'?: string;
-  dataType: ORDER_DATA_TYPES;
-  fee: number;
-}
-export interface IV1OrderData {
-  '@type'?: string;
-  dataType: ORDER_DATA_TYPES;
-  payouts: IPart[];
-  originFees: IPart[];
-}
+// export interface ILegacyOrderData {
+//   '@type'?: string;
+//   dataType: ORDER_DATA_TYPES;
+//   fee: number;
+// }
+// export interface IV1OrderData {
+//   '@type'?: string;
+//   dataType: ORDER_DATA_TYPES;
+//   payouts: IPart[];
+//   originFees: IPart[];
+// }
 export interface IV2OrderData {
   '@type'?: string;
   dataType: ORDER_DATA_TYPES;

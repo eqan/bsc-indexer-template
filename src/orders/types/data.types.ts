@@ -28,15 +28,15 @@ export class Part {
   value: number;
 }
 
-@ChildEntity(ORDER_DATA_TYPES.V1)
-export class OrderRaribleV2DataV1 extends OrderRaribleV2Data {
-  @Column({ name: 'payouts', type: 'jsonb' })
-  payouts: Part[];
+// @ChildEntity(ORDER_DATA_TYPES.V1)
+// export class OrderRaribleV2DataV1 extends OrderRaribleV2Data {
+//   @Column({ name: 'payouts', type: 'jsonb' })
+//   payouts: Part[];
 
-  // payouts: Part[],
-  @Column({ name: 'originFees', type: 'jsonb' })
-  originFees: Part[];
-}
+//   // payouts: Part[],
+//   @Column({ name: 'originFees', type: 'jsonb' })
+//   originFees: Part[];
+// }
 
 @ChildEntity(ORDER_DATA_TYPES.V2)
 export class OrderRaribleV2DataV2 extends OrderRaribleV2Data {

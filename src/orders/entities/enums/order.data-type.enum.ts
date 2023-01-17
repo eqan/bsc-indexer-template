@@ -14,12 +14,12 @@ import { registerEnumType } from '@nestjs/graphql';
 // }
 
 export enum ORDER_DATA_TYPES {
-  V1 = 'V1',
+  // V1 = 'V1',
   V2 = 'V2',
   V3_BUY = 'V3_BUY',
   V3_SELL = 'V3_SELL',
   ETH_RARIBLE_V2 = 'ETH_RARIBLE_V2',
-  LEGACY = 'LEGACY',
+  // LEGACY = 'LEGACY',
 }
 
 registerEnumType(ORDER_DATA_TYPES, {
