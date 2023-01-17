@@ -40,29 +40,31 @@ export class TokensService {
    */
   async create(createTokensInput: CreateTokenInput): Promise<Tokens> {
     try {
-      const { collectionId, ...restParams } = createTokensInput;
-      const id = collectionId + ':' + restParams.id;
-      const collection = await this.collectionsRepo.findOneByOrFail({
-        id: collectionId,
-      });
-      await this.tokensRepo.upsert(
-        { ...restParams, id, collection },
-        {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ['id'],
-        },
-      );
-      if (restParams?.Meta) await this.update({ id, Meta: restParams.Meta });
+      if (createTokensInput != null) {
+        const { collectionId, ...restParams } = createTokensInput;
+        const id = collectionId + ':' + restParams.id;
+        const collection = await this.collectionsRepo.findOneByOrFail({
+          id: collectionId,
+        });
+        await this.tokensRepo.upsert(
+          { ...restParams, id, collection },
+          {
+            skipUpdateIfNoValuesChanged: true,
+            conflictPaths: ['id'],
+          },
+        );
+        if (restParams?.Meta) await this.update({ id, Meta: restParams.Meta });
 
-      const token = await this.tokensRepo.findOne({ where: { id } });
-      if (token && token.Meta && restParams.Meta?.attributes?.length !== 0) {
-        const attributes = restParams.Meta?.attributes?.map((attribute) => ({
-          ...attribute,
-          tokensMeta: token.Meta,
-        }));
-        await this.tokenAttributeRepo.save(attributes);
+        const token = await this.tokensRepo.findOne({ where: { id } });
+        if (token && token.Meta && restParams.Meta?.attributes?.length !== 0) {
+          const attributes = restParams.Meta?.attributes?.map((attribute) => ({
+            ...attribute,
+            tokensMeta: token.Meta,
+          }));
+          await this.tokenAttributeRepo.save(attributes);
+        }
+        return token;
       }
-      return token;
     } catch (error) {
       throw new BadRequestException(error);
     }
