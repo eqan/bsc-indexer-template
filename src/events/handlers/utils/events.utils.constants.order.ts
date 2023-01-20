@@ -7,7 +7,7 @@ export const Routers: ChainIdToAddressMap = {
   // Network.Ethereum
   1: {
     // Rarible
-    '0x9757f2d2b135150bbeb65308d4a91804107cd8d6': 'rarible.com',
+    '0x9757f2d2b135150bbeb65308d4a91804107cd8d6': 'rarible.com', // Exchange Contract
     '0x2a7251d1e7d708c507b1b0d3ff328007beecce5d': 'rarible.com',
     '0x7f19564c35c681099c0c857a7141836cf7edaa53': 'rarible.com',
     // Reservoir (modules)

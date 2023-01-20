@@ -16,7 +16,6 @@ import { LazyTokenInput } from './dto/lazy-token-dto';
 import { UpdateTokensInput } from './dto/update-tokens.input';
 import { TokenType } from './entities/enum/token.type.enum';
 import { TokensAttributes } from './entities/nestedObjects/tokens.meta.attributes.entity';
-import { TokensMeta } from './entities/nestedObjects/tokens.meta.entity';
 import { Tokens } from './entities/tokens.entity';
 
 @Injectable()
@@ -24,8 +23,6 @@ export class TokensService {
   constructor(
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
-    @InjectRepository(TokensMeta)
-    private tokensMetaRepo: Repository<TokensMeta>,
     @InjectRepository(Collections)
     private collectionsRepo: Repository<Collections>,
     private lazyTokenValidator: LazyTokenValidator,

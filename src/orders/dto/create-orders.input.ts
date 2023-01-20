@@ -16,7 +16,7 @@ import { OrderKind } from '../entities/enums/order.kind.enum';
 import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Asset } from './nestedObjectsDto/asset-type.dto';
-import { CustomDataScalar } from './nestedObjectsDto/data.dto';
+import { CustomDataScalar } from './nestedObjectsDto/data.scalar.dto';
 
 @InputType()
 export class CreateOrdersInput {

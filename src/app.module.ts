@@ -21,7 +21,7 @@ import { BackfillSyncModule } from './jobs/backfill-sync/backfill-sync.job.modul
 import { MidwaySyncModule } from './jobs/midway-sync/midway-sync.job.module';
 import { RealtimeSyncModule } from './jobs/realtime-sync/realtime-sync.job.module';
 import { CustomEnumScalar } from './orders/common/orders-enum-scalar.common';
-import { CustomDataScalar } from './orders/dto/nestedObjectsDto/data.dto';
+import { CustomDataScalar } from './orders/dto/nestedObjectsDto/data.scalar.dto';
 import { OrdersModule } from './orders/orders.module';
 import { RefreshMetadataModule } from './refresh-metadata/refresh-metadata.module';
 import { TokensModule } from './tokens/tokens.module';

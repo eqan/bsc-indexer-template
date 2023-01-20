@@ -1,0 +1,51 @@
+import type { Erc721LazyAssetType } from "@rarible/ethereum-api-client/build/models/AssetType"
+import type { Erc1155LazyAssetType } from "@rarible/ethereum-api-client/build/models/AssetType"
+
+function convert(source: AssetTypeDto): AssetType {
+  switch (source.constructor) {
+    case EthAssetTypeDto:
+      return EthAssetType;
+    case GenerativeArtAssetTypeDto:
+      return new GenerativeArtAssetType(source.contract);
+    case Erc20AssetTypeDto:
+      return new Erc20AssetType(Address.apply(source.contract));
+    case Erc721AssetTypeDto:
+      return new Erc721AssetType(
+        Address.apply(source.contract),
+        EthUInt256(source.tokenId),
+      );
+    case Erc1155AssetTypeDto:
+      return new Erc1155AssetType(
+        Address.apply(source.contract),
+        EthUInt256(source.tokenId),
+      );
+    case Erc721LazyAssetTypeDto:
+      return new Erc721LazyAssetType(
+        source.contract,
+        EthUInt256(source.tokenId),
+        source.uri,
+        source.creators.map(
+          (c) => new Part(c.account, EthUInt256.of(c.value.toLong())),
+        ),
+        source.royalties.map(
+          (r) => new Part(r.account, EthUInt256.of(r.value.toLong())),
+        ),
+        source.signatures,
+      );
+    case Erc1155LazyAssetTypeDto:
+      return new Erc1155LazyAssetType(
+        source.contract,
+        EthUInt256(source.tokenId),
+        source.uri,
+        EthUInt256.of(source.supply),
+        source.creators.map(
+          (c) => new Part(c.account, EthUInt256.of(c.value.toLong())),
+        ),
+        source.royalties.map(
+          (r) => new Part(r.account, EthUInt256.of(r.value.toLong())),
+        ),
+        source.signatures,
+      );
+    case CollectionAssetTypeDto:
+      return new CollectionAssetType(source.contract);
+}

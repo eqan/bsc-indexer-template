@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
+import { IsOptional, ValidateNested } from 'class-validator';
 import { Collections } from 'src/collections/entities/collections.entity';
+import { PartDto } from 'src/core/dto/part.dto';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import {
   Column,
@@ -53,6 +54,13 @@ export class Tokens extends Timestamps {
 
   @Field({ nullable: true })
   @Column({
+    type: 'text',
+    nullable: true,
+  })
+  uri?: string;
+
+  @Field({ nullable: true })
+  @Column({
     type: 'timestamptz',
     default: null,
   })
@@ -72,25 +80,33 @@ export class Tokens extends Timestamps {
   })
   sellers: number;
 
-  @Field(() => CreatorRoyalty, { nullable: true })
+  @Field({ nullable: true })
   @Column({
-    type: 'jsonb',
+    type: 'int',
     default: null,
   })
-  creator?: {
-    account?: string[];
-    value?: number;
-  };
+  lazySupply: number;
 
-  @Field(() => CreatorRoyalty, { nullable: true })
+  @Field({ nullable: true })
   @Column({
-    type: 'jsonb',
-    nullable: true,
+    type: 'int',
+    default: null,
   })
-  royalties?: {
-    account?: string[];
-    value?: number;
-  };
+  supply: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Field(() => [PartDto], { nullable: true })
+  creators: PartDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Field(() => [PartDto], { nullable: true })
+  royalties: PartDto[];
+
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  signatures: string[];
 
   @IsOptional()
   @Field(() => TokensMeta, { nullable: true })

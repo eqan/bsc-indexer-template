@@ -26,12 +26,10 @@ export class LazyErc721Input {
   uri: string;
 
   @ValidateNested()
-  //   @Type(() => PartDto[])
   @Field(() => [PartDto])
   creators: PartDto[];
 
   @ValidateNested()
-  //   @Type(() => [PartDto])
   @Field(() => [PartDto])
   royalties: PartDto[];
 
@@ -67,8 +65,8 @@ export class LazyErc1155Input {
   @Field(() => [String])
   signatures: string[];
 
-  @Field(() => CustomBigNumberScalar)
-  supply: BigNumber;
+  @Field(() => Number)
+  supply: number;
 }
 
 @InputType()

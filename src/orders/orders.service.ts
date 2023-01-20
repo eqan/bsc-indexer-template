@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { toBigNumber } from '@rarible/types';
 import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filter-tokens-by-price-range.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
 import {
@@ -15,7 +16,14 @@ import {
 import { SystemErrors } from 'src/constants/errors.enum';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { getOrderSide } from 'src/events/handlers/utils/events.utils.helpers.orders';
-import { Between, ILike, In, Not, Repository } from 'typeorm';
+import {
+  Between,
+  EntityNotFoundError,
+  ILike,
+  In,
+  Not,
+  Repository,
+} from 'typeorm';
 import { CreateOnchainOrdersInput } from './dto/create-onchain.orders.input';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -26,16 +34,26 @@ import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
+import { OrderFormDto } from './dto/order-form.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { OrderStatus } from './entities/enums/orders.status.enum';
 import { Orders } from './entities/orders.entity';
 import { OrdersHelpers } from './helpers/orders.helpers';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
+import {
+  LazyErc1155Input,
+  LazyErc721Input,
+} from 'src/tokens/dto/lazy-token-dto';
+import { Asset } from './dto/nestedObjectsDto/asset-type.dto';
+import { hashForm } from './utils/hashfunction';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
+    @InjectRepository(Tokens)
+    private tokensRepo: Repository<Tokens>,
     private readonly ordersHelpers: OrdersHelpers,
   ) {}
 
@@ -49,6 +67,136 @@ export class OrdersService {
       return await this.ordersRepo.findOne({ where: { orderId } });
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  async put(form: OrderFormDto): Promise<Orders> {
+    // val orderVersion = convertFormToVersion(form)
+    // orderValidator.validate(orderVersion)
+    // val existingOrder = orderRepository.findById(orderVersion.hash)
+    // if (existingOrder != null) {
+    //     orderValidator.validate(existingOrder, orderVersion)
+    // }
+    // return orderUpdateService
+    //     .save(orderVersion)
+    //     .also { raribleOrderSaveMetric.increment() }
+  }
+
+  async convertFormToVersion(form: OrderFormDto): Promise<OrderVersion> {
+    const maker = form.maker;
+    const make = await this.checkLazyNftMake(maker, form.make);
+    const take = await this.checkLazyNft(form.take);
+    const data = form.data;
+    // Asset: { assetType: AssetType(assetClass, assetData), value };
+    // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
+    const hash = hashForm(
+      form.maker,
+      make.assetType,
+      take,
+      form.salt,
+      data,
+      process.env.CHAIN_ID,
+    );
+    const approved = approveService.checkOnChainApprove(
+      maker,
+      make.type,
+      platform,
+    );
+    // val signature = commonSigner.fixSignature(form.signature)
+    // return OrderVersion(
+    //     maker = maker,
+    //     make = make,
+    //     take = take,
+    //     taker = form.taker,
+    //     type = OrderTypeConverter.convert(form),
+    //     salt = EthUInt256.of(form.salt),
+    //     start = form.start,
+    //     end = form.end,
+    //     data = data,
+    //     signature = signature,
+    //     platform = platform,
+    //     hash = hash,
+    //     approved = approved,
+    //     makePriceUsd = null,
+    //     takePriceUsd = null,
+    //     makePrice = null,
+    //     takePrice = null,
+    //     makeUsd = null,
+    //     takeUsd = null
+    // ).run { priceUpdateService.withUpdatedAllPrices(this) }
+  }
+
+  async checkLazyNftMake(maker: string, asset: Asset): Promise<Asset> {
+    const make = await this.checkLazyNft(asset);
+    const makeType = make['type'];
+    if (
+      makeType == 'ERC721_LAZY' &&
+      makeType.creators.first().account == maker
+    ) {
+      return make;
+    }
+    if (
+      makeType == 'ERC1155_LAZY' &&
+      makeType.creators.first().account == maker
+    ) {
+      return make;
+    }
+    return asset;
+  }
+
+  async checkLazyNftAndReturnAsset(asset: Asset): Promise<Asset> {
+    const data = await this.checkLazyNft(asset);
+    const newAsset = new Asset();
+    newAsset.assetType = data;
+    newAsset.value = asset.value;
+    return newAsset;
+  }
+
+  async checkLazyNft(asset: Asset): Promise<any> {
+    const data = await this.getLazyNft(
+      asset.assetType['contract'],
+      asset.assetType['tokenId'],
+    );
+    switch (asset.assetType['assetClass']) {
+      case 'ERC721_LAZY':
+        const lazyErc721 = new LazyErc721Input();
+        lazyErc721.contract = data?.contract;
+        lazyErc721.tokenId = data?.id;
+        lazyErc721.type = 'ERC721_LAZY';
+        lazyErc721.creators = data?.creators;
+        lazyErc721.royalties = data?.royalties;
+        lazyErc721.signatures = data?.signatures;
+        return lazyErc721;
+      case 'ERC1155_LAZY':
+        const lazyErc1155 = new LazyErc1155Input();
+        lazyErc1155.contract = data?.contract;
+        lazyErc1155.tokenId = data?.id;
+        lazyErc1155.type = 'ERC1155_LAZY';
+        lazyErc1155.uri = data?.uri;
+        lazyErc1155.supply = data?.supply;
+        lazyErc1155.creators = data?.creators;
+        lazyErc1155.royalties = data?.royalties;
+        lazyErc1155.signatures = data?.signatures;
+        return lazyErc1155;
+      default:
+        return asset.assetType;
+    }
+  }
+
+  async getLazyNft(contract: string, tokenId: string): Promise<Tokens> {
+    const itemId = contract + ':' + tokenId;
+    const lazySupply =
+      (await this.tokensRepo.findOneBy({ id: itemId }))?.lazySupply ??
+      toBigNumber('0');
+
+    if (lazySupply > toBigNumber('0')) {
+      const data = await this.tokensRepo.findOneBy({ id: itemId });
+      if (data) {
+        return data;
+      }
+      throw new EntityNotFoundError('Lazy Item', itemId);
+    } else {
+      return null;
     }
   }
 

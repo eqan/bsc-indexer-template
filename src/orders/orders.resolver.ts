@@ -12,6 +12,7 @@ import { GetOrderBidsByMakerDto } from './dto/get-order-bids-by-maker.dto';
 import { GetSellOrdersByItemDto } from './dto/get-sell-orders-by-item.dto';
 import { GetSellOrdersByMakerDto } from './dto/get-sell-orders-by-maker';
 import { GetSellOrdersDto } from './dto/get-sell-orders.dto';
+import { OrderFormDto } from './dto/order-form.dto';
 import { UpdateOrderStatus } from './dto/update-order-status.dto';
 import { Orders } from './entities/orders.entity';
 import { OrdersService } from './orders.service';
@@ -37,6 +38,12 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  upsertOrder(form: OrderFormDto): Promise<Orders> {
+    // val order = orderService.put(form)
+    // val result = orderDtoConverter.convert(order)
+    // return ResponseEntity.ok(result)
   }
 
   /**
