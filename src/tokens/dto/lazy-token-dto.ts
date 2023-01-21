@@ -41,7 +41,7 @@ export class LazyErc721Input {
 
 @InputType()
 export class LazyErc1155Input {
-  @Field(() => String, { nullable: true, defaultValue: 'ERC721' })
+  @Field(() => String, { nullable: true, defaultValue: 'ERC1155' })
   type?: string;
 
   @Field(() => String)
