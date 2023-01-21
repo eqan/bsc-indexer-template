@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CustomBinaryScalar } from 'src/core/customScalars/binary';
-import { Asset } from './nestedObjectsDto/asset-type.dto';
+import { Asset } from './nestedObjectsDto/asset.dto';
 import { CustomDataScalar } from './nestedObjectsDto/data.scalar.dto';
 // @Id
 // val id: ObjectId = ObjectId(),

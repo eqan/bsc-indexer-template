@@ -1,5 +1,6 @@
 import { TypedDataUtils } from 'ethers-eip712';
 import * as Addresses from '../constants/orders.constants.addresses';
+import { Data } from '../dto/nestedObjectsDto/data.dto';
 import { EIP712_TYPES } from '../types/orders.types';
 
 function hash(
@@ -25,11 +26,11 @@ function hash(
 
 export function hashForm(
   maker: string,
-  makeAssetType: JSON,
-  takeAssetType: JSON,
+  makeAssetType: Data,
+  takeAssetType: Data,
   salt: string,
-  data: JSON,
-  chainId: number,
+  data: Data,
+  chainId: string,
 ): Uint8Array {
   const hashedData = hash(
     {

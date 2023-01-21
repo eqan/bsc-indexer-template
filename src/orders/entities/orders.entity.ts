@@ -3,7 +3,7 @@ import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
+import { Asset } from '../dto/nestedObjectsDto/asset.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.scalar.dto';
 import { OrderKind } from './enums/order.kind.enum';
 import { ORDER_TYPES } from './enums/order.order-types.enum';

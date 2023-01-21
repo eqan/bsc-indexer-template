@@ -44,8 +44,9 @@ import {
   LazyErc1155Input,
   LazyErc721Input,
 } from 'src/tokens/dto/lazy-token-dto';
-import { Asset } from './dto/nestedObjectsDto/asset-type.dto';
+import { Asset } from './dto/nestedObjectsDto/asset.dto';
 import { hashForm } from './utils/hashfunction';
+import { Data } from './dto/nestedObjectsDto/data.dto';
 
 @Injectable()
 export class OrdersService {
@@ -99,8 +100,8 @@ export class OrdersService {
     );
     const approved = approveService.checkOnChainApprove(
       maker,
-      make.type,
-      platform,
+      make,
+      data['contract'],
     );
     // val signature = commonSigner.fixSignature(form.signature)
     // return OrderVersion(
@@ -127,17 +128,17 @@ export class OrdersService {
   }
 
   async checkLazyNftMake(maker: string, asset: Asset): Promise<Asset> {
-    const make = await this.checkLazyNft(asset);
-    const makeType = make['type'];
+    const make = await this.checkLazyNftAndReturnAsset(asset);
+    const makeType = make.assetType;
     if (
-      makeType == 'ERC721_LAZY' &&
-      makeType.creators.first().account == maker
+      makeType instanceof LazyErc721Input &&
+      makeType.creators[0].account == maker
     ) {
       return make;
     }
     if (
-      makeType == 'ERC1155_LAZY' &&
-      makeType.creators.first().account == maker
+      makeType instanceof LazyErc1155Input &&
+      makeType.creators[0].account == maker
     ) {
       return make;
     }
@@ -152,7 +153,7 @@ export class OrdersService {
     return newAsset;
   }
 
-  async checkLazyNft(asset: Asset): Promise<any> {
+  async checkLazyNft(asset: Asset): Promise<Data> {
     const data = await this.getLazyNft(
       asset.assetType['contract'],
       asset.assetType['tokenId'],
@@ -166,7 +167,7 @@ export class OrdersService {
         lazyErc721.creators = data?.creators;
         lazyErc721.royalties = data?.royalties;
         lazyErc721.signatures = data?.signatures;
-        return lazyErc721;
+        return { assetType: lazyErc721 };
       case 'ERC1155_LAZY':
         const lazyErc1155 = new LazyErc1155Input();
         lazyErc1155.contract = data?.contract;
@@ -177,7 +178,7 @@ export class OrdersService {
         lazyErc1155.creators = data?.creators;
         lazyErc1155.royalties = data?.royalties;
         lazyErc1155.signatures = data?.signatures;
-        return lazyErc1155;
+        return { assetType: lazyErc1155 };
       default:
         return asset.assetType;
     }

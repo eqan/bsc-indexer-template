@@ -1,8 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { BigNumber } from '@rarible/utils';
 import { Transform, Type } from 'class-transformer';
 import { IsEthereumAddress, ValidateNested } from 'class-validator';
-import { CustomBigNumberScalar } from 'src/core/customScalars/bignumber';
 
 import { PartDto } from 'src/core/dto/part.dto';
 
