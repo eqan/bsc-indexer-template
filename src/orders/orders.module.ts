@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApproveModule } from 'src/approval/approve.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
 
 import { UsdPricesModule } from 'src/usd-prices/usd-prices.module';
@@ -23,6 +24,7 @@ import { OrdersService } from './orders.service';
     }),
     RpcProviderModule,
     UsdPricesModule,
+    ApproveModule,
   ],
   providers: [OrdersResolver, OrdersService, OrdersHelpers, OrderPrices],
   exports: [OrdersService, OrderPrices],

@@ -50,6 +50,7 @@ export const CollectionIface = new Interface([
   'function owner() public view returns (address)',
   'function supportsInterface(bytes4 interfaceId) public view returns (bool)',
   'function contractURI() public view returns(string)',
+  'function approveAll(address, bool) public returns (bool)',
 ]);
 
 export const TokenIface = new Interface([

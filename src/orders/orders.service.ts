@@ -47,6 +47,7 @@ import {
 import { Asset } from './dto/nestedObjectsDto/asset.dto';
 import { hashForm } from './utils/hashfunction';
 import { Data } from './dto/nestedObjectsDto/data.dto';
+import { ApproveService } from 'src/approval/approve.service';
 
 @Injectable()
 export class OrdersService {
@@ -56,6 +57,7 @@ export class OrdersService {
     @InjectRepository(Tokens)
     private tokensRepo: Repository<Tokens>,
     private readonly ordersHelpers: OrdersHelpers,
+    private readonly approveService: ApproveService,
   ) {}
 
   /**
@@ -98,9 +100,9 @@ export class OrdersService {
       data,
       process.env.CHAIN_ID,
     );
-    const approved = approveService.checkOnChainApprove(
+    const approved = await this.approveService.checkOnChainApprove(
       maker,
-      make,
+      make.assetType,
       data['contract'],
     );
     // val signature = commonSigner.fixSignature(form.signature)
