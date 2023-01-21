@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsEthereumAddress, IsNumber, IsString } from 'class-validator';
+import { PartDto } from 'src/core/dto/part.dto';
 import { Part } from 'src/orders/types/data.types';
 import { Binary } from 'typeorm';
 
@@ -19,13 +20,13 @@ export class ERC721LazyAssetDto {
   @Field()
   uri: number;
 
-  @Type(() => Part)
-  @Field(() => [Part])
-  creators: Part[];
+  @Type(() => PartDto)
+  @Field(() => [PartDto])
+  creators: PartDto[];
 
-  @Type(() => Part)
-  @Field(() => [Part])
-  royalties: Part[];
+  @Type(() => PartDto)
+  @Field(() => [PartDto])
+  royalties: PartDto[];
 
   @Type(() => Binary)
   @Field(() => [Binary])
