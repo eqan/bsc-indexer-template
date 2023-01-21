@@ -20,13 +20,11 @@ export class ApproveService {
     collection: string,
   ): Promise<boolean> {
     if (!make.nft || !this.featureFlags.checkOnChainApprove) return true;
-    const onChainApprove = this.checkOnChainApproveAndReturnResult(
+    const onChainApprove = await this.checkOnChainApproveAndReturnResult(
       toAddress(maker),
       toAddress(collection),
     );
-    return (await this.featureFlags.applyOnChainApprove)
-      ? onChainApprove
-      : true;
+    return this.featureFlags.applyOnChainApprove ? onChainApprove : true;
   }
 
   async checkOnChainApproveAndReturnResult(
