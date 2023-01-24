@@ -53,12 +53,15 @@ import {
 import { hashForm } from './utils/hashfunction';
 import { Data } from './dto/nestedObjectsDto/data.dto';
 import { AssetType } from './dto/nestedObjectsDto/asset.dto';
+import { ApproveService } from 'src/approval/approve.service';
+
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
     private readonly ordersHelpers: OrdersHelpers,
+    private readonly approveService: ApproveService,
   ) {}
   // @InjectRepository(Tokens)
   // private tokensRepo: Repository<Tokens>,
@@ -85,7 +88,33 @@ export class OrdersService {
       from.make.assetType.assetClass == AssetTypeEnum.ERC721 &&
         from.make.assetType.tokenId,
     );
-    return true;
+    const approved = await this.approveService.checkOnChainApprove(
+      maker,
+      make.assetType,
+      data['contract'],
+    );
+    // val signature = commonSigner.fixSignature(form.signature)
+    // return OrderVersion(
+    //     maker = maker,
+    //     make = make,
+    //     take = take,
+    //     taker = form.taker,
+    //     type = OrderTypeConverter.convert(form),
+    //     salt = EthUInt256.of(form.salt),
+    //     start = form.start,
+    //     end = form.end,
+    //     data = data,
+    //     signature = signature,
+    //     platform = platform,
+    //     hash = hash,
+    //     approved = approved,
+    //     makePriceUsd = null,
+    //     takePriceUsd = null,
+    //     makePrice = null,
+    //     takePrice = null,
+    //     makeUsd = null,
+    //     takeUsd = null
+    // ).run { priceUpdateService.withUpdatedAllPrices(this) }
   }
 
   // private convertFormToVersion(form: OrderFormDto): AssetType {}
