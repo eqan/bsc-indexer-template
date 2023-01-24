@@ -210,16 +210,125 @@ type GetAllAuctions {
   total: Int!
 }
 
-type UsdPrice {
+type MetaContent {
+  type: String
+  url: String
+  representation: String
+}
+
+type CollectionsMeta {
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
+  deletedAt: String
+  name: String
+  description: String
+  externalLink: String
+  feeRecipient: String
+  sellerFeeBasisPoints: Float
+  Content: MetaContent
+  collectionId: String!
+}
+
+type Collections {
   id: String!
-  currency: String
-  value: String!
-  timestamp: Float!
+  name: String
+  symbol: String
+  type: String!
+  features: [CollectionFeature!]!
+  owner: String
+  twitterUrl: String
+  discordUrl: String
+  description: String
+  bannerImageUrl: String
+  Meta: CollectionsMeta
+  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
+}
+
+"""Feautes of token"""
+enum CollectionFeature {
+  APPROVE_FOR_ALL
+  SET_URI_PREFIX
+  BURN
+  MINT_WITH_ADDRESS
+  SECONDARY_SALE_FEES
+  MINT_AND_TRANSFER
+}
+
+input FilterTokenDto {
+  page: Int
+  limit: Int
+  id: String
+  contract: String
+  owner: String
 }
 
 type PartDto {
   account: String!
   value: Int!
+}
+
+type Attributes {
+  id: String
+  tokenId: String
+  collectionId: String
+  key: String
+  format: String
+  value: String
+}
+
+type Content {
+  fileName: String
+  representation: String
+  mimeType: String
+  type: String
+  url: String
+  size: Float
+  available: Boolean
+  width: Float
+  height: Float
+}
+
+type Meta {
+  id: String!
+  name: String
+  description: String
+  Content: Content
+  tags: [String!]
+  genres: [String!]
+  originalMetaUri: String
+  externalUri: String
+  rightsUri: String
+  attributes: [Attributes!]
+}
+
+type Tokens {
+  createdAt: String
+  lastUpdatedAt: String
+  dbUpdatedAt: String
+  deletedAt: String
+  id: String!
+  collectionId: String
+  contract: String
+  type: String
+  owner: String
+  uri: String
+  mintedAt: DateTime
+  deleted: Boolean
+  sellers: Float
+  lazySupply: Float
+  supply: Float
+  creators: [PartDto!]
+  royalties: [PartDto!]
+  signatures: [String!]
+  Meta: Meta
+}
+
+type UsdPrice {
+  id: String!
+  currency: String
+  value: String!
+  timestamp: Float!
 }
 
 type Asset {
@@ -295,115 +404,6 @@ type GetAllOrders {
 type GetAllSellOrders {
   items: [Orders!]!
   total: Int!
-}
-
-type Attributes {
-  id: String
-  tokenId: String
-  collectionId: String
-  key: String
-  format: String
-  value: String
-}
-
-type Content {
-  fileName: String
-  representation: String
-  mimeType: String
-  type: String
-  url: String
-  size: Float
-  available: Boolean
-  width: Float
-  height: Float
-}
-
-type Meta {
-  id: String!
-  name: String
-  description: String
-  Content: Content
-  tags: [String!]
-  genres: [String!]
-  originalMetaUri: String
-  externalUri: String
-  rightsUri: String
-  attributes: [Attributes!]
-}
-
-type Tokens {
-  createdAt: String
-  lastUpdatedAt: String
-  dbUpdatedAt: String
-  deletedAt: String
-  id: String!
-  collectionId: String
-  contract: String
-  type: String
-  owner: String
-  uri: String
-  mintedAt: DateTime
-  deleted: Boolean
-  sellers: Float
-  lazySupply: Float
-  supply: Float
-  creators: [PartDto!]
-  royalties: [PartDto!]
-  signatures: [String!]
-  Meta: Meta
-}
-
-type MetaContent {
-  type: String
-  url: String
-  representation: String
-}
-
-type CollectionsMeta {
-  createdAt: String
-  lastUpdatedAt: String
-  dbUpdatedAt: String
-  deletedAt: String
-  name: String
-  description: String
-  externalLink: String
-  feeRecipient: String
-  sellerFeeBasisPoints: Float
-  Content: MetaContent
-  collectionId: String!
-}
-
-type Collections {
-  id: String!
-  name: String
-  symbol: String
-  type: String!
-  features: [CollectionFeature!]!
-  owner: String
-  twitterUrl: String
-  discordUrl: String
-  description: String
-  bannerImageUrl: String
-  Meta: CollectionsMeta
-  tokens(FilterTokensInput: FilterTokenDto = {}): [Tokens!]
-}
-
-"""Feautes of token"""
-enum CollectionFeature {
-  APPROVE_FOR_ALL
-  SET_URI_PREFIX
-  BURN
-  MINT_WITH_ADDRESS
-  SECONDARY_SALE_FEES
-  MINT_AND_TRANSFER
-}
-
-input FilterTokenDto {
-  page: Int
-  limit: Int
-  id: String
-  contract: String
-  owner: String
 }
 
 type TokensAttributesInput {
@@ -604,6 +604,12 @@ input SellInput {
   value: Float!
 }
 
+input MetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
+
 input PartDtoInput {
   account: String!
   value: Int!
@@ -640,12 +646,6 @@ enum AssetTypeEnum {
 
 """Binary Parser"""
 scalar Binary
-
-input MetaContentInput {
-  type: String
-  url: String
-  representation: String
-}
 
 input TokensAttributes {
   key: String
@@ -956,7 +956,7 @@ input LazyErc721Input {
 }
 
 input LazyErc1155Input {
-  type: String = "ERC721"
+  type: String = "ERC1155"
   tokenId: String!
   contract: String!
   uri: String!
@@ -1021,7 +1021,6 @@ input OrderFormDto {
   start: Float
   end: Float
   signature: Binary!
-  data: DATA_SCALAR!
 }
 
 input OrderFormAsset {

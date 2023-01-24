@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { toBigNumber } from '@rarible/types';
+import { toAddress, toBigNumber, toBinary } from '@rarible/types';
 import { FilterTokensByPriceRangeDto } from 'src/collections/dto/filter-tokens-by-price-range.dto';
 import { SortOrder } from 'src/collections/enums/collections.sort-order.enum';
 import {
@@ -46,25 +46,31 @@ import {
 } from 'src/tokens/dto/lazy-token-dto';
 import {
   Asset,
+  AssetType,
   AssetTypeEnum,
+  AssetTypeInput,
+  Erc1155AssetType,
+  Erc1155LazyAssetType,
   Erc20AssetType,
+  Erc721LazyAssetType,
   EthAssetType,
+  OrderFormAsset,
 } from './dto/nestedObjectsDto/asset.dto';
 import { hashForm } from './utils/hashfunction';
-import { Data } from './dto/nestedObjectsDto/data.dto';
-import { AssetType } from './dto/nestedObjectsDto/asset.dto';
 import { ApproveService } from 'src/approval/approve.service';
+import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Orders)
     private ordersRepo: Repository<Orders>,
+    @InjectRepository(Tokens)
+    private tokensRepo: Repository<Tokens>,
     private readonly ordersHelpers: OrdersHelpers,
     private readonly approveService: ApproveService,
+    private readonly rpcProvider: RpcProvider,
   ) {}
-  // @InjectRepository(Tokens)
-  // private tokensRepo: Repository<Tokens>,
 
   /**
    * Check if order exist or not
@@ -79,21 +85,55 @@ export class OrdersService {
     }
   }
 
-  async puting(from: OrderFormDto): Promise<boolean> {
-    console.log(
-      JSON.stringify(from),
-      from.make.assetType,
-      from.make.assetType instanceof Erc20AssetType,
-      from.make.assetType.assetClass == 'ERC20' && from.make.assetType.contract,
-      from.make.assetType.assetClass == AssetTypeEnum.ERC721 &&
-        from.make.assetType.tokenId,
-    );
-    const approved = await this.approveService.checkOnChainApprove(
-      maker,
+  // async puting(from: OrderFormDto): Promise<boolean> {
+  //   console.log(
+  //     JSON.stringify(from),
+  //     from.make.assetType,
+  //     from.make.assetType instanceof Erc20AssetType,
+  //     from.make.assetType.assetClass == 'ERC20' && from.make.assetType.contract,
+  //     from.make.assetType.assetClass == AssetTypeEnum.ERC721 &&
+  //       from.make.assetType.tokenId,
+  //   );
+  // }
+
+  // private convertFormToVersion(form: OrderFormDto): AssetType {}
+  // async put(form: OrderFormDto): Promise<Orders> {
+  //   // val orderVersion = convertFormToVersion(form)
+  //   // orderValidator.validate(orderVersion)
+  //   // val existingOrder = orderRepository.findById(orderVersion.hash)
+  //   // if (existingOrder != null) {
+  //   //     orderValidator.validate(existingOrder, orderVersion)
+  //   // }
+  //   // return orderUpdateService
+  //   //     .save(orderVersion)
+  //   //     .also { raribleOrderSaveMetric.increment() }
+  // }
+
+  async upsert(form: OrderFormDto): Promise<null> {
+    const maker = form.maker;
+    let [make, take] = [null, null];
+    make = await this.checkLazyNftMake(maker, form.make);
+    take = await this.checkLazyNftAndReturnAsset(form.take);
+    // console.log(make, take);
+    // const data = form.data;
+    // Asset: { assetType: AssetType(assetClass, assetData), value };
+    // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
+    const hash = hashForm(
+      form.maker,
       make.assetType,
-      data['contract'],
+      take,
+      form.salt,
+      // data,
+      process.env.CHAIN_ID,
+      this.rpcProvider.chainId,
     );
-    // val signature = commonSigner.fixSignature(form.signature)
+    console.log(hash);
+    // const approved = this.approveService.checkOnChainApprove(
+    //   maker,
+    //   make,
+    //   data['contract'],
+    // );
+    // const signature = commonSigner.fixSignature(form.signature);
     // return OrderVersion(
     //     maker = maker,
     //     make = make,
@@ -115,139 +155,101 @@ export class OrdersService {
     //     makeUsd = null,
     //     takeUsd = null
     // ).run { priceUpdateService.withUpdatedAllPrices(this) }
+    //   // orderValidator.validate(orderVersion)
+    //   // val existingOrder = orderRepository.findById(orderVersion.hash)
+    //   // if (existingOrder != null) {
+    //   //     orderValidator.validate(existingOrder, orderVersion)
+    //   // }
+    //   // return orderUpdateService
+    //   //     .save(orderVersion)
+    //   //     .also { raribleOrderSaveMetric.increment() }
+    return null;
   }
 
-  // private convertFormToVersion(form: OrderFormDto): AssetType {}
-  // async put(form: OrderFormDto): Promise<Orders> {
-  //   // val orderVersion = convertFormToVersion(form)
-  //   // orderValidator.validate(orderVersion)
-  //   // val existingOrder = orderRepository.findById(orderVersion.hash)
-  //   // if (existingOrder != null) {
-  //   //     orderValidator.validate(existingOrder, orderVersion)
-  //   // }
-  //   // return orderUpdateService
-  //   //     .save(orderVersion)
-  //   //     .also { raribleOrderSaveMetric.increment() }
-  // }
+  async checkLazyNftMake(
+    maker: string,
+    asset: OrderFormAsset,
+  ): Promise<OrderFormAsset> {
+    const make = await this.checkLazyNftAndReturnAsset(asset);
+    const makeType = make.assetType;
+    if (
+      makeType instanceof LazyErc721Input &&
+      makeType.creators[0].account == maker
+    ) {
+      return make;
+    }
+    if (
+      makeType instanceof LazyErc1155Input &&
+      makeType.creators[0].account == maker
+    ) {
+      return make;
+    }
+    return asset;
+  }
 
-  // async convertFormToVersion(form: OrderFormDto): Promise<OrderVersion> {
-  //   const maker = form.maker;
-  //   const make = await this.checkLazyNftMake(maker, form.make);
-  //   const take = await this.checkLazyNft(form.take);
-  //   const data = form.data;
-  //   // Asset: { assetType: AssetType(assetClass, assetData), value };
-  //   // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
-  //   const hash = hashForm(
-  //     form.maker,
-  //     make.assetType,
-  //     take,
-  //     form.salt,
-  //     data,
-  //     process.env.CHAIN_ID,
-  //   );
-  //   const approved = approveService.checkOnChainApprove(
-  //     maker,
-  //     make,
-  //     data['contract'],
-  //   );
+  async checkLazyNftAndReturnAsset(
+    asset: OrderFormAsset,
+  ): Promise<OrderFormAsset> {
+    const data = await this.checkLazyNft(asset.assetType);
+    const newAsset = new OrderFormAsset();
+    newAsset.assetType = data;
+    newAsset.value = asset.value;
+    return newAsset;
+  }
 
-  //   // val signature = commonSigner.fixSignature(form.signature)
-  //   // return OrderVersion(
-  //   //     maker = maker,
-  //   //     make = make,
-  //   //     take = take,
-  //   //     taker = form.taker,
-  //   //     type = OrderTypeConverter.convert(form),
-  //   //     salt = EthUInt256.of(form.salt),
-  //   //     start = form.start,
-  //   //     end = form.end,
-  //   //     data = data,
-  //   //     signature = signature,
-  //   //     platform = platform,
-  //   //     hash = hash,
-  //   //     approved = approved,
-  //   //     makePriceUsd = null,
-  //   //     takePriceUsd = null,
-  //   //     makePrice = null,
-  //   //     takePrice = null,
-  //   //     makeUsd = null,
-  //   //     takeUsd = null
-  //   // ).run { priceUpdateService.withUpdatedAllPrices(this) }
-  // }
+  async checkLazyNft(asset: AssetType): Promise<AssetType> {
+    switch (asset.assetClass) {
+      case AssetTypeEnum.ERC721_LAZY:
+        const lazyERC721Data = await this.getLazyNft(
+          asset.contract,
+          asset.tokenId,
+        );
+        const lazyErc721 = new Erc721LazyAssetType();
+        lazyErc721.contract = toAddress(lazyERC721Data?.contract);
+        lazyErc721.tokenId = toBigNumber(lazyERC721Data?.id);
+        lazyErc721.creators = lazyERC721Data?.creators;
+        lazyErc721.royalties = lazyERC721Data.royalties;
+        // there will be only one or two singatures. So it is okay to use map here.
+        lazyErc721.signatures = lazyERC721Data.signatures.map((signature) =>
+          toBinary(signature),
+        );
+        return lazyErc721;
+      case AssetTypeEnum.ERC1155_LAZY:
+        const lazyERC1155Data = await this.getLazyNft(
+          asset.contract,
+          asset.tokenId,
+        );
+        const lazyErc1155 = new Erc1155LazyAssetType();
+        lazyErc1155.contract = toAddress(lazyERC1155Data?.contract);
+        lazyErc1155.tokenId = toBigNumber(lazyERC1155Data?.id);
+        lazyErc1155.uri = lazyERC1155Data?.uri;
+        lazyErc1155.creators = lazyERC1155Data?.creators;
+        lazyErc1155.royalties = lazyERC1155Data?.royalties;
+        lazyErc1155.signatures = lazyERC1155Data.signatures.map((signature) =>
+          toBinary(signature),
+        );
+        return lazyErc1155;
+      default:
+        return asset;
+    }
+  }
 
-  // async checkLazyNftMake(maker: string, asset: Asset): Promise<Asset> {
-  //   const make = await this.checkLazyNftAndReturnAsset(asset);
-  //   const makeType = make.assetType;
-  //   if (
-  //     makeType instanceof LazyErc721Input &&
-  //     makeType.creators[0].account == maker
-  //   ) {
-  //     return make;
-  //   }
-  //   if (
-  //     makeType instanceof LazyErc1155Input &&
-  //     makeType.creators[0].account == maker
-  //   ) {
-  //     return make;
-  //   }
-  //   return asset;
-  // }
+  async getLazyNft(contract: string, tokenId: string): Promise<Tokens> {
+    const itemId = contract + ':' + tokenId;
+    const lazySupply =
+      (await this.tokensRepo.findOneBy({ id: itemId }))?.lazySupply ??
+      toBigNumber('0');
 
-  // async checkLazyNftAndReturnAsset(asset: Asset): Promise<Asset> {
-  //   const data = await this.checkLazyNft(asset);
-  //   const newAsset = new Asset();
-  //   newAsset.assetType = data;
-  //   newAsset.value = asset.value;
-  //   return newAsset;
-  // }
-
-  // async checkLazyNft(asset: Asset): Promise<Data> {
-  //   const data = await this.getLazyNft(
-  //     asset.assetType['contract'],
-  //     asset.assetType['tokenId'],
-  //   );
-  //   switch (asset.assetType['assetClass']) {
-  //     case 'ERC721_LAZY':
-  //       const lazyErc721 = new LazyErc721Input();
-  //       lazyErc721.contract = data?.contract;
-  //       lazyErc721.tokenId = data?.id;
-  //       lazyErc721.type = 'ERC721_LAZY';
-  //       lazyErc721.creators = data?.creators;
-  //       lazyErc721.royalties = data?.royalties;
-  //       lazyErc721.signatures = data?.signatures;
-  //       return { assetType: lazyErc721 };
-  //     case 'ERC1155_LAZY':
-  //       const lazyErc1155 = new LazyErc1155Input();
-  //       lazyErc1155.contract = data?.contract;
-  //       lazyErc1155.tokenId = data?.id;
-  //       lazyErc1155.type = 'ERC1155_LAZY';
-  //       lazyErc1155.uri = data?.uri;
-  //       lazyErc1155.supply = data?.supply;
-  //       lazyErc1155.creators = data?.creators;
-  //       lazyErc1155.royalties = data?.royalties;
-  //       lazyErc1155.signatures = data?.signatures;
-  //       return { assetType: lazyErc1155 };
-  //     default:
-  //       return asset.assetType;
-  //   }
-  // }
-
-  // async getLazyNft(contract: string, tokenId: string): Promise<Tokens> {
-  //   const itemId = contract + ':' + tokenId;
-  //   const lazySupply =
-  //     (await this.tokensRepo.findOneBy({ id: itemId }))?.lazySupply ??
-  //     toBigNumber('0');
-
-  //   if (lazySupply > toBigNumber('0')) {
-  //     const data = await this.tokensRepo.findOneBy({ id: itemId });
-  //     if (data) {
-  //       return data;
-  //     }
-  //     throw new EntityNotFoundError('Lazy Item', itemId);
-  //   } else {
-  //     return null;
-  //   }
-  // }
+    if (lazySupply > toBigNumber('0')) {
+      const data = await this.tokensRepo.findOneBy({ id: itemId });
+      if (data) {
+        return data;
+      }
+      throw new EntityNotFoundError('Lazy Item', itemId);
+    } else {
+      return null;
+    }
+  }
 
   /**
    * Create Order

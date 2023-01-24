@@ -1,6 +1,6 @@
 import { TypedDataUtils } from 'ethers-eip712';
 import * as Addresses from '../constants/orders.constants.addresses';
-import { Data } from '../dto/nestedObjectsDto/data.dto';
+import { AssetType } from '../dto/nestedObjectsDto/asset.dto';
 import { EIP712_TYPES } from '../types/orders.types';
 
 function hash(
@@ -26,17 +26,18 @@ function hash(
 
 export function hashForm(
   maker: string,
-  makeAssetType: Data,
-  takeAssetType: Data,
+  makeAssetType: AssetType,
+  takeAssetType: AssetType,
   salt: string,
-  data: Data,
+  // data: Data,
   chainId: string,
+  rpcProviderChainID: string,
 ): Uint8Array {
   const hashedData = hash(
     {
       name: 'Exchange',
       version: '2',
-      chainId: this.rpcProvider.chainId,
+      chainId: rpcProviderChainID,
       verifyingContract: Addresses.Exchange[chainId],
     },
     'Exchange',
@@ -45,7 +46,7 @@ export function hashForm(
       makeAssetType,
       takeAssetType,
       salt,
-      data,
+      // data,
     },
     {
       AssetType: EIP712_TYPES.AssetType,

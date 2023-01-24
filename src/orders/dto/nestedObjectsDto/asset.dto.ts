@@ -119,7 +119,7 @@ export class Erc721LazyAssetType {
   @Field(() => [PartDto])
   creators: PartDto[];
   @Field(() => [PartDto])
-  royalties: PartDto;
+  royalties: PartDto[];
   @Field(() => [CustomBinaryScalar])
   signatures: Binary[];
 }
@@ -140,7 +140,7 @@ export class Erc1155LazyAssetType {
   @Field(() => [PartDto])
   creators: PartDto[];
   @Field(() => [PartDto])
-  royalties: PartDto;
+  royalties: PartDto[];
   @Field(() => [CustomBinaryScalar])
   signatures: Binary[];
 }
@@ -155,7 +155,7 @@ export type AssetType =
   | CollectionAssetType;
 
 @InputType('AssetTypeInput')
-class AssetTypeInput {
+export class AssetTypeInput {
   @Field(() => AssetTypeEnum)
   type: AssetTypeEnum;
 

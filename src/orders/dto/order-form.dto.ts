@@ -54,7 +54,7 @@ export class OrderFormDto {
   @Field(() => CustomBinaryScalar)
   signature?: Binary;
 
-  @Type(() => Data)
-  @Field(() => CustomDataScalar)
-  data: Data;
+  // @Type(() => Data)
+  // @Field(() => CustomDataScalar)
+  // data: Data;
 }

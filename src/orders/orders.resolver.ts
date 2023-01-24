@@ -50,7 +50,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     @Args('orderFormDto') orderFormDto: OrderFormDto,
   ): Promise<boolean> {
     try {
-      return await this.ordersService.puting(orderFormDto);
+      return await this.ordersService.upsert(orderFormDto);
     } catch (error) {
       throw new BadRequestException(error);
     }

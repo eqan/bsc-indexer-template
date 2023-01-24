@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApproveModule } from 'src/approval/approve.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { Tokens } from 'src/tokens/entities/tokens.entity';
 
 import { UsdPricesModule } from 'src/usd-prices/usd-prices.module';
 import { Orders } from './entities/orders.entity';
@@ -17,7 +18,7 @@ import { OrdersService } from './orders.service';
  */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Orders]),
+    TypeOrmModule.forFeature([Orders, Tokens]),
     HttpModule.register({
       timeout: 40 * 1000, //40sec
       maxRedirects: 5,
