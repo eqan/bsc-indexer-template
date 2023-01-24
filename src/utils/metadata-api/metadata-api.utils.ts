@@ -123,10 +123,12 @@ export class MetadataApi {
       contract: collectionId,
       deleted: false,
       sellers: 0,
-      creator: {
-        account: [],
-        value: 10000,
-      },
+      creator: [
+        {
+          account: '',
+          value: 10000,
+        },
+      ],
     };
 
     const contract = new Contract(
@@ -136,7 +138,7 @@ export class MetadataApi {
     );
     const newTokenId = collectionId + ':' + tokenId;
     try {
-      data.creator.account = await getNFTCreator(contract, tokenId);
+      // data.creator.account = (await getNFTCreator(contract, tokenId))[0];
       const tokenURI = await getTokenURI(type, tokenId, contract);
 
       if (!tokenURI) return { ...data, Meta: this.returnMeta({}, '', '', '') };

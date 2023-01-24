@@ -40,11 +40,27 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     }
   }
 
-  upsertOrder(form: OrderFormDto): Promise<Orders> {
-    // val order = orderService.put(form)
-    // val result = orderDtoConverter.convert(order)
-    // return ResponseEntity.ok(result)
+  /**
+   * Create Order
+   * @param OrderFormDto
+   * @returns Orders
+   */
+  @Mutation(() => Boolean, { name: 'puting' })
+  async puting(
+    @Args('orderFormDto') orderFormDto: OrderFormDto,
+  ): Promise<boolean> {
+    try {
+      return await this.ordersService.puting(orderFormDto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
+
+  // upsertOrder(form: OrderFormDto): Promise<Orders> {
+  //   // val order = orderService.put(form)
+  //   // val result = orderDtoConverter.convert(order)
+  //   // return ResponseEntity.ok(result)
+  // }
 
   /**
    * Delete Order

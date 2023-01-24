@@ -10,10 +10,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Part } from 'src/orders/types/data.types';
+import { PartDto } from 'src/core/dto/part.dto';
 import { TokenType } from '../entities/enum/token.type.enum';
 
-import { CreatorRoyalty } from './nestedObjectDto/creator.dto';
 import { MetaData } from './nestedObjectDto/meta.dto';
 
 /**Create tokens table in database
@@ -61,8 +60,8 @@ export class CreateTokenInput {
 
   @IsOptional()
   @ValidateNested()
-  @Field(() => [Part], { nullable: true })
-  creator?: Part[];
+  @Field(() => [PartDto], { nullable: true })
+  creator?: PartDto[];
 
   @IsOptional()
   @Field(() => [String], { nullable: true })
@@ -70,8 +69,8 @@ export class CreateTokenInput {
 
   @IsOptional()
   @ValidateNested()
-  @Field(() => [Part], { nullable: true })
-  royalties?: Part[];
+  @Field(() => [PartDto], { nullable: true })
+  royalties?: PartDto[];
 
   @IsOptional()
   @ValidateNested()

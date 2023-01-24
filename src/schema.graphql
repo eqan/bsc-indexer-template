@@ -217,6 +217,11 @@ type UsdPrice {
   timestamp: Float!
 }
 
+type PartDto {
+  account: String!
+  value: Int!
+}
+
 type Asset {
   value: String!
   valueDecimal: String
@@ -292,11 +297,6 @@ type GetAllSellOrders {
   total: Int!
 }
 
-type CreatorRoyalty {
-  account: [String!]
-  value: Int
-}
-
 type Attributes {
   id: String
   tokenId: String
@@ -341,11 +341,15 @@ type Tokens {
   contract: String
   type: String
   owner: String
+  uri: String
   mintedAt: DateTime
   deleted: Boolean
   sellers: Float
-  creator: CreatorRoyalty
-  royalties: CreatorRoyalty
+  lazySupply: Float
+  supply: Float
+  creators: [PartDto!]
+  royalties: [PartDto!]
+  signatures: [String!]
   Meta: Meta
 }
 
@@ -600,16 +604,42 @@ input SellInput {
   value: Float!
 }
 
+input PartDtoInput {
+  account: String!
+  value: Int!
+}
+
 input AssetInput {
   value: String!
   valueDecimal: String
   assetType: ASSET_SCALAR!
 }
 
-input CreatorRoyaltyInput {
-  account: [String!] = null
-  value: Int
+input AssetTypeInput {
+  type: AssetTypeEnum!
+  assetClass: AssetTypeEnum!
+  contract: Address
+  tokenId: BigNumber
+  uri: String
+  supply: BigNumber
+  creators: [PartDtoInput!]
+  royalties: [PartDtoInput!]
+  signatures: [Binary!]
 }
+
+"""AssetType Enum"""
+enum AssetTypeEnum {
+  ETH
+  ERC20
+  ERC721
+  ERC1155
+  ERC721_LAZY
+  ERC1155_LAZY
+  COLLECTION
+}
+
+"""Binary Parser"""
+scalar Binary
 
 input MetaContentInput {
   type: String
@@ -803,6 +833,7 @@ type Mutation {
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
+  puting(orderFormDto: OrderFormDto!): Boolean!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
   createUsdPrice(createUsdPriceInput: CreateUsdPriceInput!): UsdPrice!
@@ -885,8 +916,9 @@ input CreateTokenInput {
   mintedAt: DateTime
   deleted: Boolean!
   sellers: Float!
-  creator: CreatorRoyaltyInput
-  royalties: CreatorRoyaltyInput
+  creator: [PartDtoInput!]
+  signatures: [String!]
+  royalties: [PartDtoInput!]
   Meta: MetaDataInput
 }
 
@@ -923,11 +955,6 @@ input LazyErc721Input {
   signatures: [String!]!
 }
 
-input PartDtoInput {
-  account: String!
-  value: Int!
-}
-
 input LazyErc1155Input {
   type: String = "ERC721"
   tokenId: String!
@@ -936,7 +963,7 @@ input LazyErc1155Input {
   creators: [PartDtoInput!]!
   royalties: [PartDtoInput!]!
   signatures: [String!]!
-  supply: BigNumber!
+  supply: Float!
 }
 
 input UpdateTokensInput {
@@ -946,6 +973,11 @@ input UpdateTokensInput {
   creator: CreatorRoyaltyInput
   Meta: MetaDataInput
   mintedAt: DateTime
+}
+
+input CreatorRoyaltyInput {
+  account: [String!] = null
+  value: Int
 }
 
 input DeleteTokensInput {
@@ -978,6 +1010,23 @@ input CreateOrdersInput {
   taker: String
   contract: String
   tokenId: String
+}
+
+input OrderFormDto {
+  maker: String!
+  taker: String
+  make: OrderFormAsset!
+  take: OrderFormAsset!
+  salt: String!
+  start: Float
+  end: Float
+  signature: Binary!
+  data: DATA_SCALAR!
+}
+
+input OrderFormAsset {
+  assetType: AssetTypeInput!
+  value: BigNumber!
 }
 
 input DeleteOrderInput {
