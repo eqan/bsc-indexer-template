@@ -115,9 +115,9 @@ export class OrdersService {
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
     const hash = hashForm({
       maker: form.maker,
-      make: form.make,
+      make: make,
       taker: form.taker,
-      take: form.take,
+      take: take,
       salt: form.salt,
       start: form.start,
       end: form.end,

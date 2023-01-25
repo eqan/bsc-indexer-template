@@ -1,5 +1,6 @@
 import { id } from '@ethersproject/hash';
 import { TypedDataUtils } from 'ethers-eip712';
+import { solidityKeccak256 } from 'ethers/lib/utils';
 import * as Addresses from '../constants/orders.constants.addresses';
 import { AssetType, OrderFormAsset } from '../dto/nestedObjectsDto/asset.dto';
 import { DataDto } from '../dto/nestedObjectsDto/data.dto';
@@ -25,6 +26,12 @@ function hash(
   return digest;
 }
 
+export function convertDtoToHash(dto: any) {
+  const dtoString = JSON.stringify(dto);
+  const stringHash = solidityKeccak256(['string'], [dtoString]);
+  return stringHash.toString();
+}
+
 export function hashForm({
   maker,
   make,
@@ -48,7 +55,7 @@ export function hashForm({
   data: DataDto;
   chainId: string;
 }): Uint8Array {
-  console.log(start, end, dataType, 'value is here');
+  const hashedDto = convertDtoToHash(data);
   const hashedData = hash(
     {
       name: 'Exchange',
@@ -62,23 +69,23 @@ export function hashForm({
       makeAsset: {
         assetType: {
           assetClass: id(make.assetType.assetClass).slice(0, 10),
-          data: '0x', // need to change. this will be hashed asset data
+          data: hashedDto, // need to change. this will be hashed asset data
         },
-        value: make.value.toString(),
+        value: String(make.value),
       },
       taker,
       takeAsset: {
         assetType: {
           assetClass: id(take.assetType.assetClass).slice(0, 10),
-          data: '0x', // need to change. this will be hashed asset data
+          data: hashedDto, // need to change. this will be hashed asset data
         },
-        value: take.value.toString(),
+        value: String(take.value),
       },
       salt,
-      start: start.toString(),
-      end: end.toString(),
+      start: String(start),
+      end: String(end),
       dataType: id(dataType).slice(0, 10),
-      data: '0x', // need to change this to order data hash.
+      data: hashedDto, // need to change. this will be hashed asset data
     },
     {
       AssetType: EIP712_TYPES.AssetType,
