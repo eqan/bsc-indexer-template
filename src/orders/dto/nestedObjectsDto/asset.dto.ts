@@ -262,6 +262,6 @@ export class OrderFormAsset {
   })
   assetType: AssetType;
 
-  @Field(() => CustomBigNumberScalar)
-  value: BigNumber;
+  @Field(() => Number)
+  value: number;
 }

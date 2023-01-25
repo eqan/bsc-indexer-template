@@ -1,9 +1,9 @@
+import { id } from '@ethersproject/hash';
 import { TypedDataUtils } from 'ethers-eip712';
 import * as Addresses from '../constants/orders.constants.addresses';
-import { AssetType } from '../dto/nestedObjectsDto/asset.dto';
+import { AssetType, OrderFormAsset } from '../dto/nestedObjectsDto/asset.dto';
 import { DataDto } from '../dto/nestedObjectsDto/data.dto';
 import { EIP712_TYPES } from '../types/orders.types';
-
 function hash(
   domainData: object,
   primaryType: string,
@@ -25,29 +25,60 @@ function hash(
   return digest;
 }
 
-export function hashForm(
-  maker: string,
-  makeAssetType: AssetType,
-  takeAssetType: AssetType,
-  salt: string,
-  data: DataDto,
-  chainId: string,
-  rpcProviderChainID: string,
-): Uint8Array {
+export function hashForm({
+  maker,
+  make,
+  taker,
+  take,
+  salt,
+  start,
+  end,
+  dataType,
+  data,
+  chainId,
+}: {
+  maker: string;
+  make: OrderFormAsset;
+  taker: string;
+  take: OrderFormAsset;
+  salt: string; // need to change in number
+  start: number;
+  end: number;
+  dataType: string;
+  data: DataDto;
+  chainId: string;
+}): Uint8Array {
+  console.log(start, end, dataType, 'value is here');
   const hashedData = hash(
     {
       name: 'Exchange',
       version: '2',
-      chainId: rpcProviderChainID,
+      chainId: chainId,
       verifyingContract: Addresses.Exchange[chainId],
     },
     'Order',
     {
       maker,
-      makeAssetType,
-      takeAssetType,
+      makeAsset: {
+        assetType: {
+          assetClass: id(make.assetType.assetClass).slice(0, 10),
+          data: '0x', // need to change. this will be hashed asset data
+        },
+        value: make.value.toString(),
+      },
+      taker,
+      takeAsset: {
+        assetType: {
+          assetClass: id(take.assetType.assetClass).slice(0, 10),
+          data: '0x', // need to change. this will be hashed asset data
+        },
+        value: take.value.toString(),
+      },
       salt,
-      data,
+      start: start.toString(),
+      end: end.toString(),
+      dataType: id(dataType).slice(0, 10),
+      data: '0x', // need to change this to order data hash.
     },
     {
       AssetType: EIP712_TYPES.AssetType,

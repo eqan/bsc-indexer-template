@@ -113,16 +113,19 @@ export class OrdersService {
     console.log(data);
     // Asset: { assetType: AssetType(assetClass, assetData), value };
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
-    const hash = hashForm(
-      form.maker,
-      make.assetType,
-      take,
-      form.salt,
+    const hash = hashForm({
+      maker: form.maker,
+      make: form.make,
+      taker: form.taker,
+      take: form.take,
+      salt: form.salt,
+      start: form.start,
+      end: form.end,
+      dataType: 'RARIBLE_V2_DATA_V2', //  need to change this
       data,
-      process.env.CHAIN_ID,
-      this.rpcProvider.chainId,
-    );
-    console.log(hash);
+      chainId: this.rpcProvider.chainId,
+    });
+    console.log(hash, 'ash');
     // const approved = this.approveService.checkOnChainApprove(
     //   maker,
     //   make,

@@ -1044,7 +1044,7 @@ input OrderFormDto {
 
 input OrderFormAsset {
   assetType: AssetTypeInput!
-  value: BigNumber!
+  value: Float!
 }
 
 input DataDto {
