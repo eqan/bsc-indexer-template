@@ -41,7 +41,7 @@ export function hashForm(
       chainId: rpcProviderChainID,
       verifyingContract: Addresses.Exchange[chainId],
     },
-    'Exchange',
+    'Order',
     {
       maker,
       makeAssetType,

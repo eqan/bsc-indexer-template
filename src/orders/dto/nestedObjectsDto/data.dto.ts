@@ -23,7 +23,7 @@ registerEnumType(DataTypeEnum, {
 export class V2Type {
   @Field(() => DataTypeEnum, { defaultValue: DataTypeEnum.V2 })
   @Type(() => () => DataTypeEnum.V2)
-  readonly dataClass: DataTypeEnum.V2;
+  readonly assetClass: DataTypeEnum.V2;
 
   @Field(() => [PartDto])
   payouts: PartDto[];
@@ -40,7 +40,7 @@ export class V2Type {
 export class ETH_RARIBLE_V2_Type {
   @Field(() => DataTypeEnum, { defaultValue: DataTypeEnum.ETH_RARIBLE_V2 })
   @Type(() => () => DataTypeEnum.ETH_RARIBLE_V2)
-  readonly dataClass: DataTypeEnum.ETH_RARIBLE_V2;
+  readonly assetClass: DataTypeEnum.ETH_RARIBLE_V2;
 
   @Field(() => [PartDto])
   payouts: PartDto[];
@@ -54,7 +54,7 @@ export class ETH_RARIBLE_V2_Type {
 export class V3SellType {
   @Field(() => DataTypeEnum, { defaultValue: DataTypeEnum.V3_SELL })
   @Type(() => () => DataTypeEnum.V3_SELL)
-  readonly dataClass: DataTypeEnum.V3_SELL;
+  readonly assetClass: DataTypeEnum.V3_SELL;
 
   @Field(() => PartDto, { nullable: true })
   payout?: PartDto;
@@ -77,7 +77,7 @@ export class V3SellType {
 export class V3BuyType {
   @Field(() => DataTypeEnum, { defaultValue: DataTypeEnum.V3_BUY })
   @Type(() => () => DataTypeEnum.V3_BUY)
-  readonly dataClass: DataTypeEnum.V3_BUY;
+  readonly assetClass: DataTypeEnum.V3_BUY;
 
   @Field(() => PartDto, { nullable: true })
   payout?: PartDto;
@@ -112,7 +112,7 @@ export class DataTypeInput {
   type: DataTypeEnum;
 
   @Field(() => DataTypeEnum)
-  dataClass: DataTypeEnum;
+  assetClass: DataTypeEnum;
 
   @Field(() => PartDto, { nullable: true })
   payout?: PartDto;
@@ -154,5 +154,5 @@ export class DataDto {
       ],
     },
   })
-  dataType: DataType;
+  assetType: DataType;
 }

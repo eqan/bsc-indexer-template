@@ -1,9 +1,0 @@
-import { Make } from 'src/activities/dto/nestedActivityObject/make.dto';
-import { Asset } from '../dto/nestedObjectsDto/asset-type.dto';
-
-function convert(source: Make): Asset {
-  return Asset(
-    AssetTypeConverter.convert(source.assetType),
-    EthUInt256.of(source.value),
-  );
-}

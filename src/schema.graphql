@@ -646,7 +646,7 @@ scalar Binary
 
 input DataTypeInput {
   type: DataTypeEnum!
-  dataClass: DataTypeEnum!
+  assetClass: DataTypeEnum!
   payout: PartDtoInput
   originFeesFirst: PartDtoInput
   originFeesSecond: PartDtoInput
@@ -1048,7 +1048,7 @@ input OrderFormAsset {
 }
 
 input DataDto {
-  dataType: DataTypeInput!
+  assetType: DataTypeInput!
 }
 
 input DeleteOrderInput {
