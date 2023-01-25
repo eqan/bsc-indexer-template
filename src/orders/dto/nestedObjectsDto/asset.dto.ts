@@ -17,7 +17,7 @@ import {
   assetTypeValidationSchema,
   validate,
 } from 'src/orders/constants/orders.constants.validation-schema';
-import { Data } from './data.dto';
+import { CustomDataScalar } from './data.scalar.dto';
 
 export const CustomAssetScalar = new GraphQLScalarType({
   name: 'ASSET_SCALAR',
@@ -39,8 +39,8 @@ export class Asset {
   valueDecimal?: string;
 
   @ValidateNested()
-  @Field(() => CustomAssetScalar)
-  assetType: Data;
+  @Field(() => CustomDataScalar)
+  assetType: AssetType;
 }
 export enum AssetTypeEnum {
   ETH = 'ETH',

@@ -45,15 +45,10 @@ import {
   LazyErc721Input,
 } from 'src/tokens/dto/lazy-token-dto';
 import {
-  Asset,
   AssetType,
   AssetTypeEnum,
-  AssetTypeInput,
-  Erc1155AssetType,
   Erc1155LazyAssetType,
-  Erc20AssetType,
   Erc721LazyAssetType,
-  EthAssetType,
   OrderFormAsset,
 } from './dto/nestedObjectsDto/asset.dto';
 import { hashForm } from './utils/hashfunction';
@@ -114,8 +109,8 @@ export class OrdersService {
     let [make, take] = [null, null];
     make = await this.checkLazyNftMake(maker, form.make);
     take = await this.checkLazyNftAndReturnAsset(form.take);
-    // console.log(make, take);
-    // const data = form.data;
+    const data = form.data;
+    console.log(data);
     // Asset: { assetType: AssetType(assetClass, assetData), value };
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
     const hash = hashForm(
@@ -123,7 +118,7 @@ export class OrdersService {
       make.assetType,
       take,
       form.salt,
-      // data,
+      data,
       process.env.CHAIN_ID,
       this.rpcProvider.chainId,
     );

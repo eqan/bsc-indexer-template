@@ -334,11 +334,11 @@ type UsdPrice {
 type Asset {
   value: String!
   valueDecimal: String
-  assetType: ASSET_SCALAR!
+  assetType: DATA_SCALAR!
 }
 
-"""A simple Asset Parser"""
-scalar ASSET_SCALAR
+"""A simple Data Parser"""
+scalar DATA_SCALAR
 
 type Orders {
   createdAt: DateTime
@@ -392,9 +392,6 @@ enum OrderStatus {
   INACTIVE
   CANCELLED
 }
-
-"""A simple Data Parser"""
-scalar DATA_SCALAR
 
 type GetAllOrders {
   items: [Orders!]!
@@ -618,7 +615,7 @@ input PartDtoInput {
 input AssetInput {
   value: String!
   valueDecimal: String
-  assetType: ASSET_SCALAR!
+  assetType: DATA_SCALAR!
 }
 
 input AssetTypeInput {
@@ -646,6 +643,27 @@ enum AssetTypeEnum {
 
 """Binary Parser"""
 scalar Binary
+
+input DataTypeInput {
+  type: DataTypeEnum!
+  dataClass: DataTypeEnum!
+  payout: PartDtoInput
+  originFeesFirst: PartDtoInput
+  originFeesSecond: PartDtoInput
+  maxFeesBasePoint: Float
+  marketPlaceMarker: String
+  payouts: [PartDtoInput!]
+  originFees: [PartDtoInput!]
+  isMakeFill: Boolean
+}
+
+"""DataType Enum"""
+enum DataTypeEnum {
+  V2
+  ETH_RARIBLE_V2
+  V3_SELL
+  V3_BUY
+}
 
 input TokensAttributes {
   key: String
@@ -1021,11 +1039,16 @@ input OrderFormDto {
   start: Float
   end: Float
   signature: Binary!
+  data: DataDto!
 }
 
 input OrderFormAsset {
   assetType: AssetTypeInput!
   value: BigNumber!
+}
+
+input DataDto {
+  dataType: DataTypeInput!
 }
 
 input DeleteOrderInput {

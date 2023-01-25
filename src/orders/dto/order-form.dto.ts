@@ -11,8 +11,7 @@ import {
 } from 'class-validator';
 import { CustomBinaryScalar } from 'src/core/customScalars/binary';
 import { OrderFormAsset } from './nestedObjectsDto/asset.dto';
-import { Data } from './nestedObjectsDto/data.dto';
-import { CustomDataScalar } from './nestedObjectsDto/data.scalar.dto';
+import { DataDto } from './nestedObjectsDto/data.dto';
 
 @InputType('OrderFormDto')
 export class OrderFormDto {
@@ -54,7 +53,7 @@ export class OrderFormDto {
   @Field(() => CustomBinaryScalar)
   signature?: Binary;
 
-  // @Type(() => Data)
-  // @Field(() => CustomDataScalar)
-  // data: Data;
+  @Type(() => DataDto)
+  @Field(() => DataDto)
+  data: DataDto;
 }
