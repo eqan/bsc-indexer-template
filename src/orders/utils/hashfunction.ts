@@ -2,7 +2,7 @@ import { id } from '@ethersproject/hash';
 import { TypedDataUtils } from 'ethers-eip712';
 import { solidityKeccak256 } from 'ethers/lib/utils';
 import * as Addresses from '../constants/orders.constants.addresses';
-import { AssetType, OrderFormAsset } from '../dto/nestedObjectsDto/asset.dto';
+import { OrderFormAsset } from '../dto/nestedObjectsDto/asset.dto';
 import { DataDto } from '../dto/nestedObjectsDto/data.dto';
 import { EIP712_TYPES } from '../types/orders.types';
 function hash(

@@ -49,9 +49,9 @@ export class OrderFormDto {
   @Field(() => Number, { nullable: true })
   end?: number;
 
-  @IsOptional()
   @Field(() => CustomBinaryScalar)
-  signature?: Binary;
+  @Type(() => String)
+  signature: Binary;
 
   @Type(() => DataDto)
   @Field(() => DataDto)

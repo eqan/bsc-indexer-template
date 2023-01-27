@@ -54,6 +54,7 @@ import {
 import { hashForm } from './utils/hashfunction';
 import { ApproveService } from 'src/approval/approve.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
+import { fixSignature } from 'src/utils/service/common-signer';
 
 @Injectable()
 export class OrdersService {
@@ -66,6 +67,7 @@ export class OrdersService {
     private readonly approveService: ApproveService,
     private readonly rpcProvider: RpcProvider,
   ) {}
+  private contract: string;
 
   /**
    * Check if order exist or not
@@ -80,39 +82,15 @@ export class OrdersService {
     }
   }
 
-  // async puting(from: OrderFormDto): Promise<boolean> {
-  //   console.log(
-  //     JSON.stringify(from),
-  //     from.make.assetType,
-  //     from.make.assetType instanceof Erc20AssetType,
-  //     from.make.assetType.assetClass == 'ERC20' && from.make.assetType.contract,
-  //     from.make.assetType.assetClass == AssetTypeEnum.ERC721 &&
-  //       from.make.assetType.tokenId,
-  //   );
-  // }
-
-  // private convertFormToVersion(form: OrderFormDto): AssetType {}
-  // async put(form: OrderFormDto): Promise<Orders> {
-  //   // val orderVersion = convertFormToVersion(form)
-  //   // orderValidator.validate(orderVersion)
-  //   // val existingOrder = orderRepository.findById(orderVersion.hash)
-  //   // if (existingOrder != null) {
-  //   //     orderValidator.validate(existingOrder, orderVersion)
-  //   // }
-  //   // return orderUpdateService
-  //   //     .save(orderVersion)
-  //   //     .also { raribleOrderSaveMetric.increment() }
-  // }
-
   async upsert(form: OrderFormDto): Promise<null> {
     const maker = form.maker;
     let [make, take] = [null, null];
     make = await this.checkLazyNftMake(maker, form.make);
     take = await this.checkLazyNftAndReturnAsset(form.take);
     const data = form.data;
-    console.log(data);
     // Asset: { assetType: AssetType(assetClass, assetData), value };
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
+    console.log(form.signature);
     const hash = hashForm({
       maker: form.maker,
       make: make,
@@ -125,13 +103,13 @@ export class OrdersService {
       data,
       chainId: this.rpcProvider.chainId,
     });
-    console.log(hash, 'ash');
-    // const approved = this.approveService.checkOnChainApprove(
-    //   maker,
-    //   make,
-    //   data['contract'],
-    // );
-    // const signature = commonSigner.fixSignature(form.signature);
+    const approved = await this.approveService.checkOnChainApprove(
+      maker,
+      make,
+      this.contract,
+    );
+    const signature = fixSignature(form.signature);
+    console.log(signature);
     // return OrderVersion(
     //     maker = maker,
     //     make = make,
@@ -204,6 +182,7 @@ export class OrdersService {
         );
         const lazyErc721 = new Erc721LazyAssetType();
         lazyErc721.contract = toAddress(lazyERC721Data?.contract);
+        this.contract = lazyERC721Data?.contract;
         lazyErc721.tokenId = toBigNumber(lazyERC721Data?.id);
         lazyErc721.creators = lazyERC721Data?.creators;
         lazyErc721.royalties = lazyERC721Data.royalties;
@@ -219,6 +198,7 @@ export class OrdersService {
         );
         const lazyErc1155 = new Erc1155LazyAssetType();
         lazyErc1155.contract = toAddress(lazyERC1155Data?.contract);
+        this.contract = lazyERC1155Data?.contract;
         lazyErc1155.tokenId = toBigNumber(lazyERC1155Data?.id);
         lazyErc1155.uri = lazyERC1155Data?.uri;
         lazyErc1155.creators = lazyERC1155Data?.creators;
