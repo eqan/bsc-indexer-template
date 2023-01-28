@@ -47,6 +47,7 @@ import {
 import {
   AssetType,
   AssetTypeEnum,
+  AssetTypeInput,
   Erc1155LazyAssetType,
   Erc721LazyAssetType,
   OrderFormAsset,
@@ -54,7 +55,7 @@ import {
 import { hashForm } from './utils/hashfunction';
 import { ApproveService } from 'src/approval/approve.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
-import { fixSignature } from 'src/utils/service/common-signer';
+import { PriceUpdateService } from 'src/priceUpdateService/priceUpdate.service';
 
 @Injectable()
 export class OrdersService {
@@ -66,6 +67,7 @@ export class OrdersService {
     private readonly ordersHelpers: OrdersHelpers,
     private readonly approveService: ApproveService,
     private readonly rpcProvider: RpcProvider,
+    private readonly priceUpdateService: PriceUpdateService,
   ) {}
   private contract: string;
 
@@ -84,13 +86,12 @@ export class OrdersService {
 
   async upsert(form: OrderFormDto): Promise<null> {
     const maker = form.maker;
-    let [make, take] = [null, null];
+    let [make, take]: [OrderFormAsset, OrderFormAsset] = [null, null];
     make = await this.checkLazyNftMake(maker, form.make);
     take = await this.checkLazyNftAndReturnAsset(form.take);
     const data = form.data;
     // Asset: { assetType: AssetType(assetClass, assetData), value };
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
-    console.log(form.signature);
     const hash = hashForm({
       maker: form.maker,
       make: make,
@@ -103,35 +104,18 @@ export class OrdersService {
       data,
       chainId: this.rpcProvider.chainId,
     });
+    const makeAssetData = this.returnMakeAssetData(make);
     const approved = await this.approveService.checkOnChainApprove(
       maker,
-      make,
+      makeAssetData,
       this.contract,
     );
-    const signature = fixSignature(form.signature);
-    console.log(signature);
-    // return OrderVersion(
-    //     maker = maker,
-    //     make = make,
-    //     take = take,
-    //     taker = form.taker,
-    //     type = OrderTypeConverter.convert(form),
-    //     salt = EthUInt256.of(form.salt),
-    //     start = form.start,
-    //     end = form.end,
-    //     data = data,
-    //     signature = signature,
-    //     platform = platform,
-    //     hash = hash,
-    //     approved = approved,
-    //     makePriceUsd = null,
-    //     takePriceUsd = null,
-    //     makePrice = null,
-    //     takePrice = null,
-    //     makeUsd = null,
-    //     takeUsd = null
-    // ).run { priceUpdateService.withUpdatedAllPrices(this) }
-    //   // orderValidator.validate(orderVersion)
+    form.approved = approved;
+    form.hash = hash;
+    const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
+      form,
+    );
+    // orderValidator.validate(orderVersion);
     //   // val existingOrder = orderRepository.findById(orderVersion.hash)
     //   // if (existingOrder != null) {
     //   //     orderValidator.validate(existingOrder, orderVersion)
@@ -636,6 +620,20 @@ export class OrdersService {
       return result.volume;
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  returnMakeAssetData(make: OrderFormAsset): AssetTypeInput {
+    if (make.assetType.assetClass == AssetTypeEnum.ERC721) {
+      return { ...make.assetType, type: AssetTypeEnum.ERC721 };
+    } else if (make.assetType.assetClass == AssetTypeEnum.ERC721_LAZY) {
+      return { ...make.assetType, type: AssetTypeEnum.ERC721_LAZY };
+    } else if (make.assetType.assetClass == AssetTypeEnum.ERC1155_LAZY) {
+      return { ...make.assetType, type: AssetTypeEnum.ERC1155_LAZY };
+    } else if (make.assetType.assetClass == AssetTypeEnum.ERC1155) {
+      return { ...make.assetType, type: AssetTypeEnum.ERC1155 };
+    } else {
+      return null;
     }
   }
 }

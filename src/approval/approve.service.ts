@@ -3,7 +3,10 @@ import { Address, toAddress } from '@rarible/types';
 import { Contract } from '@ethersproject/contracts';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { CollectionIface } from 'src/common/utils.common';
-import { AssetTypeInput } from 'src/orders/dto/nestedObjectsDto/asset.dto';
+import {
+  AssetType,
+  AssetTypeInput,
+} from 'src/orders/dto/nestedObjectsDto/asset.dto';
 import { getFeatureFlags } from 'src/config/featureflag.config';
 
 @Injectable()
@@ -17,7 +20,7 @@ export class ApproveService {
     collection: string,
   ): Promise<boolean> {
     const featureFlags = getFeatureFlags();
-    if (!make.tokenId || !featureFlags.checkOnChainApprove) return true;
+    if (!make?.tokenId || !featureFlags.checkOnChainApprove) return true;
     const onChainApprove = await this.checkOnChainApproveAndReturnResult(
       toAddress(maker),
       toAddress(collection),

@@ -178,7 +178,7 @@ export class AssetTypeInput {
   creators?: PartDto[];
 
   @Field(() => [PartDto], { nullable: true })
-  royalties?: PartDto;
+  royalties?: PartDto[];
 
   @Field(() => [CustomBinaryScalar], { nullable: true })
   signatures?: Binary[];

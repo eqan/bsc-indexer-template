@@ -210,6 +210,20 @@ type GetAllAuctions {
   total: Int!
 }
 
+type PartDto {
+  account: String!
+  value: Int!
+}
+
+type Asset {
+  value: String!
+  valueDecimal: String
+  assetType: DATA_SCALAR!
+}
+
+"""A simple Data Parser"""
+scalar DATA_SCALAR
+
 type MetaContent {
   type: String
   url: String
@@ -261,11 +275,6 @@ input FilterTokenDto {
   id: String
   contract: String
   owner: String
-}
-
-type PartDto {
-  account: String!
-  value: Int!
 }
 
 type Attributes {
@@ -330,15 +339,6 @@ type UsdPrice {
   value: String!
   timestamp: Float!
 }
-
-type Asset {
-  value: String!
-  valueDecimal: String
-  assetType: DATA_SCALAR!
-}
-
-"""A simple Data Parser"""
-scalar DATA_SCALAR
 
 type Orders {
   createdAt: DateTime
@@ -601,12 +601,6 @@ input SellInput {
   value: Float!
 }
 
-input MetaContentInput {
-  type: String
-  url: String
-  representation: String
-}
-
 input PartDtoInput {
   account: String!
   value: Int!
@@ -643,6 +637,12 @@ enum AssetTypeEnum {
 
 """Binary Parser"""
 scalar Binary
+
+input MetaContentInput {
+  type: String
+  url: String
+  representation: String
+}
 
 input DataTypeInput {
   type: DataTypeEnum!
@@ -1040,6 +1040,10 @@ input OrderFormDto {
   end: Float
   signature: Binary!
   data: DataDto!
+  usdValue: Float
+  takePriceUsd: Float
+  makePriceUsd: Float
+  type: OrderTransaction
 }
 
 input OrderFormAsset {
@@ -1049,6 +1053,11 @@ input OrderFormAsset {
 
 input DataDto {
   assetType: DataTypeInput!
+}
+
+enum OrderTransaction {
+  SELL_ORDER
+  BID_ORDER
 }
 
 input DeleteOrderInput {

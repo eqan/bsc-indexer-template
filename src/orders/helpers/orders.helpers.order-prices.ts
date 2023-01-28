@@ -3,6 +3,7 @@ import { Contract } from '@ethersproject/contracts';
 import { formatEther, formatUnits } from '@ethersproject/units';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+import axios from 'axios';
 import { lastValueFrom } from 'rxjs';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { CurrencyIface } from 'src/common/utils.common';
@@ -83,6 +84,14 @@ export class OrderPrices {
         );
     }
   };
+
+  async getTokenPrice(tokenAddress: string): Promise<number> {
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/simple/token_price/${tokenAddress}`,
+    );
+    console.log(response);
+    return response.data.usd;
+  }
 
   getUpstreamUSDPrice = async (
     currencyAddress: string,
