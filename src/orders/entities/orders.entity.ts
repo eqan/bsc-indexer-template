@@ -2,8 +2,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsEthereumAddress, IsNotEmpty, IsString } from 'class-validator';
 import { Timestamps } from 'src/core/embed/timestamps.embed';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
+import { AssetTypeInput } from 'src/graphqlFile';
 import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { Asset } from '../dto/nestedObjectsDto/asset.dto';
+import { Asset, AssetType } from '../dto/nestedObjectsDto/asset.dto';
+import { DataDto } from '../dto/nestedObjectsDto/data.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.scalar.dto';
 import { OrderKind } from './enums/order.kind.enum';
 import { ORDER_TYPES } from './enums/order.order-types.enum';
@@ -60,7 +62,7 @@ export class Orders extends Timestamps {
     enum: ORDER_TYPES,
     default: ORDER_TYPES.V2,
   })
-  type: ORDER_TYPES;
+  type: ORDER_TYPES.V2;
 
   @Field(() => OrderStatus)
   @Column({
@@ -107,9 +109,9 @@ export class Orders extends Timestamps {
     type: 'jsonb',
   })
   make: {
-    value: string;
+    value: number;
     valueDecimal?: string;
-    assetType: JSON;
+    assetType: AssetTypeInput;
   };
 
   @Field(() => Asset, { nullable: true })
@@ -117,9 +119,9 @@ export class Orders extends Timestamps {
     type: 'jsonb',
   })
   take: {
-    value: string;
+    value: number;
     valueDecimal?: string;
-    assetType: JSON;
+    assetType: AssetTypeInput;
   };
 
   @Field({ nullable: true })
@@ -128,12 +130,12 @@ export class Orders extends Timestamps {
   })
   salt: string;
 
-  @Field(() => CustomDataScalar)
+  @Field(() => DataDto)
   @Column({
     type: 'json',
     nullable: false,
   })
-  data: JSON;
+  data: DataDto;
 
   @Field({ nullable: true })
   @Column({
@@ -189,6 +191,13 @@ export class Orders extends Timestamps {
     type: 'text',
   })
   signature: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  hash?: string;
 
   @IsEthereumAddress()
   @Field({ nullable: true })

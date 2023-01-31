@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Binary } from '@rarible/types';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -54,7 +53,7 @@ export class OrderFormDto {
 
   @Field(() => CustomBinaryScalar)
   @Type(() => String)
-  signature: Binary;
+  signature: string;
 
   @Type(() => DataDto)
   @Field(() => DataDto)

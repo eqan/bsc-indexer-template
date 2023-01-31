@@ -48,7 +48,7 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   @Mutation(() => Boolean, { name: 'puting' })
   async puting(
     @Args('orderFormDto') orderFormDto: OrderFormDto,
-  ): Promise<boolean> {
+  ): Promise<Orders> {
     try {
       return await this.ordersService.upsert(orderFormDto);
     } catch (error) {

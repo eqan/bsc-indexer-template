@@ -3,6 +3,7 @@ import { formatEther } from '@ethersproject/units';
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -52,10 +53,11 @@ import {
   Erc721LazyAssetType,
   OrderFormAsset,
 } from './dto/nestedObjectsDto/asset.dto';
-import { hashForm } from './utils/hashfunction';
+import { hashForm, convertDtoToHash } from './utils/hashfunction';
 import { ApproveService } from 'src/approval/approve.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { PriceUpdateService } from 'src/priceUpdateService/priceUpdate.service';
+import { recoverAddress } from '@ethersproject/transactions';
 
 @Injectable()
 export class OrdersService {
@@ -70,6 +72,7 @@ export class OrdersService {
     private readonly priceUpdateService: PriceUpdateService,
   ) {}
   private contract: string;
+  private readonly logger = new Logger('order-service');
 
   /**
    * Check if order exist or not
@@ -84,7 +87,7 @@ export class OrdersService {
     }
   }
 
-  async upsert(form: OrderFormDto): Promise<null> {
+  async upsert(form: OrderFormDto): Promise<Orders> {
     const maker = form.maker;
     let [make, take]: [OrderFormAsset, OrderFormAsset] = [null, null];
     make = await this.checkLazyNftMake(maker, form.make);
@@ -115,15 +118,44 @@ export class OrdersService {
     const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
       form,
     );
-    // orderValidator.validate(orderVersion);
-    //   // val existingOrder = orderRepository.findById(orderVersion.hash)
-    //   // if (existingOrder != null) {
-    //   //     orderValidator.validate(existingOrder, orderVersion)
-    //   // }
-    //   // return orderUpdateService
-    //   //     .save(orderVersion)
-    //   //     .also { raribleOrderSaveMetric.increment() }
-    return null;
+    const string = String.fromCharCode(...updatedOrder.hash);
+    this.validateV2OrderMessage(updatedOrder, form.signature);
+    const existingOrder = await this.ordersRepo.findOneByOrFail({
+      hash: string,
+    });
+    if (existingOrder != null) {
+      await this.validateV2OrderMessage(
+        {
+          ...existingOrder,
+          type: form.type,
+          hash: form.hash,
+        },
+        form.signature,
+      );
+    }
+    delete updatedOrder.hash;
+    return await this.ordersRepo.save({
+      ...existingOrder,
+      ...updatedOrder,
+      type: existingOrder.type,
+      hash: existingOrder.hash,
+    });
+  }
+
+  async validateV2OrderMessage(
+    form: OrderFormDto,
+    signature: string,
+  ): Promise<void> {
+    this.logger.verbose(
+      `validating v2 order message: ${form.hash}, signature: ${signature}`,
+    );
+    const hash = convertDtoToHash(form);
+    const isSigner = recoverAddress(hash, signature);
+    if (!isSigner) {
+      throw new NotFoundException(
+        "Maker's signature is not valid for V2 order",
+      );
+    }
   }
 
   async checkLazyNftMake(

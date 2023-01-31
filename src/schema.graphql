@@ -366,6 +366,7 @@ type Orders {
   makePriceUsd: Float
   takePriceUsd: Float
   signature: String
+  hash: String
   taker: String
   contract: String
   tokenId: String
