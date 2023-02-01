@@ -95,7 +95,7 @@ export class OrdersService {
     const data = form.data;
     // Asset: { assetType: AssetType(assetClass, assetData), value };
     // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
-    const hash = hashForm({
+    const hashedForm = hashForm({
       maker: form.maker,
       make: make,
       taker: form.taker,
@@ -114,31 +114,67 @@ export class OrdersService {
       this.contract,
     );
     form.approved = approved;
-    form.hash = hash;
+    form.hash = hashedForm;
     const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
       form,
     );
-    const string = String.fromCharCode(...updatedOrder.hash);
+    const hashData = String.fromCharCode(...updatedOrder.hash);
     this.validateV2OrderMessage(updatedOrder, form.signature);
     const existingOrder = await this.ordersRepo.findOneByOrFail({
-      hash: string,
+      hash: hashData,
     });
+    const orderFormDto = new OrderFormDto();
+    orderFormDto.maker = existingOrder.maker;
+    orderFormDto.taker = existingOrder.taker;
+    orderFormDto.salt = existingOrder.salt;
+    orderFormDto.start = existingOrder.start;
+    orderFormDto.end = existingOrder.end;
+    orderFormDto.signature = existingOrder.signature;
+    orderFormDto.data = existingOrder.data;
+    orderFormDto.usdValue = existingOrder.makePriceUsd;
+    orderFormDto.takePriceUsd = existingOrder.takePriceUsd;
+    orderFormDto.makePriceUsd = existingOrder.makePriceUsd;
+    orderFormDto.makePrice = existingOrder.makePrice;
+    orderFormDto.takePrice = existingOrder.takePrice;
+    orderFormDto.makeUsd = existingOrder.makePriceUsd;
+    orderFormDto.takeUsd = existingOrder.takePriceUsd;
+    orderFormDto.approved = approved;
+
     if (existingOrder != null) {
       await this.validateV2OrderMessage(
         {
-          ...existingOrder,
+          ...orderFormDto,
           type: form.type,
           hash: form.hash,
         },
         form.signature,
       );
     }
-    delete updatedOrder.hash;
     return await this.ordersRepo.save({
-      ...existingOrder,
-      ...updatedOrder,
+      orderId: existingOrder.orderId,
+      onchain: existingOrder.onchain,
+      fill: existingOrder.fill,
+      kind: existingOrder.kind,
+      side: existingOrder.side,
       type: existingOrder.type,
-      hash: existingOrder.hash,
+      status: existingOrder.status,
+      makeStock: existingOrder.makeStock,
+      cancelled: existingOrder.cancelled,
+      createdAt: existingOrder.createdAt,
+      maker: updatedOrder.maker,
+      salt: updatedOrder.salt,
+      start: updatedOrder.start,
+      end: updatedOrder.end,
+      optionalRoyalties: existingOrder.optionalRoyalties,
+      makePrice: updatedOrder.makePrice,
+      takePrice: updatedOrder.takePrice,
+      makePriceUsd: updatedOrder.makePriceUsd,
+      takePriceUsd: updatedOrder.takePriceUsd,
+      signature: existingOrder.signature,
+      hash: hashData,
+      taker: updatedOrder.taker,
+      contract: existingOrder.contract,
+      tokenId: existingOrder.tokenId,
     });
   }
 
