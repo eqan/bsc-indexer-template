@@ -130,7 +130,6 @@ export class OrdersService {
     orderFormDto.start = existingOrder.start;
     orderFormDto.end = existingOrder.end;
     orderFormDto.signature = existingOrder.signature;
-    orderFormDto.data = existingOrder.data;
     orderFormDto.usdValue = existingOrder.makePriceUsd;
     orderFormDto.takePriceUsd = existingOrder.takePriceUsd;
     orderFormDto.makePriceUsd = existingOrder.makePriceUsd;
