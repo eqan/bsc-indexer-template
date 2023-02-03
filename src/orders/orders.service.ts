@@ -124,23 +124,23 @@ export class OrdersService {
         );
         const hashData = String.fromCharCode(...updatedOrder.hash);
         this.validateV2OrderMessage(updatedOrder, form.signature);
-        const existingOrder = await this.ordersRepo.findOneByOrFail({
+        const existingOrder = await this.ordersRepo.findOneBy({
           hash: hashData,
         });
         const orderFormDto = new OrderFormDto();
-        orderFormDto.maker = existingOrder.maker;
-        orderFormDto.taker = existingOrder.taker;
-        orderFormDto.salt = existingOrder.salt;
-        orderFormDto.start = existingOrder.start;
-        orderFormDto.end = existingOrder.end;
-        orderFormDto.signature = existingOrder.signature;
-        orderFormDto.usdValue = existingOrder.makePriceUsd;
-        orderFormDto.takePriceUsd = existingOrder.takePriceUsd;
-        orderFormDto.makePriceUsd = existingOrder.makePriceUsd;
-        orderFormDto.makePrice = existingOrder.makePrice;
-        orderFormDto.takePrice = existingOrder.takePrice;
-        orderFormDto.makeUsd = existingOrder.makePriceUsd;
-        orderFormDto.takeUsd = existingOrder.takePriceUsd;
+        orderFormDto.maker = existingOrder?.maker;
+        orderFormDto.taker = existingOrder?.taker;
+        orderFormDto.salt = existingOrder?.salt;
+        orderFormDto.start = existingOrder?.start;
+        orderFormDto.end = existingOrder?.end;
+        orderFormDto.signature = existingOrder?.signature;
+        orderFormDto.usdValue = existingOrder?.makePriceUsd;
+        orderFormDto.takePriceUsd = existingOrder?.takePriceUsd;
+        orderFormDto.makePriceUsd = existingOrder?.makePriceUsd;
+        orderFormDto.makePrice = existingOrder?.makePrice;
+        orderFormDto.takePrice = existingOrder?.takePrice;
+        orderFormDto.makeUsd = existingOrder?.makePriceUsd;
+        orderFormDto.takeUsd = existingOrder?.takePriceUsd;
         orderFormDto.approved = approved;
 
         if (existingOrder != null) {
