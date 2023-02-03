@@ -852,7 +852,7 @@ type Mutation {
   DeleteToken(DeleteTokenInput: DeleteTokensInput!): Tokens
   ResetMetaDataofTokens(ResetMetaData: String!): Tokens
   CreateOrder(CreateOrderInput: CreateOrdersInput!): Orders!
-  puting(orderFormDto: OrderFormDto!): Boolean!
+  UpsertOrder(UpsertOrderInput: OrderFormDto!): Orders!
   DeleteOrder(DeleteOrderInput: DeleteOrderInput!): Orders
   UpdateOrder(UpdateOrderInput: UpdateOrderStatus!): Orders!
   createUsdPrice(createUsdPriceInput: CreateUsdPriceInput!): UsdPrice!

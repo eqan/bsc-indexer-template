@@ -1,5 +1,6 @@
 import { MaxUint256, Zero } from '@ethersproject/constants';
 import { formatEther } from '@ethersproject/units';
+import { splitSignature } from '@ethersproject/bytes';
 import {
   BadRequestException,
   Injectable,
@@ -88,93 +89,105 @@ export class OrdersService {
   }
 
   async upsert(form: OrderFormDto): Promise<Orders> {
-    const maker = form.maker;
-    let [make, take]: [OrderFormAsset, OrderFormAsset] = [null, null];
-    make = await this.checkLazyNftMake(maker, form.make);
-    take = await this.checkLazyNftAndReturnAsset(form.take);
-    const data = form.data;
-    // Asset: { assetType: AssetType(assetClass, assetData), value };
-    // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
-    const hashedForm = hashForm({
-      maker: form.maker,
-      make: make,
-      taker: form.taker,
-      take: take,
-      salt: form.salt,
-      start: form.start,
-      end: form.end,
-      dataType: 'RARIBLE_V2_DATA_V2', //  need to change this
-      data,
-      chainId: this.rpcProvider.chainId,
-    });
-    const makeAssetData = this.returnMakeAssetData(make);
-    const approved = await this.approveService.checkOnChainApprove(
-      maker,
-      makeAssetData,
-      this.contract,
-    );
-    form.approved = approved;
-    form.hash = hashedForm;
-    const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
-      form,
-    );
-    const hashData = String.fromCharCode(...updatedOrder.hash);
-    this.validateV2OrderMessage(updatedOrder, form.signature);
-    const existingOrder = await this.ordersRepo.findOneByOrFail({
-      hash: hashData,
-    });
-    const orderFormDto = new OrderFormDto();
-    orderFormDto.maker = existingOrder.maker;
-    orderFormDto.taker = existingOrder.taker;
-    orderFormDto.salt = existingOrder.salt;
-    orderFormDto.start = existingOrder.start;
-    orderFormDto.end = existingOrder.end;
-    orderFormDto.signature = existingOrder.signature;
-    orderFormDto.usdValue = existingOrder.makePriceUsd;
-    orderFormDto.takePriceUsd = existingOrder.takePriceUsd;
-    orderFormDto.makePriceUsd = existingOrder.makePriceUsd;
-    orderFormDto.makePrice = existingOrder.makePrice;
-    orderFormDto.takePrice = existingOrder.takePrice;
-    orderFormDto.makeUsd = existingOrder.makePriceUsd;
-    orderFormDto.takeUsd = existingOrder.takePriceUsd;
-    orderFormDto.approved = approved;
+    try {
+      const validateSignature = splitSignature(form.signature);
+      if (validateSignature) {
+        const maker = form.maker;
+        let [make, take]: [OrderFormAsset, OrderFormAsset] = [null, null];
+        make = await this.checkLazyNftMake(maker, form.make);
+        take = await this.checkLazyNftAndReturnAsset(form.take);
+        const data = form.data;
+        // Asset: { assetType: AssetType(assetClass, assetData), value };
+        // Order: { maker, makeAsset, taker, takeAsset, salt, start, end, dataType, data };
+        const hashedForm = hashForm({
+          maker: form.maker,
+          make: make,
+          taker: form.taker,
+          take: take,
+          salt: form.salt,
+          start: form.start,
+          end: form.end,
+          dataType: 'RARIBLE_V2_DATA_V2', //  need to change this
+          data,
+          chainId: this.rpcProvider.chainId,
+        });
+        const makeAssetData = this.returnMakeAssetData(make);
+        const approved = await this.approveService.checkOnChainApprove(
+          maker,
+          makeAssetData,
+          this.contract,
+        );
+        form.approved = approved;
+        form.hash = hashedForm;
+        const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
+          form,
+        );
+        const hashData = String.fromCharCode(...updatedOrder.hash);
+        this.validateV2OrderMessage(updatedOrder, form.signature);
+        const existingOrder = await this.ordersRepo.findOneByOrFail({
+          hash: hashData,
+        });
+        const orderFormDto = new OrderFormDto();
+        orderFormDto.maker = existingOrder.maker;
+        orderFormDto.taker = existingOrder.taker;
+        orderFormDto.salt = existingOrder.salt;
+        orderFormDto.start = existingOrder.start;
+        orderFormDto.end = existingOrder.end;
+        orderFormDto.signature = existingOrder.signature;
+        orderFormDto.usdValue = existingOrder.makePriceUsd;
+        orderFormDto.takePriceUsd = existingOrder.takePriceUsd;
+        orderFormDto.makePriceUsd = existingOrder.makePriceUsd;
+        orderFormDto.makePrice = existingOrder.makePrice;
+        orderFormDto.takePrice = existingOrder.takePrice;
+        orderFormDto.makeUsd = existingOrder.makePriceUsd;
+        orderFormDto.takeUsd = existingOrder.takePriceUsd;
+        orderFormDto.approved = approved;
 
-    if (existingOrder != null) {
-      await this.validateV2OrderMessage(
-        {
-          ...orderFormDto,
-          type: form.type,
-          hash: form.hash,
-        },
-        form.signature,
-      );
+        if (existingOrder != null) {
+          await this.validateV2OrderMessage(
+            {
+              ...orderFormDto,
+              type: form.type,
+              hash: form.hash,
+            },
+            form.signature,
+          );
+        }
+        return await this.ordersRepo.save({
+          orderId: existingOrder.orderId,
+          onchain: existingOrder.onchain,
+          fill: existingOrder.fill,
+          kind: existingOrder.kind,
+          side: existingOrder.side,
+          type: existingOrder.type,
+          status: existingOrder.status,
+          makeStock: existingOrder.makeStock,
+          cancelled: existingOrder.cancelled,
+          createdAt: existingOrder.createdAt,
+          maker: updatedOrder.maker,
+          salt: updatedOrder.salt,
+          start: updatedOrder.start,
+          end: updatedOrder.end,
+          optionalRoyalties: existingOrder.optionalRoyalties,
+          makePrice: updatedOrder.makePrice,
+          takePrice: updatedOrder.takePrice,
+          makePriceUsd: updatedOrder.makePriceUsd,
+          takePriceUsd: updatedOrder.takePriceUsd,
+          signature: existingOrder.signature,
+          hash: hashData,
+          taker: updatedOrder.taker,
+          contract: existingOrder.contract,
+          tokenId: existingOrder.tokenId,
+        });
+      } else {
+        this.logger.error('Signature couldnt be validated in upsert function!');
+        throw new BadRequestException(
+          'Signature couldnt be validated in upsert function!',
+        );
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
     }
-    return await this.ordersRepo.save({
-      orderId: existingOrder.orderId,
-      onchain: existingOrder.onchain,
-      fill: existingOrder.fill,
-      kind: existingOrder.kind,
-      side: existingOrder.side,
-      type: existingOrder.type,
-      status: existingOrder.status,
-      makeStock: existingOrder.makeStock,
-      cancelled: existingOrder.cancelled,
-      createdAt: existingOrder.createdAt,
-      maker: updatedOrder.maker,
-      salt: updatedOrder.salt,
-      start: updatedOrder.start,
-      end: updatedOrder.end,
-      optionalRoyalties: existingOrder.optionalRoyalties,
-      makePrice: updatedOrder.makePrice,
-      takePrice: updatedOrder.takePrice,
-      makePriceUsd: updatedOrder.makePriceUsd,
-      takePriceUsd: updatedOrder.takePriceUsd,
-      signature: existingOrder.signature,
-      hash: hashData,
-      taker: updatedOrder.taker,
-      contract: existingOrder.contract,
-      tokenId: existingOrder.tokenId,
-    });
   }
 
   async validateV2OrderMessage(

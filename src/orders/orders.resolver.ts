@@ -41,13 +41,13 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   }
 
   /**
-   * Create Order
+   * Upsert Order
    * @param OrderFormDto
    * @returns Orders
    */
-  @Mutation(() => Boolean, { name: 'puting' })
+  @Mutation(() => Orders, { name: 'UpsertOrder' })
   async puting(
-    @Args('orderFormDto') orderFormDto: OrderFormDto,
+    @Args('UpsertOrderInput') orderFormDto: OrderFormDto,
   ): Promise<Orders> {
     try {
       return await this.ordersService.upsert(orderFormDto);
@@ -55,12 +55,6 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
       throw new BadRequestException(error);
     }
   }
-
-  // upsertOrder(form: OrderFormDto): Promise<Orders> {
-  //   // val order = orderService.put(form)
-  //   // val result = orderDtoConverter.convert(order)
-  //   // return ResponseEntity.ok(result)
-  // }
 
   /**
    * Delete Order
