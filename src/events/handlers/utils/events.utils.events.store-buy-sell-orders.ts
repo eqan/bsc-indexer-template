@@ -8,7 +8,7 @@ import {
   decodeOrderData,
 } from 'src/events/handlers/utils/events.utils.decode-order';
 import { fillMatchFunctionType } from 'src/events/types/events.types';
-import { ORDER_TYPES } from 'src/orders/constants/orders.constants.order-types';
+import { OrderTypesForPlatform } from 'src/orders/entities/enums/order.order-types.enum';
 import { CreateOnchainOrdersInput } from 'src/orders/dto/create-onchain.orders.input';
 import { OrderStatus } from 'src/orders/entities/enums/orders.status.enum';
 import { OrdersService } from 'src/orders/orders.service';
@@ -60,7 +60,7 @@ export class StoreOnchainBuySellOrders {
             // binance
             onchain: true,
             side: OrderSide.sell,
-            type: ORDER_TYPES.V2,
+            type: OrderTypesForPlatform.V2,
             status: OrderStatus.FILLED,
             cancelled: false,
             createdAt: new Date(timestamp * 1000),
@@ -112,7 +112,7 @@ export class StoreOnchainBuySellOrders {
             // binance
             onchain: true,
             side: OrderSide.buy,
-            type: ORDER_TYPES.V2,
+            type: OrderTypesForPlatform.V2,
             status: OrderStatus.FILLED,
             cancelled: false,
             createdAt: new Date(timestamp * 1000),
@@ -175,7 +175,7 @@ export class StoreOnchainBuySellOrders {
             cancelled: false,
             status: OrderStatus.FILLED,
             onchain: true,
-            type: ORDER_TYPES.V2,
+            type: OrderTypesForPlatform.V2,
             makeStock: makeStock.toString(),
             maker: orderLeft.maker,
             taker,
@@ -222,7 +222,7 @@ export class StoreOnchainBuySellOrders {
             cancelled: false,
             status: OrderStatus.FILLED,
             onchain: true,
-            type: ORDER_TYPES.V2,
+            type: OrderTypesForPlatform.V2,
             makeStock: bigNumber(orderRight.makeAsset.value).toString(),
             side: getOrderSide(rightMakeAsset.assetType.assetClass),
             maker: orderRight.maker,

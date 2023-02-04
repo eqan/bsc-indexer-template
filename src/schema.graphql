@@ -341,7 +341,7 @@ type UsdPrice {
 }
 
 type Orders {
-  createdAt: DateTime
+  createdAt: String
   lastUpdatedAt: String
   dbUpdatedAt: String
   deletedAt: String
@@ -349,7 +349,7 @@ type Orders {
   fill: String!
   kind: OrderKind
   side: OrderSide
-  type: ORDER_TYPES
+  type: OrderTypesForPlatform
   status: OrderStatus!
   makeStock: String
   cancelled: Boolean
@@ -382,7 +382,7 @@ enum OrderSide {
   sell
 }
 
-enum ORDER_TYPES {
+enum OrderTypesForPlatform {
   V2
 }
 
@@ -1006,7 +1006,7 @@ input DeleteTokensInput {
 input CreateOrdersInput {
   orderId: String!
   fill: String!
-  type: ORDER_TYPES!
+  type: OrderTypesForPlatform!
   side: OrderSide!
   kind: OrderKind!
   status: OrderStatus!
@@ -1033,6 +1033,8 @@ input CreateOrdersInput {
 
 input OrderFormDto {
   maker: String!
+  contract: String!
+  tokenId: String!
   taker: String
   make: OrderFormAsset!
   take: OrderFormAsset!
@@ -1045,6 +1047,20 @@ input OrderFormDto {
   takePriceUsd: Float
   makePriceUsd: Float
   type: OrderTransaction
+  makePrice: Float
+  takePrice: Float
+  fill: String!
+  kind: OrderKind!
+  status: OrderStatus!
+  side: OrderSide!
+  platformType: OrderTypesForPlatform!
+  makeUsd: Float
+  makeStock: String
+  takeUsd: Float
+  approved: Boolean
+  onchain: Boolean!
+  cancelled: Boolean!
+  optionalRoyalties: Boolean!
 }
 
 input OrderFormAsset {

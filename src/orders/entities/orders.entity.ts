@@ -6,7 +6,7 @@ import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm';
 import { Asset } from '../dto/nestedObjectsDto/asset.dto';
 import { CustomDataScalar } from '../dto/nestedObjectsDto/data.scalar.dto';
 import { OrderKind } from './enums/order.kind.enum';
-import { ORDER_TYPES } from './enums/order.order-types.enum';
+import { OrderTypesForPlatform } from './enums/order.order-types.enum';
 import { OrderStatus } from './enums/orders.status.enum';
 
 @ObjectType()
@@ -53,14 +53,14 @@ export class Orders extends Timestamps {
   })
   side?: OrderSide;
 
-  @Field(() => ORDER_TYPES, { nullable: true })
+  @Field(() => OrderTypesForPlatform, { nullable: true })
   @Column({
     type: 'enum',
     enumName: 'ORDER_TYPES',
-    enum: ORDER_TYPES,
-    default: ORDER_TYPES.V2,
+    enum: OrderTypesForPlatform,
+    default: OrderTypesForPlatform.V2,
   })
-  type: ORDER_TYPES;
+  type: OrderTypesForPlatform;
 
   @Field(() => OrderStatus)
   @Column({
@@ -86,13 +86,13 @@ export class Orders extends Timestamps {
   })
   cancelled: boolean;
 
-  //TODO : NEED TO DISCUSS TIMESTAMP REQUIRED OR NOT
-  @Field({ nullable: true })
-  @Column({
-    type: 'timestamptz',
-    nullable: true,
-  })
-  createdAt: Date;
+  // //TODO : NEED TO DISCUSS TIMESTAMP REQUIRED OR NOT
+  // @Field({ nullable: true })
+  // @Column({
+  //   type: 'timestamptz',
+  //   nullable: true,
+  // })
+  // createdAt: Date;
 
   @IsEthereumAddress()
   @Field({ nullable: true })
@@ -109,7 +109,7 @@ export class Orders extends Timestamps {
   make: {
     value: string;
     valueDecimal?: string;
-    assetType: JSON;
+    assetType: string;
   };
 
   @Field(() => Asset, { nullable: true })
@@ -119,7 +119,7 @@ export class Orders extends Timestamps {
   take: {
     value: string;
     valueDecimal?: string;
-    assetType: JSON;
+    assetType: string;
   };
 
   @Field({ nullable: true })
@@ -133,7 +133,7 @@ export class Orders extends Timestamps {
     type: 'json',
     nullable: false,
   })
-  data: JSON;
+  data: string;
 
   @Field({ nullable: true })
   @Column({

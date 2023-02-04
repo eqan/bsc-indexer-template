@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 import { OrderSide } from 'src/events/enums/events.enums.order-side';
 import { OrderKind } from '../entities/enums/order.kind.enum';
-import { ORDER_TYPES } from '../entities/enums/order.order-types.enum';
+import { OrderTypesForPlatform } from '../entities/enums/order.order-types.enum';
 import { OrderStatus } from '../entities/enums/orders.status.enum';
 import { Asset } from './nestedObjectsDto/asset.dto';
 import { CustomDataScalar } from './nestedObjectsDto/data.scalar.dto';
@@ -29,9 +29,9 @@ export class CreateOnchainOrdersInput {
   @IsString()
   fill: string;
 
-  @IsEnum(ORDER_TYPES)
+  @IsEnum(OrderTypesForPlatform)
   @IsNotEmpty()
-  type: ORDER_TYPES;
+  type: OrderTypesForPlatform;
 
   @IsEnum(OrderSide)
   side?: OrderSide;

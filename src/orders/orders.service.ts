@@ -127,23 +127,24 @@ export class OrdersService {
         const existingOrder = await this.ordersRepo.findOneBy({
           hash: hashData,
         });
-        const orderFormDto = new OrderFormDto();
-        orderFormDto.maker = existingOrder?.maker;
-        orderFormDto.taker = existingOrder?.taker;
-        orderFormDto.salt = existingOrder?.salt;
-        orderFormDto.start = existingOrder?.start;
-        orderFormDto.end = existingOrder?.end;
-        orderFormDto.signature = existingOrder?.signature;
-        orderFormDto.usdValue = existingOrder?.makePriceUsd;
-        orderFormDto.takePriceUsd = existingOrder?.takePriceUsd;
-        orderFormDto.makePriceUsd = existingOrder?.makePriceUsd;
-        orderFormDto.makePrice = existingOrder?.makePrice;
-        orderFormDto.takePrice = existingOrder?.takePrice;
-        orderFormDto.makeUsd = existingOrder?.makePriceUsd;
-        orderFormDto.takeUsd = existingOrder?.takePriceUsd;
-        orderFormDto.approved = approved;
 
         if (existingOrder != null) {
+          const orderFormDto = new OrderFormDto();
+          orderFormDto.maker = existingOrder?.maker;
+          orderFormDto.taker = existingOrder?.taker;
+          orderFormDto.salt = existingOrder?.salt;
+          orderFormDto.start = existingOrder?.start;
+          orderFormDto.end = existingOrder?.end;
+          orderFormDto.signature = existingOrder?.signature;
+          orderFormDto.usdValue = existingOrder?.makePriceUsd;
+          orderFormDto.takePriceUsd = existingOrder?.takePriceUsd;
+          orderFormDto.makePriceUsd = existingOrder?.makePriceUsd;
+          orderFormDto.makePrice = existingOrder?.makePrice;
+          orderFormDto.takePrice = existingOrder?.takePrice;
+          orderFormDto.makeUsd = existingOrder?.makePriceUsd;
+          orderFormDto.takeUsd = existingOrder?.takePriceUsd;
+          orderFormDto.approved = approved;
+
           await this.validateV2OrderMessage(
             {
               ...orderFormDto,
@@ -153,31 +154,52 @@ export class OrdersService {
             form.signature,
           );
         }
+
+        const makeJSON = {
+          value: String(updatedOrder?.make?.value) || String(form?.make?.value),
+          valueDecimal:
+            String(updatedOrder?.make.value) || String(form?.make?.value),
+          assetType:
+            JSON.stringify(updatedOrder?.make.assetType) ||
+            JSON.stringify(form?.make?.assetType),
+        };
+
+        const takeJSON = {
+          value: String(updatedOrder?.take?.value) || String(form?.take?.value),
+          valueDecimal:
+            String(updatedOrder?.take.value) || String(form?.take?.value),
+          assetType:
+            JSON.stringify(updatedOrder?.take.assetType) ||
+            JSON.stringify(form?.take?.assetType),
+        };
         return await this.ordersRepo.save({
-          orderId: existingOrder.orderId,
-          onchain: existingOrder.onchain,
-          fill: existingOrder.fill,
-          kind: existingOrder.kind,
-          side: existingOrder.side,
-          type: existingOrder.type,
-          status: existingOrder.status,
-          makeStock: existingOrder.makeStock,
-          cancelled: existingOrder.cancelled,
-          createdAt: existingOrder.createdAt,
-          maker: updatedOrder.maker,
-          salt: updatedOrder.salt,
-          start: updatedOrder.start,
-          end: updatedOrder.end,
-          optionalRoyalties: existingOrder.optionalRoyalties,
+          orderId: existingOrder?.orderId || hashData,
+          onchain: existingOrder?.onchain || form?.onchain,
+          fill: existingOrder?.fill || form?.fill,
+          kind: existingOrder?.kind || form?.kind,
+          side: existingOrder?.side || form?.side,
+          type: existingOrder?.type || form?.platformType,
+          status: existingOrder?.status || form?.status,
+          makeStock: existingOrder?.makeStock || form?.makeStock,
+          cancelled: existingOrder?.cancelled || form?.cancelled,
+          make: makeJSON,
+          take: takeJSON,
+          maker: updatedOrder?.maker || form?.maker,
+          salt: updatedOrder?.salt || form?.salt,
+          start: updatedOrder?.start || form?.start,
+          end: updatedOrder?.end || form?.end,
+          optionalRoyalties:
+            existingOrder?.optionalRoyalties || form?.optionalRoyalties,
           makePrice: updatedOrder.makePrice,
           takePrice: updatedOrder.takePrice,
           makePriceUsd: updatedOrder.makePriceUsd,
           takePriceUsd: updatedOrder.takePriceUsd,
-          signature: existingOrder.signature,
+          signature: existingOrder?.signature || form?.signature,
           hash: hashData,
           taker: updatedOrder.taker,
-          contract: existingOrder.contract,
-          tokenId: existingOrder.tokenId,
+          contract: existingOrder?.contract || form?.contract,
+          tokenId: existingOrder?.tokenId || form?.tokenId,
+          data: existingOrder?.data || JSON.stringify(form?.data),
         });
       } else {
         this.logger.error('Signature couldnt be validated in upsert function!');
