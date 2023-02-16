@@ -59,6 +59,8 @@ import { ApproveService } from 'src/approval/approve.service';
 import { RpcProvider } from 'src/common/rpc-provider/rpc-provider.common';
 import { PriceUpdateService } from 'src/priceUpdateService/priceUpdate.service';
 import { recoverAddress } from '@ethersproject/transactions';
+import { solidityKeccak256 } from 'ethers/lib/utils';
+import { keccak256 } from 'js-sha3';
 
 @Injectable()
 export class OrdersService {
@@ -90,8 +92,12 @@ export class OrdersService {
 
   async upsert(form: OrderFormDto): Promise<Orders> {
     try {
+      const token = await this.tokensRepo.findOneBy({
+        id: form.tokenId,
+        contract: form.contract,
+      });
       const validateSignature = splitSignature(form.signature);
-      if (validateSignature) {
+      if (validateSignature && token != null) {
         const maker = form.maker;
         let [make, take]: [OrderFormAsset, OrderFormAsset] = [null, null];
         make = await this.checkLazyNftMake(maker, form.make);
@@ -122,7 +128,12 @@ export class OrdersService {
         const updatedOrder = await this.priceUpdateService.withUpdatedUsdPrices(
           form,
         );
-        const hashData = String.fromCharCode(...updatedOrder.hash);
+        const dataToHash = `${updatedOrder.contract}${updatedOrder.tokenId}`;
+        const hashData = solidityKeccak256(
+          ['bytes'],
+          ['0x' + keccak256(dataToHash)],
+        );
+
         this.validateV2OrderMessage(updatedOrder, form.signature);
         const existingOrder = await this.ordersRepo.findOneBy({
           hash: hashData,
@@ -202,9 +213,11 @@ export class OrdersService {
           data: existingOrder?.data || JSON.stringify(form?.data),
         });
       } else {
-        this.logger.error('Signature couldnt be validated in upsert function!');
+        this.logger.error(
+          'Information provided such as signature or token is invalid or doesnt exist!',
+        );
         throw new BadRequestException(
-          'Signature couldnt be validated in upsert function!',
+          'Information provided such as signature or token is invalid or doesnt exist!',
         );
       }
     } catch (error) {
