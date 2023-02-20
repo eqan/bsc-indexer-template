@@ -394,6 +394,11 @@ enum OrderStatus {
   CANCELLED
 }
 
+type PreparedTransaction {
+  to: String!
+  data: String!
+}
+
 type GetAllOrders {
   items: [Orders!]!
   total: Int!
@@ -711,6 +716,7 @@ type Query {
   GetCollectionUniqueOwners(collectionId: String!): Float!
   GetAllTokens(GetAllTokensInput: FilterTokenDto = {}): GetAllTokens!
   GetTokenById(tokenId: String!): Tokens!
+  PrepareOrderCancelTransaction(orderId: String!): PreparedTransaction!
   GetOrderById(orderId: String!): Orders!
   GetAllOrders(FilterOrderInput: FilterOrderDto = {}): GetAllOrders!
   GetOrderBidsByMaker(OrderBidsByMakerInput: GetOrderBidsByMakerDto = {}): [Orders!]!

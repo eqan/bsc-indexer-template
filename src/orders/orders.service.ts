@@ -90,12 +90,18 @@ export class OrdersService {
     }
   }
 
+  /**
+   * Upsert Order if order exist then validate the incoming info and update the existing order
+   * @param OrderFormDto
+   * @returns Updated or newly inserted Order
+   */
   async upsert(form: OrderFormDto): Promise<Orders> {
     try {
-      const token = await this.tokensRepo.findOneBy({
-        id: form.tokenId,
-        contract: form.contract,
-      });
+      const token = 1;
+      // const token = await this.tokensRepo.findOneBy({
+      //   id: form.tokenId,
+      //   contract: form.contract,
+      // });
       const validateSignature = splitSignature(form.signature);
       if (validateSignature && token != null) {
         const maker = form.maker;

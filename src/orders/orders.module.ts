@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApproveModule } from 'src/approval/approve.module';
 import { RpcProviderModule } from 'src/common/rpc-provider/rpc-provider.module';
+import { PrepareTransactionModule } from 'src/prepareTransaction/prepare-transaction.module';
 import { PriceUpdateModule } from 'src/priceUpdateService/priceUpdate.module';
 import { Tokens } from 'src/tokens/entities/tokens.entity';
 import { UsdPricesModule } from 'src/usd-prices/usd-prices.module';
@@ -27,6 +28,7 @@ import { OrdersService } from './orders.service';
     UsdPricesModule,
     ApproveModule,
     PriceUpdateModule,
+    PrepareTransactionModule,
   ],
   providers: [OrdersResolver, OrdersService, OrdersHelpers, OrderPrices],
   exports: [OrdersService, OrderPrices],

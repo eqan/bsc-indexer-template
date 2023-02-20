@@ -2,6 +2,8 @@ import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import BaseProvider from 'src/core/base.BaseProvider';
+import { PreparedTransaction } from 'src/prepareTransaction/dto/preparedtx.dto';
+import { PrepareTransactionService } from 'src/prepareTransaction/prepare-transaction.service';
 import { CreateOrdersInput } from './dto/create-orders.input';
 import { DeleteOrderInput } from './dto/delete-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
@@ -19,7 +21,10 @@ import { OrdersService } from './orders.service';
 
 @Resolver(() => Orders)
 export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
-  constructor(private readonly ordersService: OrdersService) {
+  constructor(
+    private readonly ordersService: OrdersService,
+    private readonly prepareTransactionService: PrepareTransactionService,
+  ) {
     super();
   }
 
@@ -51,6 +56,18 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
   ): Promise<Orders> {
     try {
       return await this.ordersService.upsert(orderFormDto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Query(() => PreparedTransaction, { name: 'PrepareOrderCancelTransaction' })
+  async prepareOrderCancelTransaction(
+    @Args('orderId') orderId: string,
+  ): Promise<PreparedTransaction> {
+    try {
+      const order = await this.ordersService.show(orderId);
+      return await this.prepareTransactionService.prepareCancelTxData(order);
     } catch (error) {
       throw new BadRequestException(error);
     }
