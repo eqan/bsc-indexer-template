@@ -5,6 +5,8 @@ import BaseProvider from 'src/core/base.BaseProvider';
 import { PreparedTransaction } from 'src/prepareTransaction/dto/preparedtx.dto';
 import { PrepareTransactionService } from 'src/prepareTransaction/prepare-transaction.service';
 import { CreateOrdersInput } from './dto/create-orders.input';
+import { CreatePendingOrderInput } from './dto/create-pending-order.input';
+import { CreatePendingOrderOutput } from './dto/create-pending-order.output';
 import { DeleteOrderInput } from './dto/delete-orders.input';
 import { FilterOrderDto } from './dto/filter.orders.dto';
 import { GetAllOrders } from './dto/get-all-orders.output';
@@ -61,6 +63,11 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     }
   }
 
+  /**
+   * Prepare Order Cancel Transaction
+   * @param OrderId
+   * @returns PreparedTransaction
+   */
   @Query(() => PreparedTransaction, { name: 'PrepareOrderCancelTransaction' })
   async prepareOrderCancelTransaction(
     @Args('orderId') orderId: string,
@@ -71,6 +78,17 @@ export class OrdersResolver extends BaseProvider<Orders | FilterOrderDto> {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  // This endpoint is a work in progress as mechanism is not properly defined
+  @Mutation(() => PreparedTransaction, {
+    name: 'CreateOrderPendingTransaction',
+  })
+  async createOrderPendingTransaction(
+    @Args('CreatePendingOrderInput')
+    createPendingOrderInput: CreatePendingOrderInput,
+  ): Promise<CreatePendingOrderOutput> {
+    return;
   }
 
   /**
